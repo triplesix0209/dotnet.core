@@ -21,43 +21,31 @@ namespace CpTech.Core.Test.Attributes
         }
 
         [TestMethod]
-        public void Null()
+        public void Valid()
         {
             var attr = new EnumValidateAttribute();
-            EnumOne? value = null;
-            bool result = attr.IsValid(value);
-
-            Assert.IsTrue(result);
+            Assert.IsTrue(attr.IsValid(EnumOne.One));
         }
 
         [TestMethod]
-        public void WrongType()
+        public void Null()
         {
             var attr = new EnumValidateAttribute();
-            var value = string.Empty;
-            bool result = attr.IsValid(value);
-
-            Assert.IsFalse(result);
+            Assert.IsTrue(attr.IsValid(null));
         }
 
         [TestMethod]
         public void DiffType()
         {
             var attr = new EnumValidateAttribute(typeof(EnumTwo));
-            var value = EnumOne.Three;
-            bool result = attr.IsValid(value);
-
-            Assert.IsFalse(result);
+            Assert.IsFalse(attr.IsValid(EnumOne.Three));
         }
 
         [TestMethod]
-        public void RightValue()
+        public void WrongType()
         {
             var attr = new EnumValidateAttribute();
-            var value = EnumOne.One;
-            bool result = attr.IsValid(value);
-
-            Assert.IsTrue(result);
+            Assert.IsFalse(attr.IsValid(string.Empty));
         }
 
         [TestMethod]
