@@ -1,0 +1,22 @@
+{
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/bin": true,
+    "**/bin.*": true,
+    "**/obj": true,
+    "**/obj.*": true,
+    "**/.vs": true,
+    "**/.vs.*": true,
+    ".vscode": true,
+    ".editorconfig": true,
+    "Directory.Build.props": true,
+    "**/*.DotSettings": true,
+    "Dist": true
+  },
+  "explorerExclude.backup": null
+}
