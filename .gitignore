@@ -4,9 +4,5 @@
 .VSCodeCounter/
 .nuget/
 .vs/
-Dist/
-Logs/
-Uploads/
 bin/
-key.jwk
 obj/
