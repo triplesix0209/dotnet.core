@@ -20,18 +20,12 @@ namespace CpTech.Core.Attributes
             ErrorMessage = _message;
 
             _enumType = Nullable.GetUnderlyingType(enumType) ?? enumType;
-            if (!_enumType.IsEnum)
-            {
-                throw new ArgumentException("must be Enum type", nameof(enumType));
-            }
+            if (!_enumType.IsEnum) throw new ArgumentException("must be Enum type", nameof(enumType));
         }
 
         public override bool IsValid(object value)
         {
-            if (value == null)
-            {
-                return true;
-            }
+            if (value == null) return true;
 
             Type type;
             if (_enumType == null)

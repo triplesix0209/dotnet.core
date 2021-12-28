@@ -13,7 +13,7 @@ namespace CpTech.Core.Attributes
         public RegexValidateAttribute(string pattern, string patternName)
             : base(pattern)
         {
-            ErrorMessage = $"{{0}} phải là {patternName}";
+            ErrorMessage = $"{{0}} phải có dạng {patternName}";
         }
     }
 }
