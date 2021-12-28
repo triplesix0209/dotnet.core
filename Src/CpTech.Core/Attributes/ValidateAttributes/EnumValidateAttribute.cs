@@ -7,22 +7,23 @@ namespace CpTech.Core.Attributes
 {
     public class EnumValidateAttribute : ValidationAttribute
     {
+        private const string _message = "giá trị của {0} không nằm trong tập giá trị cho phép";
         private readonly Type _enumType;
 
         public EnumValidateAttribute()
         {
-            ErrorMessage = "giá trị của {0} không nằm trong tập giá trị cho phép";
+            ErrorMessage = _message;
         }
 
         public EnumValidateAttribute(Type enumType)
         {
+            ErrorMessage = _message;
+
             _enumType = Nullable.GetUnderlyingType(enumType) ?? enumType;
             if (!_enumType.IsEnum)
             {
                 throw new ArgumentException("must be Enum type", nameof(enumType));
             }
-
-            ErrorMessage = "giá trị của {0} không nằm trong tập giá trị cho phép";
         }
 
         public override bool IsValid(object value)
@@ -37,10 +38,7 @@ namespace CpTech.Core.Attributes
             {
                 type = value.GetType();
                 type = Nullable.GetUnderlyingType(type) ?? type;
-                if (!type.IsEnum)
-                {
-                    return true;
-                }
+                if (!type.IsEnum) return false;
             }
             else
             {

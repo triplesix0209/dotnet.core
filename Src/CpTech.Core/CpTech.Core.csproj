@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <PackageId>CpTech.Core</PackageId>
-    <Version>5.0.6</Version>
+    <Version>5.0.7</Version>
     <Authors>luc.ta</Authors>
     <Company>CP-Tech</Company>
   </PropertyGroup>
