@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using TripleSix.Core.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using TripleSix.Core.Exceptions;
 
 namespace TripleSix.Core.Extensions
 {
