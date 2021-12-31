@@ -54,7 +54,7 @@ namespace TripleSix.Core.Test.Extensions
         [TestMethod]
         public void ToCamelCase()
         {
-            string input = "Ta hong  QuangLuc";
+            string input = "Ta  hong-QuangLuc";
             string expected = "taHongQuangLuc";
 
             Assert.AreEqual(expected, input.ToCamelCase());
@@ -63,7 +63,7 @@ namespace TripleSix.Core.Test.Extensions
         [TestMethod]
         public void ToSnakeCase()
         {
-            string input = "Ta hong  QuangLuc";
+            string input = "Ta  hong-QuangLuc";
             string expected = "ta_hong_quang_luc";
 
             Assert.AreEqual(expected, input.ToSnakeCase());
@@ -72,7 +72,7 @@ namespace TripleSix.Core.Test.Extensions
         [TestMethod]
         public void ToKebabCase()
         {
-            string input = "Ta hong  QuangLuc";
+            string input = "Ta  hong-QuangLuc";
             string expected = "ta-hong-quang-luc";
 
             Assert.AreEqual(expected, input.ToKebabCase());
