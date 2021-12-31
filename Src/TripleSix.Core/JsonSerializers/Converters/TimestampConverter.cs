@@ -1,8 +1,8 @@
 ﻿using System;
-using TripleSix.Core.Extensions;
-using TripleSix.Core.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.JsonSerializers.Converters
 {

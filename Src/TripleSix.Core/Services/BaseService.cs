@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using TripleSix.Core.Events;
 using Microsoft.Extensions.Configuration;
+using TripleSix.Core.Events;
 
 namespace TripleSix.Core.Services
 {

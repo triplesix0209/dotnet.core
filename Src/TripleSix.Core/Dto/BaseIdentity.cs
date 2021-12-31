@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using TripleSix.Core.Extensions;
 using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Extensions;
 
 namespace TripleSix.Core.Dto
 {

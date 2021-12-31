@@ -1,7 +1,7 @@
 using System.Reflection;
-using TripleSix.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using TripleSix.Core.Extensions;
 
 namespace TripleSix.Core.DataContexts
 {

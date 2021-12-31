@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TripleSix.Core.Extensions;
 
-namespace TripleSix.Core.Test.Extensions
+namespace TripleSix.Core.Test.HelperExtensions
 {
     [TestClass]
-    public class ArrayListExtensionTest
+    public class ArrayListTest
     {
         [TestMethod]
         public void IsNullOrEmpty()

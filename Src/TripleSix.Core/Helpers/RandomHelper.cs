@@ -13,5 +13,10 @@ namespace TripleSix.Core.Helpers
                 .Select(s => s[Random.Next(s.Length)])
                 .ToArray());
         }
+
+        public static int RandomNumber(int min, int max)
+        {
+            return new Random().Next(min, max);
+        }
     }
 }

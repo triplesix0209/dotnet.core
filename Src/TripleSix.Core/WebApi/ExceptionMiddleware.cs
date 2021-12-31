@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.JsonSerializers;
 using TripleSix.Core.WebApi.Results;
-using Microsoft.AspNetCore.Http;
 
 namespace TripleSix.Core.WebApi
 {

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Extensions;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Services
 {

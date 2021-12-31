@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TripleSix.Core.Extensions;
 
-namespace TripleSix.Core.Test.Extensions
+namespace TripleSix.Core.Test.HelperExtensions
 {
     [TestClass]
-    public class StringExtensionTest
+    public class StringTest
     {
         [TestMethod]
         public void IsNullOrWhiteSpace()

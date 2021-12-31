@@ -1,5 +1,5 @@
-﻿using TripleSix.Core.WebApi.Results;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using TripleSix.Core.WebApi.Results;
 
 namespace TripleSix.Core.WebApi.Filters
 {

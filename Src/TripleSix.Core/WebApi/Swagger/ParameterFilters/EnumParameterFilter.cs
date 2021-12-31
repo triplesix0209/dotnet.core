@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using TripleSix.Core.Helpers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi.Swagger
 {

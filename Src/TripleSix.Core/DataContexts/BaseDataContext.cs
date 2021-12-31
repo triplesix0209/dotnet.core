@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using TripleSix.Core.DataTypes;
-using TripleSix.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
+using TripleSix.Core.DataTypes;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.DataContexts
 {

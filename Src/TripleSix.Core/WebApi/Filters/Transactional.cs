@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using TripleSix.Core.DataContexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using TripleSix.Core.DataContexts;
 
 namespace TripleSix.Core.WebApi.Filters
 {

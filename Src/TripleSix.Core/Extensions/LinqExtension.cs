@@ -5,12 +5,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Mappers;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Extensions
 {

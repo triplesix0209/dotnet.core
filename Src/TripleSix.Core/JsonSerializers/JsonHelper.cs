@@ -1,6 +1,6 @@
-﻿using TripleSix.Core.JsonSerializers.ContractResolvers;
+﻿using Newtonsoft.Json;
+using TripleSix.Core.JsonSerializers.ContractResolvers;
 using TripleSix.Core.JsonSerializers.Converters;
-using Newtonsoft.Json;
 
 namespace TripleSix.Core.JsonSerializers
 {

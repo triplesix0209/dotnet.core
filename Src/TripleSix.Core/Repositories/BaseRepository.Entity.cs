@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Repositories
 {

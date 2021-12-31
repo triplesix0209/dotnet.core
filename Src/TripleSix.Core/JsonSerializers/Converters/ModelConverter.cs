@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using TripleSix.Core.Dto;
-using TripleSix.Core.JsonSerializers.ContractResolvers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TripleSix.Core.Dto;
+using TripleSix.Core.JsonSerializers.ContractResolvers;
 
 namespace TripleSix.Core.JsonSerializers.Converters
 {

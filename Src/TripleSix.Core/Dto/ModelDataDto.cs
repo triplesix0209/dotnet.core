@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using TripleSix.Core.Attributes;
 using Newtonsoft.Json;
+using TripleSix.Core.Attributes;
 
 namespace TripleSix.Core.Dto
 {

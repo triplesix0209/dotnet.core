@@ -1,5 +1,5 @@
-﻿using TripleSix.Core.Extensions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using TripleSix.Core.Extensions;
 
 namespace TripleSix.Core.WebApi.Results
 {

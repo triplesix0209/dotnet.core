@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Dto;
 using TripleSix.Core.WebApi.Filters;
 using TripleSix.Core.WebApi.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace TripleSix.Core.WebApi.Controllers
 {

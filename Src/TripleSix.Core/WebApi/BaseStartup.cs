@@ -3,12 +3,6 @@ using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
-using TripleSix.Core.DataTypes;
-using TripleSix.Core.JsonSerializers.ContractResolvers;
-using TripleSix.Core.JsonSerializers.Converters;
-using TripleSix.Core.ModuleAutofac;
-using TripleSix.Core.WebApi.ModelBinders;
-using TripleSix.Core.WebApi.Swagger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -19,6 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.ReDoc;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TripleSix.Core.DataTypes;
+using TripleSix.Core.JsonSerializers.ContractResolvers;
+using TripleSix.Core.JsonSerializers.Converters;
+using TripleSix.Core.ModuleAutofac;
+using TripleSix.Core.WebApi.ModelBinders;
+using TripleSix.Core.WebApi.Swagger;
 
 namespace TripleSix.Core.WebApi
 {

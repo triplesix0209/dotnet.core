@@ -6,22 +6,25 @@ namespace TripleSix.Core.Extensions
 {
     public static class HttpExtension
     {
-        public static string GetHeaderValue(this IHeaderDictionary header, string key)
+        public static string GetValue(this IHeaderDictionary header, string key)
         {
             key = key.Trim().ToCamelCase();
             return header.ContainsKey(key) ? header[key].First() : null;
         }
 
-        public static TResult GetHeaderValue<TResult>(this IHeaderDictionary header, string key, Func<string, TResult> converter, TResult defaultValue = default(TResult))
+        public static TResult GetValue<TResult>(
+            this IHeaderDictionary header,
+            string key,
+            Func<string, TResult> converter = null,
+            TResult defaultValue = default(TResult))
         {
-            try
-            {
-                return converter(GetHeaderValue(header, key));
-            }
-            catch
-            {
-                return defaultValue;
-            }
+            var value = GetValue(header, key);
+            if (converter is not null) return converter(value);
+
+            var typeCode = Type.GetTypeCode(typeof(TResult));
+            if (typeCode == TypeCode.Empty) throw new InvalidCastException();
+
+            return (TResult)Convert.ChangeType(value, typeCode);
         }
     }
 }

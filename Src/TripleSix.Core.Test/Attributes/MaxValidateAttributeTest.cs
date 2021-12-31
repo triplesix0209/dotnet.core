@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TripleSix.Core.Attributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TripleSix.Core.Attributes;
 
 namespace TripleSix.Core.Test.Attributes
 {

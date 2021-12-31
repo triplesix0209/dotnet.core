@@ -1,6 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Repositories
 {

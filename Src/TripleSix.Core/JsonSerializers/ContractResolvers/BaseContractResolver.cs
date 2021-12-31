@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TripleSix.Core.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using TripleSix.Core.Extensions;
 
 namespace TripleSix.Core.JsonSerializers.ContractResolvers
 {
