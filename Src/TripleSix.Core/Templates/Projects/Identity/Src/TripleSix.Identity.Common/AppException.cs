@@ -3,7 +3,7 @@
 using TripleSix.Core.Attributes;
 using TripleSix.Core.Exceptions;
 
-namespace ProjectCode.Common
+namespace TripleSix.Identity.Common
 {
     public class AppException : BaseException
     {

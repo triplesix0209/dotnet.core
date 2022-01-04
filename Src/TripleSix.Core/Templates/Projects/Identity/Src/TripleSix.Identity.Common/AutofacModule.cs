@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TripleSix.Core.ModuleAutofac;
 
-namespace ProjectCode.Common
+namespace TripleSix.Identity.Common
 {
     public class AutofacModule : BaseModule
     {
