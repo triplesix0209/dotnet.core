@@ -19,6 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TripleSix.Core\TripleSix.Core.csproj" />
+    <ProjectReference Include="..\..\Src\TripleSix.Core\TripleSix.Core.csproj" />
   </ItemGroup>
 </Project>
