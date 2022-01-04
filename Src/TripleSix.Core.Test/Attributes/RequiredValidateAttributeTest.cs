@@ -19,7 +19,7 @@ namespace TripleSix.Core.Test.Attributes
         {
             var attr = new RequiredValidateAttribute();
             var name = "test";
-            var errorTemplate = $"{name} là thông tin bắt buộc";
+            var errorTemplate = $"{name} không được bỏ trống";
 
             Assert.ThrowsException<ValidationException>(() =>
             {

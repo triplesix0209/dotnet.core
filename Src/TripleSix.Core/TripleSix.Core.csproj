@@ -3,7 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
 
     <PackageId>TripleSix.Core</PackageId>
-    <Version>5.0.0</Version>
+    <Version>5.0.1</Version>
     <Authors>triplesix0209@gmail.com</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
