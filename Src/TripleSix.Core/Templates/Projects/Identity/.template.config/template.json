@@ -10,5 +10,31 @@
     "type": "project"
   },
   "sourceName": "TripleSix.Identity",
-  "preferNameDirectory": true
+  "preferNameDirectory": true,
+  "symbols": {
+    "hostname": {
+      "type": "parameter",
+      "replaces": "{Hostname}",
+      "datatype": "text",
+      "defaultValue": "sample.vn"
+    },
+    "connectionString": {
+      "type": "parameter",
+      "replaces": "{ConnectionString}",
+      "datatype": "text",
+      "defaultValue": ""
+    },
+    "clientId": {
+      "type": "parameter",
+      "replaces": "{ClientId}",
+      "datatype": "text",
+      "defaultValue": "identity"
+    },
+    "clientSecret": {
+      "type": "parameter",
+      "replaces": "{ClientSecret}",
+      "datatype": "text",
+      "defaultValue": "secret"
+    }
+  }
 }
