@@ -1,0 +1,10 @@
+*.DotSettings.user
+*.csproj.user
+*.log
+.VSCodeCounter/
+.nuget/
+.vs/
+Logs/
+bin/
+obj/
+key.jwk

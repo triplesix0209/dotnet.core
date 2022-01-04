@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "triplesix0209@gmail.com",
+  "classifications": [ "Service" ],
+  "identity": "TripleSix.Project.Identity",
+  "name": "TripleSix Templates: Identity project",
+  "shortName": "triplesix.project.identity",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}
