@@ -4,7 +4,8 @@
 .VSCodeCounter/
 .nuget/
 .vs/
-bin/
-obj/
-Dist/
 TestResults/
+bin/
+dist/
+obj/
+!*/deploy.bat
