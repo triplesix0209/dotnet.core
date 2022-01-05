@@ -8,4 +8,3 @@ TestResults/
 bin/
 dist/
 obj/
-!Src/TripleSix.Core/dist/deploy.bat
