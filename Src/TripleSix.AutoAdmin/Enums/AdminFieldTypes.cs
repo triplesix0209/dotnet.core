@@ -1,7 +1,7 @@
 ﻿namespace TripleSix.AutoAdmin.Enums
 {
     /// <summary>
-    /// phân loại phương thức của admin.
+    /// phân loại field của admin.
     /// </summary>
     public enum AdminFieldTypes
     {

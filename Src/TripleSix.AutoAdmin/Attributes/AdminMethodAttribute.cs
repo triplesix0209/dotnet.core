@@ -10,22 +10,22 @@ namespace TripleSix.AutoAdmin.Attributes
     public class AdminMethodAttribute : Attribute
     {
         /// <summary>
-        /// Admin Dto sử dụng của controller.
+        /// Admin Dto sử dụng.
         /// </summary>
         public Type AdminType { get; set; }
 
         /// <summary>
-        /// Entity sử dụng của controller.
+        /// Entity sử dụng.
         /// </summary>
         public Type EntityType { get; set; }
 
         /// <summary>
-        /// bật/tắt controller.
+        /// bật/tắt.
         /// </summary>
         public bool Enable { get; set; } = true;
 
         /// <summary>
-        /// loại phương thức
+        /// loại phương thức.
         /// </summary>
         public AdminMethodTypes Type { get; set; } = 0;
     }
