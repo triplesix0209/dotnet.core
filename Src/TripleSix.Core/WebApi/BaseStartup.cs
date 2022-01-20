@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -108,6 +110,15 @@ namespace TripleSix.Core.WebApi
             options.ConfigObject.AdditionalItems.Add("hideSchemaTitles", true);
             options.HideDownloadButton();
             options.RequiredPropsFirst();
+            options.IndexStream = () =>
+            {
+                var redocStream = GetType().GetTypeInfo().Assembly
+                    .GetManifestResourceNames()
+                    .First(x => x.EndsWith("ReDoc.html"));
+
+                return GetType().GetTypeInfo().Assembly
+                    .GetManifestResourceStream(redocStream);
+            };
         }
 
         public virtual void BaseConfigure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -116,6 +127,20 @@ namespace TripleSix.Core.WebApi
 
             if (AutofacContainer.IsRegistered<MapperConfiguration>())
                 AutofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
+
+            if (Configuration.GetValue("Swagger:Enable", false))
+            {
+                app.UseSwagger();
+                app.UseReDoc(ConfigureReDoc);
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapGet("/", context =>
+                    {
+                        context.Response.Redirect("/swagger");
+                        return Task.CompletedTask;
+                    });
+                });
+            }
 
             app.UseMiddleware<ExceptionMiddleware>();
         }
