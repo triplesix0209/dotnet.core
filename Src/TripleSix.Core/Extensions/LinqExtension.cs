@@ -316,7 +316,7 @@ namespace TripleSix.Core.Extensions
         }
 
         public static IQueryable<TEntity> WhereOrs<TEntity>(this IQueryable<TEntity> query, params Expression<Func<TEntity, bool>>[] predicates)
-            where TEntity : IModelEntity
+            where TEntity : IEntity
         {
             var expr = PredicateBuilder.New<TEntity>();
             foreach (var predicate in predicates)
