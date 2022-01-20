@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -129,20 +128,6 @@ namespace TripleSix.Core.WebApi
                 AutofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
 
             app.UseMiddleware<ExceptionMiddleware>();
-
-            if (Configuration.GetValue("Swagger:Enable", false))
-            {
-                app.UseSwagger();
-                app.UseReDoc(ConfigureReDoc);
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapGet("/", context =>
-                    {
-                        context.Response.Redirect("/swagger");
-                        return Task.CompletedTask;
-                    });
-                });
-            }
         }
     }
 }
