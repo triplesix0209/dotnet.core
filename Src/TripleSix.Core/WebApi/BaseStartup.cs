@@ -128,6 +128,8 @@ namespace TripleSix.Core.WebApi
             if (AutofacContainer.IsRegistered<MapperConfiguration>())
                 AutofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (Configuration.GetValue("Swagger:Enable", false))
             {
                 app.UseSwagger();
@@ -141,8 +143,6 @@ namespace TripleSix.Core.WebApi
                     });
                 });
             }
-
-            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }
