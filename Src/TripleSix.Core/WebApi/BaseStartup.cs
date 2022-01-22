@@ -109,6 +109,7 @@ namespace TripleSix.Core.WebApi
             options.ConfigObject.AdditionalItems.Add("hideSchemaTitles", true);
             options.HideDownloadButton();
             options.RequiredPropsFirst();
+
             options.IndexStream = () =>
             {
                 var redocStream = GetType().GetTypeInfo().Assembly

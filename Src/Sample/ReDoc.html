@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 40px;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        #links_container {
+            background-color: rgb(38, 50, 56);
+            margin: 0;
+            padding: 0;
+        }
+
+            #links_container li {
+                color: white;
+                cursor: pointer;
+                display: inline-block;
+                padding: 10px;
+            }
+
+        .MepfT .ellipsis::after {
+            content: "..." !important;
+        }
+
+        .sc-qZtCU {
+            font-size: 0;
+        }
+
+            .sc-qZtCU::after {
+                content: "x";
+                font-size: 13pt;
+                line-height: 17pt;
+            }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <ul id="links_container">
+        </ul>
+    </nav>
+
+    <redoc scroll-y-offset="body > nav"></redoc>
+
+    <script src="redoc.standalone.js"></script>
+    <script>
+        var apis = [
+            {
+                name: 'Api',
+                url: 'api/swagger.json'
+            },
+        ];
+
+        var options = {
+            hideDownloadButton: true,
+            hideSchemaTitles: true,
+            requiredPropsFirst: true,
+        };
+
+        Redoc.init(apis[0].url, options);
+
+        function onClick() {
+            var url = this.getAttribute('data-link');
+            Redoc.init(url, options);
+        }
+
+        var $list = document.getElementById('links_container');
+        apis.forEach(function (api) {
+            var $listitem = document.createElement('li');
+            $listitem.setAttribute('data-link', api.url);
+            $listitem.innerText = api.name;
+            $listitem.addEventListener('click', onClick);
+            $list.appendChild($listitem);
+        });
+    </script>
+</body>
+
+</html>
