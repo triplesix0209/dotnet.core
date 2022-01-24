@@ -106,10 +106,6 @@ namespace TripleSix.Core.WebApi
         public virtual void ConfigureReDoc(ReDocOptions options)
         {
             options.RoutePrefix = "swagger";
-            options.ConfigObject.AdditionalItems.Add("hideSchemaTitles", true);
-            options.HideDownloadButton();
-            options.RequiredPropsFirst();
-
             options.IndexStream = () =>
             {
                 var redocStream = GetType().GetTypeInfo().Assembly
