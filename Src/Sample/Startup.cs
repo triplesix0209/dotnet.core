@@ -31,7 +31,7 @@ namespace Sample
         {
             base.ConfigureSwagger(options);
 
-            options.SwaggerDoc("api", new OpenApiInfo());
+            options.SwaggerDoc("api", new OpenApiInfo { Title = "API Document", Version = "v1", });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
