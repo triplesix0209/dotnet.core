@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Sample.Dto;
 using Swashbuckle.AspNetCore.Annotations;
 using TripleSix.Core.WebApi.Controllers;
+using TripleSix.Core.WebApi.Filters;
 using TripleSix.Core.WebApi.Results;
 
 namespace Sample.Controllers
@@ -10,10 +12,12 @@ namespace Sample.Controllers
     {
         [HttpGet]
         [SwaggerOperation("Test")]
-        [SwaggerResponse(200, null, typeof(SuccessResult))]
-        public Task<IActionResult> GetList()
+        [SwaggerResponse(200, null, typeof(DataResult<string>))]
+        [ValidateModel]
+        public Task<IActionResult> Test([FromBody] InputDto input)
         {
-            return Task.FromResult<IActionResult>(SuccessResult());
+            var result = DataResult(input.Data);
+            return Task.FromResult<IActionResult>(result);
         }
     }
 }
