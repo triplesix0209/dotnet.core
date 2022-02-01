@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,22 +67,26 @@ namespace TripleSix.Core.WebApi
             Action<MvcOptions> mvcAction = null,
             Action<MvcNewtonsoftJsonOptions> jsonAction = null)
         {
-            return services.AddMvc(options =>
-            {
-                options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
-                options.ModelBinderProviders.Insert(0, new PhoneModelBinderProvider());
-                options.AllowEmptyInputInBodyModelBinding = true;
-                if (mvcAction != null) mvcAction(options);
-            })
-            .AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ContractResolver = BaseContractResolver;
-                options.SerializerSettings.Converters.Add(new ModelConverter(BaseContractResolver));
-                options.SerializerSettings.Converters.Add(new TimestampConverter());
-                options.SerializerSettings.Converters.Add(new PhoneConverter());
-                if (jsonAction != null) jsonAction(options);
-            })
-            .AddControllersAsServices();
+            var httpContextAccessor = new HttpContextAccessor();
+            
+            return services
+                .AddSingleton<IHttpContextAccessor>(httpContextAccessor)
+                .AddMvc(options =>
+                {
+                    options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new PhoneModelBinderProvider());
+                    options.AllowEmptyInputInBodyModelBinding = true;
+                    if (mvcAction != null) mvcAction(options);
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = BaseContractResolver;
+                    options.SerializerSettings.Converters.Add(new ModelConverter(httpContextAccessor, BaseContractResolver));
+                    options.SerializerSettings.Converters.Add(new TimestampConverter());
+                    options.SerializerSettings.Converters.Add(new PhoneConverter());
+                    if (jsonAction != null) jsonAction(options);
+                })
+                .AddControllersAsServices();
         }
 
         public virtual void ConfigureSwagger(SwaggerGenOptions options)
