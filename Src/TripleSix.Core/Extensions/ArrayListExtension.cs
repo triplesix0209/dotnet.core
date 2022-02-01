@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TripleSix.Core.Extensions
 {
@@ -9,19 +10,29 @@ namespace TripleSix.Core.Extensions
             return array == null || array.Length == 0;
         }
 
-        public static bool IsNotNullOrEmpty<T>(this T[] array)
-        {
-            return array != null && array.Length > 0;
-        }
-
         public static bool IsNullOrEmpty<T>(this IList<T> list)
         {
             return list == null || list.Count == 0;
         }
 
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable == null || enumerable.Count() == 0;
+        }
+
+        public static bool IsNotNullOrEmpty<T>(this T[] array)
+        {
+            return array != null && array.Length > 0;
+        }
+
         public static bool IsNotNullOrEmpty<T>(this IList<T> list)
         {
             return list != null && list.Count > 0;
+        }
+
+        public static bool IsNotNullOrEmpty<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable != null && enumerable.Count() > 0;
         }
     }
 }
