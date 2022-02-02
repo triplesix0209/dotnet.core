@@ -3,7 +3,7 @@
 namespace TripleSix.Core.Dto
 {
     public interface IDataDto
-        : IDto, IPropertyTracking
+        : IDto, IPropertyTracking, IHttpContextAccess
     {
     }
 }

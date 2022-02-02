@@ -53,7 +53,8 @@ namespace TripleSix.Core.JsonSerializers.Converters
                 (result as IPropertyTracking)?.SetPropertyChanged(p.Name, true);
             }
 
-            var httpContext = _httpContextAccessor.HttpContext;
+            if (result as IHttpContextAccess is not null)
+                (result as IHttpContextAccess).SetHttpContext(_httpContextAccessor.HttpContext);
 
             return (IDto)result;
         }

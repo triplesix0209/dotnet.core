@@ -5,7 +5,9 @@ namespace Sample.Dto
 {
     public class InputDto : DataDto
     {
+        public int Id { get; set; }
+
         [RequiredValidate]
-        public string Data { get; set; }
+        public string Name { get; set; }
     }
 }

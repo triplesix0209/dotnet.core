@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Extensions;
 
@@ -19,7 +20,9 @@ namespace TripleSix.Core.Attributes
         protected override ValidationResult IsValid(object value, ValidationContext context)
         {
             var model = context?.ObjectInstance as IDataDto;
-            if (model is not null && !model.IsPropertyChanged(context.MemberName))
+            if (model is not null
+                && model.GetHttpContext()?.Request.Method == HttpMethods.Put
+                && !model.IsPropertyChanged(context.MemberName))
                 return ValidationResult.Success;
 
             if (value == null)
