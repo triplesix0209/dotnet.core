@@ -28,20 +28,17 @@ namespace TripleSix.Core.Dto
         {
             var errorDetail = new Dictionary<string, string[]>();
 
-            TryValidate(out var checkResults);
+            var checkResults = TryValidate();
             foreach (var result in checkResults)
-            {
-                if (result.Value.Count <= 0) continue;
                 errorDetail.Add(result.Key, result.Value.Select(x => x.ErrorMessage).ToArray());
-            }
 
             if (errorDetail.Count == 0) return;
             throw new BaseException(BaseExceptions.BadClientRequest, errorDetail);
         }
 
-        public virtual bool TryValidate(out IDictionary<string, ICollection<ValidationResult>> result)
+        public virtual IDictionary<string, ICollection<ValidationResult>> TryValidate()
         {
-            result = new Dictionary<string, ICollection<ValidationResult>>();
+            var result = new Dictionary<string, ICollection<ValidationResult>>();
             var context = new ValidationContext(this);
 
             var properties = GetType().GetProperties();
@@ -50,10 +47,12 @@ namespace TripleSix.Core.Dto
                 context.MemberName = property.Name;
                 var validateResults = new List<ValidationResult>();
                 Validator.TryValidateProperty(property.GetValue(this), context, validateResults);
+
+                if (validateResults.Count == 0) continue;
                 result.Add(context.MemberName, validateResults);
             }
 
-            return result.Any(x => x.Value.Any());
+            return result;
         }
     }
 }

@@ -11,6 +11,6 @@ namespace TripleSix.Core.Dto
     {
         public void Validate();
 
-        public bool TryValidate(out IDictionary<string, ICollection<ValidationResult>> result);
+        public IDictionary<string, ICollection<ValidationResult>> TryValidate();
     }
 }
