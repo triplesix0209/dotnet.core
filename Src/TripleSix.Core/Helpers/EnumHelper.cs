@@ -21,66 +21,6 @@ namespace TripleSix.Core.Helpers
             return GetDescription(typeof(T), value);
         }
 
-        public static ErrorDataAttribute GetErrorData<T>(this T? value)
-            where T : struct, Enum
-        {
-            return GetErrorData(typeof(T), value);
-        }
-
-        public static ErrorDataAttribute GetErrorData<T>(this T value)
-            where T : struct, Enum
-        {
-            return GetErrorData(typeof(T), value);
-        }
-
-        public static EnumDataAttribute GetEnumData<T>(this T? value)
-            where T : struct, Enum
-        {
-            return GetEnumData(typeof(T), value);
-        }
-
-        public static EnumDataAttribute GetEnumData<T>(this T value)
-            where T : struct, Enum
-        {
-            return GetEnumData(typeof(T), value);
-        }
-
-        public static string GetName<T>(T? value)
-            where T : struct, Enum
-        {
-            return value == null ? null : Enum.GetName(typeof(T), value.Value);
-        }
-
-        public static string GetName<T>(T value)
-            where T : struct, Enum
-        {
-            return Enum.GetName(typeof(T), value);
-        }
-
-        public static string[] GetNames<T>()
-            where T : struct, Enum
-        {
-            return Enum.GetNames(typeof(T));
-        }
-
-        public static IEnumerable<T> GetValues<T>()
-            where T : struct, Enum
-        {
-            return GetValues(typeof(T)).Cast<T>();
-        }
-
-        public static T Parse<T>(object value, bool ignoreCase = true)
-            where T : Enum
-        {
-            return (T)Parse(typeof(T), value, ignoreCase);
-        }
-
-        public static bool TryParse<T>(out object result, object value, bool ignoreCase = true)
-            where T : Enum
-        {
-            return TryParse(out result, typeof(T), value, ignoreCase);
-        }
-
         public static string GetDescription(Type enumType, object value)
         {
             if (value == null) return null;
@@ -106,6 +46,18 @@ namespace TripleSix.Core.Helpers
             return attrDesc?.Description ?? value.ToString();
         }
 
+        public static ErrorDataAttribute GetErrorData<T>(this T? value)
+            where T : struct, Enum
+        {
+            return GetErrorData(typeof(T), value);
+        }
+
+        public static ErrorDataAttribute GetErrorData<T>(this T value)
+            where T : struct, Enum
+        {
+            return GetErrorData(typeof(T), value);
+        }
+
         public static ErrorDataAttribute GetErrorData(Type enumType, object value)
         {
             if (value == null) return null;
@@ -127,6 +79,18 @@ namespace TripleSix.Core.Helpers
             return (ErrorDataAttribute)mi?
                 .GetCustomAttributes(typeof(ErrorDataAttribute), true)
                 .FirstOrDefault();
+        }
+
+        public static EnumDataAttribute GetEnumData<T>(this T? value)
+            where T : struct, Enum
+        {
+            return GetEnumData(typeof(T), value);
+        }
+
+        public static EnumDataAttribute GetEnumData<T>(this T value)
+            where T : struct, Enum
+        {
+            return GetEnumData(typeof(T), value);
         }
 
         public static EnumDataAttribute GetEnumData(Type enumType, object value)
@@ -152,6 +116,24 @@ namespace TripleSix.Core.Helpers
                 .FirstOrDefault();
         }
 
+        public static string GetName<T>(T? value)
+            where T : struct, Enum
+        {
+            return value == null ? null : Enum.GetName(typeof(T), value.Value);
+        }
+
+        public static string GetName<T>(T value)
+            where T : struct, Enum
+        {
+            return Enum.GetName(typeof(T), value);
+        }
+
+        public static string[] GetNames<T>()
+            where T : struct, Enum
+        {
+            return Enum.GetNames(typeof(T));
+        }
+
         public static string GetName(Type enumType, object value)
         {
             return value == null ? null : Enum.GetName(enumType, value);
@@ -162,9 +144,21 @@ namespace TripleSix.Core.Helpers
             return Enum.GetNames(enumType);
         }
 
+        public static IEnumerable<T> GetValues<T>()
+            where T : struct, Enum
+        {
+            return GetValues(typeof(T)).Cast<T>();
+        }
+
         public static Array GetValues(Type enumType)
         {
             return Enum.GetValues(enumType);
+        }
+
+        public static T Parse<T>(object value, bool ignoreCase = true)
+            where T : Enum
+        {
+            return (T)Parse(typeof(T), value, ignoreCase);
         }
 
         public static object Parse(Type enumType, object value, bool ignoreCase = true)
@@ -173,6 +167,12 @@ namespace TripleSix.Core.Helpers
                 return Enum.Parse(enumType, str, ignoreCase);
 
             return Enum.ToObject(enumType, Convert.ToInt32(value));
+        }
+
+        public static bool TryParse<T>(out object result, object value, bool ignoreCase = true)
+            where T : Enum
+        {
+            return TryParse(out result, typeof(T), value, ignoreCase);
         }
 
         public static bool TryParse(out object result, Type enumType, object value, bool ignoreCase = true)

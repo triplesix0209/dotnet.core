@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TripleSix.Core.Extensions;
 
-namespace TripleSix.Core.Test.HelperExtensions
+namespace TripleSix.Core.Test.Helpers
 {
     [TestClass]
     public class ArrayListTest

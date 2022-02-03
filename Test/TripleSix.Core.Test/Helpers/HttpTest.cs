@@ -4,7 +4,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TripleSix.Core.Extensions;
 
-namespace TripleSix.Core.Test.HelperExtensions
+namespace TripleSix.Core.Test.Helpers
 {
     [TestClass]
     public class HttpTest

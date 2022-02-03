@@ -10,5 +10,11 @@ namespace TripleSix.Core.Helpers
         {
             return Epoch.AddMilliseconds(timestamp);
         }
+
+        public static long ToEpochTimestamp(this DateTime datetime)
+        {
+            return (long)(datetime - Epoch)
+                .TotalMilliseconds;
+        }
     }
 }

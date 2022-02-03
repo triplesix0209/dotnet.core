@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TripleSix.Core.Helpers;
 
-namespace TripleSix.Core.Test.HelperExtensions
+namespace TripleSix.Core.Test.Helpers
 {
     [TestClass]
     public class RandomTest

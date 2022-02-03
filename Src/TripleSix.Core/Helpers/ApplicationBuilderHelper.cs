@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.ReDoc;
 
-namespace TripleSix.Core.Extensions
+namespace TripleSix.Core.Helpers
 {
-    public static class ApplicationBuilderExtension
+    public static class ApplicationBuilderHelper
     {
         public static void UseSwagger(this IApplicationBuilder app, IConfiguration configuration, Action<ReDocOptions> setupAction)
         {

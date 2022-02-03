@@ -1,7 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using TripleSix.Core.Extensions;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.JsonSerializers.Converters
