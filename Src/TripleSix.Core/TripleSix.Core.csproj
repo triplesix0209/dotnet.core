@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
 
     <PackageId>TripleSix.Core</PackageId>
-    <Version>5.0.14</Version>
+    <Version>5.0.15</Version>
     <Authors>triplesix0209@gmail.com</Authors>
   </PropertyGroup>
 
@@ -16,10 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Autofac.Extras.Quartz" Version="7.3.0" />
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
-    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="4.1.3" />
+    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="5.0.0" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.38" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.13" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="5.0.27" />
@@ -32,4 +34,5 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.2.3" />
   </ItemGroup>
+  
 </Project>

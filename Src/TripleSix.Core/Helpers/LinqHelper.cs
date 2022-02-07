@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
-using TripleSix.Core.Mappers;
 
 namespace TripleSix.Core.Helpers
 {
@@ -27,20 +26,9 @@ namespace TripleSix.Core.Helpers
             }
             else
             {
-                var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-                if (isFullMapper)
-                {
-                    item = mapper.MapData(
-                        query.FirstOrDefault(),
-                        query.ElementType,
-                        resultType) as TResult;
-                }
-                else
-                {
-                    item = query
-                        .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                        .FirstOrDefault();
-                }
+                item = query
+                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                    .FirstOrDefault();
             }
 
             if (item == null) throw new BaseException(BaseExceptions.ObjectNotFound, args: typeof(TResult).GetDisplayName());
@@ -58,20 +46,9 @@ namespace TripleSix.Core.Helpers
             }
             else
             {
-                var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-                if (isFullMapper)
-                {
-                    item = mapper.MapData(
-                        await query.FirstOrDefaultAsync(),
-                        query.ElementType,
-                        resultType) as TResult;
-                }
-                else
-                {
-                    item = await query
-                        .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                        .FirstOrDefaultAsync();
-                }
+                item = await query
+                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                    .FirstOrDefaultAsync();
             }
 
             if (item == null)
@@ -85,20 +62,9 @@ namespace TripleSix.Core.Helpers
             var resultType = typeof(TResult);
             if (typeof(IEntity).IsAssignableFrom(resultType)) return query.FirstOrDefault() as TResult;
 
-            var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-            if (isFullMapper)
-            {
-                return mapper.MapData(
-                    query.FirstOrDefault(),
-                    query.ElementType,
-                    resultType) as TResult;
-            }
-            else
-            {
-                return query
-                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .FirstOrDefault();
-            }
+            return query
+                .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                .FirstOrDefault();
         }
 
         public static async Task<TResult> FirstOrDefaultAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper)
@@ -107,20 +73,9 @@ namespace TripleSix.Core.Helpers
             var resultType = typeof(TResult);
             if (typeof(IEntity).IsAssignableFrom(resultType)) return await query.FirstOrDefaultAsync() as TResult;
 
-            var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-            if (isFullMapper)
-            {
-                return mapper.MapData(
-                    await query.FirstOrDefaultAsync(),
-                    query.ElementType,
-                    resultType) as TResult;
-            }
-            else
-            {
-                return await query
-                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .FirstOrDefaultAsync();
-            }
+            return await query
+                .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
         }
 
         public static TResult[] ToArray<TResult>(this IQueryable<IEntity> query, IMapper mapper)
@@ -129,20 +84,9 @@ namespace TripleSix.Core.Helpers
             var resultType = typeof(TResult);
             if (typeof(IEntity).IsAssignableFrom(resultType)) return query.ToArray().Cast<TResult>().ToArray();
 
-            var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-            if (isFullMapper)
-            {
-                return mapper.MapData(
-                    query.ToArray(),
-                    query.ElementType.MakeArrayType(),
-                    resultType.MakeArrayType()) as TResult[];
-            }
-            else
-            {
-                return query
-                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .ToArray();
-            }
+            return query
+                .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                .ToArray();
         }
 
         public static async Task<TResult[]> ToArrayAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper)
@@ -151,20 +95,9 @@ namespace TripleSix.Core.Helpers
             var resultType = typeof(TResult);
             if (typeof(IEntity).IsAssignableFrom(resultType)) return (await query.ToArrayAsync()).Cast<TResult>().ToArray();
 
-            var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-            if (isFullMapper)
-            {
-                return mapper.MapData(
-                    await query.ToArrayAsync(),
-                    query.ElementType.MakeArrayType(),
-                    resultType.MakeArrayType()) as TResult[];
-            }
-            else
-            {
-                return await query
-                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .ToArrayAsync();
-            }
+            return await query
+                .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                .ToArrayAsync();
         }
 
         public static List<TResult> ToList<TResult>(this IQueryable<IEntity> query, IMapper mapper)
@@ -173,20 +106,9 @@ namespace TripleSix.Core.Helpers
             var resultType = typeof(TResult);
             if (typeof(IEntity).IsAssignableFrom(resultType)) return query.ToArray().Cast<TResult>().ToList();
 
-            var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-            if (isFullMapper)
-            {
-                return mapper.MapData(
-                    query.ToList(),
-                    query.ElementType.MakeGenericType(typeof(List<>)),
-                    resultType.MakeGenericType(typeof(List<>))) as List<TResult>;
-            }
-            else
-            {
-                return query
-                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .ToList();
-            }
+            return query
+                .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                .ToList();
         }
 
         public static async Task<List<TResult>> ToListAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper)
@@ -195,20 +117,9 @@ namespace TripleSix.Core.Helpers
             var resultType = typeof(TResult);
             if (typeof(IEntity).IsAssignableFrom(resultType)) return (await query.ToArrayAsync()).Cast<TResult>().ToList();
 
-            var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-            if (isFullMapper)
-            {
-                return mapper.MapData(
-                    await query.ToListAsync(),
-                    query.ElementType.MakeGenericType(typeof(List<>)),
-                    resultType.MakeGenericType(typeof(List<>))) as List<TResult>;
-            }
-            else
-            {
-                return await query
-                    .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .ToListAsync();
-            }
+            return await query
+                .ProjectTo<TResult>(mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
         public static IPaging<TResult> ToPaging<TResult>(this IQueryable<IEntity> query, IMapper mapper, int page, int size)
@@ -230,21 +141,10 @@ namespace TripleSix.Core.Helpers
             }
             else
             {
-                var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-                if (isFullMapper)
-                {
-                    result.Items = mapper.MapData(
-                        query.Skip((page - 1) * size).Take(size).ToArray(),
-                        query.ElementType.MakeArrayType(),
-                        resultType.MakeArrayType()) as TResult[];
-                }
-                else
-                {
-                    result.Items = query.ProjectTo<TResult>(mapper.ConfigurationProvider)
-                        .Skip((page - 1) * size)
-                        .Take(size)
-                        .ToArray();
-                }
+                result.Items = query.ProjectTo<TResult>(mapper.ConfigurationProvider)
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToArray();
             }
 
             return result;
@@ -269,21 +169,10 @@ namespace TripleSix.Core.Helpers
             }
             else
             {
-                var isFullMapper = CheckFullMapper(mapper, query.ElementType, resultType);
-                if (isFullMapper)
-                {
-                    result.Items = mapper.MapData(
-                        await query.Skip((page - 1) * size).Take(size).ToArrayAsync(),
-                        query.ElementType.MakeArrayType(),
-                        resultType.MakeArrayType()) as TResult[];
-                }
-                else
-                {
-                    result.Items = await query.ProjectTo<TResult>(mapper.ConfigurationProvider)
-                        .Skip((page - 1) * size)
-                        .Take(size)
-                        .ToArrayAsync();
-                }
+                result.Items = await query.ProjectTo<TResult>(mapper.ConfigurationProvider)
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToArrayAsync();
             }
 
             return result;
@@ -322,18 +211,6 @@ namespace TripleSix.Core.Helpers
             foreach (var predicate in predicates)
                 expr = expr.Or(predicate);
             return query.Where(expr);
-        }
-
-        private static bool CheckFullMapper(IMapper mapper, Type sourceType, Type destinationType)
-        {
-            var typeMap = mapper.ConfigurationProvider.FindTypeMapFor(sourceType, destinationType);
-            if (typeMap == null) return false;
-
-            var isFullMapper = typeMap.BeforeMapActions.Any() || typeMap.AfterMapActions.Any();
-            if (isFullMapper && !typeof(IFullMapperDto).IsAssignableFrom(destinationType))
-                throw new Exception($"{destinationType.Name} need implement {nameof(IFullMapperDto)} for using BeforeMap and AfterMap.");
-
-            return isFullMapper;
         }
     }
 }

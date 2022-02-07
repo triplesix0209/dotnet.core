@@ -1,10 +1,12 @@
 #pragma warning disable SA1649 // File name should match first type name
 
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Builder;
+using Autofac.Extras.Quartz;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
@@ -12,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContexts;
 using TripleSix.Core.Events;
 using TripleSix.Core.Mappers;
+using TripleSix.Core.Quartz;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
 using TripleSix.Core.WebApi.Controllers;
@@ -96,8 +99,6 @@ namespace TripleSix.Core.ModuleAutofac
             builder.Register(c => new MapperConfiguration(config =>
                 {
                     config.AddExpressionMapping();
-                    config.Advanced.AllowAdditiveTypeMapCreation = true;
-
                     foreach (var mapper in mappers)
                     {
                         config.AddProfile(mapper);
@@ -128,7 +129,6 @@ namespace TripleSix.Core.ModuleAutofac
             builder.Register(c => new MapperConfiguration(config =>
             {
                 config.AddExpressionMapping();
-                config.Advanced.AllowAdditiveTypeMapCreation = true;
 
                 var mappers = assembly.GetTypes()
                     .Where(t => t.IsClass && typeof(BaseMapper).IsAssignableFrom(t))
@@ -155,6 +155,39 @@ namespace TripleSix.Core.ModuleAutofac
             })
                 .InstancePerLifetimeScope()
                 .As<IMapper>();
+        }
+
+        public static void RegisterAllJob(this ContainerBuilder builder, Assembly assembly)
+        {
+            builder.RegisterType<JobScheduler>()
+               .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+               .AsSelf();
+
+            builder.Register(_ => new ScopedDependency("global"))
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder.RegisterModule(new QuartzAutofacFactoryModule
+            {
+                ConfigurationProvider = _ => new NameValueCollection
+                {
+                    { "quartz.threadPool.threadCount", "3" },
+                    { "quartz.scheduler.threadName", "Scheduler" },
+                },
+                JobScopeConfigurator = (builder, tag) =>
+                {
+                    builder.Register(_ => new ScopedDependency("job-" + DateTime.UtcNow.ToLongTimeString()))
+                        .AsImplementedInterfaces()
+                        .InstancePerMatchingLifetimeScope(tag);
+                },
+            });
+
+            var jobTypes = assembly.GetTypes()
+                .Where(t => t.IsPublic)
+                .Where(t => !t.IsAbstract)
+                .Where(t => typeof(BaseJob).IsAssignableFrom(t));
+            foreach (var jobType in jobTypes)
+                builder.RegisterModule(new QuartzAutofacJobsModule(jobType.Assembly) { AutoWireProperties = true });
         }
 
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>

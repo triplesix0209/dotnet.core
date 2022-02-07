@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace Sample
+namespace Sample.WebApi
 {
     public class Program
     {
@@ -19,11 +19,11 @@ namespace Sample
             var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             var config = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile(Path.Combine("Config", "appsettings.json"), true)
-                .AddJsonFile(Path.Combine("Config", $"appsettings.{envName}.json"), true)
-                .AddCommandLine(args)
-                .Build();
+               .AddJsonFile(Path.Combine("Config", "appsettings.json"), true)
+               .AddJsonFile(Path.Combine("Config", $"appsettings.{envName}.json"), true)
+               .AddEnvironmentVariables()
+               .AddCommandLine(args)
+               .Build();
 
             return Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())

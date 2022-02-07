@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using TripleSix.Core.DataTypes;
 using TripleSix.Core.Dto;
@@ -17,7 +18,14 @@ namespace TripleSix.Core.Mappers
             CreateMap<Phone, string>().ConvertUsing(s => s == null ? null : s.ToString());
         }
 
-        protected abstract IEnumerable<Type> SelectEntity();
+        protected virtual IEnumerable<Type> SelectEntity()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes()
+                .Where(t => t.IsPublic)
+                .Where(t => typeof(IEntity).IsAssignableFrom(t))
+                .Where(t => t.Name.EndsWith("Entity")));
+        }
 
         protected abstract IEnumerable<Type> SelectDto(string objectName);
 

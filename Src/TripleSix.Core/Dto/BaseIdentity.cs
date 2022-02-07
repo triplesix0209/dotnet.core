@@ -20,13 +20,15 @@ namespace TripleSix.Core.Dto
 
         public BaseIdentity(HttpContext httpContext)
         {
+            HttpContext = httpContext;
+
             if (httpContext.User.Identity.IsAuthenticated)
-            {
                 User = httpContext.User;
-            }
         }
 
         public ClaimsPrincipal User { get; }
+
+        public HttpContext HttpContext { get; }
 
         public virtual Guid? UserId
         {

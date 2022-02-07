@@ -180,7 +180,7 @@ namespace TripleSix.AutoAdmin.Services
         /// mã hóa entity.
         /// </summary>
         /// <param name="identity">identity phiên xử lý.</param>
-        /// <param name="entity">entity cần mã hóa</param>
+        /// <param name="entity">entity cần mã hóa.</param>
         /// <returns>kết quả mã hóa.</returns>
         protected virtual Task<string> SerializeEntity(IIdentity identity, TEntity entity)
         {

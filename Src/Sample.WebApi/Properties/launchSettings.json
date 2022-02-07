@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Sample": {
+    "Sample.WebApi": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local"
