@@ -12,9 +12,9 @@ using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Mappers;
 
-namespace TripleSix.Core.Extensions
+namespace TripleSix.Core.Helpers
 {
-    public static class LinqExtension
+    public static class LinqHelper
     {
         public static TResult First<TResult>(this IQueryable<IEntity> query, IMapper mapper)
             where TResult : class

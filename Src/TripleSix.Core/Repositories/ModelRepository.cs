@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
-using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Repositories
 {

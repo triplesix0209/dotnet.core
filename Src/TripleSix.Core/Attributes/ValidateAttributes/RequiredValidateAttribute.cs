@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Dto;
-using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Attributes
 {
-    public class RequiredValidateAttribute : ValidationAttribute
+    public class RequiredValidateAttribute : RequiredAttribute
     {
         public RequiredValidateAttribute()
         {

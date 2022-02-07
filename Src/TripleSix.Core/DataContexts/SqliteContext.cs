@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
-using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.DataContexts
 {

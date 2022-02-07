@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Test.Helpers
 {

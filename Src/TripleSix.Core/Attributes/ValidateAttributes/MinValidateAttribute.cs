@@ -4,17 +4,17 @@ namespace TripleSix.Core.Attributes
 {
     public class MinValidateAttribute : ValidationAttribute
     {
-        private readonly int _minValue;
-
         public MinValidateAttribute(int value)
         {
-            _minValue = value;
-            ErrorMessage = $"giá trị của {{0}} không được nhỏ hơn {_minValue}";
+            MinValue = value;
+            ErrorMessage = $"giá trị của {{0}} không được nhỏ hơn {MinValue}";
         }
+
+        public int MinValue { get; }
 
         public override bool IsValid(object value)
         {
-            return value == null || (int)value >= _minValue;
+            return value == null || (int)value >= MinValue;
         }
     }
 }

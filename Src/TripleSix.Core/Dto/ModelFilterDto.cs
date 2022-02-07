@@ -7,7 +7,7 @@ namespace TripleSix.Core.Dto
     public class ModelFilterDto : PagingFilterDto,
         IModelFilterDto
     {
-        [HideProperty]
+        [SwaggerHide]
         public virtual string AppendIds { get; set; }
 
         [DisplayName("lọc theo mã định danh")]

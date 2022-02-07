@@ -1,5 +1,5 @@
 using System;
-using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Attributes
 {

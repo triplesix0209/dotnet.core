@@ -1,8 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TripleSix.Core.Attributes;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi.Swagger
 {
@@ -11,23 +13,50 @@ namespace TripleSix.Core.WebApi.Swagger
         public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
         {
             var propertyInfo = context.PropertyInfo;
-            if (propertyInfo == null) return;
+            if (propertyInfo is null) return;
+            var defaultValue = propertyInfo.GetValue(Activator.CreateInstance(propertyInfo.DeclaringType));
+            var propertyType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? propertyInfo.PropertyType;
 
-            var sb = new StringBuilder();
+            if (parameter.Schema.Default is null)
+                parameter.Schema.Default = SwaggerHelper.DefaultValue(defaultValue, propertyType);
 
             var attrName = (DisplayNameAttribute)propertyInfo
                 .GetCustomAttributes(typeof(DisplayNameAttribute), true)
                 .FirstOrDefault();
-
             var attrDesc = (DescriptionAttribute)propertyInfo
                 .GetCustomAttributes(typeof(DescriptionAttribute), true)
                 .FirstOrDefault();
+            var description = string.Join("<br/>", attrName?.DisplayName, attrDesc?.Description);
+            if (description.IsNotNullOrWhiteSpace()) parameter.Description += description;
 
-            var desc = sb.AppendJoin(attrName?.DisplayName, attrDesc?.Description)
-                .ToString();
+            parameter.Required = propertyInfo.GetCustomAttributes(typeof(RequiredValidateAttribute), true).Any()
+                && defaultValue is null;
 
-            if (desc.Length != 0)
-                parameter.Description += desc;
+            var minValue = ((MinValidateAttribute)propertyInfo.GetCustomAttributes(typeof(MinValidateAttribute), true)
+                .FirstOrDefault())
+                ?.MinValue;
+            if (minValue.HasValue) parameter.Schema.Minimum = minValue;
+
+            var maxValue = ((MaxValidateAttribute)propertyInfo.GetCustomAttributes(typeof(MaxValidateAttribute), true)
+                .FirstOrDefault())
+                ?.MaxValue;
+            if (maxValue.HasValue) parameter.Schema.Maximum = maxValue;
+
+            if (propertyType.IsEnum)
+            {
+                parameter.Schema.Reference = null;
+                parameter.Schema.Type = "integer";
+                parameter.Schema.Format = "int32";
+
+                var values = EnumHelper.GetValues(propertyType).Cast<int>()
+                    .Select(value => $"<span class=\"sc-fzqzlV sc-fzonjX iwWBsD\">{value} = {EnumHelper.GetDescription(propertyType, value)}</span>");
+                if (values.Any())
+                {
+                    parameter.Description += "<br/>"
+                        + "<span class=\"sc-fzqzlV jDREaU\"> Values: </span><br/>"
+                        + string.Join("<br/>", values);
+                }
+            }
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace TripleSix.Core.Extensions
+namespace TripleSix.Core.Helpers
 {
-    public static class ReflectionExtension
+    public static class ReflectionHelper
     {
         public static bool IsSubclassOfRawGeneric(this Type type, Type genericType)
         {

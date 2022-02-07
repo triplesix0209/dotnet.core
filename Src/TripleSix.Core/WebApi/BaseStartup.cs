@@ -100,12 +100,11 @@ namespace TripleSix.Core.WebApi
             options.MapType<Phone>(() => new OpenApiSchema { Type = "string", Nullable = true });
 
             options.DocumentFilter<BaseDocumentFilter>();
-            options.OperationFilter<HidePropertyOperationFilter>();
-            options.SchemaFilter<DescribeSchemaFilter>();
-            options.SchemaFilter<EnumSchemaFilter>();
-            options.SchemaFilter<HidePropertySchemaFilter>();
+            options.OperationFilter<DescribeOperationFilter>();
+            options.OperationFilter<HideParameterOperationFilter>();
             options.ParameterFilter<DescribeParameterFilter>();
-            options.ParameterFilter<EnumParameterFilter>();
+            options.SchemaFilter<DescribeSchemaFilter>();
+            options.SchemaFilter<HideSchemaFilter>();
         }
 
         public virtual void ConfigureReDoc(ReDocOptions options)

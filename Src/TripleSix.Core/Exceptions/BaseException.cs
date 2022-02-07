@@ -2,7 +2,6 @@
 
 using System;
 using TripleSix.Core.Attributes;
-using TripleSix.Core.Extensions;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Exceptions

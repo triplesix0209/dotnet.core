@@ -2,9 +2,9 @@
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 
-namespace TripleSix.Core.Extensions
+namespace TripleSix.Core.Helpers
 {
-    public static class HttpExtension
+    public static class HttpHelper
     {
         public static string GetValue(this IHeaderDictionary header, string key)
         {

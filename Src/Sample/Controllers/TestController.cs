@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Dto;
-using Swashbuckle.AspNetCore.Annotations;
+using TripleSix.Core.Attributes;
 using TripleSix.Core.WebApi.Controllers;
 using TripleSix.Core.WebApi.Results;
 
@@ -10,8 +10,8 @@ namespace Sample.Controllers
     public class TestController : BaseController
     {
         [HttpGet]
-        [SwaggerResponse(200, null, typeof(SuccessResult))]
-        public Task<IActionResult> Test([FromBody] InputDto input)
+        [SwaggerApi(typeof(DataResult<string>))]
+        public Task<IActionResult> Get(InputDto input)
         {
             input.Validate();
             var result = DataResult(input);

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TripleSix.Core.Extensions
+namespace TripleSix.Core.Helpers
 {
-    public static class ArrayListExtension
+    public static class ArrayListHelper
     {
         public static bool ContainAny<T>(this T[] array, params T[] values)
         {

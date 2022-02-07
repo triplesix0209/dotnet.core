@@ -4,7 +4,7 @@ using AutoMapper;
 using TripleSix.Core.DataTypes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
-using TripleSix.Core.Extensions;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Mappers
 {

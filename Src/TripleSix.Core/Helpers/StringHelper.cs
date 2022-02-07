@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace TripleSix.Core.Extensions
+namespace TripleSix.Core.Helpers
 {
-    public static class StringExtension
+    public static class StringHelper
     {
         private static readonly string[] VietnameseSigns = new string[]
         {
