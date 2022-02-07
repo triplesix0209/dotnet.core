@@ -2,8 +2,8 @@
 
 using System;
 using System.Threading.Tasks;
-using TripleSix.Core.DataTypes;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TripleSix.Core.DataTypes;
 
 namespace TripleSix.Core.WebApi.ModelBinders
 {

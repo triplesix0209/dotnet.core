@@ -68,7 +68,7 @@ namespace TripleSix.Core.WebApi
             Action<MvcNewtonsoftJsonOptions> jsonAction = null)
         {
             var httpContextAccessor = new HttpContextAccessor();
-            
+
             return services
                 .AddSingleton<IHttpContextAccessor>(httpContextAccessor)
                 .AddMvc(options =>

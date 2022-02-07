@@ -8,13 +8,13 @@ using Autofac.Builder;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
+using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContexts;
 using TripleSix.Core.Events;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
 using TripleSix.Core.WebApi.Controllers;
-using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.ModuleAutofac
 {

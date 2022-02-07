@@ -40,7 +40,7 @@ dotnet_diagnostic.SA1601.severity = suggestion
 dotnet_diagnostic.SA1515.severity = none
 
 # SA0001: XML comment analysis is disabled due to project configuration
-dotnet_diagnostic.SA0001.severity = suggestion
+dotnet_diagnostic.SA0001.severity = none
 
 # SA1124: Do not use regions
 dotnet_diagnostic.SA1124.severity = none

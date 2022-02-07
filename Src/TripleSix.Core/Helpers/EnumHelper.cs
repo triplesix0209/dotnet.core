@@ -33,17 +33,15 @@ namespace TripleSix.Core.Helpers
             else
             {
                 var valueName = GetName(enumType, value);
-                if (valueName != null)
-                {
+                if (valueName is not null)
                     mi = enumType.GetMember(valueName).FirstOrDefault();
-                }
             }
 
             var attrDesc = (DescriptionAttribute)mi?
                 .GetCustomAttributes(typeof(DescriptionAttribute), true)
                 .FirstOrDefault();
 
-            return attrDesc?.Description ?? value.ToString();
+            return attrDesc?.Description ?? GetName(enumType, value);
         }
 
         public static ErrorDataAttribute GetErrorData<T>(this T? value)
@@ -70,10 +68,8 @@ namespace TripleSix.Core.Helpers
             else
             {
                 var valueName = GetName(enumType, value);
-                if (valueName != null)
-                {
+                if (valueName is not null)
                     mi = enumType.GetMember(valueName).FirstOrDefault();
-                }
             }
 
             return (ErrorDataAttribute)mi?
@@ -81,62 +77,27 @@ namespace TripleSix.Core.Helpers
                 .FirstOrDefault();
         }
 
-        public static EnumDataAttribute GetEnumData<T>(this T? value)
-            where T : struct, Enum
-        {
-            return GetEnumData(typeof(T), value);
-        }
-
-        public static EnumDataAttribute GetEnumData<T>(this T value)
-            where T : struct, Enum
-        {
-            return GetEnumData(typeof(T), value);
-        }
-
-        public static EnumDataAttribute GetEnumData(Type enumType, object value)
-        {
-            if (value == null) return null;
-
-            MemberInfo mi = null;
-            if (value is string)
-            {
-                mi = enumType.GetMember(value.ToString() ?? string.Empty).FirstOrDefault();
-            }
-            else
-            {
-                var valueName = GetName(enumType, value);
-                if (valueName != null)
-                {
-                    mi = enumType.GetMember(valueName).FirstOrDefault();
-                }
-            }
-
-            return (EnumDataAttribute)mi?
-                .GetCustomAttributes(typeof(EnumDataAttribute), true)
-                .FirstOrDefault();
-        }
-
-        public static string GetName<T>(T? value)
+        public static string GetName<T>(this T? value)
             where T : struct, Enum
         {
             return value == null ? null : Enum.GetName(typeof(T), value.Value);
         }
 
-        public static string GetName<T>(T value)
+        public static string GetName<T>(this T value)
             where T : struct, Enum
         {
             return Enum.GetName(typeof(T), value);
+        }
+
+        public static string GetName(Type enumType, object value)
+        {
+            return value == null ? null : Enum.GetName(enumType, value);
         }
 
         public static string[] GetNames<T>()
             where T : struct, Enum
         {
             return Enum.GetNames(typeof(T));
-        }
-
-        public static string GetName(Type enumType, object value)
-        {
-            return value == null ? null : Enum.GetName(enumType, value);
         }
 
         public static string[] GetNames(Type enumType)
@@ -169,13 +130,13 @@ namespace TripleSix.Core.Helpers
             return Enum.ToObject(enumType, Convert.ToInt32(value));
         }
 
-        public static bool TryParse<T>(out object result, object value, bool ignoreCase = true)
+        public static bool TryParse<T>(object value, out object result, bool ignoreCase = true)
             where T : Enum
         {
-            return TryParse(out result, typeof(T), value, ignoreCase);
+            return TryParse(typeof(T), value, out result, ignoreCase);
         }
 
-        public static bool TryParse(out object result, Type enumType, object value, bool ignoreCase = true)
+        public static bool TryParse(Type enumType, object value, out object result, bool ignoreCase = true)
         {
             try
             {

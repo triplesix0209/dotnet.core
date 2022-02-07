@@ -2,8 +2,8 @@
 
 using System;
 using System.Threading.Tasks;
-using TripleSix.Core.Helpers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi.ModelBinders
 {
