@@ -7,11 +7,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Sample.WebApi.Swagger;
+using Sample.Common;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Quartz;
 using TripleSix.Core.WebApi;
+using TripleSix.Core.WebApi.Swagger;
 
 namespace Sample.WebApi
 {
@@ -45,7 +46,7 @@ namespace Sample.WebApi
 
             options.SwaggerDoc("api", new OpenApiInfo { Title = "API Document", Version = "1.0" });
 
-            options.OperationFilter<IdentityOperationFilter>();
+            options.OperationFilter<IdentityOperationFilter<Identity>>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

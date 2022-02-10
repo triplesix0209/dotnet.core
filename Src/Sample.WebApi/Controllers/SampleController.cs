@@ -1,18 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Sample.Common.Dto;
-using TripleSix.Core.Attributes;
-using TripleSix.Core.WebApi.Controllers;
-using TripleSix.Core.WebApi.Results;
+using Sample.WebApi.Abstracts;
+using TripleSix.Core.Dto;
 
 namespace Sample.WebApi.Controllers
 {
-    public class SampleController : BaseController
+    public class SampleController : CommonController
     {
         [HttpGet]
-        [SwaggerApi(typeof(DataResult<SampleDto>))]
         public async Task<IActionResult> Test()
         {
+            var identity = GenerateIdentity<IIdentity>();
             return SuccessResult();
         }
     }

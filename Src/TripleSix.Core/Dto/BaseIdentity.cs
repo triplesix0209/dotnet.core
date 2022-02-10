@@ -26,9 +26,9 @@ namespace TripleSix.Core.Dto
                 User = httpContext.User;
         }
 
-        public ClaimsPrincipal User { get; }
-
         public HttpContext HttpContext { get; }
+
+        public ClaimsPrincipal User { get; }
 
         public virtual Guid? UserId
         {
