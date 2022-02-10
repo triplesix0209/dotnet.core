@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi.Results
@@ -9,6 +10,7 @@ namespace TripleSix.Core.WebApi.Results
         private string _code;
 
         [JsonProperty(Order = -10)]
+        [DisplayName("mã lỗi")]
         public virtual string Code
         {
             get => _code;
@@ -16,6 +18,7 @@ namespace TripleSix.Core.WebApi.Results
         }
 
         [JsonProperty(Order = -10)]
+        [DisplayName("mô tả lỗi")]
         public virtual string Message { get; set; }
     }
 }

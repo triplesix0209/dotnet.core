@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace TripleSix.Core.WebApi.Results
 {
@@ -12,6 +13,7 @@ namespace TripleSix.Core.WebApi.Results
         }
 
         [JsonProperty(Order = -9)]
+        [DisplayName("kết quả xử lý")]
         public virtual TData Data { get; protected set; }
     }
 }

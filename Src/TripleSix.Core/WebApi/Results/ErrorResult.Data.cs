@@ -1,6 +1,8 @@
-﻿namespace TripleSix.Core.WebApi.Results
+﻿using System.ComponentModel;
+
+namespace TripleSix.Core.WebApi.Results
 {
-    public class ErrorResult<TData> : BaseResult<BaseMeta>
+    public class ErrorResult<TData> : BaseResult<ErrorMeta>
     {
         public ErrorResult(
             int statusCode = 500,
@@ -9,10 +11,10 @@
             TData data = default)
             : base(statusCode)
         {
-            Meta = new BaseMeta { Success = false };
             Error = new DataError<TData> { Code = code, Message = message, Data = data };
         }
 
+        [DisplayName("thông tin lỗi")]
         public virtual DataError<TData> Error { get; protected set; }
     }
 }

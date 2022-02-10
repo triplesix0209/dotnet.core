@@ -101,10 +101,6 @@ namespace TripleSix.Core.WebApi
 
             options.DocumentFilter<BaseDocumentFilter>();
             options.OperationFilter<DescribeOperationFilter>();
-            options.OperationFilter<HideParameterOperationFilter>();
-            options.ParameterFilter<DescribeParameterFilter>();
-            options.SchemaFilter<DescribeSchemaFilter>();
-            options.SchemaFilter<HideSchemaFilter>();
         }
 
         public virtual void ConfigureReDoc(ReDocOptions options)

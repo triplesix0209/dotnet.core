@@ -1,6 +1,8 @@
-﻿namespace TripleSix.Core.WebApi.Results
+﻿using System.ComponentModel;
+
+namespace TripleSix.Core.WebApi.Results
 {
-    public class ErrorResult : BaseResult<BaseMeta>
+    public class ErrorResult : BaseResult<ErrorMeta>
     {
         public ErrorResult(
             int statusCode = 500,
@@ -8,10 +10,10 @@
             string message = "internal server error")
             : base(statusCode)
         {
-            Meta = new BaseMeta { Success = false };
             Error = new BaseError { Code = code, Message = message };
         }
 
+        [DisplayName("thông tin lỗi")]
         public virtual BaseError Error { get; protected set; }
     }
 }

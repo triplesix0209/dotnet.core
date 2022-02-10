@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace TripleSix.Core.WebApi.Results
 {
-    public class SuccessResult : BaseResult<BaseMeta>
+    public class SuccessResult : BaseResult<SuccessMeta>
     {
         public SuccessResult()
             : base(200)
@@ -10,6 +11,7 @@ namespace TripleSix.Core.WebApi.Results
         }
 
         [JsonProperty(Order = -9)]
+        [DisplayName("kết quả xử lý")]
         public virtual bool Data { get; protected set; } = true;
     }
 }

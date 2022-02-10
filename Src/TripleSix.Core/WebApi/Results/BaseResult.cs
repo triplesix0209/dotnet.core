@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -18,6 +19,7 @@ namespace TripleSix.Core.WebApi.Results
         public virtual int StatusCode { get; protected set; }
 
         [JsonProperty(Order = -10)]
+        [DisplayName("thông tin metadata")]
         public virtual TMeta Meta { get; protected set; }
 
         public virtual async Task ExecuteResultAsync(ActionContext context)
