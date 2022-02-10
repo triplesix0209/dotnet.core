@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -32,6 +33,24 @@ namespace TripleSix.Core.Helpers
                 result.Reference = null;
                 result.Type = "integer";
                 result.Format = "int32";
+            }
+            else if (result.Type == "array")
+            {
+                Type elementType;
+                object defaultValue;
+
+                if (typeof(IEnumerable).IsAssignableFrom(type))
+                {
+                    elementType = type.GetGenericArguments()[0];
+                    defaultValue = (defaultInstance as IEnumerable<object>).FirstOrDefault();
+                } else
+                {
+                    elementType = type.GetElementType();
+                    defaultValue = (defaultInstance as Array).Length == 0 ? null : (defaultInstance as Array).GetValue(0);
+                }
+
+                result.Items.Reference = null;
+                result.Items = elementType.GenerateSchema(schemaGenerator, schemaRepository, defaultValue, result);
             }
             else if (result.Type is null)
             {
@@ -162,7 +181,7 @@ namespace TripleSix.Core.Helpers
                 foreach (var item in items)
                 {
                     isAny = true;
-                    result.Add(type.GetElementType().DefaultValue(item));
+                    result.Add(type.GetGenericArguments()[0].DefaultValue(item));
                 }
 
                 if (isAny && result.Count == 0) return null;
