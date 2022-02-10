@@ -36,13 +36,6 @@ namespace TripleSix.Core.WebApi.Swagger
             });
             operation.Responses["200"] = successResponse;
 
-            var errorResponse = new OpenApiResponse { Description = "Error" };
-            errorResponse.Content.Add("application/json", new OpenApiMediaType
-            {
-                Schema = typeof(ErrorResult).GenerateSchema(context.SchemaGenerator, context.SchemaRepository),
-            });
-            operation.Responses["500"] = errorResponse;
-
             context.SchemaRepository.Schemas.Clear();
         }
     }
