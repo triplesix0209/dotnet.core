@@ -26,8 +26,7 @@ namespace TripleSix.Core.Dto
             if (httpContext.User.Identity.IsAuthenticated)
                 User = httpContext.User;
 
-            var properties = GetType().GetProperties()
-                .Where(x => !new[] { nameof(HttpContext), nameof(User), nameof(UserId) }.Contains(x.Name));
+            var properties = GetType().GetProperties().Where(x => x.CanWrite);
             foreach (var property in properties)
                 property.SetValue(this, httpContext.Request.Headers.GetValue(property.Name));
         }
