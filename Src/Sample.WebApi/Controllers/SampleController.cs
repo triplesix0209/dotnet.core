@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Sample.Common;
 using Sample.WebApi.Abstracts;
-using TripleSix.Core.Dto;
 
 namespace Sample.WebApi.Controllers
 {
@@ -10,7 +10,7 @@ namespace Sample.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Test()
         {
-            var identity = GenerateIdentity<IIdentity>();
+            var identity = GenerateIdentity<Identity>();
             return SuccessResult();
         }
     }

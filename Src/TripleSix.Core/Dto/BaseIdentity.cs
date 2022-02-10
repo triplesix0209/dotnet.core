@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Dto
 {
@@ -24,6 +25,11 @@ namespace TripleSix.Core.Dto
 
             if (httpContext.User.Identity.IsAuthenticated)
                 User = httpContext.User;
+
+            var properties = GetType().GetProperties()
+                .Where(x => !new[] { nameof(HttpContext), nameof(User), nameof(UserId) }.Contains(x.Name));
+            foreach (var property in properties)
+                property.SetValue(this, httpContext.Request.Headers.GetValue(property.Name));
         }
 
         public HttpContext HttpContext { get; }
