@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.4" />
-    <PackageReference Include="TripleSix.Core" Version="5.0.3" />
+    <PackageReference Include="TripleSix.Core" Version="5.0.15" />
   </ItemGroup>
   
 </Project>

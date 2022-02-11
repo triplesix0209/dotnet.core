@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -18,39 +17,38 @@ namespace TripleSix.Core.Helpers
             this Type type,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
+            bool generateDefault = true,
             object defaultInstance = null,
             OpenApiSchema baseSchema = null,
             PropertyInfo propertyInfo = null,
             string[] excludeProperties = null)
         {
             var result = schemaGenerator.GenerateSchema(type, schemaRepository);
-            var propertyType = Nullable.GetUnderlyingType(type) is not null ? Nullable.GetUnderlyingType(type) : type;
-            result.Nullable = Nullable.GetUnderlyingType(type) is not null || type.IsClass;
+            result.Nullable = type.IsNullableType();
             result.Reference = null;
 
-            if (propertyType.IsEnum)
+            var propertyType = type.GetUnderlyingType();
+            if (result.Type == "array")
             {
-                result.Reference = null;
-                result.Type = "integer";
-                result.Format = "int32";
-            }
-            else if (result.Type == "array")
-            {
-                Type elementType;
-                object defaultValue;
+                var elementType = type.IsArray
+                    ? type.GetElementType()
+                    : type.GetGenericArguments()[0];
 
-                if (typeof(IEnumerable).IsAssignableFrom(type))
+                object elementDefaultInstance = null;
+                if (generateDefault)
                 {
-                    elementType = type.GetGenericArguments()[0];
-                    defaultValue = (defaultInstance as IEnumerable<object>).FirstOrDefault();
-                } else
-                {
-                    elementType = type.GetElementType();
-                    defaultValue = (defaultInstance as Array).Length == 0 ? null : (defaultInstance as Array).GetValue(0);
+                    elementDefaultInstance = type.IsArray
+                        ? (defaultInstance as Array).GetValue(0)
+                        : (defaultInstance as IList)[0];
                 }
 
                 result.Items.Reference = null;
-                result.Items = elementType.GenerateSchema(schemaGenerator, schemaRepository, defaultValue, result);
+                result.Items = elementType.GenerateSchema(
+                    schemaGenerator,
+                    schemaRepository,
+                    generateDefault: generateDefault,
+                    defaultInstance: elementDefaultInstance,
+                    baseSchema: result);
             }
             else if (result.Type is null)
             {
@@ -62,6 +60,7 @@ namespace TripleSix.Core.Helpers
                             .FirstOrDefault() as JsonPropertyAttribute;
                         return jsonProperty?.Order ?? 0;
                     });
+
                 foreach (var property in properties)
                 {
                     if (property.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Any()
@@ -69,30 +68,42 @@ namespace TripleSix.Core.Helpers
                         || (excludeProperties is not null && excludeProperties.Contains(property.Name)))
                         continue;
 
-                    var defaultValue = defaultInstance is null ? null : property.GetValue(defaultInstance);
-                    if (defaultValue is null && property.PropertyType != typeof(string))
-                        defaultValue = Activator.CreateInstance(property.PropertyType);
+                    object propertyDefaultInstance = null;
+                    if (generateDefault)
+                    {
+                        propertyDefaultInstance = property.GetValue(defaultInstance);
+                        if (propertyDefaultInstance is null
+                            && property.PropertyType.IsClass
+                            && property.PropertyType != typeof(string))
+                            propertyDefaultInstance = property.PropertyType.CreateDefaultInstance();
+                    }
 
                     result.Properties.Add(
                         property.Name.ToCamelCase(),
                         property.PropertyType.GenerateSchema(
                             schemaGenerator,
                             schemaRepository,
-                            defaultValue,
-                            result,
-                            property,
+                            generateDefault: generateDefault,
+                            defaultInstance: propertyDefaultInstance,
+                            baseSchema: result,
+                            propertyInfo: property,
                             excludeProperties));
                 }
             }
-            else
+            else if (propertyType.IsEnum)
             {
-                result.Default = type.DefaultValue(defaultInstance);
+                result.Reference = null;
+                result.Type = "integer";
+                result.Format = "int32";
             }
 
-            if (propertyInfo is null) return result;
+            if (result.Type != "object" && generateDefault)
+                result.Default = type.GenerateDefaultValue(defaultInstance);
 
+            if (propertyInfo is null) return result;
             if (propertyInfo.GetCustomAttribute<RequiredValidateAttribute>() is not null
-                && defaultInstance is null)
+                && result.Default is OpenApiNull
+                && baseSchema is not null)
                 baseSchema.Required.Add(propertyInfo.Name.ToCamelCase());
 
             var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
@@ -124,67 +135,67 @@ namespace TripleSix.Core.Helpers
             return result;
         }
 
-        public static IOpenApiAny DefaultValue(this Type type, object defaultValue)
+        public static IOpenApiAny GenerateDefaultValue(this Type type, object value)
         {
-            if (defaultValue is null)
+            if (value is null)
                 return new OpenApiNull();
 
-            if (defaultValue is string)
-                return new OpenApiString((string)defaultValue);
+            if (value is string)
+                return new OpenApiString((string)value);
 
-            if (defaultValue is bool)
-                return new OpenApiBoolean((bool)defaultValue);
+            if (value is bool)
+                return new OpenApiBoolean((bool)value);
 
-            if (defaultValue is byte)
-                return new OpenApiByte((byte)defaultValue);
+            if (value is byte)
+                return new OpenApiByte((byte)value);
 
-            if (defaultValue is int)
-                return new OpenApiInteger((int)defaultValue);
+            if (value is int)
+                return new OpenApiInteger((int)value);
 
-            if (defaultValue is long)
-                return new OpenApiLong((long)defaultValue);
+            if (value is long)
+                return new OpenApiLong((long)value);
 
-            if (defaultValue is float)
-                return new OpenApiFloat((float)defaultValue);
+            if (value is float)
+                return new OpenApiFloat((float)value);
 
-            if (defaultValue is decimal)
-                return new OpenApiDouble(Convert.ToDouble(defaultValue));
+            if (value is double)
+                return new OpenApiDouble((double)value);
 
-            if (defaultValue is double)
-                return new OpenApiDouble((double)defaultValue);
+            if (value is decimal)
+                return new OpenApiDouble(Convert.ToDouble(value));
 
-            if (defaultValue is DateTime)
-                return new OpenApiInteger((int)((DateTime)defaultValue).ToEpochTimestamp());
+            if (value is DateTime)
+                return new OpenApiInteger((int)((DateTime)value).ToEpochTimestamp());
 
-            if (defaultValue is Enum)
-                return new OpenApiInteger((int)defaultValue);
+            if (value is Enum)
+                return new OpenApiInteger((int)value);
 
             if (type.IsArray)
             {
                 var result = new OpenApiArray();
-                var items = defaultValue as Array;
+                var items = value as Array;
                 if (items.Length == 0) return result;
 
                 foreach (var item in items)
-                    result.Add(type.GetElementType().DefaultValue(item));
+                    result.Add(type.GetElementType().GenerateDefaultValue(item));
 
-                if (result.Count == 0) return null;
+                if (!result.Where(x => x is not null).Any()) return null;
                 return result;
             }
 
-            if (typeof(IEnumerable).IsAssignableFrom(type))
+            if (typeof(IList).IsAssignableFrom(type))
             {
                 var result = new OpenApiArray();
-                var items = defaultValue as IEnumerable;
+                var items = value as IList;
 
                 var isAny = false;
                 foreach (var item in items)
                 {
                     isAny = true;
-                    result.Add(type.GetGenericArguments()[0].DefaultValue(item));
+                    result.Add(type.GetGenericArguments()[0].GenerateDefaultValue(item));
                 }
 
-                if (isAny && result.Count == 0) return null;
+                if (isAny && !result.Where(x => x is not null).Any()) return null;
                 return result;
             }
 

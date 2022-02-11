@@ -20,6 +20,7 @@ namespace Sample.Middle.Mappers
                     return new[]
                     {
                         objectName + "Dto",
+                        objectName + "DataDto",
                     }.Contains(t.Name);
                 }));
         }

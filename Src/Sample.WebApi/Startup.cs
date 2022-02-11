@@ -3,11 +3,13 @@ using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Sample.Common;
+using Sample.Data.DataContexts;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Quartz;
@@ -49,9 +51,17 @@ namespace Sample.WebApi
             options.OperationFilter<IdentityOperationFilter<Identity>>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public override void ConfigureServices(IServiceCollection services)
+        {
+            base.ConfigureServices(services);
+
+            services.AddDbContext<DataContext>();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
         {
             BaseConfigure(app, env);
+            dataContext.Database.Migrate();
             AutofacContainer.Resolve<JobScheduler>().Start();
 
             app.UseRouting();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -50,6 +51,37 @@ namespace TripleSix.Core.Helpers
                 yield return type;
                 type = type.BaseType;
             }
+        }
+
+        public static Type GetUnderlyingType(this Type type)
+        {
+            return Nullable.GetUnderlyingType(type) is null ? type : Nullable.GetUnderlyingType(type);
+        }
+
+        public static bool IsNullableType(this Type type)
+        {
+            return Nullable.GetUnderlyingType(type) is not null || type.IsClass;
+        }
+
+        public static object CreateDefaultInstance(this Type type)
+        {
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+                var array = Array.CreateInstance(elementType, 1);
+                array.SetValue(elementType.CreateDefaultInstance(), 0);
+                return array;
+            }
+
+            if (type.IsGenericType && typeof(IList).IsAssignableFrom(type))
+            {
+                var elementType = type.GetGenericArguments()[0];
+                var list = Activator.CreateInstance(type) as IList;
+                list.Add(elementType.CreateDefaultInstance());
+                return list;
+            }
+
+            return Activator.CreateInstance(type);
         }
     }
 }

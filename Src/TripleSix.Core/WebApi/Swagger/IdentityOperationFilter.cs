@@ -14,7 +14,8 @@ namespace TripleSix.Core.WebApi.Swagger
             var schema = typeof(TIdentity).GenerateSchema(
                 context.SchemaGenerator,
                 context.SchemaRepository,
-                Activator.CreateInstance<TIdentity>(),
+                generateDefault: true,
+                defaultInstance: Activator.CreateInstance<TIdentity>(),
                 excludeProperties: new[] { nameof(IIdentity.HttpContext), nameof(IIdentity.User), nameof(IIdentity.UserId) });
 
             foreach (var property in schema.Properties)
