@@ -1,11 +1,8 @@
 ﻿using System;
-using TripleSix.AutoAdmin.Enums;
+using TripleSix.Core.Enums;
 
-namespace TripleSix.AutoAdmin.Attributes
+namespace TripleSix.Core.AutoAdmin
 {
-    /// <summary>
-    /// cấu hình auto admin field.
-    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class AdminFieldAttribute : Attribute
     {

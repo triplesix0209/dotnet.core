@@ -1,11 +1,8 @@
 ﻿using System.ComponentModel;
 using TripleSix.Core.Dto;
 
-namespace TripleSix.AutoAdmin.Dto
+namespace TripleSix.Core.AutoAdmin
 {
-    /// <summary>
-    /// thông tin export.
-    /// </summary>
     public class ExportInputDto : DataDto
     {
         [DisplayName("danh sách field")]

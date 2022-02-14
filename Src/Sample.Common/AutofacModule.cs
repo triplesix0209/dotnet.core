@@ -16,6 +16,8 @@ namespace Sample.Common
         {
             base.Load(builder);
 
+            builder.RegisterModule(new TripleSix.Core.AutoAdmin.AutofacModule(Configuration));
+
             builder.RegisterType<LoggerFactory>()
                 .As<ILoggerFactory>()
                 .SingleInstance();

@@ -8,6 +8,23 @@ namespace Sample.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "object_log",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    datetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    actor_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    object_type = table.Column<string>(type: "text", nullable: false),
+                    object_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    before_data = table.Column<string>(type: "text", nullable: true),
+                    after_data = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_object_log", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "setting",
                 columns: table => new
                 {
@@ -65,6 +82,9 @@ namespace Sample.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "object_log");
+
             migrationBuilder.DropTable(
                 name: "setting");
         }

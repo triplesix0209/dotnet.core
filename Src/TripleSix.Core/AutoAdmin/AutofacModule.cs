@@ -1,14 +1,11 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using TripleSix.Core.ModuleAutofac;
 
-namespace TripleSix.AutoAdmin
+namespace TripleSix.Core.AutoAdmin
 {
     public class AutofacModule : BaseModule
     {
-        private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
-
         public AutofacModule(IConfiguration configuration)
             : base(configuration)
         {
@@ -18,7 +15,7 @@ namespace TripleSix.AutoAdmin
         {
             base.Load(builder);
 
-            builder.RegisterAllRepository(_assembly);
+            builder.RegisterRepository<ObjectLogRepository>();
         }
     }
 }

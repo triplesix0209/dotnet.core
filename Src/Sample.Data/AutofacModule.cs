@@ -19,7 +19,7 @@ namespace Sample.Data
         {
             base.Load(builder);
 
-            builder.RegisterDbContext(c => new DataContext(Configuration));
+            builder.RegisterDbContext<DataContext>();
             builder.RegisterAllRepository(_assembly);
         }
     }

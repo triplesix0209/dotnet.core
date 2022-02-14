@@ -8,10 +8,6 @@ using ClosedXML.Excel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using TripleSix.AutoAdmin.Dto;
-using TripleSix.AutoAdmin.Entities;
-using TripleSix.AutoAdmin.Interfaces;
-using TripleSix.AutoAdmin.Repositories;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
@@ -20,7 +16,7 @@ using TripleSix.Core.JsonSerializers.Converters;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
 
-namespace TripleSix.AutoAdmin.Services
+namespace TripleSix.Core.AutoAdmin
 {
     public abstract class BaseCommonService<TEntity> : ModelService<TEntity>,
         ICommonService<TEntity>
@@ -41,13 +37,7 @@ namespace TripleSix.AutoAdmin.Services
                 .FirstAsync<ObjectLogDto>(Mapper);
 
             if (objectLog.CreatorId.HasValue)
-            {
-                var actor = (await GetActor(identity, objectLog.CreatorId.Value)).First();
-                objectLog.ActorId = actor.Id;
-                objectLog.ActorCode = actor.Code;
-                objectLog.ActorName = actor.Name;
-                objectLog.ActorAvatarLink = actor.AvatarLink;
-            }
+                objectLog.Actor = (await GetActor(identity, objectLog.CreatorId.Value)).First();
 
             return objectLog;
         }
@@ -57,7 +47,7 @@ namespace TripleSix.AutoAdmin.Services
             var objectLogs = await ObjectLogRepo.Query
                 .Where(x => x.ObjectType == typeof(TEntity).Name)
                 .Where(x => x.ObjectId == id)
-                .OrderByDescending(x => x.CreateDatetime)
+                .OrderByDescending(x => x.Datetime)
                 .ToPagingAsync<ObjectLogDto>(Mapper, page, size);
 
             var actorIds = objectLogs.Items
@@ -71,14 +61,8 @@ namespace TripleSix.AutoAdmin.Services
                 var actors = await GetActor(identity, actorIds);
                 foreach (var objectLog in objectLogs.Items)
                 {
-                    if (!objectLog.CreatorId.HasValue) continue;
-                    var actor = actors.FirstOrDefault(x => x.Id == objectLog.CreatorId.Value);
-                    if (actor is null) continue;
-
-                    objectLog.ActorId = actor.Id;
-                    objectLog.ActorCode = actor.Code;
-                    objectLog.ActorName = actor.Name;
-                    objectLog.ActorAvatarLink = actor.AvatarLink;
+                    if (objectLog.CreatorId.HasValue)
+                        objectLog.Actor = actors.FirstOrDefault(x => x.Id == objectLog.CreatorId.Value);
                 }
             }
 
@@ -93,8 +77,8 @@ namespace TripleSix.AutoAdmin.Services
 
             ObjectLogRepo.Create(new ObjectLogEntity
             {
-                CreatorId = identity.UserId,
-                UpdaterId = identity.UserId,
+                Datetime = DateTime.UtcNow,
+                ActorId = identity.UserId,
                 ObjectType = typeof(TEntity).GetDisplayName(),
                 ObjectId = id,
                 BeforeData = beforeData,
@@ -175,23 +159,11 @@ namespace TripleSix.AutoAdmin.Services
             return Task.FromResult(RandomHelper.RandomString(10));
         }
 
-        /// <summary>
-        /// mã hóa entity.
-        /// </summary>
-        /// <param name="identity">identity phiên xử lý.</param>
-        /// <param name="entity">entity cần mã hóa.</param>
-        /// <returns>kết quả mã hóa.</returns>
         protected virtual Task<string> SerializeEntity(IIdentity identity, TEntity entity)
         {
             return SerializeData(entity);
         }
 
-        /// <summary>
-        /// mã hóa dữ liệu.
-        /// </summary>
-        /// <param name="data">đối tượng cần mã hóa.</param>
-        /// <param name="excludeProperties">danh sách các property loại bỏ khỏi.</param>
-        /// <returns>kết quả mã hóa.</returns>
         protected virtual Task<string> SerializeData(object data, params string[] excludeProperties)
         {
             var jsonText = JsonConvert.SerializeObject(data, EntityContractResolver.SerializerSettings);
@@ -206,12 +178,6 @@ namespace TripleSix.AutoAdmin.Services
             return Task.FromResult(jsonText);
         }
 
-        /// <summary>
-        /// lấy thông tin người thao tác.
-        /// </summary>
-        /// <param name="identity">identity phiên xử lý.</param>
-        /// <param name="actorIds">danh sách id người tao tác.</param>
-        /// <returns>danh sách thông tin người thao tác.</returns>
         protected abstract Task<IEnumerable<ActorDto>> GetActor(IIdentity identity, params Guid[] actorIds);
 
         private class EntityContractResolver : BaseContractResolver

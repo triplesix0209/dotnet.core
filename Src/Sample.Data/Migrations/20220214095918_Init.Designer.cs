@@ -10,7 +10,7 @@ using Sample.Data.DataContexts;
 namespace Sample.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220211034716_Init")]
+    [Migration("20220214095918_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,6 +95,45 @@ namespace Sample.Data.Migrations
                             IsDeleted = false,
                             Value = "value"
                         });
+                });
+
+            modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLogEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<string>("AfterData")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("after_data");
+
+                    b.Property<string>("BeforeData")
+                        .HasColumnType("text")
+                        .HasColumnName("before_data");
+
+                    b.Property<DateTime?>("Datetime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("datetime");
+
+                    b.Property<Guid>("ObjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("object_id");
+
+                    b.Property<string>("ObjectType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("object_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_object_log");
+
+                    b.ToTable("object_log");
                 });
 #pragma warning restore 612, 618
         }

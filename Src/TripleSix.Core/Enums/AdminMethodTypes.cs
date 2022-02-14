@@ -1,4 +1,4 @@
-﻿namespace TripleSix.AutoAdmin.Enums
+﻿namespace TripleSix.Core.Enums
 {
     /// <summary>
     /// phân loại phương thức của admin.

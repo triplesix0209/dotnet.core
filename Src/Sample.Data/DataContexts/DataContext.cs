@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sample.Data.Entities;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.DataContexts;
 
 namespace Sample.Data.DataContexts
@@ -14,5 +15,7 @@ namespace Sample.Data.DataContexts
         }
 
         public DbSet<SettingEntity> Setting { get; set; }
+
+        public DbSet<ObjectLogEntity> ObjectLog { get; set; }
     }
 }

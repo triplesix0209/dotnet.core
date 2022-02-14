@@ -1,6 +1,6 @@
 ﻿using TripleSix.Core.Entities;
 
-namespace TripleSix.AutoAdmin.Interfaces
+namespace TripleSix.Core.AutoAdmin
 {
     public interface ICommonService<TEntity> :
         IChangeLogService<TEntity>,

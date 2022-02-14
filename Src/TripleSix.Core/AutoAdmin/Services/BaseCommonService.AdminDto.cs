@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using TripleSix.AutoAdmin.Dto;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
 
-namespace TripleSix.AutoAdmin.Services
+namespace TripleSix.Core.AutoAdmin
 {
     public abstract class BaseCommonService<TEntity, TAdminDto> : BaseCommonService<TEntity>
         where TEntity : class, IModelEntity

@@ -14,8 +14,6 @@ namespace TripleSix.Core.Test
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-
-            builder.RegisterEventPublisher();
         }
     }
 }

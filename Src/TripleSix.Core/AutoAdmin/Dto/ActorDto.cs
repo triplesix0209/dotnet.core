@@ -2,11 +2,8 @@
 using System.ComponentModel;
 using TripleSix.Core.Dto;
 
-namespace TripleSix.AutoAdmin.Dto
+namespace TripleSix.Core.AutoAdmin
 {
-    /// <summary>
-    /// thông tin người thao tác.
-    /// </summary>
     public class ActorDto : DataDto
     {
         [DisplayName("mã định danh người thao tác")]

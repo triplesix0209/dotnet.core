@@ -22,26 +22,24 @@ namespace TripleSix.Core.ModuleAutofac
 {
     public static class ModuleAutofacExtension
     {
-        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle>
+        public static IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterDbContext<T>(
-                this ContainerBuilder builder,
-                Func<IComponentContext, T> @delegate)
+                this ContainerBuilder builder)
                 where T : DbContext
         {
-            return builder.Register(@delegate)
+            return builder.RegisterType<T>()
                 .InstancePerLifetimeScope()
                 .As<BaseDataContext>()
                 .As<DbContext>()
                 .AsSelf();
         }
 
-        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle>
+        public static IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterRepository<T>(
-                this ContainerBuilder builder,
-                Func<IComponentContext, T> @delegate)
+                this ContainerBuilder builder)
                 where T : IRepository
         {
-            return builder.Register(@delegate)
+            return builder.RegisterType<T>()
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces()
@@ -62,13 +60,12 @@ namespace TripleSix.Core.ModuleAutofac
                 .AsSelf();
         }
 
-        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle>
+        public static IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle>
             RegisterService<T>(
-                this ContainerBuilder builder,
-                Func<IComponentContext, T> @delegate)
+                this ContainerBuilder builder)
                 where T : IService
         {
-            return builder.Register(@delegate)
+            return builder.RegisterType<T>()
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces()
@@ -91,7 +88,6 @@ namespace TripleSix.Core.ModuleAutofac
 
         public static void RegisterMapper(
             this ContainerBuilder builder,
-            Assembly assembly,
             params Profile[] mappers)
         {
             builder.Register(c => new MapperConfiguration(config =>

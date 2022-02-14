@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Sample.Data.Entities;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
-using TripleSix.Core.Services;
 
 namespace Sample.Middle.Services
 {
-    public interface ISettingService : IModelService<SettingEntity>
+    public interface ISettingService : ICommonService<SettingEntity>
     {
         Task<string> GetValue(IIdentity identity, string code);
 

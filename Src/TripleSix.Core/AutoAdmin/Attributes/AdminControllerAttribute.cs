@@ -1,10 +1,7 @@
 ﻿using System;
 
-namespace TripleSix.AutoAdmin.Attributes
+namespace TripleSix.Core.AutoAdmin
 {
-    /// <summary>
-    /// cấu hình auto admin controller.
-    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class AdminControllerAttribute : Attribute
     {

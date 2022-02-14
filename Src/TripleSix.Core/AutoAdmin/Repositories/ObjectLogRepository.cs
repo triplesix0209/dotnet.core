@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TripleSix.AutoAdmin.Entities;
 using TripleSix.Core.Repositories;
 
-namespace TripleSix.AutoAdmin.Repositories
+namespace TripleSix.Core.AutoAdmin
 {
-    public class ObjectLogRepository : ModelRepository<ObjectLogEntity>
+    public class ObjectLogRepository : BaseRepository<ObjectLogEntity>
     {
         public ObjectLogRepository(DbContext dataContext)
             : base(dataContext)
