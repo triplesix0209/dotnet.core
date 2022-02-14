@@ -12,7 +12,6 @@ using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContexts;
-using TripleSix.Core.Events;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Quartz;
 using TripleSix.Core.Repositories;
@@ -23,18 +22,11 @@ namespace TripleSix.Core.ModuleAutofac
 {
     public static class ModuleAutofacExtension
     {
-        public static IRegistrationBuilder<IEventPublisher, ConcreteReflectionActivatorData, SingleRegistrationStyle>
-            RegisterEventPublisher(this ContainerBuilder builder)
-        {
-            return builder.RegisterType<EventPublisher>()
-                .InstancePerLifetimeScope()
-                .As<IEventPublisher>();
-        }
-
-        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle> RegisterDbContext<T>(
-            this ContainerBuilder builder,
-            Func<IComponentContext, T> @delegate)
-            where T : DbContext
+        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle>
+            RegisterDbContext<T>(
+                this ContainerBuilder builder,
+                Func<IComponentContext, T> @delegate)
+                where T : DbContext
         {
             return builder.Register(@delegate)
                 .InstancePerLifetimeScope()
@@ -43,10 +35,11 @@ namespace TripleSix.Core.ModuleAutofac
                 .AsSelf();
         }
 
-        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle> RegisterRepository<T>(
-            this ContainerBuilder builder,
-            Func<IComponentContext, T> @delegate)
-            where T : IRepository
+        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle>
+            RegisterRepository<T>(
+                this ContainerBuilder builder,
+                Func<IComponentContext, T> @delegate)
+                where T : IRepository
         {
             return builder.Register(@delegate)
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
@@ -69,10 +62,11 @@ namespace TripleSix.Core.ModuleAutofac
                 .AsSelf();
         }
 
-        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle> RegisterService<T>(
-            this ContainerBuilder builder,
-            Func<IComponentContext, T> @delegate)
-            where T : IService
+        public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle>
+            RegisterService<T>(
+                this ContainerBuilder builder,
+                Func<IComponentContext, T> @delegate)
+                where T : IService
         {
             return builder.Register(@delegate)
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
@@ -81,9 +75,10 @@ namespace TripleSix.Core.ModuleAutofac
                 .AsSelf();
         }
 
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllService(
-            this ContainerBuilder builder,
-            Assembly assembly)
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle>
+            RegisterAllService(
+                this ContainerBuilder builder,
+                Assembly assembly)
         {
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -94,7 +89,10 @@ namespace TripleSix.Core.ModuleAutofac
                 .AsSelf();
         }
 
-        public static void RegisterMapper(this ContainerBuilder builder, Assembly assembly, params Profile[] mappers)
+        public static void RegisterMapper(
+            this ContainerBuilder builder,
+            Assembly assembly,
+            params Profile[] mappers)
         {
             builder.Register(c => new MapperConfiguration(config =>
                 {
@@ -117,7 +115,9 @@ namespace TripleSix.Core.ModuleAutofac
                 .As<IMapper>();
         }
 
-        public static void RegisterAllMapper(this ContainerBuilder builder, Assembly assembly)
+        public static void RegisterAllMapper(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -157,7 +157,9 @@ namespace TripleSix.Core.ModuleAutofac
                 .As<IMapper>();
         }
 
-        public static void RegisterAllJob(this ContainerBuilder builder, Assembly assembly)
+        public static void RegisterAllJob(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             builder.RegisterType<JobScheduler>()
                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)

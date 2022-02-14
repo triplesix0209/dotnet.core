@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
@@ -9,18 +10,19 @@ namespace TripleSix.Core.Mappers
 {
     public abstract class BaseMapper : Profile
     {
-        protected new IMappingExpression<TSource, TDestination> CreateMap<TSource, TDestination>(
+        protected new IMappingExpression CreateMap(
+            Type sourceType,
+            Type destinationType,
             MemberList memberList = MemberList.Destination)
         {
-            var map = base.CreateMap<TSource, TDestination>(memberList)
+            var map = base.CreateMap(sourceType, destinationType, memberList)
                 .IncludeAllDerived();
 
-            var destType = typeof(TDestination);
-            if (typeof(IPropertyTracking).IsAssignableFrom(typeof(TSource)))
+            if (typeof(IPropertyTracking).IsAssignableFrom(sourceType))
             {
-                foreach (var p in destType.GetProperties())
+                foreach (var property in destinationType.GetProperties())
                 {
-                    map.ForMember(p.Name, opt =>
+                    map.ForMember(property.Name, opt =>
                     {
                         opt.Condition((
                             source,
@@ -30,11 +32,10 @@ namespace TripleSix.Core.Mappers
                             context) =>
                         {
                             if (!context.Items.ContainsKey("mode")) return true;
-
                             var mode = (string)context.Items["mode"];
                             if (mode == null) return true;
 
-                            return mode == "update" && ((IPropertyTracking)source).IsPropertyChanged(p.Name);
+                            return mode == "update" && ((IPropertyTracking)source).IsPropertyChanged(property.Name);
                         });
                     });
                 }
@@ -43,32 +44,17 @@ namespace TripleSix.Core.Mappers
             return map;
         }
 
-        protected IMappingExpression<TSource, TEntity> CreateMapToEntity<TSource, TEntity>(
+        protected new IMappingExpression<TSource, TDestination> CreateMap<TSource, TDestination>(
             MemberList memberList = MemberList.Destination)
-            where TEntity : IEntity
         {
-            var map = base.CreateMap<TSource, TEntity>(memberList)
+            var map = base.CreateMap<TSource, TDestination>(memberList)
                 .IncludeAllDerived();
 
-            var isPropertyTracking = typeof(IPropertyTracking).IsAssignableFrom(typeof(TSource));
-            var entityType = typeof(TEntity);
-            foreach (var p in entityType.GetProperties())
+            if (typeof(IPropertyTracking).IsAssignableFrom(typeof(TSource)))
             {
-                var descType = Nullable.GetUnderlyingType(p.PropertyType) != null
-                    ? Nullable.GetUnderlyingType(p.PropertyType)
-                    : p.PropertyType;
-
-                if (typeof(IEntity).IsAssignableFrom(descType)
-                    || descType.IsSubclassOfRawGeneric(typeof(ICollection<>))
-                    || descType.IsSubclassOfRawGeneric(typeof(IList<>)))
+                foreach (var property in typeof(TDestination).GetProperties())
                 {
-                    map.ForMember(p.Name, opt => opt.Ignore());
-                    continue;
-                }
-
-                if (isPropertyTracking)
-                {
-                    map.ForMember(p.Name, opt =>
+                    map.ForMember(property.Name, opt =>
                     {
                         opt.Condition((
                             source,
@@ -78,15 +64,58 @@ namespace TripleSix.Core.Mappers
                             context) =>
                         {
                             if (!context.Items.ContainsKey("mode")) return true;
-
                             var mode = (string)context.Items["mode"];
                             if (mode == null) return true;
 
-                            return mode == "update" && ((IPropertyTracking)source).IsPropertyChanged(p.Name);
+                            return mode == "update" && ((IPropertyTracking)source).IsPropertyChanged(property.Name);
                         });
                     });
                 }
             }
+
+            return map;
+        }
+
+        protected IMappingExpression CreateMapToEntity(
+            Type sourceType,
+            Type destinationType,
+            MemberList memberList = MemberList.Destination)
+        {
+            var map = CreateMap(sourceType, destinationType, memberList);
+
+            if (!typeof(IEntity).IsAssignableFrom(destinationType))
+                throw new Exception($"{destinationType.Name} need implement {nameof(IEntity)}> interface");
+
+            var ignoreProperties = destinationType.GetProperties()
+                .Where(property =>
+                {
+                    var propertyType = property.PropertyType.GetUnderlyingType();
+                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                        || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
+                        || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
+                });
+            foreach (var property in ignoreProperties)
+                map.ForMember(property.Name, opt => opt.Ignore());
+
+            return map;
+        }
+
+        protected IMappingExpression<TSource, TEntity> CreateMapToEntity<TSource, TEntity>(
+            MemberList memberList = MemberList.Destination)
+            where TEntity : IEntity
+        {
+            var map = CreateMap<TSource, TEntity>(memberList);
+
+            var ignoreProperties = typeof(TEntity).GetProperties()
+                .Where(property =>
+                {
+                    var propertyType = property.PropertyType.GetUnderlyingType();
+                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                        || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
+                        || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
+                });
+            foreach (var property in ignoreProperties)
+                map.ForMember(property.Name, opt => opt.Ignore());
 
             return map;
         }

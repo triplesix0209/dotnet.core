@@ -16,8 +16,6 @@ namespace Sample.Common
         {
             base.Load(builder);
 
-            builder.RegisterEventPublisher();
-
             builder.RegisterType<LoggerFactory>()
                 .As<ILoggerFactory>()
                 .SingleInstance();

@@ -68,9 +68,7 @@ namespace TripleSix.Core.Services
                 }
             }
 
-            Repo.Create(identity, entities);
-            await Repo.SaveChanges();
-
+            await base.CreateBulk(identity, entities);
             return entities;
         }
 

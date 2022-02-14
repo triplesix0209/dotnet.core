@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Configuration;
-using TripleSix.Core.Events;
 
 namespace TripleSix.Core.Services
 {
@@ -8,8 +7,6 @@ namespace TripleSix.Core.Services
         : IService
     {
         public IConfiguration Configuration { get; set; }
-
-        public IEventPublisher EventPublisher { get; set; }
 
         public IMapper Mapper { get; set; }
     }

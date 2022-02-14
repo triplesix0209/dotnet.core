@@ -100,42 +100,6 @@ namespace TripleSix.Core.Services
             await DeleteBulk(identity, entities);
         }
 
-        public virtual Task AddLinkOfMap(IIdentity identity, IMapEntity mapEntity, Type mapType)
-        {
-            var serviceType = GetType();
-            var linkWithMapEntityInterface = typeof(ILinkWithMapEntity<>).MakeGenericType(mapType);
-            if (!linkWithMapEntityInterface.IsAssignableFrom(serviceType))
-                throw new Exception($"{serviceType.Name} need implement ILinkWithMapEntity<{mapType.Name}> interface");
-
-            var addLinkMethod = serviceType.GetMethods()
-                .First(x => x.Name == nameof(ILinkWithMapEntity<IEntity>.AddLink) && x.GetParameters()[1].ParameterType == mapType);
-            return (Task)addLinkMethod.Invoke(this, new object[] { identity, mapEntity });
-        }
-
-        public virtual async Task AddBulkLinkOfMap(IIdentity identity, IEnumerable<IMapEntity> mapEntities, Type mapType)
-        {
-            foreach (var mapEntity in mapEntities)
-                await AddLinkOfMap(identity, mapEntity, mapType);
-        }
-
-        public virtual Task RemoveLinkOfMap(IIdentity identity, IMapEntity mapEntity, Type mapType)
-        {
-            var serviceType = GetType();
-            var linkWithMapEntityInterface = typeof(ILinkWithMapEntity<>).MakeGenericType(mapType);
-            if (!linkWithMapEntityInterface.IsAssignableFrom(serviceType))
-                throw new Exception($"{serviceType.Name} need implement ILinkWithMapEntity<{mapType.Name}> interface");
-
-            var removeLinkMethod = serviceType.GetMethods()
-                .First(x => x.Name == nameof(ILinkWithMapEntity<IEntity>.RemoveLink) && x.GetParameters()[1].ParameterType == mapType);
-            return (Task)removeLinkMethod.Invoke(this, new object[] { identity, mapEntity });
-        }
-
-        public virtual async Task RemoveBulkLinkOfMap(IIdentity identity, IEnumerable<IMapEntity> mapEntities, Type mapType)
-        {
-            foreach (var mapEntity in mapEntities)
-                await RemoveLinkOfMap(identity, mapEntity, mapType);
-        }
-
         public Task<bool> Any(IIdentity identity)
         {
             return Repo.Query.AnyAsync();

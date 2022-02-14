@@ -36,14 +36,6 @@ namespace TripleSix.Core.Services
 
         Task DeleteBulk(IIdentity identity, IQueryable<TEntity> query);
 
-        Task AddLinkOfMap(IIdentity identity, IMapEntity mapEntity, Type mapType);
-
-        Task AddBulkLinkOfMap(IIdentity identity, IEnumerable<IMapEntity> mapEntities, Type mapType);
-
-        Task RemoveLinkOfMap(IIdentity identity, IMapEntity mapEntity, Type mapType);
-
-        Task RemoveBulkLinkOfMap(IIdentity identity, IEnumerable<IMapEntity> mapEntities, Type mapType);
-
         Task<bool> Any(IIdentity identity);
 
         Task<bool> Any(IIdentity identity, IQueryable<TEntity> query);
