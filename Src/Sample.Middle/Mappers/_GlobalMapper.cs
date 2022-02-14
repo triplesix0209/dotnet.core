@@ -9,7 +9,7 @@ namespace Sample.Middle.Mappers
 {
     public class GlobalMapper : TripleSix.Core.Mappers.GlobalMapper
     {
-        protected override IEnumerable<Type> SelectDto(string objectName)
+        protected override IEnumerable<Type> SelectDtoType(string objectName)
         {
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes()

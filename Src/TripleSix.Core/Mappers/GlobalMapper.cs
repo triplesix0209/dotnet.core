@@ -5,7 +5,6 @@ using AutoMapper;
 using TripleSix.Core.DataTypes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
-using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Mappers
 {
@@ -18,7 +17,7 @@ namespace TripleSix.Core.Mappers
             CreateMap<Phone, string>().ConvertUsing(s => s == null ? null : s.ToString());
         }
 
-        protected virtual IEnumerable<Type> SelectEntity()
+        protected virtual IEnumerable<Type> SelectEntityType()
         {
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes()
@@ -27,64 +26,24 @@ namespace TripleSix.Core.Mappers
                 .Where(t => t.Name.EndsWith("Entity")));
         }
 
-        protected abstract IEnumerable<Type> SelectDto(string objectName);
+        protected abstract IEnumerable<Type> SelectDtoType(string objectName);
 
         private void CreateProfile()
         {
-            var entities = SelectEntity();
-            foreach (var entity in entities)
+            var entityTypes = SelectEntityType();
+            foreach (var entityType in entityTypes)
             {
-                var objectName = entity.Name.Substring(0, entity.Name.IndexOf("Entity", StringComparison.Ordinal));
+                var objectName = entityType.Name.Substring(0, entityType.Name.IndexOf("Entity", StringComparison.Ordinal));
 
-                CreateMap(entity, entity).IncludeAllDerived();
-                RegisterMap(entity, typeof(ModelDataDto));
+                CreateMapToEntity(entityType, entityType);
+                CreateMapToEntity(typeof(ModelDataDto), entityType, MemberList.None);
 
-                var dtos = SelectDto(objectName);
-                foreach (var dto in dtos)
+                var dtoTypes = SelectDtoType(objectName);
+                foreach (var dtoType in dtoTypes)
                 {
-                    CreateMap(typeof(ModelDataDto), dto, MemberList.None).IncludeAllDerived();
-                    RegisterMap(entity, dto);
+                    CreateMap(typeof(ModelDataDto), dtoType, MemberList.None).ReverseMap();
+                    CreateMapToEntity(dtoType, entityType, MemberList.None).ReverseMap();
                 }
-            }
-        }
-
-        private void RegisterMap(Type entity, Type dto)
-        {
-            var map = CreateMap(entity, dto, MemberList.None)
-                .IncludeAllDerived()
-                .ReverseMap();
-
-            foreach (var p in entity.GetProperties())
-            {
-                var descType = Nullable.GetUnderlyingType(p.PropertyType) != null
-                    ? Nullable.GetUnderlyingType(p.PropertyType)
-                    : p.PropertyType;
-
-                if (typeof(IEntity).IsAssignableFrom(descType)
-                    || descType.IsSubclassOfRawGeneric(typeof(ICollection<>))
-                    || descType.IsSubclassOfRawGeneric(typeof(IList<>)))
-                {
-                    map.ForMember(p.Name, opt => opt.Ignore());
-                    continue;
-                }
-
-                map.ForMember(p.Name, opt =>
-                {
-                    opt.Condition((
-                        source,
-                        desc,
-                        sourceVal,
-                        descVal,
-                        context) =>
-                    {
-                        if (!context.Items.ContainsKey("mode")) return true;
-
-                        var mode = (string)context.Items["mode"];
-                        if (mode == null) return true;
-
-                        return mode == "update" && ((IPropertyTracking)source).IsPropertyChanged(p.Name);
-                    });
-                });
             }
         }
     }
