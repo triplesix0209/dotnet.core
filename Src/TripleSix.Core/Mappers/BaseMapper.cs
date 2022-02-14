@@ -81,10 +81,10 @@ namespace TripleSix.Core.Mappers
             Type destinationType,
             MemberList memberList = MemberList.Destination)
         {
-            var map = CreateMap(sourceType, destinationType, memberList);
-
             if (!typeof(IEntity).IsAssignableFrom(destinationType))
                 throw new Exception($"{destinationType.Name} need implement {nameof(IEntity)}> interface");
+
+            var map = CreateMap(sourceType, destinationType, memberList);
 
             var ignoreProperties = destinationType.GetProperties()
                 .Where(property =>
@@ -116,6 +116,50 @@ namespace TripleSix.Core.Mappers
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, opt => opt.Ignore());
+
+            return map;
+        }
+
+        protected IMappingExpression CreateMapFromEntity(
+            Type sourceType,
+            Type destinationType,
+            MemberList memberList = MemberList.Destination)
+        {
+            if (!typeof(IEntity).IsAssignableFrom(sourceType))
+                throw new Exception($"{sourceType.Name} need implement {nameof(IEntity)}> interface");
+
+            var map = CreateMap(sourceType, destinationType, memberList);
+
+            var ignoreProperties = sourceType.GetProperties()
+                .Where(property =>
+                {
+                    var propertyType = property.PropertyType.GetUnderlyingType();
+                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                        || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
+                        || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
+                });
+            foreach (var property in ignoreProperties)
+                map.ForSourceMember(property.Name, opt => opt.DoNotValidate());
+
+            return map;
+        }
+
+        protected IMappingExpression<TEntity, TDestination> CreateMapFromEntity<TEntity, TDestination>(
+            MemberList memberList = MemberList.Destination)
+            where TEntity : IEntity
+        {
+            var map = CreateMap<TEntity, TDestination>(memberList);
+
+            var ignoreProperties = typeof(TEntity).GetProperties()
+                .Where(property =>
+                {
+                    var propertyType = property.PropertyType.GetUnderlyingType();
+                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                        || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
+                        || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
+                });
+            foreach (var property in ignoreProperties)
+                map.ForSourceMember(property.Name, opt => opt.DoNotValidate());
 
             return map;
         }
