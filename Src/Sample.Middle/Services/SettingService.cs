@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Sample.Common.Dto;
 using Sample.Data.Entities;
 using Sample.Data.Repositories;
 using Sample.Middle.Abstracts;
@@ -9,7 +10,7 @@ using TripleSix.Core.Helpers;
 
 namespace Sample.Middle.Services
 {
-    public class SettingService : CommonService<SettingEntity>,
+    public class SettingService : CommonService<SettingEntity, SettingAdminDto>,
         ISettingService
     {
         public SettingService(SettingRepository repo)

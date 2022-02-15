@@ -38,7 +38,14 @@ namespace TripleSix.Core.Mappers
                 CreateMapToEntity(entityType, entityType);
                 CreateMapToEntity(typeof(ModelDataDto), entityType, MemberList.None);
 
-                var dtoTypes = SelectDtoType(objectName);
+                var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(assembly => assembly.GetTypes()
+                    .Where(t => t.IsPublic)
+                    .Where(t => t.Name == objectName + "AdminDto")
+                    .SelectMany(t => t.GetNestedTypes())
+                    .Where(t => typeof(IDataDto).IsAssignableFrom(t)));
+                var dtoTypes = SelectDtoType(objectName).Concat(adminDtos);
+
                 foreach (var dtoType in dtoTypes)
                 {
                     CreateMap(typeof(ModelDataDto), dtoType, MemberList.None).ReverseMap();

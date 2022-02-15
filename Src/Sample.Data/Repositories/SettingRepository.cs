@@ -11,11 +11,29 @@ using TripleSix.Core.Repositories;
 namespace Sample.Data.Repositories
 {
     public class SettingRepository : ModelRepository<SettingEntity>,
+        IQueryBuilder<SettingEntity, SettingAdminDto.Filter>,
         IQueryBuilder<SettingEntity, SettingFilterDto>
     {
         public SettingRepository(DataContext context)
             : base(context)
         {
+        }
+
+        public async Task<IQueryable<SettingEntity>> BuildQuery(IIdentity identity, SettingAdminDto.Filter filter)
+        {
+            var query = await BuildQuery(identity, filter as ModelFilterDto);
+
+            if (filter.Description.IsNotNullOrWhiteSpace())
+                query = query.Where(x => EF.Functions.Like(x.Description, $"%{filter.Description}%"));
+
+            if (filter.Search.IsNotNullOrWhiteSpace())
+            {
+                query = query.WhereOrs(
+                    x => EF.Functions.Like(x.Code, $"%{filter.Search}%"),
+                    x => EF.Functions.Like(x.Description, $"%{filter.Search}%"));
+            }
+
+            return query;
         }
 
         public Task<IQueryable<SettingEntity>> BuildQuery(IIdentity identity, SettingFilterDto filter)

@@ -13,9 +13,6 @@ namespace TripleSix.Core.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Id { get; set; }
 
-        [MaxLength(32)]
-        public virtual string Code { get; set; }
-
         [Required]
         public virtual bool IsDeleted { get; set; }
 
@@ -27,16 +24,19 @@ namespace TripleSix.Core.Entities
 
         public Guid? UpdaterId { get; set; }
 
+        [MaxLength(100)]
+        public virtual string Code { get; set; }
+
         protected override void ModelConfigure(EntityTypeBuilder<TEntity> builder)
         {
             base.ModelConfigure(builder);
 
-            builder.HasIndex(x => x.Code).IsUnique();
             builder.HasIndex(x => x.IsDeleted);
             builder.HasIndex(x => x.CreateDatetime);
             builder.HasIndex(x => x.UpdateDatetime);
             builder.HasIndex(x => x.CreatorId);
             builder.HasIndex(x => x.UpdaterId);
+            builder.HasIndex(x => x.Code).IsUnique();
         }
     }
 }

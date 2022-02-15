@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.ReDoc;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.DataTypes;
 using TripleSix.Core.JsonSerializers.ContractResolvers;
 using TripleSix.Core.JsonSerializers.Converters;
@@ -73,20 +74,27 @@ namespace TripleSix.Core.WebApi
                 .AddSingleton<IHttpContextAccessor>(httpContextAccessor)
                 .AddMvc(options =>
                 {
+                    options.Conventions.Add(new AdminControllerRouteConvention(_executingAssembly));
                     options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new PhoneModelBinderProvider());
                     options.AllowEmptyInputInBodyModelBinding = true;
+
                     if (mvcAction != null) mvcAction(options);
                 })
+                .AddControllersAsServices()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = BaseContractResolver;
                     options.SerializerSettings.Converters.Add(new ModelConverter(httpContextAccessor, BaseContractResolver));
                     options.SerializerSettings.Converters.Add(new TimestampConverter());
                     options.SerializerSettings.Converters.Add(new PhoneConverter());
+
                     if (jsonAction != null) jsonAction(options);
                 })
-                .AddControllersAsServices();
+                .ConfigureApplicationPartManager(options =>
+                {
+                    options.FeatureProviders.Add(new AdminControllerFeatureProvider(_executingAssembly));
+                });
         }
 
         public virtual void ConfigureSwagger(SwaggerGenOptions options)
@@ -101,6 +109,7 @@ namespace TripleSix.Core.WebApi
 
             options.DocumentFilter<BaseDocumentFilter>();
             options.OperationFilter<DescribeOperationFilter>();
+            options.OperationFilter<DescribeAutoAdminOperationFilter>(_executingAssembly);
         }
 
         public virtual void ConfigureReDoc(ReDocOptions options)

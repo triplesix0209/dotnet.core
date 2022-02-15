@@ -12,11 +12,6 @@ namespace TripleSix.Core.Dto
         [JsonProperty(Order = -10)]
         public virtual Guid? Id { get; set; }
 
-        [DisplayName("mã số")]
-        [JsonProperty(Order = -10)]
-        [StringLengthValidate(32)]
-        public virtual string Code { get; set; }
-
         [DisplayName("đã bị xóa?")]
         [JsonProperty(Order = -10)]
         public virtual bool? IsDeleted { get; set; }
@@ -36,5 +31,10 @@ namespace TripleSix.Core.Dto
         [DisplayName("mã định danh người sửa")]
         [JsonProperty(Order = -10)]
         public virtual Guid? UpdaterId { get; set; }
+
+        [DisplayName("mã số")]
+        [JsonProperty(Order = -10)]
+        [StringLengthValidate(100)]
+        public virtual string Code { get; set; }
     }
 }

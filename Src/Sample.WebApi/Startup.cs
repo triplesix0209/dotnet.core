@@ -9,7 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Sample.Common;
+using Sample.Common.Dto;
 using Sample.Data.DataContexts;
+using Sample.WebApi.Controllers.Admins.Methods;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Quartz;
@@ -28,10 +30,14 @@ namespace Sample.WebApi
         public override void ConfigureContainer(ContainerBuilder builder)
         {
             base.ConfigureContainer(builder);
+            builder.RegisterModule(new TripleSix.Core.AutoAdmin.AutofacModule(Configuration));
             builder.RegisterModule(new Common.AutofacModule(Configuration));
             builder.RegisterModule(new Data.AutofacModule(Configuration));
             builder.RegisterModule(new Middle.AutofacModule(Configuration));
             builder.RegisterModule(new Quartz.AutofacModule(Configuration));
+
+            builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
         }
 
         public override void ConfigureCors(CorsOptions options)
@@ -46,7 +52,8 @@ namespace Sample.WebApi
         {
             base.ConfigureSwagger(options);
 
-            options.SwaggerDoc("api", new OpenApiInfo { Title = "API Document", Version = "1.0" });
+            options.SwaggerDoc("common", new OpenApiInfo { Title = "API Document", Version = "1.0" });
+            options.SwaggerDoc("admin", new OpenApiInfo { Title = "Admin API Document", Version = "1.0" });
 
             options.OperationFilter<IdentityOperationFilter<Identity>>();
         }

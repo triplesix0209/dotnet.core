@@ -93,10 +93,9 @@ namespace TripleSix.Core.ModuleAutofac
             builder.Register(c => new MapperConfiguration(config =>
                 {
                     config.AddExpressionMapping();
+
                     foreach (var mapper in mappers)
-                    {
                         config.AddProfile(mapper);
-                    }
                 }))
                 .SingleInstance()
                 .AsSelf();

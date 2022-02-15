@@ -37,7 +37,7 @@ namespace TripleSix.Core.AutoAdmin
                 .FirstAsync<ObjectLogDto>(Mapper);
 
             if (objectLog.CreatorId.HasValue)
-                objectLog.Actor = (await GetActor(identity, objectLog.CreatorId.Value)).First();
+                objectLog.Actor = (await GetActor(identity, objectLog.CreatorId.Value))?.First();
 
             return objectLog;
         }
@@ -59,10 +59,13 @@ namespace TripleSix.Core.AutoAdmin
             if (actorIds.IsNotNullOrEmpty())
             {
                 var actors = await GetActor(identity, actorIds);
-                foreach (var objectLog in objectLogs.Items)
+                if (actors.IsNotNullOrEmpty())
                 {
-                    if (objectLog.CreatorId.HasValue)
-                        objectLog.Actor = actors.FirstOrDefault(x => x.Id == objectLog.CreatorId.Value);
+                    foreach (var objectLog in objectLogs.Items)
+                    {
+                        if (objectLog.CreatorId.HasValue)
+                            objectLog.Actor = actors.FirstOrDefault(x => x.Id == objectLog.CreatorId.Value);
+                    }
                 }
             }
 

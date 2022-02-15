@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sample.Common;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
-using TripleSix.Core.WebApi.Controllers;
 
 namespace Sample.WebApi.Abstracts
 {
-    [Route("[controller]")]
-    [ApiExplorerSettings(GroupName = "common")]
-    public abstract class CommonController : BaseController
+    [Route("Admin/[controller]")]
+    [ApiExplorerSettings(GroupName = "admin")]
+    public abstract class AdminController : BaseAdminController
     {
         protected override IIdentity GenerateIdentity()
         {
