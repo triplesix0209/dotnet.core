@@ -28,7 +28,13 @@ namespace TripleSix.Core.Helpers
             result.Reference = null;
 
             var propertyType = type.GetUnderlyingType();
-            if (result.Type == "array")
+            if (propertyType.IsEnum)
+            {
+                result.Reference = null;
+                result.Type = "integer";
+                result.Format = "int32";
+            }
+            else if (result.Type == "array")
             {
                 var elementType = type.IsArray
                     ? type.GetElementType()
@@ -38,8 +44,8 @@ namespace TripleSix.Core.Helpers
                 if (generateDefault)
                 {
                     elementDefaultInstance = type.IsArray
-                        ? (defaultInstance as Array).GetValue(0)
-                        : (defaultInstance as IList)[0];
+                        ? (defaultInstance as Array)?.GetValue(0)
+                        : (defaultInstance as IList)?[0];
                 }
 
                 result.Items.Reference = null;
@@ -90,12 +96,6 @@ namespace TripleSix.Core.Helpers
                             excludeProperties));
                 }
             }
-            else if (propertyType.IsEnum)
-            {
-                result.Reference = null;
-                result.Type = "integer";
-                result.Format = "int32";
-            }
 
             if (result.Type != "object" && generateDefault)
                 result.Default = type.GenerateDefaultValue(defaultInstance);
@@ -115,8 +115,8 @@ namespace TripleSix.Core.Helpers
             result.MaxLength = propertyInfo.GetCustomAttribute<StringLengthValidateAttribute>()?.MaximumLength;
             if (propertyInfo.GetCustomAttribute<RangeValidateAttribute>() is not null)
             {
-                result.Minimum = propertyInfo.GetCustomAttribute<RangeValidateAttribute>()?.Minimum as decimal?;
-                result.Maximum = propertyInfo.GetCustomAttribute<RangeValidateAttribute>()?.Maximum as decimal?;
+                result.Minimum = Convert.ToDecimal(propertyInfo.GetCustomAttribute<RangeValidateAttribute>()?.Minimum);
+                result.Maximum = Convert.ToDecimal(propertyInfo.GetCustomAttribute<RangeValidateAttribute>()?.Maximum);
             }
             else
             {

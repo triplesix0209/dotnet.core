@@ -134,84 +134,84 @@ namespace TripleSix.Core.Repositories
         {
             var query = await BuildQuery(identity, filter as PagingFilterDto);
 
-            if (filter.SortColumns.IsNotNullOrWhiteSpace())
-            {
-                var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                IOrderedQueryable<TEntity> orderedQuery = null;
-                var sorts = filter.SortColumns.Split(",")
-                    .Select(x =>
-                    {
-                        var items = x.Split("=");
-                        for (var i = 0; i < items.Length; i++)
-                            items[i] = items[i].Trim().ToLower();
-                        return items;
-                    });
+            //if (filter.Id.HasValue)
+            //    query = query.Where(x => x.Id == filter.Id.Value);
 
-                foreach (var sort in sorts)
-                {
-                    var isAscending = !(sort.Length > 1 && sort[1] == "desc");
-                    var propertyName = properties.FirstOrDefault(x => x.Name.ToLower() == sort[0])?.Name;
-                    if (propertyName == null)
-                        throw new Exception($"column \"{sort[0]}\" not found in {typeof(TEntity).Name}");
+            //if (filter.SortColumns.IsNotNullOrWhiteSpace())
+            //{
+            //    var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            //    IOrderedQueryable<TEntity> orderedQuery = null;
+            //    var sorts = filter.SortColumns.Split(",")
+            //        .Select(x =>
+            //        {
+            //            var items = x.Split("=");
+            //            for (var i = 0; i < items.Length; i++)
+            //                items[i] = items[i].Trim().ToLower();
+            //            return items;
+            //        });
 
-                    if (orderedQuery == null)
-                    {
-                        orderedQuery = isAscending
-                            ? query.OrderBy(e => EF.Property<object>(e, propertyName))
-                            : query.OrderByDescending(e => EF.Property<object>(e, propertyName));
-                    }
-                    else
-                    {
-                        orderedQuery = isAscending
-                            ? orderedQuery.ThenBy(e => EF.Property<object>(e, propertyName))
-                            : orderedQuery.ThenByDescending(e => EF.Property<object>(e, propertyName));
-                    }
-                }
+            //    foreach (var sort in sorts)
+            //    {
+            //        var isAscending = !(sort.Length > 1 && sort[1] == "desc");
+            //        var propertyName = properties.FirstOrDefault(x => x.Name.ToLower() == sort[0])?.Name;
+            //        if (propertyName == null)
+            //            throw new Exception($"column \"{sort[0]}\" not found in {typeof(TEntity).Name}");
 
-                query = orderedQuery;
-            }
+            //        if (orderedQuery == null)
+            //        {
+            //            orderedQuery = isAscending
+            //                ? query.OrderBy(e => EF.Property<object>(e, propertyName))
+            //                : query.OrderByDescending(e => EF.Property<object>(e, propertyName));
+            //        }
+            //        else
+            //        {
+            //            orderedQuery = isAscending
+            //                ? orderedQuery.ThenBy(e => EF.Property<object>(e, propertyName))
+            //                : orderedQuery.ThenByDescending(e => EF.Property<object>(e, propertyName));
+            //        }
+            //    }
 
-            if (filter.Id.HasValue)
-                query = query.Where(x => x.Id == filter.Id.Value);
+            //    query = orderedQuery;
+            //}
 
-            if (filter.NotId.HasValue)
-                query = query.Where(x => x.Id != filter.NotId.Value);
+            //if (filter.NotId.HasValue)
+            //    query = query.Where(x => x.Id != filter.NotId.Value);
 
-            if (!string.IsNullOrWhiteSpace(filter.Code))
-                query = query.Where(x => x.Code == filter.Code);
+            //if (!string.IsNullOrWhiteSpace(filter.Code))
+            //    query = query.Where(x => x.Code == filter.Code);
 
-            if (filter.ListId.IsNotNullOrWhiteSpace())
-            {
-                var ids = filter.ListId.Split(",").Select(x => Guid.Parse(x));
-                query = query.Where(x => ids.Contains(x.Id));
-            }
+            //if (filter.ListId.IsNotNullOrWhiteSpace())
+            //{
+            //    var ids = filter.ListId.Split(",").Select(x => Guid.Parse(x));
+            //    query = query.Where(x => ids.Contains(x.Id));
+            //}
 
-            if (filter.NotListId != null && filter.NotListId.Length > 0)
-            {
-                var ids = filter.NotListId.Split(",").Select(x => Guid.Parse(x));
-                query = query.Where(x => !ids.Contains(x.Id));
-            }
+            //if (filter.NotListId != null && filter.NotListId.Length > 0)
+            //{
+            //    var ids = filter.NotListId.Split(",").Select(x => Guid.Parse(x));
+            //    query = query.Where(x => !ids.Contains(x.Id));
+            //}
 
-            if (filter.IsDeleted.HasValue)
-                query = query.Where(x => x.IsDeleted == filter.IsDeleted);
+            //if (filter.IsDeleted.HasValue)
+            //    query = query.Where(x => x.IsDeleted == filter.IsDeleted);
 
-            if (filter.StartCreateDatetime.HasValue)
-                query = query.Where(x => x.CreateDatetime >= filter.StartCreateDatetime);
+            //if (filter.StartCreateDatetime.HasValue)
+            //    query = query.Where(x => x.CreateDatetime >= filter.StartCreateDatetime);
 
-            if (filter.EndCreateDatetime.HasValue)
-                query = query.Where(x => x.CreateDatetime <= filter.EndCreateDatetime);
+            //if (filter.EndCreateDatetime.HasValue)
+            //    query = query.Where(x => x.CreateDatetime <= filter.EndCreateDatetime);
 
-            if (filter.StartUpdateDatetime.HasValue)
-                query = query.Where(x => x.UpdateDatetime >= filter.StartUpdateDatetime);
+            //if (filter.StartUpdateDatetime.HasValue)
+            //    query = query.Where(x => x.UpdateDatetime >= filter.StartUpdateDatetime);
 
-            if (filter.EndUpdateDatetime.HasValue)
-                query = query.Where(x => x.UpdateDatetime <= filter.EndUpdateDatetime);
+            //if (filter.EndUpdateDatetime.HasValue)
+            //    query = query.Where(x => x.UpdateDatetime <= filter.EndUpdateDatetime);
 
-            if (filter.CreatorId.HasValue)
-                query = query.Where(x => x.CreatorId == filter.CreatorId);
+            //if (filter.CreatorId.HasValue)
+            //    query = query.Where(x => x.CreatorId == filter.CreatorId);
 
-            if (filter.UpdaterId.HasValue)
-                query = query.Where(x => x.UpdaterId == filter.UpdaterId);
+            //if (filter.UpdaterId.HasValue)
+            //    query = query.Where(x => x.UpdaterId == filter.UpdaterId);
 
             return query;
         }

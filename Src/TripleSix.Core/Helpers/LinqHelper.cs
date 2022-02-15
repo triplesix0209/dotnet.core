@@ -190,20 +190,6 @@ namespace TripleSix.Core.Helpers
             return query.Where(x => !x.IsDeleted);
         }
 
-        public static IQueryable<TEntity> WhereAppendIdOr<TEntity>(this IQueryable<TEntity> query, IModelFilterDto filter, Expression<Func<TEntity, bool>> predicate)
-            where TEntity : IModelEntity
-        {
-            var expr = PredicateBuilder.New(predicate);
-
-            if (filter.AppendIds.IsNotNullOrWhiteSpace())
-            {
-                var appendIds = filter.AppendIds.Split(",").Select(x => Guid.Parse(x));
-                expr = expr.Or(x => appendIds.Contains(x.Id));
-            }
-
-            return query.Where(expr);
-        }
-
         public static IQueryable<TEntity> WhereOrs<TEntity>(this IQueryable<TEntity> query, params Expression<Func<TEntity, bool>>[] predicates)
             where TEntity : IEntity
         {
