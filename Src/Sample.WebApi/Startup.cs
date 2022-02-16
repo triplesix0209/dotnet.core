@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Sample.Common;
-using Sample.Common.Dto;
 using Sample.Data.DataContexts;
 using Sample.WebApi.Controllers.Admins.Methods;
 using Swashbuckle.AspNetCore.SwaggerGen;

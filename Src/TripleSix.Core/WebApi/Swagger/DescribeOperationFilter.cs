@@ -1,11 +1,9 @@
-﻿using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Attributes;
-using TripleSix.Core.Dto;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.WebApi.Results;
 
@@ -83,14 +81,11 @@ namespace TripleSix.Core.WebApi.Swagger
                     var propertyInfo = parameterDescription.PropertyInfo();
                     if (propertyInfo is null) continue;
 
+                    PropertyInfo parentPropertyInfo = null;
                     if (parameterDescription.Name.Contains("."))
                     {
-                        var parentType = parameterDescription.ParameterDescriptor.ParameterType
+                        parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType
                             .GetProperty(parameterDescription.Name.Split(".")[0]);
-                        if (typeof(IFilterParameter).IsAssignableFrom(parentType.PropertyType))
-                        {
-                            var parameterDisplayName = parentType.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
-                        }
                     }
 
                     parameter.Name = string.Join(".", parameterDescription.Name.Split(".")
@@ -100,7 +95,8 @@ namespace TripleSix.Core.WebApi.Swagger
                         context.SchemaRepository,
                         generateDefault: true,
                         defaultInstance: propertyInfo.GetValue(propertyInfo.DeclaringType.CreateDefaultInstance()),
-                        propertyInfo: propertyInfo);
+                        propertyInfo: propertyInfo,
+                        parentPropertyInfo: parentPropertyInfo);
 
                     if (parameter.In == ParameterLocation.Path)
                     {

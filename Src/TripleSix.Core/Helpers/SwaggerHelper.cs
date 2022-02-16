@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Attributes;
+using TripleSix.Core.Dto;
 
 namespace TripleSix.Core.Helpers
 {
@@ -21,6 +22,7 @@ namespace TripleSix.Core.Helpers
             object defaultInstance = null,
             OpenApiSchema baseSchema = null,
             PropertyInfo propertyInfo = null,
+            PropertyInfo parentPropertyInfo = null,
             string[] excludeProperties = null)
         {
             var result = schemaGenerator.GenerateSchema(type, schemaRepository);
@@ -93,7 +95,8 @@ namespace TripleSix.Core.Helpers
                             defaultInstance: propertyDefaultInstance,
                             baseSchema: result,
                             propertyInfo: property,
-                            excludeProperties));
+                            parentPropertyInfo: propertyInfo,
+                            excludeProperties: excludeProperties));
                 }
             }
 
@@ -109,6 +112,21 @@ namespace TripleSix.Core.Helpers
             var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description;
             result.Description = string.Join("<br/>", new[] { displayName, description }.Where(x => x.IsNotNullOrWhiteSpace()));
+
+            if (parentPropertyInfo is not null && typeof(IFilterParameter).IsAssignableFrom(parentPropertyInfo.PropertyType))
+            {
+                var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+                var parameterName = parameterDisplayName.StartsWith("lọc theo ")
+                    ? parameterDisplayName.Substring(9)
+                    : parameterDisplayName;
+
+                result.Description = result.Description.Replace(
+                    $"[{nameof(parameterDisplayName).ToKebabCase()}]",
+                    parameterDisplayName);
+                result.Description = result.Description.Replace(
+                    $"[{nameof(parameterName).ToKebabCase()}]",
+                    parameterName);
+            }
 
             result.Pattern = propertyInfo.GetCustomAttribute<RegexValidateAttribute>()?.Pattern;
             result.MinLength = propertyInfo.GetCustomAttribute<StringLengthValidateAttribute>()?.MinimumLength;
@@ -127,7 +145,13 @@ namespace TripleSix.Core.Helpers
             if (propertyType.IsEnum)
             {
                 var values = EnumHelper.GetValues(propertyType).Cast<int>()
-                    .Select(value => $"<span>{value} = {EnumHelper.GetDescription(propertyType, value)}</span>");
+                    .Select(value =>
+                    {
+                        var name = EnumHelper.GetName(propertyType, value);
+                        var description = EnumHelper.GetDescription(propertyType, value);
+                        return $"<span>{value} = {name} {(description == name ? string.Empty : "(" + description + ")")}</span>";
+                    });
+
                 if (values.Any())
                     result.Description += "<br/><br/>" + string.Join("<br/>", values);
             }

@@ -23,15 +23,15 @@ namespace Sample.Data.Repositories
         {
             var query = await BuildQuery(identity, filter as ModelFilterDto);
 
-            if (filter.Search.IsNotNullOrWhiteSpace())
-            {
-                query = query.WhereOrs(
-                    x => EF.Functions.Like(x.Code, $"%{filter.Search}%"),
-                    x => EF.Functions.Like(x.Description, $"%{filter.Search}%"));
-            }
+            //if (filter.Search.IsNotNullOrWhiteSpace())
+            //{
+            //    query = query.WhereOrs(
+            //        x => EF.Functions.Like(x.Code, $"%{filter.Search}%"),
+            //        x => EF.Functions.Like(x.Description, $"%{filter.Search}%"));
+            //}
 
-            if (filter.Description.IsNotNullOrWhiteSpace())
-                query = query.Where(x => EF.Functions.Like(x.Description, $"%{filter.Description}%"));
+            //if (filter.Description.IsNotNullOrWhiteSpace())
+            //    query = query.Where(x => EF.Functions.Like(x.Description, $"%{filter.Description}%"));
 
             return query;
         }

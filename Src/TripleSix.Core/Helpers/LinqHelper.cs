@@ -198,5 +198,226 @@ namespace TripleSix.Core.Helpers
                 expr = expr.Or(predicate);
             return query.Where(expr);
         }
+
+        public static IQueryable<TEntity> AppendFilterParameter<TEntity>(this IQueryable<TEntity> query, string fieldName, IFilterParameter filter)
+            where TEntity : IEntity
+        {
+            if (filter is null) return query;
+            var filterType = filter.GetType();
+
+            if (filter is FilterParameterString)
+            {
+                return query.AppendFilterParameter(fieldName, filter as FilterParameterString);
+            }
+            else if (filter is FilterParameterDatetime)
+            {
+                return query.AppendFilterParameter(fieldName, filter as FilterParameterDatetime);
+            }
+            else if (filterType.IsSubclassOfRawGeneric(typeof(FilterParameterNumber<>)))
+            {
+                var method = typeof(LinqHelper).GetMethods()
+                .Where(x => x.IsStatic)
+                .Where(x => x.Name == nameof(AppendFilterParameter))
+                .Where(x => x.GetGenericArguments().Length == 2)
+                .Where(x => x.GetParameters()[2].ParameterType.IsSubclassOfRawGeneric(typeof(FilterParameterNumber<>)))
+                .FirstOrDefault();
+
+                return method
+                    .MakeGenericMethod(typeof(TEntity), filter.GetType().GetGenericArguments()[0])
+                    .Invoke(null, new object[] { query, fieldName, filter }) as IQueryable<TEntity>;
+            }
+            else
+            {
+                var method = typeof(LinqHelper).GetMethods()
+                .Where(x => x.IsStatic)
+                .Where(x => x.Name == nameof(AppendFilterParameter))
+                .Where(x => x.GetGenericArguments().Length == 2)
+                .Where(x => x.GetParameters()[2].ParameterType.IsSubclassOfRawGeneric(typeof(FilterParameter<>)))
+                .FirstOrDefault();
+
+                return method
+                    .MakeGenericMethod(typeof(TEntity), filter.GetType().GetGenericArguments()[0])
+                    .Invoke(null, new object[] { query, fieldName, filter }) as IQueryable<TEntity>;
+            }
+        }
+
+        public static IQueryable<TEntity> AppendFilterParameter<TEntity, TType>(this IQueryable<TEntity> query, string fieldName, FilterParameter<TType> filter)
+            where TEntity : IEntity
+        {
+            if (filter is null) return query;
+
+            switch (filter.Operator)
+            {
+                case FilterParameterOperators.Is:
+                    query = query.Where(x => EF.Property<TType>(x, fieldName).Equals(filter.Value[0]));
+                    break;
+                case FilterParameterOperators.In:
+                    query = query.Where(x => filter.Value.Contains(EF.Property<TType>(x, fieldName)));
+                    break;
+                case FilterParameterOperators.IsNull:
+                    query = query.Where(x => EF.Property<TType>(x, fieldName) == null);
+                    break;
+                case FilterParameterOperators.NotIs:
+                    query = query.Where(x => !EF.Property<TType>(x, fieldName).Equals(filter.Value[0]));
+                    break;
+                case FilterParameterOperators.NotIn:
+                    query = query.Where(x => !filter.Value.Contains(EF.Property<TType>(x, fieldName)));
+                    break;
+                case FilterParameterOperators.NotNull:
+                    query = query.Where(x => EF.Property<TType>(x, fieldName) != null);
+                    break;
+            }
+
+            return query;
+        }
+
+        public static IQueryable<TEntity> AppendFilterParameter<TEntity, TType>(this IQueryable<TEntity> query, string fieldName, FilterParameterNumber<TType> filter)
+            where TEntity : IEntity
+            where TType : IComparable
+        {
+            if (filter is null) return query;
+            var pe = Expression.Parameter(typeof(TEntity));
+            Expression expr;
+
+            switch (filter.Operator)
+            {
+                case FilterParameterNumberOperators.Equal:
+                    query = query.Where(x => EF.Property<TType>(x, fieldName).Equals(filter.Value[0]));
+                    break;
+                case FilterParameterNumberOperators.Less:
+                    expr = Expression.LessThan(
+                        Expression.Convert(Expression.Property(pe, fieldName), typeof(int)),
+                        Expression.Constant(filter.Value[0]));
+                    query = query.Where(Expression.Lambda<Func<TEntity, bool>>(expr, pe));
+                    break;
+                case FilterParameterNumberOperators.LessOrEqual:
+                    expr = Expression.LessThanOrEqual(
+                        Expression.Convert(Expression.Property(pe, fieldName), typeof(int)),
+                        Expression.Constant(filter.Value[0]));
+                    query = query.Where(Expression.Lambda<Func<TEntity, bool>>(expr, pe));
+                    break;
+                case FilterParameterNumberOperators.Greater:
+                    expr = Expression.GreaterThan(
+                        Expression.Convert(Expression.Property(pe, fieldName), typeof(int)),
+                        Expression.Constant(filter.Value[0]));
+                    query = query.Where(Expression.Lambda<Func<TEntity, bool>>(expr, pe));
+                    break;
+                case FilterParameterNumberOperators.GreaterOrEqual:
+                    expr = Expression.GreaterThanOrEqual(
+                        Expression.Convert(Expression.Property(pe, fieldName), typeof(int)),
+                        Expression.Constant(filter.Value[0]));
+                    query = query.Where(Expression.Lambda<Func<TEntity, bool>>(expr, pe));
+                    break;
+                case FilterParameterNumberOperators.In:
+                    query = query.Where(x => filter.Value.Contains(EF.Property<TType>(x, fieldName)));
+                    break;
+                case FilterParameterNumberOperators.IsNull:
+                    query = query.Where(x => EF.Property<TType>(x, fieldName) == null);
+                    break;
+                case FilterParameterNumberOperators.NotEqual:
+                    query = query.Where(x => !EF.Property<TType>(x, fieldName).Equals(filter.Value[0]));
+                    break;
+                case FilterParameterNumberOperators.NotIn:
+                    query = query.Where(x => !filter.Value.Contains(EF.Property<TType>(x, fieldName)));
+                    break;
+                case FilterParameterNumberOperators.NotNull:
+                    query = query.Where(x => EF.Property<TType>(x, fieldName) != null);
+                    break;
+            }
+
+            return query;
+        }
+
+        public static IQueryable<TEntity> AppendFilterParameter<TEntity>(this IQueryable<TEntity> query, string fieldName, FilterParameterString filter)
+            where TEntity : IEntity
+        {
+            if (filter is null) return query;
+
+            switch (filter.Operator)
+            {
+                case FilterParameterStringOperators.Equal:
+                    query = query.Where(x => EF.Property<string>(x, fieldName) == filter.Value[0]);
+                    break;
+                case FilterParameterStringOperators.Contain:
+                    query = query.Where(x => EF.Functions.Like(EF.Property<string>(x, fieldName), $"%{filter.Value[0]}%"));
+                    break;
+                case FilterParameterStringOperators.StartWith:
+                    query = query.Where(x => EF.Functions.Like(EF.Property<string>(x, fieldName), $"{filter.Value[0]}%"));
+                    break;
+                case FilterParameterStringOperators.EndWith:
+                    query = query.Where(x => EF.Functions.Like(EF.Property<string>(x, fieldName), $"%{filter.Value[0]}"));
+                    break;
+                case FilterParameterStringOperators.In:
+                    query = query.Where(x => filter.Value.Contains(EF.Property<string>(x, fieldName)));
+                    break;
+                case FilterParameterStringOperators.IsNull:
+                    query = query.Where(x => EF.Property<string>(x, fieldName) == null);
+                    break;
+                case FilterParameterStringOperators.NotEqual:
+                    query = query.Where(x => !EF.Property<string>(x, fieldName).Equals(filter.Value[0]));
+                    break;
+                case FilterParameterStringOperators.NotContain:
+                    query = query.Where(x => !EF.Functions.Like(EF.Property<string>(x, fieldName), $"%{filter.Value[0]}%"));
+                    break;
+                case FilterParameterStringOperators.NotStartWith:
+                    query = query.Where(x => !EF.Functions.Like(EF.Property<string>(x, fieldName), $"{filter.Value[0]}%"));
+                    break;
+                case FilterParameterStringOperators.NotEndWith:
+                    query = query.Where(x => !EF.Functions.Like(EF.Property<string>(x, fieldName), $"%{filter.Value[0]}"));
+                    break;
+                case FilterParameterStringOperators.NotIn:
+                    query = query.Where(x => !filter.Value.Contains(EF.Property<string>(x, fieldName)));
+                    break;
+                case FilterParameterStringOperators.NotNull:
+                    query = query.Where(x => EF.Property<string>(x, fieldName) != null);
+                    break;
+            }
+
+            return query;
+        }
+
+        public static IQueryable<TEntity> AppendFilterParameter<TEntity>(this IQueryable<TEntity> query, string fieldName, FilterParameterDatetime filter)
+                where TEntity : IEntity
+        {
+            if (filter is null) return query;
+
+            switch (filter.Operator)
+            {
+                case FilterParameterDatetimeOperators.Is:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) == filter.Value[0]);
+                    break;
+                case FilterParameterDatetimeOperators.Begin:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) >= filter.Value[0]);
+                    break;
+                case FilterParameterDatetimeOperators.End:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) <= filter.Value[0]);
+                    break;
+                case FilterParameterDatetimeOperators.Between:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) >= filter.Value[0]
+                        && EF.Property<DateTime>(x, fieldName) <= filter.Value[1]);
+                    break;
+                case FilterParameterDatetimeOperators.IsNull:
+                    query = query.Where(x => EF.Property<string>(x, fieldName) == null);
+                    break;
+                case FilterParameterDatetimeOperators.NotIs:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) != filter.Value[0]);
+                    break;
+                case FilterParameterDatetimeOperators.NotBegin:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) < filter.Value[0]);
+                    break;
+                case FilterParameterDatetimeOperators.NotEnd:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) > filter.Value[0]);
+                    break;
+                case FilterParameterDatetimeOperators.NotBetween:
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) < filter.Value[0]
+                        || EF.Property<DateTime>(x, fieldName) > filter.Value[1]);
+                    break;
+                case FilterParameterDatetimeOperators.NotNull:
+                    query = query.Where(x => EF.Property<string>(x, fieldName) != null);
+                    break;
+            }
+
+            return query;
+        }
     }
 }

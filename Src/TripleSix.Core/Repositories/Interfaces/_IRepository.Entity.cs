@@ -9,8 +9,7 @@ using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Repositories
 {
-    public interface IRepository<TEntity> : IRepository,
-        IQueryBuilder<TEntity, PagingFilterDto>
+    public interface IRepository<TEntity> : IRepository
         where TEntity : class, IEntity
     {
         IQueryable<TEntity> Query { get; }

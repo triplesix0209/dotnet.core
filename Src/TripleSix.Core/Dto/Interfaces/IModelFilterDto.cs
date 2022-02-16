@@ -5,34 +5,20 @@ namespace TripleSix.Core.Dto
     public interface IModelFilterDto
         : IPagingFilterDto
     {
-        string Search { get; set; }
+        FilterParameterString Search { get; set; }
 
-        FilterParameter<Guid[]> Id { get; set; }
+        FilterParameter<Guid> Id { get; set; }
 
-        //string AppendIds { get; set; }
+        FilterParameterString Code { get; set; }
 
-        //Guid? NotId { get; set; }
+        FilterParameter<bool> IsDeleted { get; set; }
 
-        //string Code { get; set; }
+        FilterParameterDatetime CreateDatetime { get; set; }
 
-        //string ListId { get; set; }
+        FilterParameterDatetime UpdateDatetime { get; set; }
 
-        //string NotListId { get; set; }
+        FilterParameter<Guid> CreatorId { get; set; }
 
-        //bool? IsDeleted { get; set; }
-
-        //DateTime? StartCreateDatetime { get; set; }
-
-        //DateTime? EndCreateDatetime { get; set; }
-
-        //DateTime? StartUpdateDatetime { get; set; }
-
-        //DateTime? EndUpdateDatetime { get; set; }
-
-        //Guid? CreatorId { get; set; }
-
-        //Guid? UpdaterId { get; set; }
-
-        //string SortColumns { get; set; }
+        FilterParameter<Guid> UpdaterId { get; set; }
     }
 }

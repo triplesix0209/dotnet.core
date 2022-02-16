@@ -10,7 +10,7 @@ namespace Sample.Common.Dto
         public class Filter : ModelFilterDto
         {
             [DisplayName("lọc theo mô tả")]
-            public string Description { get; set; }
+            public FilterParameterString Description { get; set; }
         }
 
         public class Item : ModelDataDto

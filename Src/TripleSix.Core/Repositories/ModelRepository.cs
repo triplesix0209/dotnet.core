@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Dto;
@@ -132,10 +131,7 @@ namespace TripleSix.Core.Repositories
 
         public virtual async Task<IQueryable<TEntity>> BuildQuery(IIdentity identity, ModelFilterDto filter)
         {
-            var query = await BuildQuery(identity, filter as PagingFilterDto);
-
-            //if (filter.Id.HasValue)
-            //    query = query.Where(x => x.Id == filter.Id.Value);
+            var query = await BuildQueryAuto(identity, filter);
 
             //if (filter.SortColumns.IsNotNullOrWhiteSpace())
             //{
@@ -173,45 +169,6 @@ namespace TripleSix.Core.Repositories
 
             //    query = orderedQuery;
             //}
-
-            //if (filter.NotId.HasValue)
-            //    query = query.Where(x => x.Id != filter.NotId.Value);
-
-            //if (!string.IsNullOrWhiteSpace(filter.Code))
-            //    query = query.Where(x => x.Code == filter.Code);
-
-            //if (filter.ListId.IsNotNullOrWhiteSpace())
-            //{
-            //    var ids = filter.ListId.Split(",").Select(x => Guid.Parse(x));
-            //    query = query.Where(x => ids.Contains(x.Id));
-            //}
-
-            //if (filter.NotListId != null && filter.NotListId.Length > 0)
-            //{
-            //    var ids = filter.NotListId.Split(",").Select(x => Guid.Parse(x));
-            //    query = query.Where(x => !ids.Contains(x.Id));
-            //}
-
-            //if (filter.IsDeleted.HasValue)
-            //    query = query.Where(x => x.IsDeleted == filter.IsDeleted);
-
-            //if (filter.StartCreateDatetime.HasValue)
-            //    query = query.Where(x => x.CreateDatetime >= filter.StartCreateDatetime);
-
-            //if (filter.EndCreateDatetime.HasValue)
-            //    query = query.Where(x => x.CreateDatetime <= filter.EndCreateDatetime);
-
-            //if (filter.StartUpdateDatetime.HasValue)
-            //    query = query.Where(x => x.UpdateDatetime >= filter.StartUpdateDatetime);
-
-            //if (filter.EndUpdateDatetime.HasValue)
-            //    query = query.Where(x => x.UpdateDatetime <= filter.EndUpdateDatetime);
-
-            //if (filter.CreatorId.HasValue)
-            //    query = query.Where(x => x.CreatorId == filter.CreatorId);
-
-            //if (filter.UpdaterId.HasValue)
-            //    query = query.Where(x => x.UpdaterId == filter.UpdaterId);
 
             return query;
         }

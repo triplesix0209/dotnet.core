@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using TripleSix.Core.Attributes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Repositories
 {
@@ -22,11 +25,6 @@ namespace TripleSix.Core.Repositories
         public virtual IQueryable<TEntity> BuildQuery()
         {
             return DataContext.Set<TEntity>();
-        }
-
-        public virtual Task<IQueryable<TEntity>> BuildQuery(IIdentity identity, PagingFilterDto filter)
-        {
-            return Task.FromResult(BuildQuery());
         }
 
         public virtual Task<IQueryable<TEntity>> BuildQueryOfFilter(IIdentity identity, IFilterDto filter, Type filterType)
@@ -116,6 +114,33 @@ namespace TripleSix.Core.Repositories
         public void Delete(IEnumerable<TEntity> entities)
         {
             Delete(null, entities.ToArray());
+        }
+
+        protected Task<IQueryable<TEntity>> BuildQueryAuto(IIdentity identity, IFilterDto filter, string[] excludeProperties = null)
+        {
+            var query = BuildQuery();
+
+            var properties = filter.GetType().GetProperties()
+                .Where(x => typeof(IFilterParameter).IsAssignableFrom(x.PropertyType));
+            if (excludeProperties is not null)
+                properties = properties.Where(x => !excludeProperties.Contains(x.Name));
+
+            foreach (var property in properties)
+            {
+                var fieldName = property.Name;
+
+                var autoQuery = property.GetCustomAttribute<AutoQueryAttribute>();
+                if (autoQuery is not null)
+                {
+                    if (autoQuery.Enable == false) continue;
+                    if (autoQuery.FieldName.IsNotNullOrWhiteSpace())
+                        fieldName = autoQuery.FieldName;
+                }
+
+                query = query.AppendFilterParameter(fieldName, property.GetValue(filter) as IFilterParameter);
+            }
+
+            return Task.FromResult(query);
         }
     }
 }
