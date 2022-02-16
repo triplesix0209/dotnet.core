@@ -79,7 +79,11 @@ namespace TripleSix.Core.Helpers
                     object propertyDefaultInstance = null;
                     if (generateDefault)
                     {
-                        propertyDefaultInstance = property.GetValue(defaultInstance);
+                        if (defaultInstance is null)
+                            propertyDefaultInstance = property.GetValue(property.DeclaringType.CreateDefaultInstance());
+                        else
+                            propertyDefaultInstance = property.GetValue(defaultInstance);
+
                         if (propertyDefaultInstance is null
                             && property.PropertyType.IsClass
                             && property.PropertyType != typeof(string))

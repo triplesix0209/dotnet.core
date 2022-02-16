@@ -29,5 +29,8 @@ namespace TripleSix.Core.Dto
 
         [DisplayName("lọc theo người sửa")]
         public virtual FilterParameter<Guid> UpdaterId { get; set; }
+
+        [DisplayName("sắp xếp")]
+        public virtual SortColumn[] SortColumn { get; set; }
     }
 }

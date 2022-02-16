@@ -133,6 +133,7 @@ namespace TripleSix.Core.Repositories
         {
             var query = await BuildQueryAuto(identity, filter);
 
+            break;
             //if (filter.SortColumns.IsNotNullOrWhiteSpace())
             //{
             //    var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -145,14 +146,12 @@ namespace TripleSix.Core.Repositories
             //                items[i] = items[i].Trim().ToLower();
             //            return items;
             //        });
-
             //    foreach (var sort in sorts)
             //    {
             //        var isAscending = !(sort.Length > 1 && sort[1] == "desc");
             //        var propertyName = properties.FirstOrDefault(x => x.Name.ToLower() == sort[0])?.Name;
             //        if (propertyName == null)
             //            throw new Exception($"column \"{sort[0]}\" not found in {typeof(TEntity).Name}");
-
             //        if (orderedQuery == null)
             //        {
             //            orderedQuery = isAscending
@@ -166,7 +165,6 @@ namespace TripleSix.Core.Repositories
             //                : orderedQuery.ThenByDescending(e => EF.Property<object>(e, propertyName));
             //        }
             //    }
-
             //    query = orderedQuery;
             //}
 
