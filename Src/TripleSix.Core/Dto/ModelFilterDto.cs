@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace TripleSix.Core.Dto
 {
@@ -30,7 +31,7 @@ namespace TripleSix.Core.Dto
         [DisplayName("lọc theo người sửa")]
         public virtual FilterParameter<Guid> UpdaterId { get; set; }
 
-        [DisplayName("sắp xếp")]
+        [DisplayName("danh sách cột sắp xếp")]
         public virtual SortColumn[] SortColumn { get; set; }
     }
 }

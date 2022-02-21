@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,9 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Attributes;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Helpers
 {
@@ -117,21 +120,6 @@ namespace TripleSix.Core.Helpers
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description;
             result.Description = string.Join("<br/>", new[] { displayName, description }.Where(x => x.IsNotNullOrWhiteSpace()));
 
-            if (parentPropertyInfo is not null && typeof(IFilterParameter).IsAssignableFrom(parentPropertyInfo.PropertyType))
-            {
-                var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
-                var parameterName = parameterDisplayName.StartsWith("lọc theo ")
-                    ? parameterDisplayName.Substring(9)
-                    : parameterDisplayName;
-
-                result.Description = result.Description.Replace(
-                    $"[{nameof(parameterDisplayName).ToKebabCase()}]",
-                    parameterDisplayName);
-                result.Description = result.Description.Replace(
-                    $"[{nameof(parameterName).ToKebabCase()}]",
-                    parameterName);
-            }
-
             result.Pattern = propertyInfo.GetCustomAttribute<RegexValidateAttribute>()?.Pattern;
             result.MinLength = propertyInfo.GetCustomAttribute<StringLengthValidateAttribute>()?.MinimumLength;
             result.MaxLength = propertyInfo.GetCustomAttribute<StringLengthValidateAttribute>()?.MaximumLength;
@@ -158,6 +146,72 @@ namespace TripleSix.Core.Helpers
 
                 if (values.Any())
                     result.Description += "<br/><br/>" + string.Join("<br/>", values);
+            }
+
+            if (parentPropertyInfo is not null && typeof(IFilterParameter).IsAssignableFrom(parentPropertyInfo.PropertyType))
+            {
+                var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+                var parameterName = parameterDisplayName.StartsWith("lọc theo ")
+                    ? parameterDisplayName.Substring(9)
+                    : parameterDisplayName;
+
+                result.Description = result.Description.Replace(
+                    $"[{nameof(parameterDisplayName).ToKebabCase()}]",
+                    parameterDisplayName);
+                result.Description = result.Description.Replace(
+                    $"[{nameof(parameterName).ToKebabCase()}]",
+                    parameterName);
+            }
+
+            if (propertyInfo is not null && type.IsArray && typeof(SortColumn).IsAssignableFrom(type.GetElementType()))
+            {
+                var metadata = propertyInfo.GetCustomAttribute<SortColumnAttribute>();
+                result.Enum = new List<IOpenApiAny>();
+                Type entityType = null;
+
+                string entityName = null;
+                if (metadata is not null && metadata.EntityName.IsNotNullOrWhiteSpace())
+                {
+                    entityName = metadata.EntityName;
+                    if (!entityName.EndsWith("Entity")) entityName += "Entity";
+                }
+                else if (typeof(IAdminDto).IsAssignableFrom(propertyInfo.ReflectedType?.DeclaringType))
+                {
+                    entityName = propertyInfo.ReflectedType.DeclaringType.Name
+                        .Replace("AdminDto", string.Empty);
+                    entityName += "Entity";
+                }
+
+                if (entityName.IsNotNullOrWhiteSpace())
+                {
+                    entityType = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(x => x.GetExportedTypes())
+                        .Where(x => typeof(IEntity).IsAssignableFrom(x))
+                        .Where(x => x.Name == entityName)
+                        .FirstOrDefault();
+                }
+
+                if (entityType is not null)
+                {
+                    result.Enum = entityType.GetProperties()
+                        .Where(x => !typeof(IEntity).IsAssignableFrom(x.PropertyType))
+                        .Where(x => !x.PropertyType.IsSubclassOfRawGeneric(typeof(IList<>)))
+                        .Select(x => new OpenApiString(x.Name.ToCamelCase()))
+                        .Cast<IOpenApiAny>()
+                        .ToList();
+                }
+
+                var externalColumns = metadata?.ExternalColumns
+                    .Select(x => x.ToCamelCase());
+                if (externalColumns.IsNotNullOrEmpty())
+                {
+                    foreach (var columnName in externalColumns)
+                    {
+                        if (result.Enum.Any(x => (x as OpenApiString).Value == columnName))
+                            continue;
+                        result.Enum.Add(new OpenApiString(columnName));
+                    }
+                }
             }
 
             return result;

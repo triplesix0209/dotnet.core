@@ -133,7 +133,6 @@ namespace TripleSix.Core.Repositories
         {
             var query = await BuildQueryAuto(identity, filter);
 
-            break;
             //if (filter.SortColumns.IsNotNullOrWhiteSpace())
             //{
             //    var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
