@@ -1,0 +1,24 @@
+﻿#pragma warning disable SA1649 // File name should match first type name
+
+using Autofac;
+using Microsoft.Extensions.Configuration;
+using TripleSix.Core.ModuleAutofac;
+
+namespace Sample.WebApi.Controllers.Admins.Methods
+{
+    public class AutofacModule : BaseModule
+    {
+        public AutofacModule(IConfiguration configuration)
+            : base(configuration)
+        {
+        }
+
+        protected override void Load(ContainerBuilder builder)
+        {
+            base.Load(builder);
+
+            builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+        }
+    }
+}

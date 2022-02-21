@@ -34,9 +34,7 @@ namespace Sample.WebApi
             builder.RegisterModule(new Data.AutofacModule(Configuration));
             builder.RegisterModule(new Middle.AutofacModule(Configuration));
             builder.RegisterModule(new Quartz.AutofacModule(Configuration));
-
-            builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,>))
-                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+            builder.RegisterModule(new Controllers.Admins.Methods.AutofacModule(Configuration));
         }
 
         public override void ConfigureCors(CorsOptions options)
