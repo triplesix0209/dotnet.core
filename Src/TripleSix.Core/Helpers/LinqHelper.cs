@@ -419,5 +419,36 @@ namespace TripleSix.Core.Helpers
 
             return query;
         }
+
+        public static IQueryable<TEntity> OrderBySortColumn<TEntity>(this IQueryable<TEntity> query, SortColumn[] sortColumns)
+            where TEntity : IEntity
+        {
+            if (sortColumns.IsNullOrEmpty()) return query;
+
+            var properties = typeof(TEntity).GetProperties();
+            IOrderedQueryable<TEntity> orderedQuery = null;
+            foreach (var column in sortColumns)
+            {
+                var columnProperty = properties.FirstOrDefault(x => x.Name.ToCamelCase() == column.Name);
+                if (columnProperty is null)
+                    throw new BaseException(BaseExceptions.SortColumnInvalid, args: column.Name);
+
+                if (orderedQuery is null)
+                {
+                    orderedQuery = column.Order == SortColumnOrder.Asc
+                        ? query.OrderBy(e => EF.Property<object>(e, columnProperty.Name))
+                        : query.OrderByDescending(e => EF.Property<object>(e, columnProperty.Name));
+                }
+                else
+                {
+                    orderedQuery = column.Order == SortColumnOrder.Asc
+                        ? orderedQuery.ThenBy(e => EF.Property<object>(e, columnProperty.Name))
+                        : orderedQuery.ThenByDescending(e => EF.Property<object>(e, columnProperty.Name));
+                }
+            }
+
+            if (orderedQuery is null) return query;
+            return orderedQuery;
+        }
     }
 }

@@ -88,7 +88,15 @@ namespace Sample.Data.Migrations
                         new
                         {
                             Id = new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"),
-                            Code = "code",
+                            Code = "a",
+                            Description = "description",
+                            IsDeleted = false,
+                            Value = "value"
+                        },
+                        new
+                        {
+                            Id = new Guid("cce3e3d7-f893-4a0d-bff9-d63cdfe8abe5"),
+                            Code = "b",
                             Description = "description",
                             IsDeleted = false,
                             Value = "value"

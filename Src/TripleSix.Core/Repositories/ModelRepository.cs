@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using TripleSix.Core.Attributes;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
@@ -131,43 +134,62 @@ namespace TripleSix.Core.Repositories
 
         public virtual async Task<IQueryable<TEntity>> BuildQuery(IIdentity identity, ModelFilterDto filter)
         {
-            var query = await BuildQueryAuto(identity, filter);
+            var propertyInfo = filter.GetType().GetProperty(nameof(IModelFilterDto.SortColumn));
+            var metadata = propertyInfo.GetCustomAttribute<SortColumnAttribute>();
 
-            //if (filter.SortColumns.IsNotNullOrWhiteSpace())
-            //{
-            //    var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            //    IOrderedQueryable<TEntity> orderedQuery = null;
-            //    var sorts = filter.SortColumns.Split(",")
-            //        .Select(x =>
-            //        {
-            //            var items = x.Split("=");
-            //            for (var i = 0; i < items.Length; i++)
-            //                items[i] = items[i].Trim().ToLower();
-            //            return items;
-            //        });
-            //    foreach (var sort in sorts)
-            //    {
-            //        var isAscending = !(sort.Length > 1 && sort[1] == "desc");
-            //        var propertyName = properties.FirstOrDefault(x => x.Name.ToLower() == sort[0])?.Name;
-            //        if (propertyName == null)
-            //            throw new Exception($"column \"{sort[0]}\" not found in {typeof(TEntity).Name}");
-            //        if (orderedQuery == null)
-            //        {
-            //            orderedQuery = isAscending
-            //                ? query.OrderBy(e => EF.Property<object>(e, propertyName))
-            //                : query.OrderByDescending(e => EF.Property<object>(e, propertyName));
-            //        }
-            //        else
-            //        {
-            //            orderedQuery = isAscending
-            //                ? orderedQuery.ThenBy(e => EF.Property<object>(e, propertyName))
-            //                : orderedQuery.ThenByDescending(e => EF.Property<object>(e, propertyName));
-            //        }
-            //    }
-            //    query = orderedQuery;
-            //}
+            string entityName = null;
+            if (metadata is not null && metadata.EntityName.IsNotNullOrWhiteSpace())
+            {
+                entityName = metadata.EntityName;
+                if (!entityName.EndsWith("Entity")) entityName += "Entity";
+            }
+            else if (typeof(IAdminDto).IsAssignableFrom(propertyInfo.ReflectedType?.DeclaringType))
+            {
+                entityName = propertyInfo.ReflectedType.DeclaringType.Name
+                    .Replace("AdminDto", string.Empty);
+                entityName += "Entity";
+            }
 
-            return query;
+            var vaildColumns = new List<string>();
+            if (entityName.IsNotNullOrWhiteSpace())
+            {
+                var entityType = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(x => x.GetExportedTypes())
+                    .Where(x => typeof(IEntity).IsAssignableFrom(x))
+                    .Where(x => x.Name == entityName)
+                    .FirstOrDefault();
+
+                if (entityType is not null)
+                {
+                    vaildColumns.AddRange(entityType.GetProperties()
+                        .Where(x => !typeof(IEntity).IsAssignableFrom(x.PropertyType))
+                        .Where(x => !x.PropertyType.IsSubclassOfRawGeneric(typeof(IList<>)))
+                        .Select(x => x.Name.ToCamelCase()));
+                }
+            }
+
+            var externalColumns = metadata?.ExternalColumns
+                .Select(x => x.ToCamelCase());
+            if (externalColumns.IsNotNullOrEmpty())
+            {
+                foreach (var columnName in externalColumns)
+                {
+                    if (vaildColumns.Any(x => x == columnName)) continue;
+                    vaildColumns.Add(columnName);
+                }
+            }
+
+            var invaildColumns = filter.SortColumn?
+                .Where(x => !vaildColumns.Contains(x.Name));
+            if (invaildColumns.IsNotNullOrEmpty())
+            {
+                throw new BaseException(
+                    BaseExceptions.SortColumnInvalid,
+                    args: string.Join(",", invaildColumns.Select(x => x.Name)));
+            }
+
+            return (await BuildQueryAuto(identity, filter))
+                .OrderBySortColumn(filter.SortColumn);
         }
     }
 }

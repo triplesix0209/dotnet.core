@@ -20,5 +20,7 @@ namespace TripleSix.Core.Dto
         FilterParameter<Guid> CreatorId { get; set; }
 
         FilterParameter<Guid> UpdaterId { get; set; }
+
+        SortColumn[] SortColumn { get; set; }
     }
 }

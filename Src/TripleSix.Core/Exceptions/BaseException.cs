@@ -62,5 +62,8 @@ namespace TripleSix.Core.Exceptions
 
         [ErrorData(400, message: "lỗi kế thừa lặp")]
         CyclicInheritance,
+
+        [ErrorData(400, message: "những cột sau không phù hợp để sắp xếp: {0}")]
+        SortColumnInvalid,
     }
 }
