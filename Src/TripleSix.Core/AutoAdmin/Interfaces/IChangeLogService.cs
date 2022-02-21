@@ -9,6 +9,8 @@ namespace TripleSix.Core.AutoAdmin
     public interface IChangeLogService<TEntity> : IModelService<TEntity>
         where TEntity : class, IModelEntity
     {
+        Task<string> SerializeEntity(IIdentity identity, TEntity entity);
+
         Task<IPaging<ObjectLogDto>> GetPageChangeLog(IIdentity identity, Guid id, int page, int size = 10);
 
         Task<ObjectLogDto> GetChangeLog(IIdentity identity, Guid objectLogId);

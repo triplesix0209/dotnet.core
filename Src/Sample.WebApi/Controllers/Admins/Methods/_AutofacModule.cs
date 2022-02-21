@@ -19,6 +19,21 @@ namespace Sample.WebApi.Controllers.Admins.Methods
 
             builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+            builder.RegisterGeneric(typeof(AdminControllerCreateMethod<,>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+            builder.RegisterGeneric(typeof(AdminControllerUpdateMethod<,>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+            builder.RegisterGeneric(typeof(AdminControllerDeleteMethod<>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+            builder.RegisterGeneric(typeof(AdminControllerChangeLogMethod<>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+
+            builder.RegisterGeneric(typeof(AdminControllerExportMethod<,,>))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
         }
     }
 }

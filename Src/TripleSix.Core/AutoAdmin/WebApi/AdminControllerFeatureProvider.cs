@@ -50,6 +50,71 @@ namespace TripleSix.Core.AutoAdmin
                             .GetTypeInfo());
                     }
                 }
+
+                if (metadata.EnableCreate && createType is not null)
+                {
+                    var controllerType = exportedTypes.FirstOrDefault(
+                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerCreateMethod<,>))
+                        && !t.IsAbstract);
+                    if (controllerType is not null)
+                    {
+                        feature.Controllers.Add(
+                            controllerType.MakeGenericType(entityType, createType)
+                            .GetTypeInfo());
+                    }
+                }
+
+                if (metadata.EnableUpdate && updateType is not null)
+                {
+                    var controllerType = exportedTypes.FirstOrDefault(
+                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerUpdateMethod<,>))
+                        && !t.IsAbstract);
+                    if (controllerType is not null)
+                    {
+                        feature.Controllers.Add(
+                            controllerType.MakeGenericType(entityType, updateType)
+                            .GetTypeInfo());
+                    }
+                }
+
+                if (metadata.EnableDelete)
+                {
+                    var controllerType = exportedTypes.FirstOrDefault(
+                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerDeleteMethod<>))
+                        && !t.IsAbstract);
+                    if (controllerType is not null)
+                    {
+                        feature.Controllers.Add(
+                            controllerType.MakeGenericType(entityType)
+                            .GetTypeInfo());
+                    }
+                }
+
+                if (metadata.EnableChangeLog)
+                {
+                    var controllerType = exportedTypes.FirstOrDefault(
+                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerChangeLogMethod<>))
+                        && !t.IsAbstract);
+                    if (controllerType is not null)
+                    {
+                        feature.Controllers.Add(
+                            controllerType.MakeGenericType(entityType)
+                            .GetTypeInfo());
+                    }
+                }
+
+                if (metadata.EnableExport && filterType is not null && detailType is not null)
+                {
+                    var controllerType = exportedTypes.FirstOrDefault(
+                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerExportMethod<,,>))
+                        && !t.IsAbstract);
+                    if (controllerType is not null)
+                    {
+                        feature.Controllers.Add(
+                            controllerType.MakeGenericType(entityType, filterType, detailType)
+                            .GetTypeInfo());
+                    }
+                }
             }
         }
     }

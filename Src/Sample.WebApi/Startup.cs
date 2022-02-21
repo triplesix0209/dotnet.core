@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Sample.Common;
 using Sample.Data.DataContexts;
-using Sample.WebApi.Controllers.Admins.Methods;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Quartz;

@@ -29,6 +29,11 @@ namespace TripleSix.Core.AutoAdmin
 
         public ObjectLogRepository ObjectLogRepo { get; set; }
 
+        public virtual Task<string> SerializeEntity(IIdentity identity, TEntity entity)
+        {
+            return SerializeData(entity);
+        }
+
         public virtual async Task<ObjectLogDto> GetChangeLog(IIdentity identity, Guid objectLogId)
         {
             var objectLog = await ObjectLogRepo.Query
@@ -160,11 +165,6 @@ namespace TripleSix.Core.AutoAdmin
         public override Task<string> GenerateCode(IIdentity identity, TEntity entity)
         {
             return Task.FromResult(RandomHelper.RandomString(10));
-        }
-
-        protected virtual Task<string> SerializeEntity(IIdentity identity, TEntity entity)
-        {
-            return SerializeData(entity);
         }
 
         protected virtual Task<string> SerializeData(object data, params string[] excludeProperties)

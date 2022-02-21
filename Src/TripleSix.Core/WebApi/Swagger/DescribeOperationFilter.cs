@@ -79,22 +79,17 @@ namespace TripleSix.Core.WebApi.Swagger
                     }
 
                     var propertyInfo = parameterDescription.PropertyInfo();
-                    if (propertyInfo is null) continue;
-
                     PropertyInfo parentPropertyInfo = null;
                     if (parameterDescription.Name.Contains("."))
-                    {
-                        parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType
-                            .GetProperty(parameterDescription.Name.Split(".")[0]);
-                    }
+                        parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType.GetProperty(parameterDescription.Name.Split(".")[0]);
 
                     parameter.Name = string.Join(".", parameterDescription.Name.Split(".")
                         .Select(x => x.ToCamelCase()));
-                    parameter.Schema = propertyInfo.PropertyType.GenerateSchema(
+                    parameter.Schema = parameterDescription.Type.GenerateSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,
                         generateDefault: true,
-                        defaultInstance: propertyInfo.GetValue(propertyInfo.DeclaringType.CreateDefaultInstance()),
+                        defaultInstance: propertyInfo is null ? null : propertyInfo.GetValue(propertyInfo.DeclaringType.CreateDefaultInstance()),
                         propertyInfo: propertyInfo,
                         parentPropertyInfo: parentPropertyInfo);
 
@@ -104,7 +99,7 @@ namespace TripleSix.Core.WebApi.Swagger
                     }
                     else
                     {
-                        parameter.Required = propertyInfo.GetCustomAttribute<RequiredValidateAttribute>() is not null
+                        parameter.Required = propertyInfo?.GetCustomAttribute<RequiredValidateAttribute>() is not null
                             && parameter.Schema.Default is OpenApiNull;
                     }
 

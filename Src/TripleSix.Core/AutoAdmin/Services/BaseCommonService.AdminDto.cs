@@ -18,7 +18,7 @@ namespace TripleSix.Core.AutoAdmin
         {
         }
 
-        protected override async Task<string> SerializeEntity(IIdentity identity, TEntity entity)
+        public override async Task<string> SerializeEntity(IIdentity identity, TEntity entity)
         {
             var detailType = typeof(TAdminDto).GetNestedTypes().FirstOrDefault(x => x.Name == "Detail");
             if (detailType is null) return await base.SerializeEntity(identity, entity);
