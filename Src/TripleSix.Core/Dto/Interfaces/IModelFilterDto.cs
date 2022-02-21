@@ -5,8 +5,6 @@ namespace TripleSix.Core.Dto
     public interface IModelFilterDto
         : IPagingFilterDto
     {
-        FilterParameterString Search { get; set; }
-
         FilterParameter<Guid> Id { get; set; }
 
         FilterParameterString Code { get; set; }
@@ -20,6 +18,8 @@ namespace TripleSix.Core.Dto
         FilterParameter<Guid> CreatorId { get; set; }
 
         FilterParameter<Guid> UpdaterId { get; set; }
+
+        string Search { get; set; }
 
         SortColumn[] SortColumn { get; set; }
     }

@@ -1,15 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using Newtonsoft.Json;
 
 namespace TripleSix.Core.Dto
 {
     public class ModelFilterDto : PagingFilterDto,
         IModelFilterDto
     {
-        [DisplayName("từ khóa tìm kiếm")]
-        public virtual FilterParameterString Search { get; set; }
-
         [DisplayName("lọc theo mã định danh")]
         public virtual FilterParameter<Guid> Id { get; set; }
 
@@ -30,6 +26,9 @@ namespace TripleSix.Core.Dto
 
         [DisplayName("lọc theo người sửa")]
         public virtual FilterParameter<Guid> UpdaterId { get; set; }
+
+        [DisplayName("từ khóa tìm kiếm")]
+        public virtual string Search { get; set; }
 
         [DisplayName("danh sách cột sắp xếp")]
         public virtual SortColumn[] SortColumn { get; set; }
