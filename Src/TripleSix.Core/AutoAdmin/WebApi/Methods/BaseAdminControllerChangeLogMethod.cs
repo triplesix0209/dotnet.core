@@ -17,7 +17,7 @@ namespace TripleSix.Core.AutoAdmin
         public ICommonService<TEntity> Service { get; set; }
 
         [HttpGet("{id}/ChangeLog")]
-        [SwaggerApi("lấy danh sách lịch sử thay đổi của [controller]", typeof(PagingResult<ObjectLogDto>))]
+        [SwaggerApi("lấy lịch sử thay đổi của [controller]", typeof(PagingResult<ObjectLogDto>))]
         public virtual async Task<IActionResult> GetPageChangeLog(RouteId route, PagingFilterDto filter)
         {
             var identity = GenerateIdentity();
@@ -26,7 +26,7 @@ namespace TripleSix.Core.AutoAdmin
         }
 
         [HttpGet("ChangeLog/{objectLogId}")]
-        [SwaggerApi("xem chi tiết thay đổi của [controller]", typeof(DataResult<ObjectLogDto>))]
+        [SwaggerApi("lấy chi tiết thay đổi của [controller]", typeof(DataResult<ObjectLogDto>))]
         public virtual async Task<IActionResult> GetDetailChangeLog([SwaggerParameter("mã định danh mục thay đổi")] Guid objectLogId)
         {
             var identity = GenerateIdentity();
