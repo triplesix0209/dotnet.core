@@ -46,11 +46,7 @@ namespace Sample.Data.Migrations
             migrationBuilder.InsertData(
                 table: "setting",
                 columns: new[] { "id", "code", "create_datetime", "creator_id", "description", "is_deleted", "update_datetime", "updater_id", "value" },
-                values: new object[,]
-                {
-                    { new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"), "a", null, null, "description", false, null, null, "value" },
-                    { new Guid("cce3e3d7-f893-4a0d-bff9-d63cdfe8abe5"), "b", null, null, "description", false, null, null, "value" }
-                });
+                values: new object[] { new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"), "code", null, null, "description", false, null, null, "value" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_setting_code",

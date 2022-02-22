@@ -1,13 +1,7 @@
 ﻿[
   {
     "id": "26E84C09-8AA7-4E90-B1F6-F6E2FF6EF14C",
-    "code": "a",
-    "description": "description",
-    "value": "value"
-  },
-  {
-    "id": "CCE3E3D7-F893-4A0D-BFF9-D63CDFE8ABE5",
-    "code": "b",
+    "code": "code",
     "description": "description",
     "value": "value"
   }
