@@ -113,7 +113,10 @@ namespace TripleSix.Core.Helpers
 
         public static Array GetValues(Type enumType)
         {
-            return Enum.GetValues(enumType);
+            var values = Enum.GetValues(enumType).Cast<int>();
+            return values.Where(x => x > 0).OrderBy(x => x)
+                .Concat(values.Where(x => x < 0).OrderByDescending(x => x))
+                .ToArray();
         }
 
         public static T Parse<T>(object value, bool ignoreCase = true)

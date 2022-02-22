@@ -1,5 +1,4 @@
 ﻿using System;
-using TripleSix.Core.Enums;
 
 namespace TripleSix.Core.AutoAdmin
 {

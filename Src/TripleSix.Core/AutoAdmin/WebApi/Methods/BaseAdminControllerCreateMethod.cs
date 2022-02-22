@@ -19,6 +19,7 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpPost]
         [SwaggerApi("tạo [controller]", typeof(DataResult<Guid>))]
+        [AdminMethod(Type = AdminMethodTypes.Create)]
         [Transactional]
         public async Task<IActionResult> Create([FromBody] TCreateDto input)
         {
@@ -26,7 +27,7 @@ namespace TripleSix.Core.AutoAdmin
             TEntity data;
 
             var createInterface = typeof(ICreatableWithModel<>).MakeGenericType(typeof(TCreateDto));
-            if (createInterface.IsAssignableFrom(Service.GetType()))
+            if (Service.GetType().IsAssignableTo(createInterface))
             {
                 var method = createInterface.GetMethod(nameof(ICreatableWithModel<DataDto>.CreateWithModel));
                 data = await (Task<TEntity>)method

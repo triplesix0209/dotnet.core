@@ -33,7 +33,7 @@ namespace Sample.WebApi
             builder.RegisterModule(new Data.AutofacModule(Configuration));
             builder.RegisterModule(new Middle.AutofacModule(Configuration));
             builder.RegisterModule(new Quartz.AutofacModule(Configuration));
-            builder.RegisterModule(new Controllers.Admins.Methods.AutofacModule(Configuration));
+            builder.RegisterModule(new Controllers.Admins.Auto.AutofacModule(Configuration));
         }
 
         public override void ConfigureCors(CorsOptions options)
@@ -66,6 +66,7 @@ namespace Sample.WebApi
             BaseConfigure(app, env);
             dataContext.Database.Migrate();
             AutofacContainer.Resolve<JobScheduler>().Start();
+            TripleSix.Core.AutoAdmin.BaseAdminMetadataController.Validate();
 
             app.UseRouting();
             app.UseCors();

@@ -1,17 +1,14 @@
-﻿namespace TripleSix.Core.Enums
+﻿namespace TripleSix.Core.AutoAdmin
 {
     /// <summary>
     /// phân loại field của admin.
     /// </summary>
     public enum AdminFieldTypes
     {
-        // mã định danh
-        Id = 1,
-
         // hình ảnh / video
-        Media = 2,
+        Media = 1,
 
         // HTML editor
-        HTMLEditor = 3,
+        HTML = 2,
     }
 }

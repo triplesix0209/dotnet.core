@@ -30,7 +30,7 @@ namespace Sample.Common.Dto
         {
             [DisplayName("mã số")]
             [RequiredValidate]
-            [StringLengthValidate(32)]
+            [StringLengthValidate(100)]
             public string Code { get; set; }
 
             [DisplayName("giá trị")]

@@ -17,11 +17,22 @@ namespace TripleSix.Core.Dto
 
     public enum FilterParameterOperators
     {
+        [Description("Is")]
         Is = 1,
+
+        [Description("In")]
         In = 2,
+
+        [Description("Is NULL")]
         IsNull = 3,
+
+        [Description("Not")]
         NotIs = -1,
+
+        [Description("Not in")]
         NotIn = -2,
+
+        [Description("Not NULL")]
         NotNull = -3,
     }
 }

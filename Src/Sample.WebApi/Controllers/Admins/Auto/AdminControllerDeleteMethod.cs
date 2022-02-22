@@ -4,14 +4,13 @@ using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 
-namespace Sample.WebApi.Controllers.Admins.Methods
+namespace Sample.WebApi.Controllers.Admins.Auto
 {
     [Route("Admin/[controller]")]
     [ApiExplorerSettings(GroupName = "admin")]
-    public class AdminControllerUpdateMethod<TEntity, TUpdateDto>
-        : BaseAdminControllerUpdateMethod<TEntity, TUpdateDto>
+    public class AdminControllerDeleteMethod<TEntity>
+        : BaseAdminControllerDeleteMethod<TEntity>
         where TEntity : class, IModelEntity
-        where TUpdateDto : class, IDataDto
     {
         protected override IIdentity GenerateIdentity()
         {

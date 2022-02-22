@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -19,7 +20,7 @@ namespace TripleSix.Core.AutoAdmin
             if (!controller.ControllerType.IsGenericType) return;
 
             var entityType = controller.ControllerType.GetGenericArguments()[0];
-            if (!typeof(IModelEntity).IsAssignableFrom(entityType)) return;
+            if (!entityType.IsAssignableTo<IModelEntity>()) return;
 
             var controllerBase = _executingAssembly.GetExportedTypes()
                .FirstOrDefault(t =>

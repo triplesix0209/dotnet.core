@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TripleSix.Core.Dto;
+using TripleSix.Core.Helpers;
 
 namespace Sample.Middle.Mappers
 {
@@ -14,7 +15,7 @@ namespace Sample.Middle.Mappers
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes()
                 .Where(t => t.IsPublic)
-                .Where(t => typeof(IDataDto).IsAssignableFrom(t))
+                .Where(t => t.IsAssignableTo<IDataDto>())
                 .Where(t =>
                 {
                     return new[]

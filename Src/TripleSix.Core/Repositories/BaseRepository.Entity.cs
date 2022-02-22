@@ -31,7 +31,7 @@ namespace TripleSix.Core.Repositories
         {
             var repoType = GetType();
             var queryBuilderInterface = typeof(IQueryBuilder<,>).MakeGenericType(typeof(TEntity), filterType);
-            if (!queryBuilderInterface.IsAssignableFrom(repoType))
+            if (!repoType.IsAssignableTo(queryBuilderInterface))
                 throw new Exception($"{repoType.Name} need implement IQueryBuilder<{typeof(TEntity).Name},{filterType.Name}> interface");
 
             var buildQueryMethod = repoType.GetMethods()
@@ -121,7 +121,7 @@ namespace TripleSix.Core.Repositories
             var query = BuildQuery();
 
             var properties = filter.GetType().GetProperties()
-                .Where(x => typeof(IFilterParameter).IsAssignableFrom(x.PropertyType));
+                .Where(x => x.PropertyType.IsAssignableTo<IFilterParameter>());
             if (excludeProperties is not null)
                 properties = properties.Where(x => !excludeProperties.Contains(x.Name));
 

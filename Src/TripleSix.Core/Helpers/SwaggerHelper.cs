@@ -148,7 +148,7 @@ namespace TripleSix.Core.Helpers
                     result.Description += "<br/><br/>" + string.Join("<br/>", values);
             }
 
-            if (parentPropertyInfo is not null && typeof(IFilterParameter).IsAssignableFrom(parentPropertyInfo.PropertyType))
+            if (parentPropertyInfo is not null && parentPropertyInfo.PropertyType.IsAssignableTo<IFilterParameter>())
             {
                 var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
                 var parameterName = parameterDisplayName.StartsWith("lọc theo ")
@@ -163,7 +163,7 @@ namespace TripleSix.Core.Helpers
                     parameterName);
             }
 
-            if (propertyInfo is not null && type.IsArray && typeof(SortColumn).IsAssignableFrom(type.GetElementType()))
+            if (propertyInfo is not null && type.IsArray && type.GetElementType().IsAssignableTo<SortColumn>())
             {
                 var metadata = propertyInfo.GetCustomAttribute<SortColumnAttribute>();
                 result.Enum = new List<IOpenApiAny>();
@@ -175,7 +175,7 @@ namespace TripleSix.Core.Helpers
                     entityName = metadata.EntityName;
                     if (!entityName.EndsWith("Entity")) entityName += "Entity";
                 }
-                else if (typeof(IAdminDto).IsAssignableFrom(propertyInfo.ReflectedType?.DeclaringType))
+                else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
                 {
                     entityName = propertyInfo.ReflectedType.DeclaringType.Name
                         .Replace("AdminDto", string.Empty);
@@ -186,7 +186,7 @@ namespace TripleSix.Core.Helpers
                 {
                     entityType = AppDomain.CurrentDomain.GetAssemblies()
                         .SelectMany(x => x.GetExportedTypes())
-                        .Where(x => typeof(IEntity).IsAssignableFrom(x))
+                        .Where(x => x.IsAssignableTo<IEntity>())
                         .Where(x => x.Name == entityName)
                         .FirstOrDefault();
                 }
@@ -194,7 +194,7 @@ namespace TripleSix.Core.Helpers
                 if (entityType is not null)
                 {
                     result.Enum = entityType.GetProperties()
-                        .Where(x => !typeof(IEntity).IsAssignableFrom(x.PropertyType))
+                        .Where(x => !x.PropertyType.IsAssignableTo<IEntity>())
                         .Where(x => !x.PropertyType.IsSubclassOfRawGeneric(typeof(IList<>)))
                         .Select(x => new OpenApiString(x.Name.ToCamelCase()))
                         .Cast<IOpenApiAny>()
@@ -265,7 +265,7 @@ namespace TripleSix.Core.Helpers
                 return result;
             }
 
-            if (typeof(IList).IsAssignableFrom(type))
+            if (type.IsAssignableTo<IList>())
             {
                 var result = new OpenApiArray();
                 var items = value as IList;

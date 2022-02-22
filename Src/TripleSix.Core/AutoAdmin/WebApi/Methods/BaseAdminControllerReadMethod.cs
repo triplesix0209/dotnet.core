@@ -18,13 +18,14 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpGet]
         [SwaggerApi("lấy danh sách [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.List)]
         public virtual async Task<IActionResult> GetPage(TFilterDto input)
         {
             var identity = GenerateIdentity();
 
             IPaging<TItemDto> data;
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TItemDto));
-            if (readInterface.IsAssignableFrom(Service.GetType()))
+            if (Service.GetType().IsAssignableTo(readInterface))
                 data = await Service.GetPageByFilterWithModel<TItemDto>(identity, input);
             else
                 data = await Service.GetPageByFilter<TItemDto>(identity, input);
@@ -34,13 +35,14 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpGet("{id}")]
         [SwaggerApi("lấy chi tiết [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.Detail)]
         public virtual async Task<IActionResult> GetDetail(RouteId route)
         {
             var identity = GenerateIdentity();
 
             TDetailDto data;
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TDetailDto));
-            if (readInterface.IsAssignableFrom(Service.GetType()))
+            if (Service.GetType().IsAssignableTo(readInterface))
                 data = await Service.GetFirstByIdWithModel<TDetailDto>(identity, route.Id, true);
             else
                 data = await Service.GetFirstById<TDetailDto>(identity, route.Id, true);

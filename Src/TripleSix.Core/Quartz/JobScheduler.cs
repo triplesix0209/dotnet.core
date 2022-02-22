@@ -22,8 +22,7 @@ namespace TripleSix.Core.Quartz
                 .SelectMany(assembly => assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
-                .Where(t => typeof(BaseJob)
-                .IsAssignableFrom(t)));
+                .Where(t => t.IsAssignableTo<BaseJob>()));
 
             foreach (var jobType in jobTypes)
             {

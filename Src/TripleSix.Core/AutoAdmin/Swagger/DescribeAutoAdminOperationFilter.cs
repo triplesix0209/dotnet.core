@@ -28,7 +28,7 @@ namespace TripleSix.Core.AutoAdmin
             var controllerType = controllerDescriptor.ControllerTypeInfo;
             if (!controllerType.IsGenericType) return;
             var entityType = controllerType.GetGenericArguments()[0];
-            if (!typeof(IModelEntity).IsAssignableFrom(entityType)) return;
+            if (!entityType.IsAssignableTo<IModelEntity>()) return;
 
             var controllerBase = _executingAssembly.GetExportedTypes()
                 .FirstOrDefault(t =>

@@ -25,7 +25,7 @@ namespace TripleSix.Core.AutoAdmin
 
             var serviceType = GetType();
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), detailType);
-            if (readInterface.IsAssignableFrom(serviceType))
+            if (serviceType.IsAssignableTo(readInterface))
             {
                 var method = readInterface.GetMethod(nameof(IReadableWithModel<IModelEntity, IModelDataDto>.ConvertEntityToModel));
                 var task = method.Invoke(this, new object[] { identity, entity, null });

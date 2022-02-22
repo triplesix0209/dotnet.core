@@ -26,9 +26,9 @@ namespace TripleSix.Core.AutoAdmin
         public bool Enable { get; set; } = true;
 
         /// <summary>
-        /// ẩn hiển thị ở menu.
+        /// hiển thị trên menu.
         /// </summary>
-        public bool HideOnMenu { get; set; } = false;
+        public bool RenderOnMenu { get; set; } = true;
 
         /// <summary>
         /// bật/tắt các phương thức xem dữ liệu.

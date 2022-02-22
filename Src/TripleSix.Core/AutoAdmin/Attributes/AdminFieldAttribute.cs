@@ -1,5 +1,4 @@
 ﻿using System;
-using TripleSix.Core.Enums;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -7,19 +6,14 @@ namespace TripleSix.Core.AutoAdmin
     public class AdminFieldAttribute : Attribute
     {
         /// <summary>
+        /// có hiển thị field này hay không.
+        /// </summary>
+        public bool Render { get; set; } = true;
+
+        /// <summary>
         /// loại field.
         /// </summary>
         public AdminFieldTypes? Type { get; set; } = 0;
-
-        /// <summary>
-        /// type của đối tượng liên kết.
-        /// </summary>
-        public Type ModelType { get; set; } = null;
-
-        /// <summary>
-        /// tên của field hiển thị, nếu field đó cùng nằm trong dto.
-        /// </summary>
-        public string ModelDisplayField { get; set; } = null;
 
         /// <summary>
         /// mã nhóm.
@@ -37,21 +31,6 @@ namespace TripleSix.Core.AutoAdmin
         public int GridCol { get; set; } = 6;
 
         /// <summary>
-        /// ẩn ở màn hình xem chi tiết.
-        /// </summary>
-        public bool HideOnDetail { get; set; } = false;
-
-        /// <summary>
-        /// là key field (dùng trong tìm kiếm).
-        /// </summary>
-        public bool IsModelKey { get; set; } = false;
-
-        /// <summary>
-        /// là field hiển thị (dùng trong tìm kiếm).
-        /// </summary>
-        public bool IsModelName { get; set; } = false;
-
-        /// <summary>
         /// cho phép sort theo field này?.
         /// </summary>
         public bool Sortable { get; set; } = false;
@@ -60,5 +39,25 @@ namespace TripleSix.Core.AutoAdmin
         /// script xử lý hiển thị.
         /// </summary>
         public string ScriptDisplay { get; set; } = null;
+
+        /// <summary>
+        /// type của đối tượng liên kết.
+        /// </summary>
+        public Type ModelType { get; set; } = null;
+
+        /// <summary>
+        /// là key field của model.
+        /// </summary>
+        public bool IsModelKey { get; set; } = false;
+
+        /// <summary>
+        /// là field hiển thị của model.
+        /// </summary>
+        public bool IsModelText { get; set; } = false;
+
+        /// <summary>
+        /// hiển thị trên màn hình xem chi tiết.
+        /// </summary>
+        public bool RenderOnDetail { get; set; } = true;
     }
 }

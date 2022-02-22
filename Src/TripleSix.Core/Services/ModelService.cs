@@ -632,7 +632,7 @@ namespace TripleSix.Core.Services
         {
             var serviceType = GetType();
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
-            if (!readInterface.IsAssignableFrom(serviceType))
+            if (!serviceType.IsAssignableTo(readInterface))
                 throw new Exception($"{serviceType.Name} need implement IReadableWithModel<{typeof(TEntity).Name},{typeof(TModel).Name}> interface");
 
             var convertMethod = serviceType.GetMethods().First(x =>

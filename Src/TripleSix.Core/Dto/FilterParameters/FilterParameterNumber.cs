@@ -19,15 +19,34 @@ namespace TripleSix.Core.Dto
 
     public enum FilterParameterNumberOperators
     {
+        [Description("==")]
         Equal = 1,
+
+        [Description("<")]
         Less = 2,
+
+        [Description("<=")]
         LessOrEqual = 3,
+
+        [Description(">")]
         Greater = 4,
+
+        [Description(">=")]
         GreaterOrEqual = 5,
+
+        [Description("In")]
         In = 6,
+
+        [Description("Is NULL")]
         IsNull = 7,
+
+        [Description("!=")]
         NotEqual = -1,
+
+        [Description("Not in")]
         NotIn = -6,
+
+        [Description("Not NULL")]
         NotNull = -7,
     }
 }

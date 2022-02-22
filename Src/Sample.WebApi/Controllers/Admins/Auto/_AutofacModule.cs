@@ -4,7 +4,7 @@ using Autofac;
 using Microsoft.Extensions.Configuration;
 using TripleSix.Core.ModuleAutofac;
 
-namespace Sample.WebApi.Controllers.Admins.Methods
+namespace Sample.WebApi.Controllers.Admins.Auto
 {
     public class AutofacModule : BaseModule
     {

@@ -20,7 +20,7 @@ namespace TripleSix.Core.Helpers
         {
             TResult item;
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType))
+            if (resultType.IsAssignableTo<IEntity>())
             {
                 item = query.FirstOrDefault() as TResult;
             }
@@ -40,7 +40,7 @@ namespace TripleSix.Core.Helpers
         {
             TResult item;
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType))
+            if (resultType.IsAssignableTo<IEntity>())
             {
                 item = await query.FirstOrDefaultAsync() as TResult;
             }
@@ -60,7 +60,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType)) return query.FirstOrDefault() as TResult;
+            if (resultType.IsAssignableTo<IEntity>()) return query.FirstOrDefault() as TResult;
 
             return query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)
@@ -71,7 +71,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType)) return await query.FirstOrDefaultAsync() as TResult;
+            if (resultType.IsAssignableTo<IEntity>()) return await query.FirstOrDefaultAsync() as TResult;
 
             return await query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)
@@ -82,7 +82,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType)) return query.ToArray().Cast<TResult>().ToArray();
+            if (resultType.IsAssignableTo<IEntity>()) return query.ToArray().Cast<TResult>().ToArray();
 
             return query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)
@@ -93,7 +93,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType)) return (await query.ToArrayAsync()).Cast<TResult>().ToArray();
+            if (resultType.IsAssignableTo<IEntity>()) return (await query.ToArrayAsync()).Cast<TResult>().ToArray();
 
             return await query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)
@@ -104,7 +104,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType)) return query.ToArray().Cast<TResult>().ToList();
+            if (resultType.IsAssignableTo<IEntity>()) return query.ToArray().Cast<TResult>().ToList();
 
             return query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)
@@ -115,7 +115,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType)) return (await query.ToArrayAsync()).Cast<TResult>().ToList();
+            if (resultType.IsAssignableTo<IEntity>()) return (await query.ToArrayAsync()).Cast<TResult>().ToList();
 
             return await query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)
@@ -135,7 +135,7 @@ namespace TripleSix.Core.Helpers
             if (result.Total == 0) return result;
 
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType))
+            if (resultType.IsAssignableTo<IEntity>())
             {
                 result.Items = query.Skip((page - 1) * size).Take(size).ToArray().Cast<TResult>().ToArray();
             }
@@ -163,7 +163,7 @@ namespace TripleSix.Core.Helpers
             if (result.Total == 0) return result;
 
             var resultType = typeof(TResult);
-            if (typeof(IEntity).IsAssignableFrom(resultType))
+            if (resultType.IsAssignableTo<IEntity>())
             {
                 result.Items = (await query.Skip((page - 1) * size).Take(size).ToArrayAsync()).Cast<TResult>().ToArray();
             }

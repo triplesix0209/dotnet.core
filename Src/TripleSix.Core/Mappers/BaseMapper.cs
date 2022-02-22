@@ -18,7 +18,7 @@ namespace TripleSix.Core.Mappers
             var map = base.CreateMap(sourceType, destinationType, memberList)
                 .IncludeAllDerived();
 
-            if (typeof(IPropertyTracking).IsAssignableFrom(sourceType))
+            if (sourceType.IsAssignableTo<IPropertyTracking>())
             {
                 foreach (var property in destinationType.GetProperties())
                 {
@@ -50,7 +50,7 @@ namespace TripleSix.Core.Mappers
             var map = base.CreateMap<TSource, TDestination>(memberList)
                 .IncludeAllDerived();
 
-            if (typeof(IPropertyTracking).IsAssignableFrom(typeof(TSource)))
+            if (typeof(TSource).IsAssignableTo<IPropertyTracking>())
             {
                 foreach (var property in typeof(TDestination).GetProperties())
                 {
@@ -81,7 +81,7 @@ namespace TripleSix.Core.Mappers
             Type destinationType,
             MemberList memberList = MemberList.Destination)
         {
-            if (!typeof(IEntity).IsAssignableFrom(destinationType))
+            if (!destinationType.IsAssignableTo<IEntity>())
                 throw new Exception($"{destinationType.Name} need implement {nameof(IEntity)}> interface");
 
             var map = CreateMap(sourceType, destinationType, memberList);
@@ -90,7 +90,7 @@ namespace TripleSix.Core.Mappers
                 .Where(property =>
                 {
                     var propertyType = property.PropertyType.GetUnderlyingType();
-                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                    return propertyType.IsAssignableTo<IEntity>()
                         || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
                         || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
                 });
@@ -110,7 +110,7 @@ namespace TripleSix.Core.Mappers
                 .Where(property =>
                 {
                     var propertyType = property.PropertyType.GetUnderlyingType();
-                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                    return propertyType.IsAssignableTo<IEntity>()
                         || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
                         || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
                 });
@@ -125,7 +125,7 @@ namespace TripleSix.Core.Mappers
             Type destinationType,
             MemberList memberList = MemberList.Destination)
         {
-            if (!typeof(IEntity).IsAssignableFrom(sourceType))
+            if (!sourceType.IsAssignableTo<IEntity>())
                 throw new Exception($"{sourceType.Name} need implement {nameof(IEntity)}> interface");
 
             var map = CreateMap(sourceType, destinationType, memberList);
@@ -134,7 +134,7 @@ namespace TripleSix.Core.Mappers
                 .Where(property =>
                 {
                     var propertyType = property.PropertyType.GetUnderlyingType();
-                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                    return propertyType.IsAssignableTo<IEntity>()
                         || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
                         || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
                 });
@@ -154,7 +154,7 @@ namespace TripleSix.Core.Mappers
                 .Where(property =>
                 {
                     var propertyType = property.PropertyType.GetUnderlyingType();
-                    return typeof(IEntity).IsAssignableFrom(propertyType)
+                    return propertyType.IsAssignableTo<IEntity>()
                         || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>))
                         || propertyType.IsSubclassOfRawGeneric(typeof(IList<>));
                 });

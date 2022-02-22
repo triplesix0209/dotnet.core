@@ -8,6 +8,11 @@ namespace TripleSix.Core.Helpers
 {
     public static class ReflectionHelper
     {
+        public static bool IsAssignableTo<T>(this Type type)
+        {
+            return type.IsAssignableTo(typeof(T));
+        }
+
         public static bool IsSubclassOfRawGeneric(this Type type, Type genericType)
         {
             while (type != null && type != typeof(object))
@@ -73,7 +78,7 @@ namespace TripleSix.Core.Helpers
                 return array;
             }
 
-            if (type.IsGenericType && typeof(IList).IsAssignableFrom(type))
+            if (type.IsGenericType && type.IsAssignableTo(typeof(IList)))
             {
                 var elementType = type.GetGenericArguments()[0];
                 var list = Activator.CreateInstance(type) as IList;

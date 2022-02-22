@@ -5,6 +5,7 @@ using AutoMapper;
 using TripleSix.Core.DataTypes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Mappers
 {
@@ -22,7 +23,7 @@ namespace TripleSix.Core.Mappers
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes()
                 .Where(t => t.IsPublic)
-                .Where(t => typeof(IEntity).IsAssignableFrom(t))
+                .Where(t => t.IsAssignableTo<IEntity>())
                 .Where(t => t.Name.EndsWith("Entity")));
         }
 
@@ -43,7 +44,7 @@ namespace TripleSix.Core.Mappers
                     .Where(t => t.IsPublic)
                     .Where(t => t.Name == objectName + "AdminDto")
                     .SelectMany(t => t.GetNestedTypes())
-                    .Where(t => typeof(IDataDto).IsAssignableFrom(t)));
+                    .Where(t => t.IsAssignableTo<IDataDto>()));
                 var dtoTypes = SelectDtoType(objectName).Concat(adminDtos);
 
                 foreach (var dtoType in dtoTypes)

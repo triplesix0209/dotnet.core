@@ -143,7 +143,7 @@ namespace TripleSix.Core.Repositories
                 entityName = metadata.EntityName;
                 if (!entityName.EndsWith("Entity")) entityName += "Entity";
             }
-            else if (typeof(IAdminDto).IsAssignableFrom(propertyInfo.ReflectedType?.DeclaringType))
+            else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
             {
                 entityName = propertyInfo.ReflectedType.DeclaringType.Name
                     .Replace("AdminDto", string.Empty);
@@ -155,14 +155,14 @@ namespace TripleSix.Core.Repositories
             {
                 var entityType = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(x => x.GetExportedTypes())
-                    .Where(x => typeof(IEntity).IsAssignableFrom(x))
+                    .Where(x => x.IsAssignableTo<IEntity>())
                     .Where(x => x.Name == entityName)
                     .FirstOrDefault();
 
                 if (entityType is not null)
                 {
                     vaildColumns.AddRange(entityType.GetProperties()
-                        .Where(x => !typeof(IEntity).IsAssignableFrom(x.PropertyType))
+                        .Where(x => !x.PropertyType.IsAssignableTo<IEntity>())
                         .Where(x => !x.PropertyType.IsSubclassOfRawGeneric(typeof(IList<>)))
                         .Select(x => x.Name.ToCamelCase()));
                 }

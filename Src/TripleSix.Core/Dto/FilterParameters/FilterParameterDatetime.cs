@@ -18,15 +18,34 @@ namespace TripleSix.Core.Dto
 
     public enum FilterParameterDatetimeOperators
     {
+        [Description("Is")]
         Is = 1,
+
+        [Description("Begin")]
         Begin = 2,
+
+        [Description("End")]
         End = 3,
+
+        [Description("Between")]
         Between = 4,
+
+        [Description("Is NULL")]
         IsNull = 5,
+
+        [Description("Not")]
         NotIs = -1,
+
+        [Description("Not begin")]
         NotBegin = -2,
+
+        [Description("Not end")]
         NotEnd = -3,
+
+        [Description("Not between")]
         NotBetween = -4,
+
+        [Description("Not NULL")]
         NotNull = -5,
     }
 }

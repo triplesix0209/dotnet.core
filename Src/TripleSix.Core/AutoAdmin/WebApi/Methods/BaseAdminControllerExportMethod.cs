@@ -20,13 +20,14 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpGet("Export")]
         [SwaggerApi("xuất [controller]", typeof(File))]
+        [AdminMethod(Type = AdminMethodTypes.Export)]
         public virtual async Task<IActionResult> Export(TFilterDto filter, ExportInputDto config)
         {
             var identity = GenerateIdentity();
 
             IModelDataDto[] data;
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TDetailDto));
-            if (readInterface.IsAssignableFrom(Service.GetType()))
+            if (Service.GetType().IsAssignableTo(readInterface))
                 data = await Service.GetListByFilterWithModel<TDetailDto>(identity, filter);
             else
                 data = await Service.GetListByFilter<TDetailDto>(identity, filter);

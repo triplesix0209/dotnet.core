@@ -209,7 +209,7 @@ namespace TripleSix.Core.AutoAdmin
                 }
 
                 var type = (member as PropertyInfo)?.PropertyType;
-                if (type != null && (typeof(IEntity).IsAssignableFrom(type) || type.IsSubclassOfRawGeneric(typeof(IList<>))))
+                if (type != null && (type.IsAssignableTo<IEntity>() || type.IsSubclassOfRawGeneric(typeof(IList<>))))
                 {
                     property.ShouldSerialize = _ => false;
                     return property;

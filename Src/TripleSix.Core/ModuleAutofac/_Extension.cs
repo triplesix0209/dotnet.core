@@ -53,7 +53,7 @@ namespace TripleSix.Core.ModuleAutofac
         {
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
-                .Where(t => typeof(IRepository).IsAssignableFrom(t))
+                .Where(t => t.IsAssignableTo<IRepository>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces()
@@ -79,7 +79,7 @@ namespace TripleSix.Core.ModuleAutofac
         {
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
-                .Where(t => typeof(IService).IsAssignableFrom(t))
+                .Where(t => t.IsAssignableTo<IService>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces()
@@ -116,7 +116,7 @@ namespace TripleSix.Core.ModuleAutofac
         {
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
-                .Where(t => typeof(BaseMapper).IsAssignableFrom(t))
+                .Where(t => t.IsAssignableTo<BaseMapper>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsSelf();
@@ -126,13 +126,13 @@ namespace TripleSix.Core.ModuleAutofac
                 config.AddExpressionMapping();
 
                 var mappers = assembly.GetTypes()
-                    .Where(t => t.IsClass && typeof(BaseMapper).IsAssignableFrom(t))
+                    .Where(t => t.IsClass && t.IsAssignableTo<BaseMapper>())
                     .ToList();
 
                 mappers.Sort((a, b) =>
                 {
-                    if (typeof(GlobalMapper).IsAssignableFrom(a)) return -1;
-                    else if (typeof(GlobalMapper).IsAssignableFrom(b)) return 1;
+                    if (a.IsAssignableTo<GlobalMapper>()) return -1;
+                    else if (b.IsAssignableTo<GlobalMapper>()) return 1;
                     return 0;
                 });
 
@@ -182,7 +182,7 @@ namespace TripleSix.Core.ModuleAutofac
             var jobTypes = assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
-                .Where(t => typeof(BaseJob).IsAssignableFrom(t));
+                .Where(t => t.IsAssignableTo<BaseJob>());
             foreach (var jobType in jobTypes)
                 builder.RegisterModule(new QuartzAutofacJobsModule(jobType.Assembly) { AutoWireProperties = true });
         }
@@ -192,7 +192,7 @@ namespace TripleSix.Core.ModuleAutofac
         {
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
-                .Where(t => typeof(BaseController).IsAssignableFrom(t))
+                .Where(t => t.IsAssignableTo<BaseController>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
         }
     }

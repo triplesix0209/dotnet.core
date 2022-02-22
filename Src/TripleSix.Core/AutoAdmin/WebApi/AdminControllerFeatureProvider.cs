@@ -18,7 +18,7 @@ namespace TripleSix.Core.AutoAdmin
 
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
-            var exportedTypes = _executingAssembly.GetExportedTypes();
+            var exportedTypes = _executingAssembly.GetExportedTypes().Where(x => !x.IsAbstract);
             var candidates = exportedTypes
                 .Where(t =>
                 {
@@ -29,91 +29,54 @@ namespace TripleSix.Core.AutoAdmin
 
             foreach (var candidate in candidates)
             {
-                var metadata = candidate.GetCustomAttribute<AdminControllerAttribute>();
-                var entityType = metadata.EntityType;
-                var adminTypes = metadata.AdminType.GetNestedTypes();
-                var filterType = adminTypes.FirstOrDefault(x => x.Name == "Filter");
-                var itemType = adminTypes.FirstOrDefault(x => x.Name == "Item");
-                var detailType = adminTypes.FirstOrDefault(x => x.Name == "Detail");
-                var createType = adminTypes.FirstOrDefault(x => x.Name == "Create");
-                var updateType = adminTypes.FirstOrDefault(x => x.Name == "Update");
+                var info = candidate.GetCustomAttribute<AdminControllerAttribute>();
+                var entityType = info.EntityType;
+                var filterType = info.AdminType.GetNestedType("Filter");
+                var itemType = info.AdminType.GetNestedType("Item");
+                var detailType = info.AdminType.GetNestedType("Detail");
+                var createType = info.AdminType.GetNestedType("Create");
+                var updateType = info.AdminType.GetNestedType("Update");
 
-                if (metadata.EnableRead && filterType is not null && itemType is not null && detailType is not null)
+                if (info.EnableRead && filterType is not null && itemType is not null && detailType is not null)
                 {
-                    var controllerType = exportedTypes.FirstOrDefault(
-                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerReadMethod<,,,>))
-                        && !t.IsAbstract);
-                    if (controllerType is not null)
-                    {
-                        feature.Controllers.Add(
-                            controllerType.MakeGenericType(entityType, filterType, itemType, detailType)
-                            .GetTypeInfo());
-                    }
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerReadMethod<,,,>)));
+                    if (type is not null)
+                        feature.Controllers.Add(type.MakeGenericType(entityType, filterType, itemType, detailType).GetTypeInfo());
                 }
 
-                if (metadata.EnableCreate && createType is not null)
+                if (info.EnableCreate && createType is not null)
                 {
-                    var controllerType = exportedTypes.FirstOrDefault(
-                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerCreateMethod<,>))
-                        && !t.IsAbstract);
-                    if (controllerType is not null)
-                    {
-                        feature.Controllers.Add(
-                            controllerType.MakeGenericType(entityType, createType)
-                            .GetTypeInfo());
-                    }
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerCreateMethod<,>)));
+                    if (type is not null)
+                        feature.Controllers.Add(type.MakeGenericType(entityType, createType).GetTypeInfo());
                 }
 
-                if (metadata.EnableUpdate && updateType is not null)
+                if (info.EnableUpdate && updateType is not null)
                 {
-                    var controllerType = exportedTypes.FirstOrDefault(
-                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerUpdateMethod<,>))
-                        && !t.IsAbstract);
-                    if (controllerType is not null)
-                    {
-                        feature.Controllers.Add(
-                            controllerType.MakeGenericType(entityType, updateType)
-                            .GetTypeInfo());
-                    }
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerUpdateMethod<,>)));
+                    if (type is not null)
+                        feature.Controllers.Add(type.MakeGenericType(entityType, updateType).GetTypeInfo());
                 }
 
-                if (metadata.EnableDelete)
+                if (info.EnableDelete)
                 {
-                    var controllerType = exportedTypes.FirstOrDefault(
-                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerDeleteMethod<>))
-                        && !t.IsAbstract);
-                    if (controllerType is not null)
-                    {
-                        feature.Controllers.Add(
-                            controllerType.MakeGenericType(entityType)
-                            .GetTypeInfo());
-                    }
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerDeleteMethod<>)));
+                    if (type is not null)
+                        feature.Controllers.Add(type.MakeGenericType(entityType).GetTypeInfo());
                 }
 
-                if (metadata.EnableChangeLog)
+                if (info.EnableChangeLog)
                 {
-                    var controllerType = exportedTypes.FirstOrDefault(
-                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerChangeLogMethod<>))
-                        && !t.IsAbstract);
-                    if (controllerType is not null)
-                    {
-                        feature.Controllers.Add(
-                            controllerType.MakeGenericType(entityType)
-                            .GetTypeInfo());
-                    }
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerChangeLogMethod<>)));
+                    if (type is not null)
+                        feature.Controllers.Add(type.MakeGenericType(entityType).GetTypeInfo());
                 }
 
-                if (metadata.EnableExport && filterType is not null && detailType is not null)
+                if (info.EnableExport && filterType is not null && detailType is not null)
                 {
-                    var controllerType = exportedTypes.FirstOrDefault(
-                        t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerExportMethod<,,>))
-                        && !t.IsAbstract);
-                    if (controllerType is not null)
-                    {
-                        feature.Controllers.Add(
-                            controllerType.MakeGenericType(entityType, filterType, detailType)
-                            .GetTypeInfo());
-                    }
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerExportMethod<,,>)));
+                    if (type is not null)
+                        feature.Controllers.Add(type.MakeGenericType(entityType, filterType, detailType).GetTypeInfo());
                 }
             }
         }

@@ -4,15 +4,14 @@ using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 
-namespace Sample.WebApi.Controllers.Admins.Methods
+namespace Sample.WebApi.Controllers.Admins.Auto
 {
     [Route("Admin/[controller]")]
     [ApiExplorerSettings(GroupName = "admin")]
-    public class AdminControllerExportMethod<TEntity, TFilterDto, TDetailDto>
-        : BaseAdminControllerExportMethod<TEntity, TFilterDto, TDetailDto>
+    public class AdminControllerCreateMethod<TEntity, TCreateDto>
+        : BaseAdminControllerCreateMethod<TEntity, TCreateDto>
         where TEntity : class, IModelEntity
-        where TFilterDto : IModelFilterDto
-        where TDetailDto : class, IModelDataDto
+        where TCreateDto : class, IDataDto
     {
         protected override IIdentity GenerateIdentity()
         {

@@ -17,6 +17,7 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpPut("{id}")]
         [SwaggerApi("sửa [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.Update)]
         [Transactional]
         public async Task<IActionResult> Update(RouteId route, [FromBody] TUpdateDto input)
         {
@@ -24,7 +25,7 @@ namespace TripleSix.Core.AutoAdmin
             var beforeData = await Service.SerializeEntity(identity, await Service.GetFirstById(identity, route.Id));
 
             var updateInterface = typeof(IUpdatableWithModel<>).MakeGenericType(typeof(TUpdateDto));
-            if (updateInterface.IsAssignableFrom(Service.GetType()))
+            if (Service.GetType().IsAssignableTo(updateInterface))
             {
                 var method = updateInterface.GetMethod(nameof(IUpdatableWithModel<DataDto>.UpdateWithModel));
                 await (Task)method.Invoke(Service, new object[] { identity, route.Id, input });

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using TripleSix.Core.Attributes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
-using TripleSix.Core.Services;
 using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
@@ -16,6 +15,7 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpDelete("{id}")]
         [SwaggerApi("xóa [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.Delete)]
         [Transactional]
         public async Task<IActionResult> Delete(RouteId route)
         {
@@ -30,6 +30,7 @@ namespace TripleSix.Core.AutoAdmin
 
         [HttpPut("{id}/Restore")]
         [SwaggerApi("khôi phục [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.Restore)]
         [Transactional]
         public async Task<IActionResult> Restore(RouteId route)
         {
