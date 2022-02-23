@@ -27,6 +27,8 @@ namespace TripleSix.Core.AutoAdmin
         [Required]
         public virtual string AfterData { get; set; }
 
+        public virtual string Note { get; set; }
+
         protected override void ModelConfigure(EntityTypeBuilder<ObjectLogEntity> builder)
         {
             base.ModelConfigure(builder);

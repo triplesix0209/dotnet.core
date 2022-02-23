@@ -40,7 +40,7 @@ namespace Sample.Common.Dto
             public string Description { get; set; }
         }
 
-        public class Update : DataDto
+        public class Update : BaseAdminUpdateDto
         {
             [DisplayName("giá trị")]
             public string Value { get; set; }

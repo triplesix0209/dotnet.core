@@ -77,7 +77,7 @@ namespace TripleSix.Core.AutoAdmin
             return objectLogs;
         }
 
-        public virtual async Task WriteChangeLog(IIdentity identity, Guid id, string beforeData = null)
+        public virtual async Task WriteChangeLog(IIdentity identity, Guid id, string beforeData = null, string note = null)
         {
             var entity = await GetFirstById(identity, id);
             var afterData = await SerializeEntity(identity, entity);
@@ -91,6 +91,7 @@ namespace TripleSix.Core.AutoAdmin
                 ObjectId = id,
                 BeforeData = beforeData,
                 AfterData = afterData,
+                Note = note,
             });
             await ObjectLogRepo.SaveChanges();
         }

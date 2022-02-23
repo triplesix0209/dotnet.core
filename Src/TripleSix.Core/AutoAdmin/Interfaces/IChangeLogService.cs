@@ -15,6 +15,6 @@ namespace TripleSix.Core.AutoAdmin
 
         Task<ObjectLogDto> GetChangeLog(IIdentity identity, Guid objectLogId);
 
-        Task WriteChangeLog(IIdentity identity, Guid id, string beforeData = null);
+        Task WriteChangeLog(IIdentity identity, Guid id, string beforeData = null, string note = null);
     }
 }

@@ -20,5 +20,8 @@ namespace TripleSix.Core.AutoAdmin
 
         [DisplayName("thông tin người thao tác")]
         public ActorDto Actor { get; set; }
+
+        [DisplayName("ghi chú")]
+        public string Note { get; set; }
     }
 }
