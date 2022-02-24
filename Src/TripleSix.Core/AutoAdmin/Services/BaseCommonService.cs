@@ -91,7 +91,7 @@ namespace TripleSix.Core.AutoAdmin
                 ObjectId = id,
                 BeforeData = beforeData,
                 AfterData = afterData,
-                Note = note,
+                Note = note.IsNullOrWhiteSpace() ? null : note,
             });
             await ObjectLogRepo.SaveChanges();
         }

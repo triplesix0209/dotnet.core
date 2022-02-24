@@ -39,7 +39,7 @@ namespace TripleSix.Core.AutoAdmin
                 data = await Service.CreateWithMapper<TEntity>(identity, input);
             }
 
-            await Service.WriteChangeLog(identity, data.Id);
+            await Service.WriteChangeLog(identity, data.Id, note: identity.SubmitNote);
             return DataResult(data.Id);
         }
     }

@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
@@ -48,5 +49,8 @@ namespace TripleSix.Core.Dto
                 return Guid.Parse(id.Value);
             }
         }
+
+        [DisplayName("ghi chú xử lý")]
+        public string SubmitNote { get; set; }
     }
 }

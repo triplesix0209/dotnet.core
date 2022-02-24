@@ -11,5 +11,7 @@ namespace TripleSix.Core.Dto
         ClaimsPrincipal User { get; }
 
         Guid? UserId { get; }
+
+        string SubmitNote { get; set; }
     }
 }

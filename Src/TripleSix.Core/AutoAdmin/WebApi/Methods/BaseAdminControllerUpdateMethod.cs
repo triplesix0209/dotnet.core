@@ -11,7 +11,7 @@ namespace TripleSix.Core.AutoAdmin
     public abstract class BaseAdminControllerUpdateMethod<TEntity, TUpdateDto>
         : BaseAdminController
         where TEntity : class, IModelEntity
-        where TUpdateDto : class, IAdminUpdateDto
+        where TUpdateDto : class, IDataDto
     {
         public ICommonService<TEntity> Service { get; set; }
 
@@ -35,7 +35,7 @@ namespace TripleSix.Core.AutoAdmin
                 await Service.UpdateWithMapper(identity, route.Id, input);
             }
 
-            await Service.WriteChangeLog(identity, route.Id, beforeData, input.ChangeLogNote);
+            await Service.WriteChangeLog(identity, route.Id, beforeData, note: identity.SubmitNote);
             return SuccessResult();
         }
     }

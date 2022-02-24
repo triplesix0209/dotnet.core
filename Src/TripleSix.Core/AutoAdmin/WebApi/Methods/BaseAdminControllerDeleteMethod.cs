@@ -18,13 +18,13 @@ namespace TripleSix.Core.AutoAdmin
         [SwaggerApi("xóa [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Delete)]
         [Transactional]
-        public async Task<IActionResult> Delete(RouteId route, [SwaggerParameter("ghi chú chỉnh sửa")] string note)
+        public async Task<IActionResult> Delete(RouteId route)
         {
             var identity = GenerateIdentity();
 
             var beforeData = await Service.SerializeEntity(identity, await Service.GetFirstById(identity, route.Id));
             await Service.SetAsDelete(identity, route.Id);
-            await Service.WriteChangeLog(identity, route.Id, beforeData, note);
+            await Service.WriteChangeLog(identity, route.Id, beforeData, note: identity.SubmitNote);
 
             return SuccessResult();
         }
@@ -33,13 +33,13 @@ namespace TripleSix.Core.AutoAdmin
         [SwaggerApi("khôi phục [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Restore)]
         [Transactional]
-        public async Task<IActionResult> Restore(RouteId route, [SwaggerParameter("ghi chú chỉnh sửa")] string note)
+        public async Task<IActionResult> Restore(RouteId route)
         {
             var identity = GenerateIdentity();
 
             var beforeData = await Service.SerializeEntity(identity, await Service.GetFirstById(identity, route.Id));
             await Service.Restore(identity, route.Id);
-            await Service.WriteChangeLog(identity, route.Id, beforeData, note);
+            await Service.WriteChangeLog(identity, route.Id, beforeData, note: identity.SubmitNote);
 
             return SuccessResult();
         }
