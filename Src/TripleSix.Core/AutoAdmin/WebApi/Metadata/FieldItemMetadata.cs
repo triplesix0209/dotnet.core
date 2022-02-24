@@ -20,7 +20,7 @@ namespace TripleSix.Core.AutoAdmin
                         sortColumn = fieldType.Name.ToCamelCase();
                 }
 
-                if (sortColumn.IsNullOrWhiteSpace())
+                if (sortColumn.IsNotNullOrWhiteSpace())
                     SortColumn = sortColumn;
             }
         }
