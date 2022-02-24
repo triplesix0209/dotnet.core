@@ -10,7 +10,7 @@ using Sample.Data.DataContexts;
 namespace Sample.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220224120834_Init")]
+    [Migration("20220224121306_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -480,31 +480,31 @@ namespace Sample.Data.Migrations
                         .HasColumnName("updater_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_permission_account_group");
+                        .HasName("pk_permission_group");
 
                     b.HasIndex("Code")
                         .IsUnique()
-                        .HasDatabaseName("ix_permission_account_group_code");
+                        .HasDatabaseName("ix_permission_group_code");
 
                     b.HasIndex("CreateDatetime")
-                        .HasDatabaseName("ix_permission_account_group_create_datetime");
+                        .HasDatabaseName("ix_permission_group_create_datetime");
 
                     b.HasIndex("CreatorId")
-                        .HasDatabaseName("ix_permission_account_group_creator_id");
+                        .HasDatabaseName("ix_permission_group_creator_id");
 
                     b.HasIndex("IsDeleted")
-                        .HasDatabaseName("ix_permission_account_group_is_deleted");
+                        .HasDatabaseName("ix_permission_group_is_deleted");
 
                     b.HasIndex("Name")
-                        .HasDatabaseName("ix_permission_account_group_name");
+                        .HasDatabaseName("ix_permission_group_name");
 
                     b.HasIndex("UpdateDatetime")
-                        .HasDatabaseName("ix_permission_account_group_update_datetime");
+                        .HasDatabaseName("ix_permission_group_update_datetime");
 
                     b.HasIndex("UpdaterId")
-                        .HasDatabaseName("ix_permission_account_group_updater_id");
+                        .HasDatabaseName("ix_permission_group_updater_id");
 
-                    b.ToTable("permission_account_group");
+                    b.ToTable("permission_group");
 
                     b.HasData(
                         new
@@ -536,12 +536,12 @@ namespace Sample.Data.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("PermissionCode", "PermissionGroupId")
-                        .HasName("pk_permission_account_group_value");
+                        .HasName("pk_permission_value");
 
                     b.HasIndex("PermissionGroupId")
-                        .HasDatabaseName("ix_permission_account_group_value_permission_group_id");
+                        .HasDatabaseName("ix_permission_value_permission_group_id");
 
-                    b.ToTable("permission_account_group_value");
+                    b.ToTable("permission_value");
 
                     b.HasData(
                         new
@@ -804,7 +804,7 @@ namespace Sample.Data.Migrations
                     b.HasOne("Sample.Data.Entities.PermissionGroupEntity", "PermissionGroup")
                         .WithMany("Accounts")
                         .HasForeignKey("PermissionGroupId")
-                        .HasConstraintName("fk_account_permission_account_group_permission_group_id");
+                        .HasConstraintName("fk_account_permission_group_permission_group_id");
 
                     b.Navigation("PermissionGroup");
                 });
@@ -826,14 +826,14 @@ namespace Sample.Data.Migrations
                     b.HasOne("Sample.Data.Entities.PermissionEntity", "Permission")
                         .WithMany("PermissionValues")
                         .HasForeignKey("PermissionCode")
-                        .HasConstraintName("fk_permission_account_group_value_permission_permission_code")
+                        .HasConstraintName("fk_permission_value_permission_permission_code")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Sample.Data.Entities.PermissionGroupEntity", "PermissionGroup")
                         .WithMany("PermissionValues")
                         .HasForeignKey("PermissionGroupId")
-                        .HasConstraintName("fk_permission_account_group_value_permission_account_group_per~")
+                        .HasConstraintName("fk_permission_value_permission_group_permission_group_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -39,7 +39,7 @@ namespace Sample.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "permission_account_group",
+                name: "permission_group",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -53,7 +53,7 @@ namespace Sample.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_permission_account_group", x => x.id);
+                    table.PrimaryKey("pk_permission_group", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,15 +95,15 @@ namespace Sample.Data.Migrations
                 {
                     table.PrimaryKey("pk_account", x => x.id);
                     table.ForeignKey(
-                        name: "fk_account_permission_account_group_permission_group_id",
+                        name: "fk_account_permission_group_permission_group_id",
                         column: x => x.permission_group_id,
-                        principalTable: "permission_account_group",
+                        principalTable: "permission_group",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "permission_account_group_value",
+                name: "permission_value",
                 columns: table => new
                 {
                     permission_code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -113,15 +113,15 @@ namespace Sample.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_permission_account_group_value", x => new { x.permission_code, x.permission_group_id });
+                    table.PrimaryKey("pk_permission_value", x => new { x.permission_code, x.permission_group_id });
                     table.ForeignKey(
-                        name: "fk_permission_account_group_value_permission_account_group_per~",
+                        name: "fk_permission_value_permission_group_permission_group_id",
                         column: x => x.permission_group_id,
-                        principalTable: "permission_account_group",
+                        principalTable: "permission_group",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_permission_account_group_value_permission_permission_code",
+                        name: "fk_permission_value_permission_permission_code",
                         column: x => x.permission_code,
                         principalTable: "permission",
                         principalColumn: "code",
@@ -211,7 +211,7 @@ namespace Sample.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "permission_account_group",
+                table: "permission_group",
                 columns: new[] { "id", "code", "create_datetime", "creator_id", "is_deleted", "name", "update_datetime", "updater_id" },
                 values: new object[] { new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), "admin", null, null, false, "nhóm quyền quản trị", null, null });
 
@@ -231,7 +231,7 @@ namespace Sample.Data.Migrations
                 values: new object[] { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), null, null, null, "8sBXJjPl1BaK1ppd0PNMB366NHhmAx", "F0DC6BFBD368CDD9D63FC264C8B76E9F", false, 0, null, null, "root" });
 
             migrationBuilder.InsertData(
-                table: "permission_account_group_value",
+                table: "permission_value",
                 columns: new[] { "permission_code", "permission_group_id", "actual_value", "value" },
                 values: new object[,]
                 {
@@ -399,44 +399,44 @@ namespace Sample.Data.Migrations
                 column: "name");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_code",
-                table: "permission_account_group",
+                name: "ix_permission_group_code",
+                table: "permission_group",
                 column: "code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_create_datetime",
-                table: "permission_account_group",
+                name: "ix_permission_group_create_datetime",
+                table: "permission_group",
                 column: "create_datetime");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_creator_id",
-                table: "permission_account_group",
+                name: "ix_permission_group_creator_id",
+                table: "permission_group",
                 column: "creator_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_is_deleted",
-                table: "permission_account_group",
+                name: "ix_permission_group_is_deleted",
+                table: "permission_group",
                 column: "is_deleted");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_name",
-                table: "permission_account_group",
+                name: "ix_permission_group_name",
+                table: "permission_group",
                 column: "name");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_update_datetime",
-                table: "permission_account_group",
+                name: "ix_permission_group_update_datetime",
+                table: "permission_group",
                 column: "update_datetime");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_updater_id",
-                table: "permission_account_group",
+                name: "ix_permission_group_updater_id",
+                table: "permission_group",
                 column: "updater_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_permission_account_group_value_permission_group_id",
-                table: "permission_account_group_value",
+                name: "ix_permission_value_permission_group_id",
+                table: "permission_value",
                 column: "permission_group_id");
 
             migrationBuilder.CreateIndex(
@@ -488,7 +488,7 @@ namespace Sample.Data.Migrations
                 name: "object_log");
 
             migrationBuilder.DropTable(
-                name: "permission_account_group_value");
+                name: "permission_value");
 
             migrationBuilder.DropTable(
                 name: "setting");
@@ -500,7 +500,7 @@ namespace Sample.Data.Migrations
                 name: "permission");
 
             migrationBuilder.DropTable(
-                name: "permission_account_group");
+                name: "permission_group");
         }
     }
 }
