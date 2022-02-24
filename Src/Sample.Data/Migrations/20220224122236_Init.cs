@@ -49,11 +49,18 @@ namespace Sample.Data.Migrations
                     update_datetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     creator_id = table.Column<Guid>(type: "uuid", nullable: true),
                     updater_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
+                    code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    hierarchy_parent_id = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_permission_group", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_permission_group_permission_group_hierarchy_parent_id",
+                        column: x => x.hierarchy_parent_id,
+                        principalTable: "permission_group",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,8 +219,8 @@ namespace Sample.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "permission_group",
-                columns: new[] { "id", "code", "create_datetime", "creator_id", "is_deleted", "name", "update_datetime", "updater_id" },
-                values: new object[] { new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), "admin", null, null, false, "nhóm quyền quản trị", null, null });
+                columns: new[] { "id", "code", "create_datetime", "creator_id", "hierarchy_parent_id", "is_deleted", "name", "update_datetime", "updater_id" },
+                values: new object[] { new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), "admin", null, null, null, false, "nhóm quyền quản trị", null, null });
 
             migrationBuilder.InsertData(
                 table: "setting",
@@ -413,6 +420,11 @@ namespace Sample.Data.Migrations
                 name: "ix_permission_group_creator_id",
                 table: "permission_group",
                 column: "creator_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_permission_group_hierarchy_parent_id",
+                table: "permission_group",
+                column: "hierarchy_parent_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_permission_group_is_deleted",

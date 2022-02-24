@@ -5,7 +5,7 @@ using TripleSix.Core.Entities;
 
 namespace Sample.Data.Entities
 {
-    public class PermissionGroupEntity : ModelEntity<PermissionGroupEntity>
+    public class PermissionGroupEntity : ModelHierarchyEntity<PermissionGroupEntity>
     {
         [Required]
         [MaxLength(100)]

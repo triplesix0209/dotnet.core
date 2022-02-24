@@ -459,6 +459,10 @@ namespace Sample.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("creator_id");
 
+                    b.Property<Guid?>("HierarchyParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("hierarchy_parent_id");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -489,6 +493,9 @@ namespace Sample.Data.Migrations
 
                     b.HasIndex("CreatorId")
                         .HasDatabaseName("ix_permission_group_creator_id");
+
+                    b.HasIndex("HierarchyParentId")
+                        .HasDatabaseName("ix_permission_group_hierarchy_parent_id");
 
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("ix_permission_group_is_deleted");
@@ -819,6 +826,16 @@ namespace Sample.Data.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("Sample.Data.Entities.PermissionGroupEntity", b =>
+                {
+                    b.HasOne("Sample.Data.Entities.PermissionGroupEntity", "HierarchyParent")
+                        .WithMany("HierarchyChilds")
+                        .HasForeignKey("HierarchyParentId")
+                        .HasConstraintName("fk_permission_group_permission_group_hierarchy_parent_id");
+
+                    b.Navigation("HierarchyParent");
+                });
+
             modelBuilder.Entity("Sample.Data.Entities.PermissionValueEntity", b =>
                 {
                     b.HasOne("Sample.Data.Entities.PermissionEntity", "Permission")
@@ -853,6 +870,8 @@ namespace Sample.Data.Migrations
             modelBuilder.Entity("Sample.Data.Entities.PermissionGroupEntity", b =>
                 {
                     b.Navigation("Accounts");
+
+                    b.Navigation("HierarchyChilds");
 
                     b.Navigation("PermissionValues");
                 });
