@@ -13,7 +13,7 @@ namespace TripleSix.Core.AutoAdmin
         /// <summary>
         /// loại field.
         /// </summary>
-        public AdminFieldTypes? Type { get; set; } = 0;
+        public AdminFieldTypes Type { get; set; } = 0;
 
         /// <summary>
         /// mã nhóm.
@@ -33,7 +33,12 @@ namespace TripleSix.Core.AutoAdmin
         /// <summary>
         /// cho phép sort theo field này?.
         /// </summary>
-        public bool Sortable { get; set; } = false;
+        public bool Sortable { get; set; } = true;
+
+        /// <summary>
+        /// field được sử dụng để sort.
+        /// </summary>
+        public string SortByColumn { get; set; } = null;
 
         /// <summary>
         /// script xử lý hiển thị.

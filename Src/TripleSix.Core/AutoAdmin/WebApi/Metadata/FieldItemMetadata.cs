@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -10,9 +11,15 @@ namespace TripleSix.Core.AutoAdmin
         {
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
 
-            Sortable = fieldInfo.Sortable;
+            if (fieldInfo.Sortable)
+            {
+                var sortColumn = fieldInfo.SortByColumn;
+                if (sortColumn.IsNullOrWhiteSpace())
+                    sortColumn = fieldType.Name.ToCamelCase();
+                SortColumn = sortColumn;
+            }
         }
 
-        public bool Sortable { get; set; }
+        public string SortColumn { get; set; }
     }
 }
