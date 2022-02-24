@@ -1,0 +1,19 @@
+﻿[
+  {
+    "id": "653dc4d4-ca05-45ac-83cd-e98fa91b890f",
+    "name": "Root",
+    "username": "root",
+    "password": "root",
+    "hashPasswordKey": "8sBXJjPl1BaK1ppd0PNMB366NHhmAx",
+    "level": "root",
+    "isDeleted": true
+  },
+  {
+    "id": "B81D0C90-3B91-44D4-BB00-95A5925FA5C6",
+    "name": "Admin",
+    "username": "admin",
+    "password": "admin",
+    "hashPasswordKey": "xE8czZlAixQOJDQ0oR7PqlYJUcywj6",
+    "level": "admin"
+  }
+]

@@ -14,6 +14,18 @@ namespace Sample.Data.DataContexts
         {
         }
 
+        public DbSet<AccountAuthEntity> AccountAuth { get; set; }
+
+        public DbSet<AccountEntity> Account { get; set; }
+
+        public DbSet<AccountSessionEntity> AccountSession { get; set; }
+
+        public DbSet<PermissionGroupEntity> PermissionAccountGroup { get; set; }
+
+        public DbSet<PermissionValueEntity> PermissionAccountGroupValue { get; set; }
+
+        public DbSet<PermissionEntity> Permission { get; set; }
+
         public DbSet<SettingEntity> Setting { get; set; }
 
         public DbSet<ObjectLogEntity> ObjectLog { get; set; }

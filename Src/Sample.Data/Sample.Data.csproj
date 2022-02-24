@@ -18,5 +18,5 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\**" />
   </ItemGroup>
-  
+
 </Project>

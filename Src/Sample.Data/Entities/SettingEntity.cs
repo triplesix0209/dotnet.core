@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TripleSix.Core.Entities;
 
 namespace Sample.Data.Entities
@@ -12,5 +13,12 @@ namespace Sample.Data.Entities
         public string Value { get; set; }
 
         public string Description { get; set; }
+
+        protected override void ModelConfigure(EntityTypeBuilder<SettingEntity> builder)
+        {
+            base.ModelConfigure(builder);
+
+            builder.HasIndex(x => x.Description);
+        }
     }
 }

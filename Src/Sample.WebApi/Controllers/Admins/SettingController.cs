@@ -10,7 +10,9 @@ namespace Sample.WebApi.Controllers.Admins
     [AdminController(
         AdminType = typeof(SettingAdminDto),
         EntityType = typeof(SettingEntity),
-        GroupName = "hệ thống")]
+        GroupName = "hệ thống",
+        EnableCreate = false,
+        EnableDelete = false)]
     public class SettingController : AdminController
     {
     }
