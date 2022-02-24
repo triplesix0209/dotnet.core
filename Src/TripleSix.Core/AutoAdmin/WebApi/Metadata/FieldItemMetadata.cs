@@ -15,8 +15,13 @@ namespace TripleSix.Core.AutoAdmin
             {
                 var sortColumn = fieldInfo.SortByColumn;
                 if (sortColumn.IsNullOrWhiteSpace())
-                    sortColumn = fieldType.Name.ToCamelCase();
-                SortColumn = sortColumn;
+                {
+                    if (controllerType.GetCustomAttribute<AdminControllerAttribute>().EntityType.GetProperty(fieldType.Name) is not null)
+                        sortColumn = fieldType.Name.ToCamelCase();
+                }
+
+                if (sortColumn.IsNullOrWhiteSpace())
+                    SortColumn = sortColumn;
             }
         }
 
