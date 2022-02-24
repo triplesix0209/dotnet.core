@@ -152,7 +152,7 @@ namespace TripleSix.Core.Helpers
             {
                 var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
                 var parameterName = parameterDisplayName.StartsWith("lọc theo ")
-                    ? parameterDisplayName.Substring(9)
+                    ? parameterDisplayName[9..]
                     : parameterDisplayName;
 
                 result.Description = result.Description.Replace(

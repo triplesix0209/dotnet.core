@@ -5,13 +5,13 @@
     /// </summary>
     public enum AdminFieldTypes
     {
-        // mã định danh mục cha
-        HierarchyParentId = 1,
-
         // hình ảnh / video
-        Media = 2,
+        Media = 1,
 
         // HTML editor
-        HTML = 3,
+        HTML = 2,
+
+        // mã định danh mục cha
+        HierarchyParentId = 3,
     }
 }

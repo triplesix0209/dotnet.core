@@ -41,6 +41,11 @@ namespace TripleSix.Core.AutoAdmin
         public string SortByColumn { get; set; } = null;
 
         /// <summary>
+        /// tên field được sử dụng để hiển thị.
+        /// </summary>
+        public string DisplayBy { get; set; } = null;
+
+        /// <summary>
         /// script xử lý hiển thị.
         /// </summary>
         public string ScriptDisplay { get; set; } = null;

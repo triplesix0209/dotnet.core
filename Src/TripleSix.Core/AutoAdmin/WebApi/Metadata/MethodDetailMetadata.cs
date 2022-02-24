@@ -27,12 +27,7 @@ namespace TripleSix.Core.AutoAdmin
                 .OrderBy(x => x.DeclaringType.BaseTypesAndSelf().Count())
                 .Select(fieldType => new FieldDisplayMetadata(controllerType, methodType, fieldType))
                 .ToArray();
-
-            if (!DetailFields.Any(x => x.IsModelKey))
-                DetailFields.First(x => x.Key == nameof(IModelDataDto.Code).ToCamelCase()).IsModelKey = true;
-
-            if (!DetailFields.Any(x => x.IsModelText))
-                DetailFields.First(x => x.Key == nameof(IModelDataDto.Code).ToCamelCase()).IsModelText = true;
+            FieldDisplayMetadata.AfterProcess(DetailFields);
         }
 
         public FieldDisplayMetadata[] DetailFields { get; set; }

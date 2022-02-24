@@ -13,10 +13,12 @@ namespace TripleSix.Core.AutoAdmin
 
             if (fieldInfo.Sortable)
             {
-                var sortColumn = fieldInfo.SortByColumn;
+                var sortColumn = fieldInfo.SortByColumn?.Trim();
                 if (sortColumn.IsNullOrWhiteSpace())
                 {
-                    if (controllerType.GetCustomAttribute<AdminControllerAttribute>().EntityType.GetProperty(fieldType.Name) is not null)
+                    var entityType = methodType.GetCustomAttribute<AdminMethodAttribute>().EntityType
+                        ?? controllerType.GetCustomAttribute<AdminControllerAttribute>().EntityType;
+                    if (entityType.GetProperty(fieldType.Name) is not null)
                         sortColumn = fieldType.Name.ToCamelCase();
                 }
 

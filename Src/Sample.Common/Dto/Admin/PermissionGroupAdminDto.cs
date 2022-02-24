@@ -11,7 +11,7 @@ namespace Sample.Common.Dto
         public class Filter : ModelFilterDto
         {
             [DisplayName("lọc theo nhóm cha")]
-            [AdminField(ModelType = typeof(PermissionGroupAdminDto))]
+            [AdminField(Type = AdminFieldTypes.HierarchyParentId)]
             public FilterParameter<Guid> HierarchyParentId { get; set; }
 
             [DisplayName("lọc theo tên gọi")]
@@ -25,7 +25,7 @@ namespace Sample.Common.Dto
             public string Name { get; set; }
 
             [DisplayName("mã nhóm cha")]
-            [AdminField(Render = false, ModelType = typeof(PermissionGroupAdminDto))]
+            [AdminField(Type = AdminFieldTypes.HierarchyParentId, DisplayBy = nameof(HierarchyParentName))]
             public Guid? HierarchyParentId { get; set; }
 
             [DisplayName("tên nhóm cha")]

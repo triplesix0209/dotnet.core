@@ -49,9 +49,9 @@ namespace TripleSix.Core.Helpers
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
 
-            var texts = SplitCase(text).Select(x => char.ToUpper(x[0]) + x.Substring(1));
+            var texts = SplitCase(text).Select(x => char.ToUpper(x[0]) + x[1..]);
             var result = string.Join(string.Empty, texts);
-            result = char.ToLower(result[0]) + result.Substring(1);
+            result = char.ToLower(result[0]) + result[1..];
 
             return result;
         }

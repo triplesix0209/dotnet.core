@@ -35,7 +35,7 @@ namespace TripleSix.Core.AutoAdmin
             if (Name.IsNullOrWhiteSpace())
                 Name = Key;
             else if (Name.ToLower().StartsWith("lọc theo"))
-                Name = Name.Substring("lọc theo".Length).Trim();
+                Name = Name["lọc theo".Length..].Trim();
             Description = fieldType.GetCustomAttribute<DescriptionAttribute>()?.Description.Trim();
 
             LoadFieldType(controllerType, methodType, fieldType);
@@ -78,7 +78,6 @@ namespace TripleSix.Core.AutoAdmin
                 propertyType = typeof(string);
             }
 
-            var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
             Type = propertyType.Name.ToCamelCase();
 
@@ -107,6 +106,18 @@ namespace TripleSix.Core.AutoAdmin
             else if (fieldInfo.Type == AdminFieldTypes.HTML)
             {
                 Type = nameof(AdminFieldTypes.HTML).ToLower();
+            }
+            else if (fieldInfo.Type == AdminFieldTypes.HierarchyParentId)
+            {
+                var modelType = fieldInfo.ModelType;
+                if (modelType is null && fieldInfo.Type == AdminFieldTypes.HierarchyParentId)
+                {
+                    modelType = methodType.GetCustomAttribute<AdminMethodAttribute>().AdminType
+                        ?? controllerType.GetCustomAttribute<AdminControllerAttribute>().AdminType;
+                }
+
+                Type = "ParentId".ToCamelCase();
+                ModelController = new ModelMetadata(controllerType, methodType, fieldType, modelType);
             }
             else if (propertyType == typeof(Guid))
             {
