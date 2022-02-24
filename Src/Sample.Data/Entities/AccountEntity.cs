@@ -17,9 +17,14 @@ namespace Sample.Data.Entities
         [MaxLength(100)]
         public string Name { get; set; }
 
+        [MaxLength(100)]
+        public string Email { get; set; }
+
+        public bool IsEmailVerified { get; set; }
+
         public string AvatarLink { get; set; }
 
-        public AccountAccessLevels AccessLevel { get; set; }
+        public AccountLevels AccessLevel { get; set; }
 
         public Guid? PermissionGroupId { get; set; }
 
@@ -27,6 +32,10 @@ namespace Sample.Data.Entities
         public virtual PermissionGroupEntity PermissionGroup { get; set; }
 
         public virtual IList<AccountAuthEntity> Auths { get; set; }
+
+        public virtual IList<AccountSessionEntity> Sessions { get; set; }
+
+        public virtual IList<AccountVerifyEntity> Verifies { get; set; }
 
         protected override void ModelConfigure(EntityTypeBuilder<AccountEntity> builder)
         {

@@ -196,6 +196,7 @@ namespace TripleSix.Core.Helpers
             var expr = PredicateBuilder.New<TEntity>();
             foreach (var predicate in predicates)
                 expr = expr.Or(predicate);
+
             return query.Where(expr);
         }
 

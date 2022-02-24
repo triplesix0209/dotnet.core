@@ -22,16 +22,18 @@ namespace TripleSix.Core.AutoAdmin
                     switch (method.Type)
                     {
                         case AdminMethodTypes.List:
-                            if ((method as MethodListMetadata).ItemFields.Count(x => x.IsModelKey) > 1)
+                            var methodList = method as MethodListMetadata;
+                            if (methodList.ItemFields.Count(x => x.IsModelKey) > 1)
                                 throw new Exception($"List Controller \"{controller.Name}\": has invalid model key field");
-                            if ((method as MethodListMetadata).ItemFields.Count(x => x.IsModelText) != 1)
+                            if (methodList.ItemFields.Count(x => x.IsModelText) != 1)
                                 throw new Exception($"List Controller \"{controller.Name}\": has invalid model text field");
                             break;
 
                         case AdminMethodTypes.Detail:
-                            if ((method as MethodDetailMetadata).DetailFields.Count(x => x.IsModelKey) > 1)
+                            var methodDetail = method as MethodDetailMetadata;
+                            if (methodDetail.DetailFields.Count(x => x.IsModelKey) > 1)
                                 throw new Exception($"Detail Controller \"{controller.Name}\": has invalid model key field");
-                            if ((method as MethodDetailMetadata).DetailFields.Count(x => x.IsModelText) != 1)
+                            if (methodDetail.DetailFields.Count(x => x.IsModelText) != 1)
                                 throw new Exception($"Detail Controller \"{controller.Name}\": has invalid model text field");
                             break;
                     }

@@ -9,7 +9,7 @@ namespace TripleSix.Core.AutoAdmin
     {
         public ModelMetadata(Type controllerType, MethodInfo methodType, PropertyInfo fieldType, Type modelType)
         {
-            if (modelType is null || !modelType.IsAssignableTo<IAdminDto>()) return;
+            if (modelType is null || !modelType.IsAssignableTo<IAdminDto>()) throw new Exception($"\"{modelType.Name}\" is invalid for modelType");
 
             var modelControllerType = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())

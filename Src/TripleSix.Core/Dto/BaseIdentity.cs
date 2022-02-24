@@ -30,6 +30,11 @@ namespace TripleSix.Core.Dto
             var properties = GetType().GetProperties().Where(x => x.CanWrite);
             foreach (var property in properties)
                 property.SetValue(this, httpContext.Request.Headers.GetValue(property.Name));
+
+            if (IpAddress.IsNullOrWhiteSpace())
+                IpAddress = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (IpAddress.IsNullOrWhiteSpace())
+                IpAddress = httpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
 
         public HttpContext HttpContext { get; }
@@ -43,12 +48,21 @@ namespace TripleSix.Core.Dto
                 if (User == null || !User.Identity.IsAuthenticated)
                     return null;
 
-                var id = User.Claims.FirstOrDefault(x => x.Type == "id");
-                if (id == null) return null;
+                var identifier = User.Claims.FirstOrDefault(x => x.Type == "id");
+                if (identifier == null) return null;
 
-                return Guid.Parse(id.Value);
+                return Guid.Parse(identifier.Value);
             }
         }
+
+        [DisplayName("mã định danh client")]
+        public string ClientId { get; set; }
+
+        [DisplayName("địa chỉ ip")]
+        public string IpAddress { get; set; }
+
+        [DisplayName("url xử lý")]
+        public string RequestUrl { get; set; }
 
         [DisplayName("ghi chú xử lý")]
         public string SubmitNote { get; set; }

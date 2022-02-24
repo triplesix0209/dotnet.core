@@ -2,7 +2,7 @@
 
 namespace Sample.Common.Enum
 {
-    public enum AccountAccessLevels
+    public enum AccountLevels
     {
         [Description("thông thường")]
         Common = 0,

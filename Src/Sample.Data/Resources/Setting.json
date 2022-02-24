@@ -1,8 +1,50 @@
 ﻿[
   {
     "id": "26E84C09-8AA7-4E90-B1F6-F6E2FF6EF14C",
-    "code": "code",
-    "description": "description",
-    "value": "value"
+    "code": "accountVerify.timelife",
+    "description": "thời gian xác thực tài khoản (phút)",
+    "value": "5"
+  },
+  {
+    "id": "EBF55870-3CB6-4298-A8EC-0ECACF35554A",
+    "code": "accountVerify.emailSubject",
+    "description": "tiêu đề e-mail xác thực tài khoản",
+    "value": "Xác thực tài khoản Okayla"
+  },
+  {
+    "id": "9E6B0C1C-94FD-4280-AB11-B50269850B31",
+    "code": "accountVerify.emailBody",
+    "description": "nội dung e-mail xác thực tài khoản",
+    "value": "Xin vui lòng click vào link sau để xác thực tài khoản:<br/>{0}"
+  },
+  {
+    "id": "AE7B2A25-D280-4A38-A9CA-8EC582FFFFA0",
+    "code": "accountVerify.verifyLink",
+    "description": "cấu trúc link xác thực tài khoản",
+    "value": "https://identity.okayla.vn/verify/{0}"
+  },
+  {
+    "id": "5776AC54-8127-450A-8016-E907C1FC745A",
+    "code": "resetPassword.timelife",
+    "description": "thời gian reset password (phút)",
+    "value": "5"
+  },
+  {
+    "id": "605D0AFC-1C84-4FFD-9BC3-3108A16F12CE",
+    "code": "resetPassword.emailSubject",
+    "description": "tiêu đề e-mail reset password",
+    "value": "Đặt lại mật khẩu tài khoản Okayla"
+  },
+  {
+    "id": "EB9311D8-AF86-4327-9E15-AF5A15921493",
+    "code": "resetPassword.emailBody",
+    "description": "nội dung e-mail reset password",
+    "value": "Xin vui lòng click vào link sau để tiến hành đặt lại mật khẩu cho tài khoản của bạn:<br/>{0}"
+  },
+  {
+    "id": "25B071BE-7B87-406E-83B1-320C27F45E9B",
+    "code": "resetPassword.verifyLink",
+    "description": "cấu trúc link reset password",
+    "value": "https://identity.okayla.vn/resetPassword/{0}"
   }
 ]

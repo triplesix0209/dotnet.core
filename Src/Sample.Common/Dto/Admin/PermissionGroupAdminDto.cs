@@ -15,7 +15,7 @@ namespace Sample.Common.Dto
             public FilterParameter<Guid> HierarchyParentId { get; set; }
 
             [DisplayName("lọc theo tên gọi")]
-            public FilterParameter<string> Name { get; set; }
+            public FilterParameterString Name { get; set; }
         }
 
         public class Item : ModelDataDto

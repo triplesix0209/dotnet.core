@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using TripleSix.Core.Attributes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;

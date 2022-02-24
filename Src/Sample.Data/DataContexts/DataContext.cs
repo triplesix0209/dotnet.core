@@ -20,6 +20,8 @@ namespace Sample.Data.DataContexts
 
         public DbSet<AccountSessionEntity> AccountSession { get; set; }
 
+        public DbSet<AccountVerifyEntity> AccountVerify { get; set; }
+
         public DbSet<PermissionGroupEntity> PermissionGroup { get; set; }
 
         public DbSet<PermissionValueEntity> PermissionValue { get; set; }

@@ -168,13 +168,13 @@ namespace Sample.Data.DataContexts
                     account.Code = item.Value<string>("code").IsNotNullOrWhiteSpace()
                         ? account.Code = item.Value<string>("code")
                         : item.Value<string>("username");
-                    account.AccessLevel = Enum.Parse<AccountAccessLevels>(item.Value<string>("level"), true);
+                    account.AccessLevel = Enum.Parse<AccountLevels>(item.Value<string>("level"), true);
                     account.IsDeleted = item.Value<bool?>("isDeleted") == true;
-                    account.PermissionGroupId = account.AccessLevel == AccountAccessLevels.Root ? null : permissionGroups.First(x => x.Key == "admin").Data.Id;
+                    account.PermissionGroupId = account.AccessLevel == AccountLevels.Root ? null : permissionGroups.First(x => x.Key == "admin").Data.Id;
 
                     var auth = new AccountAuthEntity();
                     auth.Id = account.Id;
-                    auth.Type = AccountAuthTypes.Basic;
+                    auth.Type = AccountAuthTypes.UsernamePassword;
                     auth.Username = item.Value<string>("username");
                     auth.HashPasswordKey = item.Value<string>("hashPasswordKey");
                     auth.HashedPassword = PasswordHelper.Hash(auth.HashPasswordKey, item.Value<string>("password"));

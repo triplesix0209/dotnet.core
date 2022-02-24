@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Quartz;
 using TripleSix.Core.WebApi;
+using TripleSix.Core.WebApi.Authentication;
 using TripleSix.Core.WebApi.Swagger;
 
 namespace Sample.WebApi
@@ -59,6 +60,9 @@ namespace Sample.WebApi
             base.ConfigureServices(services);
 
             services.AddDbContext<DataContext>();
+
+            services.AddAuthentication()
+                .AddTokenScheme("account-token");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)

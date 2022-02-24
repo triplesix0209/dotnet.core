@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sample.Middle.Services;
 using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
@@ -17,9 +18,11 @@ namespace Sample.Middle.Abstracts
         {
         }
 
-        protected override Task<IEnumerable<ActorDto>> GetActor(IIdentity identity, params Guid[] actorIds)
+        public IAccountService AccountService { get; set; }
+
+        protected override async Task<IEnumerable<ActorDto>> GetActor(IIdentity identity, params Guid[] actorIds)
         {
-            return null;
+            return await AccountService.GetListById<ActorDto>(identity, actorIds, true);
         }
     }
 }

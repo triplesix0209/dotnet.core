@@ -12,6 +12,12 @@ namespace TripleSix.Core.Dto
 
         Guid? UserId { get; }
 
+        string ClientId { get; set; }
+
+        string IpAddress { get; set; }
+
+        string RequestUrl { get; set; }
+
         string SubmitNote { get; set; }
     }
 }

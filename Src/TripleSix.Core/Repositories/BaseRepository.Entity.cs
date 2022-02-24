@@ -116,7 +116,7 @@ namespace TripleSix.Core.Repositories
             Delete(null, entities.ToArray());
         }
 
-        protected Task<IQueryable<TEntity>> BuildQueryAuto(IIdentity identity, IFilterDto filter, string[] excludeProperties = null)
+        protected virtual Task<IQueryable<TEntity>> BuildQueryAuto(IIdentity identity, IFilterDto filter, string[] excludeProperties = null)
         {
             var query = BuildQuery();
 

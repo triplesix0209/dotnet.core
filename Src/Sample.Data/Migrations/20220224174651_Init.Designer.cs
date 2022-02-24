@@ -10,7 +10,7 @@ using Sample.Data.DataContexts;
 namespace Sample.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220224122236_Init")]
+    [Migration("20220224174651_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,9 +159,18 @@ namespace Sample.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("creator_id");
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("email");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_email_verified");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -221,6 +230,7 @@ namespace Sample.Data.Migrations
                             AccessLevel = 2,
                             Code = "root",
                             IsDeleted = true,
+                            IsEmailVerified = false,
                             Name = "Root"
                         },
                         new
@@ -229,6 +239,7 @@ namespace Sample.Data.Migrations
                             AccessLevel = 1,
                             Code = "admin",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             Name = "Admin",
                             PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77")
                         });
@@ -304,6 +315,84 @@ namespace Sample.Data.Migrations
                         .HasDatabaseName("ix_account_session_updater_id");
 
                     b.ToTable("account_session");
+                });
+
+            modelBuilder.Entity("Sample.Data.Entities.AccountVerifyEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("account_id");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime?>("CreateDatetime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("create_datetime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<DateTime>("ExpiryDatetime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("expiry_datetime");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime?>("UpdateDatetime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("update_datetime");
+
+                    b.Property<Guid?>("UpdaterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updater_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_account_verify");
+
+                    b.HasIndex("AccountId")
+                        .HasDatabaseName("ix_account_verify_account_id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_account_verify_code");
+
+                    b.HasIndex("CreateDatetime")
+                        .HasDatabaseName("ix_account_verify_create_datetime");
+
+                    b.HasIndex("CreatorId")
+                        .HasDatabaseName("ix_account_verify_creator_id");
+
+                    b.HasIndex("ExpiryDatetime")
+                        .HasDatabaseName("ix_account_verify_expiry_datetime");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_account_verify_is_deleted");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("ix_account_verify_type");
+
+                    b.HasIndex("UpdateDatetime")
+                        .HasDatabaseName("ix_account_verify_update_datetime");
+
+                    b.HasIndex("UpdaterId")
+                        .HasDatabaseName("ix_account_verify_updater_id");
+
+                    b.ToTable("account_verify");
                 });
 
             modelBuilder.Entity("Sample.Data.Entities.PermissionEntity", b =>
@@ -744,10 +833,66 @@ namespace Sample.Data.Migrations
                         new
                         {
                             Id = new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"),
-                            Code = "code",
-                            Description = "description",
+                            Code = "accountVerify.timelife",
+                            Description = "thời gian xác thực tài khoản (phút)",
                             IsDeleted = false,
-                            Value = "value"
+                            Value = "5"
+                        },
+                        new
+                        {
+                            Id = new Guid("ebf55870-3cb6-4298-a8ec-0ecacf35554a"),
+                            Code = "accountVerify.emailSubject",
+                            Description = "tiêu đề e-mail xác thực tài khoản",
+                            IsDeleted = false,
+                            Value = "Xác thực tài khoản Okayla"
+                        },
+                        new
+                        {
+                            Id = new Guid("9e6b0c1c-94fd-4280-ab11-b50269850b31"),
+                            Code = "accountVerify.emailBody",
+                            Description = "nội dung e-mail xác thực tài khoản",
+                            IsDeleted = false,
+                            Value = "Xin vui lòng click vào link sau để xác thực tài khoản:<br/>{0}"
+                        },
+                        new
+                        {
+                            Id = new Guid("ae7b2a25-d280-4a38-a9ca-8ec582ffffa0"),
+                            Code = "accountVerify.verifyLink",
+                            Description = "cấu trúc link xác thực tài khoản",
+                            IsDeleted = false,
+                            Value = "https://identity.okayla.vn/verify/{0}"
+                        },
+                        new
+                        {
+                            Id = new Guid("5776ac54-8127-450a-8016-e907c1fc745a"),
+                            Code = "resetPassword.timelife",
+                            Description = "thời gian reset password (phút)",
+                            IsDeleted = false,
+                            Value = "5"
+                        },
+                        new
+                        {
+                            Id = new Guid("605d0afc-1c84-4ffd-9bc3-3108a16f12ce"),
+                            Code = "resetPassword.emailSubject",
+                            Description = "tiêu đề e-mail reset password",
+                            IsDeleted = false,
+                            Value = "Đặt lại mật khẩu tài khoản Okayla"
+                        },
+                        new
+                        {
+                            Id = new Guid("eb9311d8-af86-4327-9e15-af5a15921493"),
+                            Code = "resetPassword.emailBody",
+                            Description = "nội dung e-mail reset password",
+                            IsDeleted = false,
+                            Value = "Xin vui lòng click vào link sau để tiến hành đặt lại mật khẩu cho tài khoản của bạn:<br/>{0}"
+                        },
+                        new
+                        {
+                            Id = new Guid("25b071be-7b87-406e-83b1-320c27f45e9b"),
+                            Code = "resetPassword.verifyLink",
+                            Description = "cấu trúc link reset password",
+                            IsDeleted = false,
+                            Value = "https://identity.okayla.vn/resetPassword/{0}"
                         });
                 });
 
@@ -819,9 +964,21 @@ namespace Sample.Data.Migrations
             modelBuilder.Entity("Sample.Data.Entities.AccountSessionEntity", b =>
                 {
                     b.HasOne("Sample.Data.Entities.AccountEntity", "Account")
-                        .WithMany()
+                        .WithMany("Sessions")
                         .HasForeignKey("AccountId")
                         .HasConstraintName("fk_account_session_account_account_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("Sample.Data.Entities.AccountVerifyEntity", b =>
+                {
+                    b.HasOne("Sample.Data.Entities.AccountEntity", "Account")
+                        .WithMany("Verifies")
+                        .HasForeignKey("AccountId")
+                        .HasConstraintName("fk_account_verify_account_account_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -862,6 +1019,10 @@ namespace Sample.Data.Migrations
             modelBuilder.Entity("Sample.Data.Entities.AccountEntity", b =>
                 {
                     b.Navigation("Auths");
+
+                    b.Navigation("Sessions");
+
+                    b.Navigation("Verifies");
                 });
 
             modelBuilder.Entity("Sample.Data.Entities.PermissionEntity", b =>

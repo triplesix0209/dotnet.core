@@ -5,6 +5,6 @@ namespace Sample.Common.Enum
     public enum AccountAuthTypes
     {
         [Description("thông thường")]
-        Basic = 0,
+        UsernamePassword = 0,
     }
 }
