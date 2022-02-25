@@ -8,6 +8,8 @@ namespace TripleSix.Core.AutoAdmin
     {
         public AdminMetadata()
         {
+            Version = new Version(2, 0);
+
             var allControllers = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(t => !t.IsAbstract)
@@ -25,6 +27,8 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(x => x.Methods.Any())
                 .ToArray();
         }
+
+        public Version Version { get; set; }
 
         public ControllerMetadata[] Controllers { get; set; }
     }
