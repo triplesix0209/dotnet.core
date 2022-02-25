@@ -78,5 +78,14 @@ namespace TripleSix.Core.WebApi.Authentication
                 Encoding.UTF8);
             return AuthenticateResult.Fail(error);
         }
+
+        protected override async Task HandleForbiddenAsync(AuthenticationProperties properties)
+        {
+            Context.Response.ContentType = "application/json";
+            Context.Response.StatusCode = 403;
+            await Context.Response.WriteAsync(
+                JsonHelper.SerializeObject(new ErrorResult(403, "forbidden", "bạn không được cấp phép để tiếp tục")),
+                Encoding.UTF8);
+        }
     }
 }

@@ -4,13 +4,13 @@ namespace Sample.Common.Enum
 {
     public enum AccountLevels
     {
-        [Description("thông thường")]
-        Common = 0,
+        [Description("root")]
+        Root = 0,
 
         [Description("quản trị")]
         Admin = 1,
 
-        [Description("root")]
-        Root = 2,
+        [Description("thông thường")]
+        Common = 2,
     }
 }

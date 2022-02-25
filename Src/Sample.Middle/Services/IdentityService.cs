@@ -117,7 +117,7 @@ namespace Sample.Middle.Services
                     ClaimValueTypes.String),
                 new Claim(
                     nameof(AccountEntity.AccessLevel).ToCamelCase(),
-                    account.AccessLevel.ToString().ToCamelCase(),
+                    account.AccessLevel.ToString("D"),
                     ClaimValueTypes.Boolean),
             };
 

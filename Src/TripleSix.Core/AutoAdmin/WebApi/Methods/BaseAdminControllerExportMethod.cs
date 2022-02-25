@@ -7,6 +7,7 @@ using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Services;
+using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -21,6 +22,7 @@ namespace TripleSix.Core.AutoAdmin
         [HttpGet("Export")]
         [SwaggerApi("xuất [controller]", typeof(File))]
         [AdminMethod(Type = AdminMethodTypes.Export)]
+        [PermissionRequirement(AutoGroup = true, ListCode = new[] { "export", "read" })]
         public virtual async Task<IActionResult> Export(TFilterDto filter, ExportInputDto config)
         {
             var identity = GenerateIdentity();

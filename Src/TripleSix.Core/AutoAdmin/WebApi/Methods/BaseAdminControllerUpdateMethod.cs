@@ -18,6 +18,7 @@ namespace TripleSix.Core.AutoAdmin
         [HttpPut("{id}")]
         [SwaggerApi("sửa [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Update)]
+        [PermissionRequirement(AutoGroup = true, ListCode = new[] { "update" })]
         [Transactional]
         public async Task<IActionResult> Update(RouteId route, [FromBody] TUpdateDto input)
         {

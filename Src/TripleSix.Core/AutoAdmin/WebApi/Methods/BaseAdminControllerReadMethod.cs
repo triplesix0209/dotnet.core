@@ -4,6 +4,7 @@ using TripleSix.Core.Attributes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Services;
+using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -19,6 +20,7 @@ namespace TripleSix.Core.AutoAdmin
         [HttpGet]
         [SwaggerApi("lấy danh sách [controller]")]
         [AdminMethod(Type = AdminMethodTypes.List)]
+        [PermissionRequirement(AutoGroup = true, ListCode = new[] { "read" })]
         public virtual async Task<IActionResult> GetPage(TFilterDto input)
         {
             var identity = GenerateIdentity();
@@ -36,6 +38,7 @@ namespace TripleSix.Core.AutoAdmin
         [HttpGet("{id}")]
         [SwaggerApi("lấy chi tiết [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Detail)]
+        [PermissionRequirement(AutoGroup = true, ListCode = new[] { "read" })]
         public virtual async Task<IActionResult> GetDetail(RouteId route)
         {
             var identity = GenerateIdentity();

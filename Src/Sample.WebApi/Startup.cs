@@ -61,8 +61,10 @@ namespace Sample.WebApi
 
             services.AddDbContext<DataContext>();
 
-            services.AddAuthentication()
-                .AddTokenScheme("account-token");
+            services.AddAuthentication(option =>
+            {
+                option.DefaultForbidScheme = "account-token";
+            }).AddTokenScheme("account-token");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)

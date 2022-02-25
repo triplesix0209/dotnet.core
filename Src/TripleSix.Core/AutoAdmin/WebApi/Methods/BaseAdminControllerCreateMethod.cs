@@ -20,6 +20,7 @@ namespace TripleSix.Core.AutoAdmin
         [HttpPost]
         [SwaggerApi("tạo [controller]", typeof(DataResult<Guid>))]
         [AdminMethod(Type = AdminMethodTypes.Create)]
+        [PermissionRequirement(AutoGroup = true, ListCode = new[] { "create" })]
         [Transactional]
         public async Task<IActionResult> Create([FromBody] TCreateDto input)
         {
