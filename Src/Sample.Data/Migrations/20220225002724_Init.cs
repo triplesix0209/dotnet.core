@@ -219,7 +219,7 @@ namespace Sample.Data.Migrations
             migrationBuilder.InsertData(
                 table: "account",
                 columns: new[] { "id", "access_level", "avatar_link", "code", "create_datetime", "creator_id", "email", "is_deleted", "is_email_verified", "name", "permission_group_id", "update_datetime", "updater_id" },
-                values: new object[] { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), 2, null, "root", null, null, null, true, false, "Root", null, null, null });
+                values: new object[] { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), 0, null, "root", null, null, null, true, false, "Root", null, null, null });
 
             migrationBuilder.InsertData(
                 table: "permission",
@@ -227,22 +227,22 @@ namespace Sample.Data.Migrations
                 values: new object[,]
                 {
                     { "setting.export", "thiết lập", "xuất dữ liệu thiết lập" },
-                    { "setting.changelog", "thiết lập", "lịch sử thay đổi của thiết lập" },
                     { "setting.update", "thiết lập", "sửa thiết lập" },
                     { "setting.read", "thiết lập", "xem thiết lập" },
+                    { "permission.export", "quyền", "xuất dữ liệu quyền" },
                     { "permission.changelog", "quyền", "lịch sử thay đổi của quyền" },
                     { "permission.delete", "quyền", "xóa quyền" },
                     { "permission.update", "quyền", "sửa quyền" },
                     { "permission.read", "quyền", "xem quyền" },
-                    { "permission.export", "quyền", "xuất dữ liệu quyền" },
+                    { "setting.changelog", "thiết lập", "lịch sử thay đổi của thiết lập" },
                     { "account.export", "tài khoản", "xuất dữ liệu tài khoản" },
                     { "account.changelog", "tài khoản", "lịch sử thay đổi của tài khoản" },
                     { "account.delete", "tài khoản", "xóa tài khoản" },
-                    { "permission.create", "quyền", "tạo quyền" },
                     { "account.update", "tài khoản", "sửa tài khoản" },
                     { "account.read", "tài khoản", "xem tài khoản" },
                     { "account.create", "tài khoản", "tạo tài khoản" },
-                    { "profile.update", "thông tin cá nhân", "sửa thông tin cá nhân" }
+                    { "profile.update", "thông tin cá nhân", "sửa thông tin cá nhân" },
+                    { "permission.create", "quyền", "tạo quyền" }
                 });
 
             migrationBuilder.InsertData(
@@ -255,13 +255,20 @@ namespace Sample.Data.Migrations
                 columns: new[] { "id", "code", "create_datetime", "creator_id", "description", "is_deleted", "update_datetime", "updater_id", "value" },
                 values: new object[,]
                 {
-                    { new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"), "accountVerify.timelife", null, null, "thời gian xác thực tài khoản (phút)", false, null, null, "5" },
-                    { new Guid("ebf55870-3cb6-4298-a8ec-0ecacf35554a"), "accountVerify.emailSubject", null, null, "tiêu đề e-mail xác thực tài khoản", false, null, null, "Xác thực tài khoản Okayla" },
-                    { new Guid("9e6b0c1c-94fd-4280-ab11-b50269850b31"), "accountVerify.emailBody", null, null, "nội dung e-mail xác thực tài khoản", false, null, null, "Xin vui lòng click vào link sau để xác thực tài khoản:<br/>{0}" },
-                    { new Guid("ae7b2a25-d280-4a38-a9ca-8ec582ffffa0"), "accountVerify.verifyLink", null, null, "cấu trúc link xác thực tài khoản", false, null, null, "https://identity.okayla.vn/verify/{0}" },
-                    { new Guid("5776ac54-8127-450a-8016-e907c1fc745a"), "resetPassword.timelife", null, null, "thời gian reset password (phút)", false, null, null, "5" },
                     { new Guid("605d0afc-1c84-4ffd-9bc3-3108a16f12ce"), "resetPassword.emailSubject", null, null, "tiêu đề e-mail reset password", false, null, null, "Đặt lại mật khẩu tài khoản Okayla" },
+                    { new Guid("5776ac54-8127-450a-8016-e907c1fc745a"), "resetPassword.timelife", null, null, "thời gian reset password (phút)", false, null, null, "5" },
+                    { new Guid("ae7b2a25-d280-4a38-a9ca-8ec582ffffa0"), "accountVerify.verifyLink", null, null, "cấu trúc link xác thực tài khoản", false, null, null, "https://identity.okayla.vn/verify/{0}" },
+                    { new Guid("9e6b0c1c-94fd-4280-ab11-b50269850b31"), "accountVerify.emailBody", null, null, "nội dung e-mail xác thực tài khoản", false, null, null, "Xin vui lòng click vào link sau để xác thực tài khoản:<br/>{0}" },
+                    { new Guid("ebf55870-3cb6-4298-a8ec-0ecacf35554a"), "accountVerify.emailSubject", null, null, "tiêu đề e-mail xác thực tài khoản", false, null, null, "Xác thực tài khoản Okayla" },
+                    { new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"), "accountVerify.timelife", null, null, "thời gian xác thực tài khoản (phút)", false, null, null, "5" },
+                    { new Guid("90522b63-c31d-458c-b183-bcaebec5d9a0"), "mail.username", null, null, "username để mail", false, null, null, "contact.goby@gmail.com" },
+                    { new Guid("0f451c30-b162-4947-9cba-cde403b4994e"), "mail.sender-name", null, null, "tên sử dụng để mail", false, null, null, "Support Okayla" },
+                    { new Guid("13ae6837-cdca-4bf1-a438-9c64e25d3de6"), "mail.enable-ssl", null, null, "sử dụng phương thức SSL để mail", false, null, null, "1" },
+                    { new Guid("99ff3180-dfa9-4543-af28-d6848d55a321"), "mail.password", null, null, "mật khẩu để mail", false, null, null, "hong.banh@cptech.vn" },
+                    { new Guid("c22d9ac6-5f8b-48ec-998a-5fd4f0e19479"), "mail.port", null, null, "port để mail", false, null, null, "587" },
+                    { new Guid("23799cd7-b0fb-447c-b105-5b34d98969e6"), "mail.host", null, null, "host để mail", false, null, null, "smtp.gmail.com" },
                     { new Guid("eb9311d8-af86-4327-9e15-af5a15921493"), "resetPassword.emailBody", null, null, "nội dung e-mail reset password", false, null, null, "Xin vui lòng click vào link sau để tiến hành đặt lại mật khẩu cho tài khoản của bạn:<br/>{0}" },
+                    { new Guid("51c37338-4b04-476f-bb95-e8fe11e0403c"), "mail.sender-address", null, null, "e-mail sử dụng để mail", false, null, null, "support@goby.one" },
                     { new Guid("25b071be-7b87-406e-83b1-320c27f45e9b"), "resetPassword.verifyLink", null, null, "cấu trúc link reset password", false, null, null, "https://identity.okayla.vn/resetPassword/{0}" }
                 });
 

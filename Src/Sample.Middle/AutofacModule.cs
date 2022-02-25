@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Sample.Middle.Helpers;
 using TripleSix.Core.ModuleAutofac;
 
 namespace Sample.Middle
@@ -20,6 +21,11 @@ namespace Sample.Middle
 
             builder.RegisterAllMapper(_assembly);
             builder.RegisterAllService(_assembly);
+
+            builder.Register(c => new MailHelper())
+               .PropertiesAutowired()
+               .InstancePerLifetimeScope()
+               .As<MailHelper>();
         }
     }
 }

@@ -10,6 +10,7 @@ using Sample.Common.Helpers;
 using Sample.Data.Entities;
 using Sample.Data.Repositories;
 using Sample.Middle.Abstracts;
+using Sample.Middle.Helpers;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
@@ -280,7 +281,7 @@ namespace Sample.Middle.Services
             var emailBody = await SettingService.GetValue(identity, "resetPassword.emailBody");
             verifyLink = string.Format(verifyLink, verify.Id.ToString());
             emailBody = string.Format(emailBody, verifyLink);
-            MailHelper.SendMail(account.Email, emailSubject, emailBody);
+            await MailHelper.SendMail(account.Email, emailSubject, emailBody);
 
             return verify;
         }
@@ -316,7 +317,7 @@ namespace Sample.Middle.Services
             var emailBody = await SettingService.GetValue(identity, "accountVerify.emailBody");
             verifyLink = string.Format(verifyLink, verify.Id.ToString());
             emailBody = string.Format(emailBody, verifyLink);
-            MailHelper.SendMail(account.Email, emailSubject, emailBody);
+            await MailHelper.SendMail(account.Email, emailSubject, emailBody);
 
             return verify;
         }

@@ -1,5 +1,47 @@
 ﻿[
   {
+    "id": "23799CD7-B0FB-447C-B105-5B34D98969E6",
+    "code": "mail.host",
+    "description": "host để mail",
+    "value": "smtp.gmail.com"
+  },
+  {
+    "id": "C22D9AC6-5F8B-48EC-998A-5FD4F0E19479",
+    "code": "mail.port",
+    "description": "port để mail",
+    "value": "587"
+  },
+  {
+    "id": "90522B63-C31D-458C-B183-BCAEBEC5D9A0",
+    "code": "mail.username",
+    "description": "username để mail",
+    "value": "contact.goby@gmail.com"
+  },
+  {
+    "id": "99FF3180-DFA9-4543-AF28-D6848D55A321",
+    "code": "mail.password",
+    "description": "mật khẩu để mail",
+    "value": "hong.banh@cptech.vn"
+  },
+  {
+    "id": "13AE6837-CDCA-4BF1-A438-9C64E25D3DE6",
+    "code": "mail.enable-ssl",
+    "description": "sử dụng phương thức SSL để mail",
+    "value": "1"
+  },
+  {
+    "id": "0F451C30-B162-4947-9CBA-CDE403B4994E",
+    "code": "mail.sender-name",
+    "description": "tên sử dụng để mail",
+    "value": "Support Okayla"
+  },
+  {
+    "id": "51C37338-4B04-476F-BB95-E8FE11E0403C",
+    "code": "mail.sender-address",
+    "description": "e-mail sử dụng để mail",
+    "value": "support@goby.one"
+  },
+  {
     "id": "26E84C09-8AA7-4E90-B1F6-F6E2FF6EF14C",
     "code": "accountVerify.timelife",
     "description": "thời gian xác thực tài khoản (phút)",

@@ -225,7 +225,7 @@ namespace Sample.Data.Migrations
                         new
                         {
                             Id = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
-                            AccessLevel = 2,
+                            AccessLevel = 0,
                             Code = "root",
                             IsDeleted = true,
                             IsEmailVerified = false,
@@ -828,6 +828,62 @@ namespace Sample.Data.Migrations
                     b.ToTable("setting");
 
                     b.HasData(
+                        new
+                        {
+                            Id = new Guid("23799cd7-b0fb-447c-b105-5b34d98969e6"),
+                            Code = "mail.host",
+                            Description = "host để mail",
+                            IsDeleted = false,
+                            Value = "smtp.gmail.com"
+                        },
+                        new
+                        {
+                            Id = new Guid("c22d9ac6-5f8b-48ec-998a-5fd4f0e19479"),
+                            Code = "mail.port",
+                            Description = "port để mail",
+                            IsDeleted = false,
+                            Value = "587"
+                        },
+                        new
+                        {
+                            Id = new Guid("90522b63-c31d-458c-b183-bcaebec5d9a0"),
+                            Code = "mail.username",
+                            Description = "username để mail",
+                            IsDeleted = false,
+                            Value = "contact.goby@gmail.com"
+                        },
+                        new
+                        {
+                            Id = new Guid("99ff3180-dfa9-4543-af28-d6848d55a321"),
+                            Code = "mail.password",
+                            Description = "mật khẩu để mail",
+                            IsDeleted = false,
+                            Value = "hong.banh@cptech.vn"
+                        },
+                        new
+                        {
+                            Id = new Guid("13ae6837-cdca-4bf1-a438-9c64e25d3de6"),
+                            Code = "mail.enable-ssl",
+                            Description = "sử dụng phương thức SSL để mail",
+                            IsDeleted = false,
+                            Value = "1"
+                        },
+                        new
+                        {
+                            Id = new Guid("0f451c30-b162-4947-9cba-cde403b4994e"),
+                            Code = "mail.sender-name",
+                            Description = "tên sử dụng để mail",
+                            IsDeleted = false,
+                            Value = "Support Okayla"
+                        },
+                        new
+                        {
+                            Id = new Guid("51c37338-4b04-476f-bb95-e8fe11e0403c"),
+                            Code = "mail.sender-address",
+                            Description = "e-mail sử dụng để mail",
+                            IsDeleted = false,
+                            Value = "support@goby.one"
+                        },
                         new
                         {
                             Id = new Guid("26e84c09-8aa7-4e90-b1f6-f6e2ff6ef14c"),
