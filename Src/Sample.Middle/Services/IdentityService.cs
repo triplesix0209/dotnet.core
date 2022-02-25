@@ -137,7 +137,6 @@ namespace Sample.Middle.Services
                     ClaimValueTypes.String));
             }
 
-            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
             var accessToken = new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
                 issuer,
                 claims: claims,
