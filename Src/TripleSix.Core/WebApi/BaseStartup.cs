@@ -109,7 +109,8 @@ namespace TripleSix.Core.WebApi
 
             options.DocumentFilter<BaseDocumentFilter>();
             options.OperationFilter<DescribeOperationFilter>();
-            options.OperationFilter<DescribeAutoAdminOperationFilter>(_executingAssembly);
+            options.OperationFilter<DescribeAutoAdminOperationFilter>();
+            options.OperationFilter<PermissionOperationFilter>();
         }
 
         public virtual void ConfigureReDoc(ReDocOptions options)

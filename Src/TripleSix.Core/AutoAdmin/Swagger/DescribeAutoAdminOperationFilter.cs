@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -13,13 +14,6 @@ namespace TripleSix.Core.AutoAdmin
 {
     public class DescribeAutoAdminOperationFilter : IOperationFilter
     {
-        private readonly Assembly _executingAssembly;
-
-        public DescribeAutoAdminOperationFilter(Assembly executingAssembly)
-        {
-            _executingAssembly = executingAssembly;
-        }
-
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor controllerDescriptor)
@@ -30,13 +24,16 @@ namespace TripleSix.Core.AutoAdmin
             var entityType = controllerType.GetGenericArguments()[0];
             if (!entityType.IsAssignableTo<IModelEntity>()) return;
 
-            var controllerBase = _executingAssembly.GetExportedTypes()
-                .FirstOrDefault(t =>
+            var controllerBase = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => x.IsPublic && !x.IsAbstract)
+                .Where(x =>
                 {
-                    var metadata = t.GetCustomAttribute<AdminControllerAttribute>();
-                    if (metadata is null) return false;
-                    return metadata.AdminType is not null && metadata.EntityType == entityType;
-                });
+                    var info = x.GetCustomAttribute<AdminControllerAttribute>();
+                    if (info is null) return false;
+                    return info.AdminType is not null && info.EntityType == entityType;
+                })
+                .FirstOrDefault();
             if (controllerBase is null) return;
 
             var swaggerTag = controllerBase.GetCustomAttribute<SwaggerTagAttribute>();
