@@ -26,7 +26,7 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(x => x.Name != nameof(IModelFilterDto.CreatorId))
                 .Where(x => x.Name != nameof(IModelFilterDto.UpdaterId))
                 .OrderBy(x => x.DeclaringType.BaseTypesAndSelf().Count())
-                .Select(fieldType => new FieldInputMetadata(controllerMetadata, this, fieldType))
+                .Select(fieldType => new FieldFilterMetadata(controllerMetadata, this, fieldType))
                 .ToArray();
 
             ItemFields = itemType.GetProperties()
@@ -41,7 +41,7 @@ namespace TripleSix.Core.AutoAdmin
             FieldDisplayMetadata.AfterProcess(ItemFields);
         }
 
-        public FieldInputMetadata[] FilterFields { get; set; }
+        public FieldFilterMetadata[] FilterFields { get; set; }
 
         public FieldItemMetadata[] ItemFields { get; set; }
     }
