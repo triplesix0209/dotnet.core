@@ -1,0 +1,13 @@
+{
+  "name": "sample.webadmin",
+  "version": "1.0.0",
+  "description": "Sample Web Admin",
+  "author": "triplesix0209@gmail.com",
+  "license": "ISC",
+  "scripts": {
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
