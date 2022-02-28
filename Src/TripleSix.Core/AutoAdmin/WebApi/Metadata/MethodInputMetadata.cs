@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using TripleSix.Core.Helpers;
 
@@ -7,9 +6,10 @@ namespace TripleSix.Core.AutoAdmin
 {
     public class MethodInputMetadata : MethodMetadata
     {
-        public MethodInputMetadata(Type controllerType, MethodInfo methodType, string nestedTypeForInput)
-            : base(controllerType, methodType)
+        public MethodInputMetadata(ControllerMetadata controllerMetadata, MethodInfo methodType, string nestedTypeForInput)
+            : base(controllerMetadata, methodType)
         {
+            var controllerType = controllerMetadata.ControllerType;
             var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
             var methodInfo = methodType.GetCustomAttribute<AdminMethodAttribute>();
             var adminType = methodInfo.AdminType ?? controllerInfo.AdminType;
@@ -17,10 +17,18 @@ namespace TripleSix.Core.AutoAdmin
 
             InputFields = inputType.GetProperties()
                 .OrderBy(x => x.DeclaringType.BaseTypesAndSelf().Count())
-                .Select(fieldType => new FieldInputMetadata(controllerType, methodType, fieldType))
+                .Select(fieldType => new FieldInputMetadata(controllerMetadata, this, fieldType))
+                .ToArray();
+
+            InputFieldGroups = InputFields
+                .Where(x => x.GroupData is not null)
+                .GroupBy(x => x.GroupData.Code)
+                .Select(x => x.First().GroupData)
                 .ToArray();
         }
 
         public FieldInputMetadata[] InputFields { get; set; }
+
+        public GroupMetadata[] InputFieldGroups { get; set; }
     }
 }

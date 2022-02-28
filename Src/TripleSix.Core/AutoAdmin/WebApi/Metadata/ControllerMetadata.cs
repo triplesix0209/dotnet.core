@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using TripleSix.Core.Helpers;
 
@@ -11,23 +12,24 @@ namespace TripleSix.Core.AutoAdmin
         public ControllerMetadata(Type controllerType)
         {
             var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
-            var controllerName = controllerType.Name.Substring(0, controllerType.Name.LastIndexOf("Controller"));
 
-            Code = controllerName.ToKebabCase();
+            ControllerType = controllerType;
+            ControllerCode = controllerType.Name.Substring(0, controllerType.Name.LastIndexOf("Controller"));
+            Code = ControllerCode.ToKebabCase();
             Icon = controllerInfo.Icon?.Trim();
             PermissionGroup = controllerInfo.PermissionGroup.IsNullOrWhiteSpace()
-                ? controllerName.ToCamelCase()
+                ? ControllerCode.ToCamelCase()
                 : controllerInfo.PermissionGroup;
 
             Name = controllerInfo is not null && controllerInfo.Name.IsNotNullOrWhiteSpace()
                 ? controllerInfo.Name.Trim()
                 : "[controller]";
             if (Name.Contains("[controller]"))
-                Name = Name.Replace("[controller]", controllerType.GetCustomAttribute<SwaggerTagAttribute>()?.Description ?? controllerName);
+                Name = Name.Replace("[controller]", controllerType.GetCustomAttribute<SwaggerTagAttribute>()?.Description ?? ControllerCode);
 
             if (controllerInfo.GroupName.IsNotNullOrWhiteSpace())
             {
-                Group = new GroupMetadata
+                GroupData = new GroupMetadata
                 {
                     Code = controllerInfo.GroupCode.IsNotNullOrWhiteSpace()
                         ? controllerInfo.GroupCode.Trim()
@@ -35,13 +37,15 @@ namespace TripleSix.Core.AutoAdmin
                     Name = controllerInfo.GroupName.Trim(),
                     Icon = controllerInfo.GroupIcon?.Trim(),
                 };
+
+                Group = GroupData.Code;
             }
 
-            Methods = MethodMetadata.GetListMethodOfController(controllerType)
-                .Select(methodType => MethodMetadata.GenerateMethodMetadata(controllerType, methodType))
+            MethodData = MethodMetadata.GetListMethodOfController(controllerType)
+                .Select(methodType => MethodMetadata.GenerateMethodMetadata(this, methodType))
                 .ToArray();
 
-            Render = controllerInfo.RenderOnMenu && Methods.Any(x => x.Type == AdminMethodTypes.List);
+            Render = controllerInfo.RenderOnMenu && MethodData.Any(x => x.Type == AdminMethodTypes.List);
         }
 
         public bool Render { get; set; }
@@ -52,10 +56,20 @@ namespace TripleSix.Core.AutoAdmin
 
         public string Icon { get; set; }
 
-        public GroupMetadata Group { get; set; }
+        public string Group { get; set; }
 
         public string PermissionGroup { get; set; }
 
-        public MethodMetadata[] Methods { get; set; }
+        [JsonIgnore]
+        public Type ControllerType { get; set; }
+
+        [JsonIgnore]
+        public string ControllerCode { get; set; }
+
+        [JsonIgnore]
+        public GroupMetadata GroupData { get; set; }
+
+        [JsonIgnore]
+        public MethodMetadata[] MethodData { get; set; }
     }
 }

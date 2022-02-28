@@ -26,6 +26,11 @@ namespace TripleSix.Core.AutoAdmin
         public string GroupName { get; set; } = null;
 
         /// <summary>
+        /// icon nhóm.
+        /// </summary>
+        public string GroupIcon { get; set; } = null;
+
+        /// <summary>
         /// số col chiếm ở grid.
         /// </summary>
         public int GridCol { get; set; } = 6;

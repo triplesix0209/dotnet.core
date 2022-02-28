@@ -24,5 +24,10 @@ namespace TripleSix.Core.AutoAdmin
         /// loại phương thức.
         /// </summary>
         public AdminMethodTypes Type { get; set; } = 0;
+
+        /// <summary>
+        /// tên phương thức.
+        /// </summary>
+        public string Name { get; set; } = null;
     }
 }

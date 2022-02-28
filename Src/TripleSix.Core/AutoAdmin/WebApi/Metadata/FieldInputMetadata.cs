@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TripleSix.Core.Attributes;
@@ -10,8 +9,8 @@ namespace TripleSix.Core.AutoAdmin
 {
     public class FieldInputMetadata : FieldMetadata
     {
-        public FieldInputMetadata(Type controllerType, MethodInfo methodType, PropertyInfo fieldType)
-            : base(controllerType, methodType, fieldType)
+        public FieldInputMetadata(ControllerMetadata controllerMetadata, MethodMetadata methodMetadata, PropertyInfo fieldType)
+            : base(controllerMetadata, methodMetadata, fieldType)
         {
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
             var propertyType = fieldType.PropertyType;

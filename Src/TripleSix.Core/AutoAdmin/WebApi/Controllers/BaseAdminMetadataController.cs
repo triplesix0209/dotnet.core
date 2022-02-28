@@ -14,9 +14,9 @@ namespace TripleSix.Core.AutoAdmin
         {
             foreach (var controller in _metadata.Controllers)
             {
-                foreach (var method in controller.Methods)
+                foreach (var method in controller.MethodData)
                 {
-                    if (controller.Methods.Count(x => x.Type == method.Type) > 1)
+                    if (controller.MethodData.Count(x => x.Type == method.Type) > 1)
                         throw new Exception($"Admin Controller \"{controller.Name}\": has \"{method.Type}\" method is duplicated");
 
                     switch (method.Type)

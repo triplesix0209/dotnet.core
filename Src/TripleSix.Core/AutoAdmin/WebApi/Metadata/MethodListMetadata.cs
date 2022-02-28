@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Helpers;
@@ -8,9 +7,10 @@ namespace TripleSix.Core.AutoAdmin
 {
     public class MethodListMetadata : MethodMetadata
     {
-        public MethodListMetadata(Type controllerType, MethodInfo methodType)
-            : base(controllerType, methodType)
+        public MethodListMetadata(ControllerMetadata controllerMetadata, MethodInfo methodType)
+            : base(controllerMetadata, methodType)
         {
+            var controllerType = controllerMetadata.ControllerType;
             var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
             var methodInfo = methodType.GetCustomAttribute<AdminMethodAttribute>();
             var adminType = methodInfo.AdminType ?? controllerInfo.AdminType;
@@ -26,7 +26,7 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(x => x.Name != nameof(IModelFilterDto.CreatorId))
                 .Where(x => x.Name != nameof(IModelFilterDto.UpdaterId))
                 .OrderBy(x => x.DeclaringType.BaseTypesAndSelf().Count())
-                .Select(fieldType => new FieldInputMetadata(controllerType, methodType, fieldType))
+                .Select(fieldType => new FieldInputMetadata(controllerMetadata, this, fieldType))
                 .ToArray();
 
             ItemFields = itemType.GetProperties()
@@ -36,7 +36,7 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(x => x.Name != nameof(IModelDataDto.UpdaterId))
                 .Where(x => x.Name != nameof(IModelDataDto.UpdateDatetime))
                 .OrderBy(x => x.DeclaringType.BaseTypesAndSelf().Count())
-                .Select(fieldType => new FieldItemMetadata(controllerType, methodType, fieldType))
+                .Select(fieldType => new FieldItemMetadata(controllerMetadata, this, fieldType))
                 .ToArray();
             FieldDisplayMetadata.AfterProcess(ItemFields);
         }

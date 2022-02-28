@@ -4,16 +4,18 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Newtonsoft.Json;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
 {
     public class MethodMetadata
     {
-        public MethodMetadata(Type controllerType, MethodInfo methodType)
+        public MethodMetadata(ControllerMetadata controllerMetadata, MethodInfo methodType)
         {
+            var controllerType = controllerMetadata.ControllerType;
+            var controllerCode = controllerMetadata.ControllerCode;
             var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
-            var controllerName = controllerType.Name.Substring(0, controllerType.Name.LastIndexOf("Controller"));
             var methodInfo = methodType.GetCustomAttribute<AdminMethodAttribute>();
             if (methodInfo.EntityType is null) methodInfo.EntityType = controllerInfo.EntityType;
             if (methodInfo.AdminType is null) methodInfo.AdminType = controllerInfo.AdminType;
@@ -24,16 +26,62 @@ namespace TripleSix.Core.AutoAdmin
             Url = route is null ? "[controller]" : route.Template;
             if (!Url.StartsWith("/")) Url = "/" + Url;
             if (httpMethod.Template.IsNotNullOrWhiteSpace()) Url += "/" + httpMethod.Template;
-            Url = Url.Replace("[controller]", controllerName);
+            Url = Url.Replace("[controller]", controllerCode);
 
+            MethodType = methodType;
             Type = methodInfo.Type;
+            Controller = controllerMetadata.Code;
+
+            Name = methodInfo.Name;
+            if (Name.IsNullOrWhiteSpace())
+            {
+                switch (Type)
+                {
+                    case AdminMethodTypes.List:
+                        Name = "danh sách [controller]";
+                        break;
+                    case AdminMethodTypes.Detail:
+                        Name = "chi tiết [controller]";
+                        break;
+                    case AdminMethodTypes.Create:
+                        Name = "tạo [controller]";
+                        break;
+                    case AdminMethodTypes.Update:
+                        Name = "sửa [controller]";
+                        break;
+                    case AdminMethodTypes.Delete:
+                        Name = "xóa [controller]";
+                        break;
+                    case AdminMethodTypes.Restore:
+                        Name = "khôi phục [controller]";
+                        break;
+                    case AdminMethodTypes.ListChangeLog:
+                        Name = "lịch sử thay đổi [controller]";
+                        break;
+                    case AdminMethodTypes.DetailChangeLog:
+                        Name = "chi tiết thay đổi [controller]";
+                        break;
+                    case AdminMethodTypes.Export:
+                        Name = "xuất [controller]";
+                        break;
+                }
+            }
+
+            Name = Name.Replace("[controller]", controllerMetadata.Name);
         }
 
         public AdminMethodTypes Type { get; set; }
 
+        public string Name { get; set; }
+
+        public string Controller { get; set; }
+
         public string Method { get; set; }
 
         public string Url { get; set; }
+
+        [JsonIgnore]
+        public MethodInfo MethodType { get; set; }
 
         public static MethodInfo[] GetListMethodOfController(Type controllerType)
         {
@@ -102,26 +150,26 @@ namespace TripleSix.Core.AutoAdmin
                 .ToArray();
         }
 
-        public static MethodMetadata GenerateMethodMetadata(Type controllerType, MethodInfo methodType)
+        public static MethodMetadata GenerateMethodMetadata(ControllerMetadata controllerMetadata, MethodInfo methodType)
         {
             var methodInfo = methodType.GetCustomAttribute<AdminMethodAttribute>();
 
             switch (methodInfo.Type)
             {
                 case AdminMethodTypes.List:
-                    return new MethodListMetadata(controllerType, methodType);
+                    return new MethodListMetadata(controllerMetadata, methodType);
 
                 case AdminMethodTypes.Detail:
-                    return new MethodDetailMetadata(controllerType, methodType);
+                    return new MethodDetailMetadata(controllerMetadata, methodType);
 
                 case AdminMethodTypes.Create:
-                    return new MethodInputMetadata(controllerType, methodType, "Create");
+                    return new MethodInputMetadata(controllerMetadata, methodType, "Create");
 
                 case AdminMethodTypes.Update:
-                    return new MethodInputMetadata(controllerType, methodType, "Update");
+                    return new MethodInputMetadata(controllerMetadata, methodType, "Update");
 
                 default:
-                    return new MethodMetadata(controllerType, methodType);
+                    return new MethodMetadata(controllerMetadata, methodType);
             }
         }
     }

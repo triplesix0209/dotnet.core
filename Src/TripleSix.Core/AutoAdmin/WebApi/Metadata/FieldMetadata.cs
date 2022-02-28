@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using Newtonsoft.Json;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Helpers;
 
@@ -9,10 +10,11 @@ namespace TripleSix.Core.AutoAdmin
 {
     public class FieldMetadata
     {
-        public FieldMetadata(Type controllerType, MethodInfo methodType, PropertyInfo fieldType)
+        public FieldMetadata(ControllerMetadata controllerMetadata, MethodMetadata methodMetadata, PropertyInfo fieldType)
         {
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
 
+            FieldType = fieldType;
             Render = fieldInfo.Render;
             Key = fieldType.Name.ToCamelCase();
             GridCol = fieldInfo.GridCol;
@@ -20,7 +22,7 @@ namespace TripleSix.Core.AutoAdmin
 
             if (fieldInfo.GroupCode.IsNotNullOrWhiteSpace() || fieldInfo.GroupName.IsNotNullOrWhiteSpace())
             {
-                Group = new GroupMetadata
+                GroupData = new GroupMetadata
                 {
                     Code = fieldInfo.GroupCode.IsNotNullOrWhiteSpace()
                         ? fieldInfo.GroupCode.Trim().ToKebabCase()
@@ -28,7 +30,10 @@ namespace TripleSix.Core.AutoAdmin
                     Name = fieldInfo.GroupName.IsNotNullOrWhiteSpace()
                         ? fieldInfo.GroupName.Trim()
                         : fieldInfo.GroupCode.Trim(),
+                    Icon = fieldInfo.GroupIcon?.Trim(),
                 };
+
+                Group = GroupData.Code;
             }
 
             Name = fieldType.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName.Trim();
@@ -38,7 +43,7 @@ namespace TripleSix.Core.AutoAdmin
                 Name = Name["lọc theo".Length..].Trim();
             Description = fieldType.GetCustomAttribute<DescriptionAttribute>()?.Description.Trim();
 
-            LoadFieldType(controllerType, methodType, fieldType);
+            LoadFieldType(controllerMetadata, methodMetadata, fieldType);
         }
 
         public bool Render { get; set; }
@@ -47,7 +52,7 @@ namespace TripleSix.Core.AutoAdmin
 
         public string Type { get; set; }
 
-        public GroupMetadata Group { get; set; }
+        public string Group { get; set; }
 
         public string Name { get; set; }
 
@@ -61,8 +66,16 @@ namespace TripleSix.Core.AutoAdmin
 
         public ModelMetadata ModelController { get; set; }
 
-        protected virtual void LoadFieldType(Type controllerType, MethodInfo methodType, PropertyInfo fieldType)
+        [JsonIgnore]
+        public PropertyInfo FieldType { get; set; }
+
+        [JsonIgnore]
+        public GroupMetadata GroupData { get; set; }
+
+        protected virtual void LoadFieldType(ControllerMetadata controllerMetadata, MethodMetadata methodMetadata, PropertyInfo fieldType)
         {
+            var controllerType = controllerMetadata.ControllerType;
+            var methodType = methodMetadata.MethodType;
             var propertyType = fieldType.PropertyType.GetUnderlyingType();
             if (propertyType.IsSubclassOfRawGeneric(typeof(FilterParameter<>))
                 || propertyType.IsSubclassOfRawGeneric(typeof(FilterParameterNumber<>)))
@@ -117,12 +130,12 @@ namespace TripleSix.Core.AutoAdmin
                 }
 
                 Type = "ParentId".ToCamelCase();
-                ModelController = new ModelMetadata(controllerType, methodType, fieldType, modelType);
+                ModelController = new ModelMetadata(controllerMetadata, methodMetadata, this, modelType);
             }
             else if (propertyType == typeof(Guid))
             {
                 Type = "id";
-                ModelController = new ModelMetadata(controllerType, methodType, fieldType, fieldInfo.ModelType);
+                ModelController = new ModelMetadata(controllerMetadata, methodMetadata, this, fieldInfo.ModelType);
             }
         }
     }

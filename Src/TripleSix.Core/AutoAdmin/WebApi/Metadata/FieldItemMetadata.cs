@@ -1,14 +1,15 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
 {
     public class FieldItemMetadata : FieldDisplayMetadata
     {
-        public FieldItemMetadata(Type controllerType, MethodInfo methodType, PropertyInfo fieldType)
-            : base(controllerType, methodType, fieldType)
+        public FieldItemMetadata(ControllerMetadata controllerMetadata, MethodMetadata methodMetadata, PropertyInfo fieldType)
+            : base(controllerMetadata, methodMetadata, fieldType)
         {
+            var controllerType = controllerMetadata.ControllerType;
+            var methodType = methodMetadata.MethodType;
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
 
             if (fieldInfo.Sortable)

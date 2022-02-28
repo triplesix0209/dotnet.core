@@ -7,7 +7,7 @@ namespace TripleSix.Core.AutoAdmin
 {
     public class ModelMetadata
     {
-        public ModelMetadata(Type controllerType, MethodInfo methodType, PropertyInfo fieldType, Type modelType)
+        public ModelMetadata(ControllerMetadata controllerMetadata, MethodMetadata methodMetadata, FieldMetadata fieldMetadata, Type modelType)
         {
             if (modelType is null || !modelType.IsAssignableTo<IAdminDto>()) throw new Exception($"\"{modelType.Name}\" is invalid for modelType");
 
@@ -17,7 +17,7 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(t => t.GetCustomAttribute<AdminControllerAttribute>()?.Enable == true)
                 .Where(t => t.GetCustomAttribute<AdminControllerAttribute>()?.AdminType == modelType)
                 .FirstOrDefault();
-            var modelControllerName = modelControllerType.Name.Substring(0, controllerType.Name.LastIndexOf("Controller"));
+            var modelControllerName = modelControllerType.Name.Substring(0, controllerMetadata.ControllerType.Name.LastIndexOf("Controller"));
 
             Code = modelControllerName.ToKebabCase();
         }
