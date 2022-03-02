@@ -2,7 +2,7 @@ module.exports = {
 	root: true,
 	env: { node: true },
 	extends: ["plugin:vue/essential", "eslint:recommended"],
-	parserOptions: { parser: "babel-eslint" },
+	parserOptions: { parser: "@babel/eslint-parser" },
 	rules: {
 		"array-bracket-newline": [0],
 		"array-bracket-spacing": [2, "never"],
