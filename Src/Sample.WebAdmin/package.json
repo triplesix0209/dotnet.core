@@ -5,9 +5,32 @@
   "author": "triplesix0209@gmail.com",
   "license": "ISC",
   "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "core-js": "^3.21.1",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.3",
+    "vuetify": "^2.6.3",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/eslint-parser": "^7.17.0",
+    "@vue/cli-plugin-babel": "^5.0.1",
+    "@vue/cli-plugin-eslint": "^5.0.1",
+    "@vue/cli-plugin-router": "^5.0.1",
+    "@vue/cli-plugin-vuex": "^5.0.1",
+    "@vue/cli-service": "^5.0.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.10.0",
+    "eslint-plugin-vue": "^8.5.0",
+    "sass": "^1.49.9",
+    "sass-loader": "^12.6.0",
+    "vue-cli-plugin-vuetify": "^2.4.6",
+    "vue-template-compiler": "^2.6.14",
+    "vuetify-loader": "^1.7.3"
   }
 }
