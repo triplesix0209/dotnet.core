@@ -61,5 +61,6 @@ module.exports = {
 		"spaced-comment": [2, "always"],
 		"switch-colon-spacing": [2],
 		"template-tag-spacing": [2],
+		"vue/multi-word-component-names": [0],
 	},
 };
