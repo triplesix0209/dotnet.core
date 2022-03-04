@@ -13,7 +13,7 @@
 		".vscode": true,
 		"node_modules": true,
 		".eslintignore": true,
-		".eslintrc.js": false,
+		".eslintrc.js": true,
 		".prettierrc": true,
 		"babel.config.js": true,
 		"package-lock.json": true,
