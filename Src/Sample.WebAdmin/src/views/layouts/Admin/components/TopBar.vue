@@ -29,11 +29,6 @@ export default {
 			let result = [];
 			if (!this.currentMenu) return result;
 
-			result.push({
-				text: this.currentMenu.name,
-				href: this.currentMenu.path,
-			});
-
 			if (this.currentMenu.method) {
 				let methods = this.getMethod({
 					controller: this.currentMenu.method.controller,
@@ -119,7 +114,7 @@ export default {
 </script>
 
 <template>
-	<v-app-bar height="100" elevation="3" color="white" app>
+	<v-app-bar height="110" elevation="3" color="white" app>
 		<div class="header-row">
 			<v-btn
 				ref="toggleMenu"
@@ -131,29 +126,37 @@ export default {
 				<v-icon v-else dark> mdi-close </v-icon>
 			</v-btn>
 
-			<v-toolbar-title>
-				{{ title | strCapitalize }}
-			</v-toolbar-title>
-
 			<v-spacer />
 
-			<UserMenu />
+			<UserMenu v-slot="{ attrs, on }">
+				<v-btn v-bind="attrs" v-on="on" icon>
+					<v-avatar size="45">
+						<v-img :src="currentUser.avatarLink" />
+					</v-avatar>
+				</v-btn>
+			</UserMenu>
 		</div>
 
 		<div class="header-divider" />
 
 		<div class="header-row">
-			<v-breadcrumbs class="pa-0" :items="breadcrumbs">
-				<template #divider>
-					<v-icon>mdi-chevron-right</v-icon>
-				</template>
+			<h4>{{ title | strCapitalize }}</h4>
 
-				<template v-slot:item="{ item }">
-					<v-breadcrumbs-item :to="item.href" :disabled="item.disabled">
-						{{ item.text | strCapitalize }}
-					</v-breadcrumbs-item>
-				</template>
-			</v-breadcrumbs>
+			<div v-if="breadcrumbs.length > 0" class="d-none d-md-flex">
+				<v-divider class="mx-2" vertical />
+
+				<v-breadcrumbs class="pa-0" :items="breadcrumbs">
+					<template #divider>
+						<v-icon>mdi-chevron-right</v-icon>
+					</template>
+
+					<template v-slot:item="{ item }">
+						<v-breadcrumbs-item :to="item.href" :disabled="item.disabled">
+							{{ item.text | strCapitalize }}
+						</v-breadcrumbs-item>
+					</template>
+				</v-breadcrumbs>
+			</div>
 		</div>
 	</v-app-bar>
 </template>
