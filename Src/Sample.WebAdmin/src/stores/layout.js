@@ -14,6 +14,8 @@ const CONST = {
 	METHOD_TYPE_LIST_CHANGELOG: 7,
 	METHOD_TYPE_DETAIL_CHANGELOG: 8,
 	METHOD_TYPE_EXPORT: 9,
+	PERMISSION_AND: 1,
+	PERMISSION_OR: 2,
 
 	generateMethodUrl(type, { controller, id } = {}) {
 		if (!controller) throw Error("method controller is invalid");

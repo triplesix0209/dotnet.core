@@ -1,5 +1,6 @@
 import { mapGetters } from "vuex";
 import PermissionService from "@/services/permission";
+import { CONST as layoutConst } from "@/stores/layout";
 
 export default {
 	computed: {
@@ -25,8 +26,19 @@ export default {
 			return result;
 		},
 
-		checkPermission(targetPermission) {
-			return PermissionService.check(targetPermission);
+		async confirm({ message }) {
+			return await this.$confirm(message, {
+				persistent: true,
+			});
+		},
+
+		checkPermission(
+			targetPermission,
+			checkOperator = layoutConst.PERMISSION_AND,
+		) {
+			if (checkOperator === layoutConst.PERMISSION_AND)
+				return PermissionService.check(targetPermission);
+			return PermissionService.check([targetPermission]);
 		},
 	},
 };

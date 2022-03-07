@@ -29,8 +29,8 @@ export default {
 		menu() {
 			let result = this["layout/menu"].map((x, i) =>
 				x.type === layoutConst.MENU_TYPE_GROUP
-					? this._menuItem({ group: x, sortOrder: i })
-					: this._menuItem({ menu: x, sortOrder: i }),
+					? this._generateMenuItem({ group: x, sortOrder: i })
+					: this._generateMenuItem({ menu: x, sortOrder: i }),
 			);
 
 			let routes =
@@ -40,7 +40,9 @@ export default {
 			for (let route of routes) {
 				let groupName = route.meta.group?.trim();
 				if (!groupName) {
-					result.push(this._menuItem({ route, sortOrder: result.length }));
+					result.push(
+						this._generateMenuItem({ route, sortOrder: result.length }),
+					);
 					continue;
 				}
 
@@ -50,7 +52,7 @@ export default {
 						x.name.trim().toLowerCase() === groupName.toLowerCase(),
 				);
 				if (!group) {
-					group = this._menuItem({
+					group = this._generateMenuItem({
 						group: {
 							type: layoutConst.MENU_TYPE_GROUP,
 							code: this.$options.filters.strKebabCase(
@@ -64,12 +66,18 @@ export default {
 				}
 
 				group.items.push(
-					this._menuItem({ route, sortOrder: group.items.length }),
+					this._generateMenuItem({ route, sortOrder: group.items.length }),
 				);
 				group.items.sort((a, b) => a.sortOrder - b.sortOrder);
 			}
 
 			result.sort((a, b) => a.sortOrder - b.sortOrder);
+
+			result = result
+				.filter((x) => x.permissionVaild)
+				.filter(
+					(x) => x.type !== layoutConst.MENU_TYPE_GROUP || x.items.length > 0,
+				);
 
 			return result;
 		},
@@ -117,15 +125,16 @@ export default {
 			if (this.$refs.topBar.isMenuAutoHide()) this.toggleLeftBar = false;
 		},
 
-		_menuItem({ group, route, menu, sortOrder } = {}) {
+		_generateMenuItem({ group, route, menu, sortOrder } = {}) {
 			if (sortOrder === undefined) sortOrder = 0;
 
 			if (group) {
 				return {
 					...group,
+					permissionVaild: true,
 					sortOrder,
 					items: group.items.map((x, i) =>
-						this._menuItem({ menu: x, sortOrder: i }),
+						this._generateMenuItem({ menu: x, sortOrder: i }),
 					),
 				};
 			}
@@ -139,19 +148,27 @@ export default {
 					sortOrder: route.meta?.sortOrder ?? sortOrder,
 					route,
 					path: route.path,
+					permissionVaild: route.meta?.permission
+						? this.checkPermission(route.meta?.permission)
+						: true,
 				};
 			}
 
-			let controller = this.getController({ code: menu.code })[0];
-			menu.method = this.getMethod({ controller: controller.code })[0];
+			menu.method = this.getMethod({ controller: menu.code })[0];
 			menu.name = menu.method.name;
 			menu.sortOrder = sortOrder;
 			menu.path = layoutConst.generateMethodUrl(menu.method.type, {
 				controller: menu.method.controller,
 			});
 
-			console.log(controller.permissionGroup);
-			console.log(menu.method);
+			if (menu.method.permissionCodes.length === 0) {
+				menu.permissionVaild = true;
+			} else {
+				menu.permissionVaild = this.checkPermission(
+					menu.method.permissionCodes,
+					menu.method.permissionOperator,
+				);
+			}
 
 			return menu;
 		},

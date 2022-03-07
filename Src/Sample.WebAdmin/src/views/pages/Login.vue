@@ -31,7 +31,9 @@ export default {
 
 					await this.login(this.form);
 
-					this.$router.push({ name: "home" });
+					let redirect = this.$route.query.redirect;
+					if (!redirect) redirect = "/";
+					this.$router.push({ path: redirect });
 				},
 
 				error: (e) => {

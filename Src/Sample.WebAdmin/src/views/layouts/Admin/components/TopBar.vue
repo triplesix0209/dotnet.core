@@ -6,6 +6,10 @@ export default {
 	name: "AdminLayout-TopBar",
 	mixins: [BaseMixin],
 
+	components: {
+		UserMenu: () => import("./UserMenu"),
+	},
+
 	props: {
 		currentMenu: { type: Object, require: true },
 		toggleLeftBar: { type: Boolean, default: null },
@@ -44,7 +48,13 @@ export default {
 					let method = methods.find(
 						(x) => x.type === layoutConst.METHOD_TYPE_DETAIL,
 					);
-					if (method) {
+					if (
+						method &&
+						this.checkPermission(
+							method.permissionCodes,
+							method.permissionOperator,
+						)
+					) {
 						result.push({
 							text: method.name,
 							href: layoutConst.generateMethodUrl(method.type, {
@@ -66,7 +76,13 @@ export default {
 					let method = methods.find(
 						(x) => x.type === layoutConst.METHOD_TYPE_LIST,
 					);
-					if (method) {
+					if (
+						method &&
+						this.checkPermission(
+							method.permissionCodes,
+							method.permissionOperator,
+						)
+					) {
 						result.push({
 							text: method.name,
 							href: layoutConst.generateMethodUrl(method.type, {
@@ -99,22 +115,12 @@ export default {
 			return display !== "none";
 		},
 	},
-
-	updated() {
-		// console.log(this.currentUser);
-	},
 };
 </script>
 
 <template>
 	<v-app-bar height="100" elevation="3" color="white" app>
 		<div class="header-row">
-			<v-toolbar-title>
-				{{ title | strCapitalize }}
-			</v-toolbar-title>
-
-			<v-spacer />
-
 			<v-btn
 				ref="toggleMenu"
 				class="d-lg-none"
@@ -124,6 +130,14 @@ export default {
 				<v-icon v-if="!_toggleLeftBar" dark> mdi-menu </v-icon>
 				<v-icon v-else dark> mdi-close </v-icon>
 			</v-btn>
+
+			<v-toolbar-title>
+				{{ title | strCapitalize }}
+			</v-toolbar-title>
+
+			<v-spacer />
+
+			<UserMenu />
 		</div>
 
 		<div class="header-divider" />

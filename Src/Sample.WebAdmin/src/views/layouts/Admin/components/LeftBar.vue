@@ -107,7 +107,7 @@ export default {
 			if (!menuItem.path) return;
 
 			if (menuItem.path === this.$route.path) return;
-			this.$router.push(menuItem.path);
+			this.$router.push({ path: menuItem.path });
 		},
 	},
 

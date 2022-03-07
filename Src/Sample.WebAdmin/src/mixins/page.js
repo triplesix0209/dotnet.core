@@ -45,7 +45,9 @@ export default {
 		if (!this.isAuthenticated) await this["auth/load"]();
 
 		if (this.metadata.requireAuth === true && !this.isAuthenticated) {
-			this.$router.push({ name: "login" });
+			let redirect = this.$route.fullPath;
+			if (redirect.startsWith("/login")) redirect = undefined;
+			this.$router.push({ name: "login", query: { redirect } });
 			return;
 		}
 

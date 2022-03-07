@@ -2,6 +2,7 @@ import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "vuetify/dist/vuetify.min.css";
 import Vue from "vue";
 import Vuetify from "vuetify/lib/framework";
+import VuetifyConfirm from "vuetify-confirm";
 import vi from "vuetify/lib/locale/vi";
 
 Vue.use(Vuetify);
@@ -30,6 +31,15 @@ const vuetify = new Vuetify({
 		locales: { vi },
 		current: "vi",
 	},
+});
+
+Vue.use(VuetifyConfirm, {
+	vuetify,
+	icon: "info",
+	color: "info",
+	title: "Xác nhận",
+	buttonTrueText: "Có",
+	buttonFalseText: "Không",
 });
 
 export default vuetify;
