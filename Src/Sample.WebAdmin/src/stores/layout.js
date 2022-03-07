@@ -1,7 +1,50 @@
 import ApiService from "@/services/api";
 
-const MENU_TYPE_GROUP = "group";
-const MENU_TYPE_CONTROLLER = "controller";
+const CONST = {
+	ROUTE_ADMIN_NAME: "admin",
+	MENU_TYPE_PAGE: "page",
+	MENU_TYPE_GROUP: "group",
+	MENU_TYPE_CONTROLLER: "controller",
+	METHOD_TYPE_LIST: 1,
+	METHOD_TYPE_DETAIL: 2,
+	METHOD_TYPE_CREATE: 3,
+	METHOD_TYPE_UPDATE: 4,
+	METHOD_TYPE_DELETE: 5,
+	METHOD_TYPE_RESTORE: 6,
+	METHOD_TYPE_LIST_CHANGELOG: 7,
+	METHOD_TYPE_DETAIL_CHANGELOG: 8,
+	METHOD_TYPE_EXPORT: 9,
+
+	generateMethodUrl(type, { controller, id } = {}) {
+		if (!controller) throw Error("method controller is invalid");
+		if (
+			!id &&
+			[
+				CONST.METHOD_TYPE_DETAIL,
+				CONST.METHOD_TYPE_UPDATE,
+				CONST.METHOD_TYPE_DETAIL_CHANGELOG,
+			].includes(type)
+		)
+			throw Error("object id of controller is invalid");
+
+		switch (type) {
+			case CONST.METHOD_TYPE_LIST:
+				return `/${controller}`;
+			case CONST.METHOD_TYPE_DETAIL:
+				return `/${controller}/${id}`;
+			case CONST.METHOD_TYPE_CREATE:
+				return `/${controller}/create`;
+			case CONST.METHOD_TYPE_UPDATE:
+				return `/${controller}/${id}/update`;
+			case CONST.METHOD_TYPE_LIST_CHANGELOG:
+				return `/${controller}/${id}/changelog`;
+		}
+
+		throw Error(`method type '${type}' is invalid`);
+	},
+};
+
+export { CONST };
 
 export default {
 	namespaced: true,
@@ -19,15 +62,8 @@ export default {
 	getters: {
 		layout: (state) => state.layout,
 		menu: (state) => state.layout?.menu ?? [],
-		controller: (state, code) =>
-			state.layout?.controllers.find((x) => x.code === code),
-		method: (state, filter = {}) =>
-			state.layout?.controllers.find(
-				(x) =>
-					(!filter.id || x.id === filter.id) &&
-					(!filter.controller || x.controller === filter.controller) &&
-					(!filter.type || x.type === filter.type),
-			),
+		controller: (state) => state.layout?.controllers ?? [],
+		method: (state) => state.layout?.methods ?? [],
 	},
 
 	actions: {
@@ -46,11 +82,15 @@ export default {
 
 				for (let group of controllerGroups) {
 					let index = layout.menu.findIndex(
-						(x) => x.type === MENU_TYPE_GROUP && x.code === group.code,
+						(x) => x.type === CONST.MENU_TYPE_GROUP && x.code === group.code,
 					);
 
 					if (index === -1)
-						layout.menu.push({ type: MENU_TYPE_GROUP, ...group, items: [] });
+						layout.menu.push({
+							type: CONST.MENU_TYPE_GROUP,
+							...group,
+							items: [],
+						});
 					else layout.menu[index] = { ...layout.menu[index], ...group };
 				}
 
@@ -61,26 +101,28 @@ export default {
 
 					if (controller.group === null) {
 						layout.menu.push({
-							type: MENU_TYPE_CONTROLLER,
+							type: CONST.MENU_TYPE_CONTROLLER,
 							code: controller.code,
 							name: controller.name,
 							icon: controller.icon,
 						});
 					} else {
 						let group = layout.menu.find(
-							(x) => x.type === MENU_TYPE_GROUP && x.code === controller.group,
+							(x) =>
+								x.type === CONST.MENU_TYPE_GROUP && x.code === controller.group,
 						);
 						if (group === null)
 							throw Error(`group '${controller.group}' not found`);
 
 						let index = group.items.findIndex(
 							(x) =>
-								x.type === MENU_TYPE_CONTROLLER && x.code === controller.code,
+								x.type === CONST.MENU_TYPE_CONTROLLER &&
+								x.code === controller.code,
 						);
 
 						if (index === -1)
 							group.items.push({
-								type: MENU_TYPE_CONTROLLER,
+								type: CONST.MENU_TYPE_CONTROLLER,
 								code: controller.code,
 								name: controller.name,
 								icon: controller.icon,

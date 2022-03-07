@@ -5,7 +5,9 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
+using TripleSix.Core.Enums;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -68,6 +70,31 @@ namespace TripleSix.Core.AutoAdmin
             }
 
             Name = Name.Replace("[controller]", controllerMetadata.Name);
+
+            var permission = methodType.GetCustomAttribute<PermissionRequirement>();
+            if (permission is not null)
+            {
+                var groupCode = string.Empty;
+                if (permission.AutoGroup)
+                {
+                    groupCode = controllerInfo.PermissionGroup.IsNullOrWhiteSpace()
+                        ? controllerMetadata.Code.ToCamelCase() + "."
+                        : controllerInfo.PermissionGroup + ".";
+                }
+
+                var listCodes = new List<string>();
+                if (permission.Code.IsNotNullOrWhiteSpace())
+                    listCodes.Add(groupCode + permission.Code);
+                if (permission.ListCode.IsNotNullOrEmpty())
+                {
+                    listCodes.AddRange(permission.ListCode
+                        .Where(x => x.IsNotNullOrWhiteSpace())
+                        .Select(x => groupCode + x));
+                }
+
+                PermissionOperator = permission.Operator;
+                PermissionCodes = listCodes.ToArray();
+            }
         }
 
         public AdminMethodTypes Type { get; set; }
@@ -79,6 +106,10 @@ namespace TripleSix.Core.AutoAdmin
         public string Method { get; set; }
 
         public string Url { get; set; }
+
+        public PermissionOperators PermissionOperator { get; set; }
+
+        public string[] PermissionCodes { get; set; }
 
         [JsonIgnore]
         public MethodInfo MethodType { get; set; }

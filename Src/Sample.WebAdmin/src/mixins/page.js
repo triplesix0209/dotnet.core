@@ -1,4 +1,4 @@
-import { mapGetters, mapActions } from "vuex";
+import { mapActions } from "vuex";
 import BaseMixin from "@/mixins/base";
 
 export default {
@@ -13,7 +13,10 @@ export default {
 	}),
 
 	computed: {
-		...mapGetters("auth", ["isAuthenticated", "currentUser"]),
+		controller() {
+			if (!this.$route.params.controller) return null;
+			return this.getController({ code: this.$route.params.controller })[0];
+		},
 	},
 
 	methods: {

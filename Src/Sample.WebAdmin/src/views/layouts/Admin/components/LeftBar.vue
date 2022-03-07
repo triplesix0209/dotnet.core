@@ -1,53 +1,133 @@
 <script>
-import { mapGetters } from "vuex";
 import BaseMixin from "@/mixins/base";
+import { CONST as layoutConst } from "@/stores/layout";
 
 export default {
 	name: "AdminLayout-LeftBar",
 	mixins: [BaseMixin],
 
 	props: {
-		value: { type: Boolean, default: null },
+		menu: { type: Array, require: true },
+		currentMenu: { type: Object, require: true },
+		toggle: { type: Boolean, default: null },
 	},
 
 	data: () => ({
 		search: null,
+		active: { old: [], current: [] },
+		open: [],
+		searchActive: null,
 	}),
 
 	computed: {
-		...mapGetters(["layout/menu"]),
-
-		menu() {
-			let menu = this["layout/menu"];
-			if (!this.search) return menu;
-
+		filteredMenu() {
 			let items = [];
-			for (let menuItem of menu) {
-				if (menuItem.type === "controller") items.push(menuItem);
-				else {
-					for (let childrenItem of menuItem.items) items.push(childrenItem);
+
+			for (let menu of this.menu) {
+				if (
+					[
+						layoutConst.MENU_TYPE_PAGE,
+						layoutConst.MENU_TYPE_CONTROLLER,
+					].includes(menu.type)
+				)
+					items.push(menu);
+				else if (menu.type === layoutConst.MENU_TYPE_GROUP) {
+					for (let child of menu.items) {
+						items.push(child);
+					}
 				}
 			}
 
-			items = items.filter((x) => x.name.includes(this.search));
-
-			return items;
+			if (!this.search) return items;
+			return items.filter((x) =>
+				this.$options.filters
+					.strClearVietnameseSign(x.name.trim())
+					.includes(
+						this.$options.filters.strClearVietnameseSign(this.search.trim()),
+					),
+			);
 		},
 
-		_value: {
+		_toggle: {
 			get() {
-				return this.value;
+				return this.toggle;
 			},
 			set(value) {
-				this.$emit("input", value);
+				this.$emit("update:toggle", value);
 			},
 		},
+	},
+
+	methods: {
+		selectMenu(value) {
+			this.search = null;
+			this.searchActive = null;
+			let menuItem = value.length === 0 ? null : value[0];
+
+			let parentItem = null;
+			if (menuItem !== null) {
+				for (let menu of this.menu) {
+					if (
+						menu.type === layoutConst.MENU_TYPE_CONTROLLER &&
+						menu.code === menuItem.code
+					)
+						break;
+
+					if (
+						menu.type === layoutConst.MENU_TYPE_GROUP &&
+						menu.items.some((x) => x.code === menuItem.code)
+					) {
+						parentItem = menu;
+						break;
+					}
+				}
+			}
+
+			let oldMenuItem =
+				this.active.old.length === 0 ? null : this.active.old[0];
+			if (!menuItem) {
+				if (this.active.old.length === 0) {
+					this.$emit("menu:change", null);
+					return;
+				}
+
+				this.$nextTick(() => (this.active.current = this.active.old));
+			} else if (
+				this.active.old.length === 0 ||
+				this.active.old[0].code !== menuItem.code
+			) {
+				if (parentItem !== null) this.open = [parentItem];
+				this.active.current = [menuItem];
+				this.active.old = [menuItem];
+				this.$emit("menu:change", menuItem);
+			}
+
+			if (!oldMenuItem || !menuItem) return;
+			if (oldMenuItem.code === menuItem.code) return;
+			if (!menuItem.path) return;
+
+			if (menuItem.path === this.$route.path) return;
+			this.$router.push(menuItem.path);
+		},
+	},
+
+	watch: {
+		$route() {
+			if (this.currentMenu.code !== this.active.current[0].code)
+				this.selectMenu([this.currentMenu]);
+		},
+	},
+
+	updated() {
+		if (!this.currentMenu) return;
+		if (this.active.current.length > 0) return;
+		this.selectMenu([this.currentMenu]);
 	},
 };
 </script>
 
 <template>
-	<v-navigation-drawer v-model="_value" color="#1E1E2D" app dark>
+	<v-navigation-drawer v-model="_toggle" color="#1E1E2D" app dark>
 		<v-list>
 			<v-list-item>
 				<v-list-item-content>
@@ -72,23 +152,30 @@ export default {
 
 		<v-divider />
 
-		<v-list>
-			<v-list-item>
+		<v-list v-show="!search" class="menu">
+			<v-list-item class="pl-0">
 				<v-list-item-content>
 					<v-treeview
-						class="menu"
 						:items="menu"
+						:open.sync="open"
+						:active.sync="active.current"
+						color="info"
 						item-key="code"
 						item-children="items"
 						:expand-icon="null"
 						open-on-click
+						activatable
+						shaped
+						dense
+						return-object
+						@update:active="selectMenu"
 					>
 						<template #label="{ item }">
 							<v-icon v-if="item.icon">
 								{{ "mdi-" + item.icon }}
 							</v-icon>
 
-							{{ item.name | strTitlecase }}
+							{{ item.name | strCapitalize }}
 						</template>
 
 						<template #append="{ item, open }">
@@ -100,13 +187,40 @@ export default {
 				</v-list-item-content>
 			</v-list-item>
 		</v-list>
+
+		<v-list v-show="search" shaped dense>
+			<v-list-item-group v-model="searchActive" color="info">
+				<v-list-item
+					v-for="item in filteredMenu"
+					:key="item.code"
+					@click="selectMenu([item])"
+				>
+					<v-list-item-icon v-if="item.icon">
+						<v-icon>
+							{{ "mdi-" + item.icon }}
+						</v-icon>
+					</v-list-item-icon>
+					<v-list-item-content>
+						<v-list-item-title>
+							{{ item.name | strCapitalize }}
+						</v-list-item-title>
+					</v-list-item-content>
+				</v-list-item>
+			</v-list-item-group>
+		</v-list>
 	</v-navigation-drawer>
 </template>
 
 <style lang="scss" scoped>
 .menu ::v-deep {
-	.v-treeview-node__toggle {
-		display: none;
+	.v-treeview-node__root {
+		.v-treeview-node__toggle {
+			display: none;
+		}
+
+		.v-treeview-node__level:first-child {
+			display: none;
+		}
 	}
 }
 </style>

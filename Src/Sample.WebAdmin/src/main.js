@@ -7,6 +7,9 @@ import Vuetify from "@/plugins/vuetify";
 // filter
 import "@/filters/string";
 
+// directive
+import "@/directives/permission";
+
 Vue.config.productionTip = false;
 new Vue({
 	router: Router,

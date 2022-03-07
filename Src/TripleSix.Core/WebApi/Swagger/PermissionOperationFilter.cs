@@ -38,27 +38,27 @@ namespace TripleSix.Core.WebApi.Swagger
                 groupCode = controllerInfo.PermissionGroup.IsNullOrWhiteSpace()
                     ? action.ControllerName.ToCamelCase() + "."
                     : controllerInfo.PermissionGroup + ".";
-
-                var listCodes = new List<string>();
-                if (permission.Code.IsNotNullOrWhiteSpace())
-                    listCodes.Add(groupCode + permission.Code);
-                if (permission.ListCode.IsNotNullOrEmpty())
-                {
-                    listCodes.AddRange(permission.ListCode
-                        .Where(x => x.IsNotNullOrWhiteSpace())
-                        .Select(x => groupCode + x));
-                }
-
-                if (listCodes.IsNullOrEmpty()) return;
-
-                var permissionText = listCodes.Count == 1
-                    ? $"yêu cầu quyền: <b>{listCodes[0]}</b>"
-                    : $"yêu cầu {(permission.Operator == PermissionOperators.And ? "tất cả các" : "một trong")} quyền: <b>{string.Join(", ", listCodes)}</b>";
-
-                operation.Description = permissionText
-                    + (operation.Description.IsNotNullOrWhiteSpace() ? "<br/>" : string.Empty)
-                    + operation.Description;
             }
+
+            var listCodes = new List<string>();
+            if (permission.Code.IsNotNullOrWhiteSpace())
+                listCodes.Add(groupCode + permission.Code);
+            if (permission.ListCode.IsNotNullOrEmpty())
+            {
+                listCodes.AddRange(permission.ListCode
+                    .Where(x => x.IsNotNullOrWhiteSpace())
+                    .Select(x => groupCode + x));
+            }
+
+            if (listCodes.IsNullOrEmpty()) return;
+
+            var permissionText = listCodes.Count == 1
+                ? $"yêu cầu quyền: <b>{listCodes[0]}</b>"
+                : $"yêu cầu {(permission.Operator == PermissionOperators.And ? "tất cả các" : "một trong")} quyền: <b>{string.Join(", ", listCodes)}</b>";
+
+            operation.Description = permissionText
+                + (operation.Description.IsNotNullOrWhiteSpace() ? "<br/>" : string.Empty)
+                + operation.Description;
         }
     }
 }
