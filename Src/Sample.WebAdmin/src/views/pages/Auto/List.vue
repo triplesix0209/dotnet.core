@@ -1,12 +1,12 @@
 <script>
-import PageMixin from "@/mixins/page";
-
 export default {
 	name: "auto-list",
-	mixins: [PageMixin],
+	components: {
+		BaseListPage: () => import("@/components/BaseAuto/Page/BaseListPage"),
+	},
 };
 </script>
 
 <template>
-	<div>List</div>
+	<BaseListPage />
 </template>

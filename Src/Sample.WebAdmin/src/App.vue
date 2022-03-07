@@ -9,4 +9,5 @@ export default {
 </template>
 
 <style lang="scss">
+@import "assets/style.scss";
 </style>

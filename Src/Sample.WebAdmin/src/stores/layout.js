@@ -53,11 +53,16 @@ export default {
 
 	state: {
 		layout: null,
+		page: null,
 	},
 
 	mutations: {
 		setLayout(state, data) {
 			state.layout = data;
+		},
+
+		setPage(state, data) {
+			state.page = data;
 		},
 	},
 
@@ -66,6 +71,8 @@ export default {
 		menu: (state) => state.layout?.menu ?? [],
 		controller: (state) => state.layout?.controllers ?? [],
 		method: (state) => state.layout?.methods ?? [],
+		page: (state) => state.page,
+		pageTitle: (state) => state.page?.title ?? null,
 	},
 
 	actions: {
@@ -143,6 +150,15 @@ export default {
 
 			context.commit("setLayout", layout);
 			return layout;
+		},
+
+		setPageTitle(context, title) {
+			let page = context.getters.page;
+			if (!page) page = {};
+
+			page.title = title?.trim();
+
+			context.commit("setPage", page);
 		},
 	},
 };

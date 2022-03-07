@@ -45,12 +45,10 @@ export default {
 			</v-img>
 
 			<v-list>
-				<v-list-item-group>
-					<v-list-item @click="logout">
-						<v-list-item-icon> <v-icon>mdi-logout</v-icon> </v-list-item-icon>
-						<v-list-item-title> Đăng xuất </v-list-item-title>
-					</v-list-item>
-				</v-list-item-group>
+				<v-list-item @click="logout">
+					<v-list-item-icon> <v-icon>mdi-logout</v-icon> </v-list-item-icon>
+					<v-list-item-title> Đăng xuất </v-list-item-title>
+				</v-list-item>
 			</v-list>
 		</v-card>
 	</v-menu>

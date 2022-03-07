@@ -8,5 +8,5 @@ export default {
 </script>
 
 <template>
-	<div>Hello World</div>
+	<div />
 </template>

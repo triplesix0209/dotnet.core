@@ -58,6 +58,13 @@ export default {
 		},
 	},
 
+	watch: {
+		$route() {
+			if (this.currentMenu.code !== this.active.current[0].code)
+				this.selectMenu([this.currentMenu]);
+		},
+	},
+
 	methods: {
 		selectMenu(value) {
 			this.search = null;
@@ -111,13 +118,6 @@ export default {
 		},
 	},
 
-	watch: {
-		$route() {
-			if (this.currentMenu.code !== this.active.current[0].code)
-				this.selectMenu([this.currentMenu]);
-		},
-	},
-
 	updated() {
 		if (!this.currentMenu) return;
 		if (this.active.current.length > 0) return;
@@ -152,62 +152,65 @@ export default {
 
 		<v-divider />
 
-		<v-list v-show="!search" class="menu">
-			<v-list-item class="pl-0">
-				<v-list-item-content>
-					<v-treeview
-						:items="menu"
-						:open.sync="open"
-						:active.sync="active.current"
-						color="info"
-						item-key="code"
-						item-children="items"
-						:expand-icon="null"
-						open-on-click
-						activatable
-						shaped
-						dense
-						return-object
-						@update:active="selectMenu"
-					>
-						<template #label="{ item }">
-							<v-icon v-if="item.icon">
-								{{ "mdi-" + item.icon }}
-							</v-icon>
+		<v-scroll-x-reverse-transition hide-on-leave>
+			<v-list v-show="!search" class="menu">
+				<v-list-item class="px-0">
+					<v-list-item-content class="pa-0">
+						<v-treeview
+							:items="menu"
+							:open.sync="open"
+							:active.sync="active.current"
+							color="info"
+							item-key="code"
+							item-children="items"
+							:expand-icon="null"
+							open-on-click
+							activatable
+							return-object
+							transition
+							@update:active="selectMenu"
+						>
+							<template #label="{ item }">
+								<v-icon v-if="item.icon">
+									{{ "mdi-" + item.icon }}
+								</v-icon>
 
-							{{ item.name | strCapitalize }}
-						</template>
+								{{ item.name | strCapitalize }}
+							</template>
 
-						<template #append="{ item, open }">
-							<v-icon v-if="item.type === 'group'">
-								{{ open ? "mdi-chevron-down" : "mdi-chevron-right" }}
-							</v-icon>
-						</template>
-					</v-treeview>
-				</v-list-item-content>
-			</v-list-item>
-		</v-list>
-
-		<v-list v-show="search" shaped dense>
-			<v-list-item-group v-model="searchActive" color="info">
-				<v-list-item
-					v-for="item in filteredMenu"
-					:key="item.code"
-					@click="selectMenu([item])"
-				>
-					<v-list-item-icon v-if="item.icon">
-						<v-icon>
-							{{ "mdi-" + item.icon }}
-						</v-icon>
-					</v-list-item-icon>
-					<v-list-item-content>
-						<v-list-item-title>
-							{{ item.name | strCapitalize }}
-						</v-list-item-title>
+							<template #append="{ item, open }">
+								<v-icon v-if="item.type === 'group'">
+									{{ open ? "mdi-chevron-down" : "mdi-chevron-right" }}
+								</v-icon>
+							</template>
+						</v-treeview>
 					</v-list-item-content>
 				</v-list-item>
-			</v-list-item-group>
-		</v-list>
+			</v-list>
+		</v-scroll-x-reverse-transition>
+
+		<v-scroll-x-transition hide-on-leave>
+			<v-list v-show="search">
+				<v-list-item-group v-model="searchActive" color="info">
+					<v-list-item
+						v-for="item in filteredMenu"
+						:key="item.code"
+						@click="selectMenu([item])"
+					>
+						<v-list-item-icon v-if="item.icon">
+							<v-icon>
+								{{ "mdi-" + item.icon }}
+							</v-icon>
+						</v-list-item-icon>
+						<v-list-item-content>
+							<v-list-item-title>
+								{{ item.name | strCapitalize }}
+							</v-list-item-title>
+						</v-list-item-content>
+					</v-list-item>
+				</v-list-item-group>
+			</v-list>
+		</v-scroll-x-transition>
 	</v-navigation-drawer>
 </template>
 

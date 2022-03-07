@@ -19,11 +19,15 @@ export default {
 	}),
 
 	computed: {
-		...mapGetters(["layout/menu"]),
+		...mapGetters(["layout/layout", "layout/menu"]),
 
 		controller() {
 			if (!this.$route.params.controller) return null;
 			return this.getController({ code: this.$route.params.controller })[0];
+		},
+
+		path() {
+			return this.$route.path;
 		},
 
 		menu() {
@@ -178,22 +182,37 @@ export default {
 
 <template>
 	<v-app>
-		<TopBar
-			ref="topBar"
-			:current-menu="currentMenu"
-			:toggle-left-bar.sync="toggleLeftBar"
-		/>
+		<div v-if="!['layout/layout']" class="screen-center text-center">
+			<v-progress-circular
+				color="primary"
+				:size="70"
+				:width="7"
+				indeterminate
+			/>
+			<h3 class="mt-5">Đang nạp trang...</h3>
+			<h4 class="grey--text">Xin vui lòng chờ.</h4>
+		</div>
 
-		<LeftBar
-			:menu="menu"
-			:current-menu="currentMenu"
-			:toggle.sync="toggleLeftBar"
-			@menu:change="menuChanged"
-		/>
+		<template v-else>
+			<TopBar
+				ref="topBar"
+				:current-menu="currentMenu"
+				:toggle-left-bar.sync="toggleLeftBar"
+			/>
 
-		<v-main>
-			<router-view />
-		</v-main>
+			<LeftBar
+				:menu="menu"
+				:current-menu="currentMenu"
+				:toggle.sync="toggleLeftBar"
+				@menu:change="menuChanged"
+			/>
+
+			<v-main>
+				<v-scroll-y-transition hide-on-leave>
+					<router-view :key="path" />
+				</v-scroll-y-transition>
+			</v-main>
+		</template>
 	</v-app>
 </template>
 

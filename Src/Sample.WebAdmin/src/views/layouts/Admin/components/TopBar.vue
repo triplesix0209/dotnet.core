@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from "vuex";
 import BaseMixin from "@/mixins/base";
 import { CONST as layoutConst } from "@/stores/layout";
 
@@ -16,13 +17,10 @@ export default {
 	},
 
 	computed: {
-		id() {
-			return this.$route.params.id;
-		},
+		...mapGetters("layout", ["pageTitle"]),
 
-		title() {
-			if (!this.currentMenu) return;
-			return this.currentMenu.name;
+		path() {
+			return this.$route.path;
 		},
 
 		breadcrumbs() {
@@ -54,7 +52,7 @@ export default {
 							text: method.name,
 							href: layoutConst.generateMethodUrl(method.type, {
 								controller: method.controller,
-								id: this.id,
+								id: this.$route.params?.id,
 							}),
 						});
 					}
@@ -126,38 +124,46 @@ export default {
 				<v-icon v-else dark> mdi-close </v-icon>
 			</v-btn>
 
+			<v-scroll-y-reverse-transition hide-on-leave>
+				<v-app-bar-title :key="path">
+					{{ pageTitle | strCapitalize }}
+				</v-app-bar-title>
+			</v-scroll-y-reverse-transition>
+
 			<v-spacer />
 
 			<UserMenu v-slot="{ attrs, on }">
-				<v-btn v-bind="attrs" v-on="on" icon>
-					<v-avatar size="45">
-						<v-img :src="currentUser.avatarLink" />
-					</v-avatar>
-				</v-btn>
+				<v-avatar v-bind="attrs" v-on="on" size="45" rounded v-ripple>
+					<v-img :src="currentUser.avatarLink" />
+				</v-avatar>
 			</UserMenu>
 		</div>
 
 		<div class="header-divider" />
 
-		<div class="header-row">
-			<h4>{{ title | strCapitalize }}</h4>
+		<v-scroll-y-reverse-transition hide-on-leave>
+			<div :key="path" class="header-row">
+				<div v-if="breadcrumbs.length > 0" class="d-none d-md-flex">
+					<v-breadcrumbs class="pa-0" :items="breadcrumbs">
+						<template #divider>
+							<v-icon>mdi-chevron-right</v-icon>
+						</template>
 
-			<div v-if="breadcrumbs.length > 0" class="d-none d-md-flex">
-				<v-divider class="mx-2" vertical />
+						<template v-slot:item="{ item }">
+							<v-breadcrumbs-item :to="item.href" :disabled="item.disabled">
+								{{ item.text | strCapitalize }}
+							</v-breadcrumbs-item>
+						</template>
+					</v-breadcrumbs>
 
-				<v-breadcrumbs class="pa-0" :items="breadcrumbs">
-					<template #divider>
-						<v-icon>mdi-chevron-right</v-icon>
-					</template>
+					<v-divider class="mx-2" vertical />
+				</div>
 
-					<template v-slot:item="{ item }">
-						<v-breadcrumbs-item :to="item.href" :disabled="item.disabled">
-							{{ item.text | strCapitalize }}
-						</v-breadcrumbs-item>
-					</template>
-				</v-breadcrumbs>
+				<h4 v-if="currentMenu">
+					{{ currentMenu.name | strCapitalize }}
+				</h4>
 			</div>
-		</div>
+		</v-scroll-y-reverse-transition>
 	</v-app-bar>
 </template>
 
