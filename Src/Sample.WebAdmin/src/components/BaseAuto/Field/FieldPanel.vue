@@ -10,23 +10,51 @@ export default {
 	},
 
 	props: {
+		value: { type: Object },
 		fields: { type: Array, required: true },
 		groups: { type: Array, default: () => [] },
-		inputMode: { type: Boolean, default: false },
+		fieldSm: [Number, String],
+		fieldMd: [Number, String],
+		fieldLg: [Number, String],
+		inputMode: { type: Boolean },
 	},
 
 	data() {
-		let data = {};
-		for (let field of this.fields) {
-			data[field.key] = null;
-		}
-
-		return { data };
+		return { inputs: this._inputFromValue() };
 	},
 
 	computed: {
 		renderFields() {
 			return this.fields.filter((x) => x.render);
+		},
+	},
+
+	watch: {
+		value() {
+			let inputs = this._inputFromValue();
+			if (JSON.stringify(inputs) !== JSON.stringify(this.inputs))
+				this.inputs = inputs;
+		},
+
+		inputs: {
+			deep: true,
+			handler() {
+				this.$emit("input", this.inputs);
+			},
+		},
+	},
+
+	methods: {
+		_inputFromValue() {
+			let result = {};
+
+			for (let field of this.fields) {
+				result[field.key] = null;
+				if (!!this.value && !!this.value[field.key])
+					result[field.key] = this.value[field.key];
+			}
+
+			return result;
 		},
 	},
 };
@@ -39,13 +67,15 @@ export default {
 				v-for="field in renderFields"
 				class="pb-0"
 				:key="field.key"
-				:sm="field.gridCol"
+				:sm="fieldSm ? fieldSm : field.gridCol"
+				:md="fieldMd ? fieldMd : field.gridCol"
+				:lg="fieldLg ? fieldLg : field.gridCol"
 				cols="12"
 			>
 				<FieldItem
-					v-model="data[field.key]"
 					:field="field"
 					:input-mode="inputMode"
+					v-model="inputs[field.key]"
 				/>
 			</v-col>
 		</v-row>

@@ -10,7 +10,14 @@ export default {
 		FieldOperator: () => import("@/components/BaseAuto/Field/FieldOperator"),
 	},
 
-	data: () => ({ dates: [null, null] }),
+	data() {
+		let dates = this.value.value;
+		if (!Array.isArray(dates)) dates = [dates];
+
+		if (dates.length === 1) dates.push(null);
+
+		return { dates };
+	},
 
 	computed: {
 		fieldRules() {

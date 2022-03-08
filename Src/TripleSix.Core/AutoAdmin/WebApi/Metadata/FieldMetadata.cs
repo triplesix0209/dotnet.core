@@ -94,7 +94,14 @@ namespace TripleSix.Core.AutoAdmin
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
             Type = propertyType.Name.ToCamelCase();
 
-            if (propertyType.IsEnum)
+            if (propertyType == typeof(byte) || propertyType == typeof(decimal)
+                || propertyType == typeof(int) || propertyType == typeof(uint)
+                || propertyType == typeof(long) || propertyType == typeof(ulong)
+                || propertyType == typeof(float) || propertyType == typeof(double))
+            {
+                Type = "number";
+            }
+            else if (propertyType.IsEnum)
             {
                 Type = "enum";
                 Enum = new Dictionary<string, string>();

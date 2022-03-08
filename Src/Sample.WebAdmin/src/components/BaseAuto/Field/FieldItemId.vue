@@ -108,7 +108,6 @@ export default {
 		hide-selected
 		no-filter
 		clearable
-		@focus="loadItem"
 	>
 		<template #prepend>
 			<FieldOperator v-model="input.operator" :field="field" />

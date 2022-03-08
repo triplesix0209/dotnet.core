@@ -7,19 +7,14 @@ export default {
 	props: {
 		field: { type: Object, required: true },
 		value: { type: Object },
+		inputMode: { type: Boolean, default: false },
 	},
 
 	data() {
-		let input = this.value;
-		if (input === null) input = {};
-
-		if (!input.operator && !!this.field.operator)
-			input.operator = Object.getOwnPropertyNames(this.field.operator)[0];
-
 		return {
 			renderKey: 0,
 			loading: false,
-			input,
+			input: this.inputFromValue(),
 		};
 	},
 
@@ -50,8 +45,6 @@ export default {
 					CONST.FIELD_OPERATOR_IS,
 					CONST.FIELD_OPERATOR_NULL,
 					CONST.FIELD_OPERATOR_NOT_NULL,
-					CONST.FIELD_OPERATOR_BETWEEN,
-					CONST.FIELD_OPERATOR_NOT_BETWEEN,
 				])
 			)
 				result += ` (${this.operatorText})`;
@@ -90,7 +83,7 @@ export default {
 		},
 
 		operatorText() {
-			if (!this.input.operator) return null;
+			if (!this.input || !this.input.operator) return null;
 			return this.field.operator[this.input.operator];
 		},
 
@@ -104,7 +97,7 @@ export default {
 
 	watch: {
 		"value"() {
-			this.input = this.value;
+			this.input = this.inputFromValue();
 		},
 
 		"input"() {
@@ -136,12 +129,26 @@ export default {
 	methods: {
 		isOperator(operators) {
 			if (!Array.isArray(operators)) operators = [operators];
-			return !!this.input.operator && operators.includes(this.input.operator);
+			return (
+				this.input &&
+				!!this.input.operator &&
+				operators.includes(this.input.operator)
+			);
 		},
 
 		undo() {
 			this.input.value = this.input.prevValue;
 			this.input.operator = this.input.prevOperator;
+		},
+
+		inputFromValue() {
+			let input = this.value;
+			if (input === undefined || input === null) input = {};
+
+			if (!input.operator && !!this.field.operator)
+				input.operator = Object.getOwnPropertyNames(this.field.operator)[0];
+
+			return input;
 		},
 	},
 };

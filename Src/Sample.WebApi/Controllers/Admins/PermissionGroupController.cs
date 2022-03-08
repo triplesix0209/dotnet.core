@@ -16,7 +16,8 @@ namespace Sample.WebApi.Controllers.Admins
     [AdminController(
         AdminType = typeof(PermissionGroupAdminDto),
         EntityType = typeof(PermissionGroupEntity),
-        GroupName = "hệ thống")]
+        GroupName = "hệ thống",
+        PermissionGroup = "permission")]
     public class PermissionGroupController : AdminController
     {
         public IPermissionGroupService PermissionGroupService { get; set; }
