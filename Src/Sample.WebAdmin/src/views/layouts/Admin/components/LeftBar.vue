@@ -1,6 +1,6 @@
 <script>
 import BaseMixin from "@/mixins/base";
-import { CONST as layoutConst } from "@/stores/layout";
+import { CONST } from "@/stores/layout";
 
 export default {
 	name: "AdminLayout-LeftBar",
@@ -25,13 +25,10 @@ export default {
 
 			for (let menu of this.menu) {
 				if (
-					[
-						layoutConst.MENU_TYPE_PAGE,
-						layoutConst.MENU_TYPE_CONTROLLER,
-					].includes(menu.type)
+					[CONST.MENU_TYPE_PAGE, CONST.MENU_TYPE_CONTROLLER].includes(menu.type)
 				)
 					items.push(menu);
-				else if (menu.type === layoutConst.MENU_TYPE_GROUP) {
+				else if (menu.type === CONST.MENU_TYPE_GROUP) {
 					for (let child of menu.items) {
 						items.push(child);
 					}
@@ -40,11 +37,9 @@ export default {
 
 			if (!this.search) return items;
 			return items.filter((x) =>
-				this.$options.filters
-					.strClearVietnameseSign(x.name.trim())
-					.includes(
-						this.$options.filters.strClearVietnameseSign(this.search.trim()),
-					),
+				this.$strFormat(x.name.trim(), "clearVietnameseSign").includes(
+					this.$options.filters.strClearVietnameseSign(this.search.trim()),
+				),
 			);
 		},
 
@@ -75,13 +70,13 @@ export default {
 			if (menuItem !== null) {
 				for (let menu of this.menu) {
 					if (
-						menu.type === layoutConst.MENU_TYPE_CONTROLLER &&
+						menu.type === CONST.MENU_TYPE_CONTROLLER &&
 						menu.code === menuItem.code
 					)
 						break;
 
 					if (
-						menu.type === layoutConst.MENU_TYPE_GROUP &&
+						menu.type === CONST.MENU_TYPE_GROUP &&
 						menu.items.some((x) => x.code === menuItem.code)
 					) {
 						parentItem = menu;
@@ -175,7 +170,7 @@ export default {
 									{{ "mdi-" + item.icon }}
 								</v-icon>
 
-								{{ item.name | strCapitalize }}
+								{{ item.name | strFormat("capitalize") }}
 							</template>
 
 							<template #append="{ item, open }">
@@ -204,7 +199,7 @@ export default {
 						</v-list-item-icon>
 						<v-list-item-content>
 							<v-list-item-title>
-								{{ item.name | strCapitalize }}
+								{{ item.name | strFormat("capitalize") }}
 							</v-list-item-title>
 						</v-list-item-content>
 					</v-list-item>

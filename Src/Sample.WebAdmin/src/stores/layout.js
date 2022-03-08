@@ -82,7 +82,7 @@ export default {
 			let responses = {};
 			for (let key in ApiService.admin) {
 				let admin = ApiService.admin[key];
-				responses[key] = (await admin.get({ url: "/_metadata" })).data;
+				responses[key] = (await admin.get({ url: "/admin/_metadata" })).data;
 			}
 
 			let layout = { menu: [], controllers: [], methods: [] };
@@ -144,7 +144,12 @@ export default {
 				}
 
 				for (let method of methods) {
-					layout.methods.push({ id: layout.methods.length, ...method });
+					layout.methods.push({
+						id: layout.methods.length,
+						api: key,
+						...method,
+						method: method.method.toLowerCase(),
+					});
 				}
 			}
 

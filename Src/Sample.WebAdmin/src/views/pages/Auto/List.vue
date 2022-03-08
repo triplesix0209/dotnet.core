@@ -2,7 +2,7 @@
 export default {
 	name: "auto-list",
 	components: {
-		BaseListPage: () => import("@/components/BaseAuto/Page/BaseListPage"),
+		BaseListPage: () => import("@/components/BaseAuto/Page/ListPage"),
 	},
 };
 </script>

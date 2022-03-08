@@ -4,11 +4,15 @@ import Router from "@/router";
 import Store from "@/stores/_index";
 import Vuetify from "@/plugins/vuetify";
 
-// filter
-import "@/filters/string";
-
 // directive
 import "@/directives/permission";
+
+// filter
+import "@/filters/strFormat";
+
+// plugins
+import "@/plugins/vue-numeral";
+import "@/plugins/vue-toast";
 
 Vue.config.productionTip = false;
 new Vue({

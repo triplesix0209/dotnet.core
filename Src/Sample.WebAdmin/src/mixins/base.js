@@ -1,6 +1,7 @@
-import { mapGetters } from "vuex";
+import { CONST } from "@/stores/layout";
+import ApiService from "@/services/api";
 import PermissionService from "@/services/permission";
-import { CONST as layoutConst } from "@/stores/layout";
+import { mapGetters } from "vuex";
 
 export default {
 	computed: {
@@ -8,22 +9,43 @@ export default {
 	},
 
 	methods: {
-		getController({ code } = {}) {
+		$numeral(value, format) {
+			return this.$options.filters.numeral(value, format);
+		},
+
+		$strFormat(value, type) {
+			return this.$options.filters.strFormat(value, type);
+		},
+
+		getController({ code, firstOrDefault } = {}) {
 			let result = this.$store.getters["layout/controller"];
 
 			if (code) result = result.filter((x) => x.code === code);
 
+			if (firstOrDefault) return result.length > 0 ? result[0] : null;
 			return result;
 		},
 
-		getMethod({ type, controller } = {}) {
+		getMethod({ type, controller, firstOrDefault } = {}) {
 			let result = this.$store.getters["layout/method"];
 
 			if (type) result = result.filter((x) => x.type === type);
 			if (controller)
 				result = result.filter((x) => x.controller === controller);
 
+			if (firstOrDefault) return result.length > 0 ? result[0] : null;
 			return result;
+		},
+
+		checkPermission(targetPermission, checkOperator = CONST.PERMISSION_AND) {
+			if (checkOperator === CONST.PERMISSION_AND)
+				return PermissionService.check(targetPermission);
+			return PermissionService.check([targetPermission]);
+		},
+
+		redirectToErrorPage({ errorCode } = {}) {
+			if (errorCode === undefined || errorCode === null) errorCode = 404;
+			this.$router.push({ name: "error", params: { code: errorCode } });
 		},
 
 		async confirm({ message }) {
@@ -32,13 +54,87 @@ export default {
 			});
 		},
 
-		checkPermission(
-			targetPermission,
-			checkOperator = layoutConst.PERMISSION_AND,
-		) {
-			if (checkOperator === layoutConst.PERMISSION_AND)
-				return PermissionService.check(targetPermission);
-			return PermissionService.check([targetPermission]);
+		toastSuccess({ message = "Đã xử lý thành công" } = {}) {
+			this.$toast.success(message);
+		},
+
+		toastWarning({ message } = {}) {
+			this.$toast.warning(message);
+		},
+
+		toastError(error) {
+			let { code, message, data } = error;
+			const h = this.$createElement;
+			let msg;
+
+			if (code === "bad_client_request") {
+				let details = [h("p", message)];
+				for (let key in data) {
+					let errors = [h("b", `${key}: `)];
+					if (data[key].length === 1) errors.push(h("span", data[key]));
+					else {
+						errors.push(h("br"));
+						for (let error of data[key]) {
+							errors.push(h("span", ` - ${error}`));
+						}
+					}
+					details.push(h("p", errors));
+				}
+				msg = h("div", details);
+			} else {
+				msg = message;
+			}
+
+			console.error(error);
+			this.$toast.error(msg);
+		},
+
+		async requestApi({
+			controllerMethod,
+			params,
+			data,
+			form,
+			responseType,
+			accessTokenField,
+			accessToken,
+			refreshToken,
+			loadingField,
+			toggleLoadingOnDone,
+			toggleLoadingOnError,
+		} = {}) {
+			if (!controllerMethod)
+				throw Error("parameter 'controllerMethod' is invalid");
+
+			if (loadingField === undefined) loadingField = "loading";
+			if (toggleLoadingOnDone === undefined) toggleLoadingOnDone = true;
+			if (toggleLoadingOnError === undefined) toggleLoadingOnError = true;
+
+			try {
+				if (loadingField in this) this[loadingField] = true;
+
+				let response = await ApiService.admin[controllerMethod.api][
+					controllerMethod.method
+				]({
+					url: `${controllerMethod.url}`,
+					params,
+					data,
+					form,
+					responseType,
+					accessTokenField,
+					accessToken,
+					refreshToken,
+				});
+
+				if (toggleLoadingOnDone && loadingField in this)
+					this[loadingField] = false;
+
+				return response;
+			} catch (e) {
+				if (toggleLoadingOnError && loadingField in this)
+					this[loadingField] = false;
+				this.toastError(e);
+				throw e;
+			}
 		},
 	},
 };

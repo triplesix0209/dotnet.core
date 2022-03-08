@@ -1,33 +1,45 @@
-import { mapActions } from "vuex";
 import BaseMixin from "@/mixins/base";
+import { mapActions } from "vuex";
 
 export default {
 	mixins: [BaseMixin],
 
 	data: () => ({
-		loading: true,
 		metadata: {
 			requireAuth: true,
 			loadLayout: true,
 		},
+
+		initialing: true,
+		loading: false,
 	}),
 
 	computed: {
 		controller() {
 			if (!this.$route.params.controller) return null;
-			return this.getController({ code: this.$route.params.controller })[0];
+			return this.getController({
+				code: this.$route.params.controller,
+				firstOrDefault: true,
+			});
 		},
 	},
 
 	methods: {
 		...mapActions(["auth/load", "layout/load"]),
 
-		async doSubmit({ handler, error, formRef, toggleLoadingOnDone } = {}) {
-			if (formRef === undefined) formRef = "form";
+		async doSubmit({
+			handler,
+			error,
+			form,
+			toggleLoadingOnDone,
+			toggleLoadingOnError,
+		} = {}) {
+			if (form === undefined) form = "form";
 			if (toggleLoadingOnDone === undefined) toggleLoadingOnDone = true;
+			if (toggleLoadingOnError === undefined) toggleLoadingOnError = true;
 
 			try {
-				if (!this.$refs[formRef].validate()) return;
+				if (!this.$refs[form].validate()) return;
 
 				this.loading = true;
 				let result = await handler();
@@ -35,10 +47,12 @@ export default {
 
 				return result;
 			} catch (e) {
-				await error(e);
-				this.loading = false;
+				if (error) await error(e);
+				if (toggleLoadingOnError) this.loading = false;
 			}
 		},
+
+		_validatePage() {},
 	},
 
 	async mounted() {
@@ -55,11 +69,18 @@ export default {
 			try {
 				await this["layout/load"]();
 			} catch (e) {
-				this.$router.push({ name: "error" });
+				this.redirectToErrorPage();
 			}
 		}
 
-		this.loading = false;
-		if (this.loaded) await this.loaded();
+		try {
+			await this._validatePage();
+		} catch (e) {
+			this.redirectToErrorPage();
+			throw e;
+		}
+
+		this.initialing = false;
+		if (this._loaded) await this._loaded();
 	},
 };

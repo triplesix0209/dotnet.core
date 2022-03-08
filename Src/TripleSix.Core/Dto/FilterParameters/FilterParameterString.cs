@@ -17,40 +17,40 @@ namespace TripleSix.Core.Dto
 
     public enum FilterParameterStringOperators
     {
-        [Description("Equal")]
+        [Description("=")]
         Equal = 1,
 
-        [Description("Contain")]
+        [Description("chứa")]
         Contain = 2,
 
-        [Description("Start with")]
+        [Description("bắt đầu với")]
         StartWith = 3,
 
-        [Description("End with")]
+        [Description("kết thúc với")]
         EndWith = 4,
 
-        [Description("In")]
+        [Description("thuộc danh sách")]
         In = 5,
 
-        [Description("Is NULL")]
+        [Description("là NULL")]
         IsNull = 6,
 
-        [Description("Not equal")]
+        [Description("khác")]
         NotEqual = -1,
 
-        [Description("Not contain")]
+        [Description("không chứa")]
         NotContain = -2,
 
-        [Description("Not start with")]
+        [Description("không bắt đầu với")]
         NotStartWith = -3,
 
-        [Description("Not end with")]
+        [Description("không kết thúc với")]
         NotEndWith = -4,
 
-        [Description("Not in")]
+        [Description("không thuộc danh sách")]
         NotIn = -5,
 
-        [Description("Not NULL")]
+        [Description("không NULL")]
         NotNull = -6,
     }
 }

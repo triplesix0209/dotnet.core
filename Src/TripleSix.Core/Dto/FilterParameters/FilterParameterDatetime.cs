@@ -18,34 +18,34 @@ namespace TripleSix.Core.Dto
 
     public enum FilterParameterDatetimeOperators
     {
-        [Description("Is")]
+        [Description("=")]
         Is = 1,
 
-        [Description("Begin")]
+        [Description("bắt đầu lúc")]
         Begin = 2,
 
-        [Description("End")]
+        [Description("kết thúc lúc")]
         End = 3,
 
-        [Description("Between")]
+        [Description("trong khoảng")]
         Between = 4,
 
-        [Description("Is NULL")]
+        [Description("là NULL")]
         IsNull = 5,
 
-        [Description("Not")]
+        [Description("khác")]
         NotIs = -1,
 
-        [Description("Not begin")]
+        [Description("không bắt đầu lúc")]
         NotBegin = -2,
 
-        [Description("Not end")]
+        [Description("không kết thúc lúc")]
         NotEnd = -3,
 
-        [Description("Not between")]
+        [Description("không trong khoảng")]
         NotBetween = -4,
 
-        [Description("Not NULL")]
+        [Description("không NULL")]
         NotNull = -5,
     }
 }

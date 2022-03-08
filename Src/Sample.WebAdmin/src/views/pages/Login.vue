@@ -1,6 +1,6 @@
 <script>
-import { mapActions } from "vuex";
 import PageMixin from "@/mixins/page";
+import { mapActions } from "vuex";
 
 export default {
 	name: "login",

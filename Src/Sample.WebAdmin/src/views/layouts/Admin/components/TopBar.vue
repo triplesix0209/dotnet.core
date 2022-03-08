@@ -1,7 +1,7 @@
 <script>
-import { mapGetters } from "vuex";
 import BaseMixin from "@/mixins/base";
-import { CONST as layoutConst } from "@/stores/layout";
+import { CONST } from "@/stores/layout";
+import { mapGetters } from "vuex";
 
 export default {
 	name: "AdminLayout-TopBar",
@@ -33,14 +33,11 @@ export default {
 				});
 
 				if (
-					[
-						layoutConst.METHOD_TYPE_UPDATE,
-						layoutConst.METHOD_TYPE_LIST_CHANGELOG,
-					].includes(this.currentMenu.method.type)
+					[CONST.METHOD_TYPE_UPDATE, CONST.METHOD_TYPE_LIST_CHANGELOG].includes(
+						this.currentMenu.method.type,
+					)
 				) {
-					let method = methods.find(
-						(x) => x.type === layoutConst.METHOD_TYPE_DETAIL,
-					);
+					let method = methods.find((x) => x.type === CONST.METHOD_TYPE_DETAIL);
 					if (
 						method &&
 						this.checkPermission(
@@ -50,7 +47,7 @@ export default {
 					) {
 						result.push({
 							text: method.name,
-							href: layoutConst.generateMethodUrl(method.type, {
+							href: CONST.generateMethodUrl(method.type, {
 								controller: method.controller,
 								id: this.$route.params?.id,
 							}),
@@ -60,15 +57,13 @@ export default {
 
 				if (
 					[
-						layoutConst.METHOD_TYPE_DETAIL,
-						layoutConst.METHOD_TYPE_CREATE,
-						layoutConst.METHOD_TYPE_UPDATE,
-						layoutConst.METHOD_TYPE_LIST_CHANGELOG,
+						CONST.METHOD_TYPE_DETAIL,
+						CONST.METHOD_TYPE_CREATE,
+						CONST.METHOD_TYPE_UPDATE,
+						CONST.METHOD_TYPE_LIST_CHANGELOG,
 					].includes(this.currentMenu.method.type)
 				) {
-					let method = methods.find(
-						(x) => x.type === layoutConst.METHOD_TYPE_LIST,
-					);
+					let method = methods.find((x) => x.type === CONST.METHOD_TYPE_LIST);
 					if (
 						method &&
 						this.checkPermission(
@@ -78,7 +73,7 @@ export default {
 					) {
 						result.push({
 							text: method.name,
-							href: layoutConst.generateMethodUrl(method.type, {
+							href: CONST.generateMethodUrl(method.type, {
 								controller: method.controller,
 							}),
 						});
@@ -126,7 +121,7 @@ export default {
 
 			<v-scroll-y-reverse-transition hide-on-leave>
 				<v-app-bar-title :key="path">
-					{{ pageTitle | strCapitalize }}
+					{{ pageTitle | strFormat("capitalize") }}
 				</v-app-bar-title>
 			</v-scroll-y-reverse-transition>
 
@@ -151,7 +146,7 @@ export default {
 
 						<template v-slot:item="{ item }">
 							<v-breadcrumbs-item :to="item.href" :disabled="item.disabled">
-								{{ item.text | strCapitalize }}
+								{{ item.text | strFormat("capitalize") }}
 							</v-breadcrumbs-item>
 						</template>
 					</v-breadcrumbs>
@@ -160,7 +155,7 @@ export default {
 				</div>
 
 				<h4 v-if="currentMenu">
-					{{ currentMenu.name | strCapitalize }}
+					{{ currentMenu.name | strFormat("capitalize") }}
 				</h4>
 			</div>
 		</v-scroll-y-reverse-transition>

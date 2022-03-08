@@ -34,19 +34,19 @@ namespace TripleSix.Core.Dto
         [Description(">=")]
         GreaterOrEqual = 5,
 
-        [Description("In")]
+        [Description("thuộc danh sách")]
         In = 6,
 
-        [Description("Is NULL")]
+        [Description("là NULL")]
         IsNull = 7,
 
         [Description("!=")]
         NotEqual = -1,
 
-        [Description("Not in")]
+        [Description("không thuộc danh sách")]
         NotIn = -6,
 
-        [Description("Not NULL")]
+        [Description("không NULL")]
         NotNull = -7,
     }
 }

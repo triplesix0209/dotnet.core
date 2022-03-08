@@ -1,6 +1,6 @@
 <script>
-import { mapActions } from "vuex";
 import BaseMixin from "@/mixins/base";
+import { mapActions } from "vuex";
 
 export default {
 	name: "AdminLayout-UserMenu",

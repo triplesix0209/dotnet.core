@@ -4,3 +4,10 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
+
+.input-field {
+	.v-input__prepend-outer {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+}
