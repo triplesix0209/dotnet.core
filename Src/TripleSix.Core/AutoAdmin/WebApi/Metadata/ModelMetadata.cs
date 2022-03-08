@@ -17,7 +17,7 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(t => t.GetCustomAttribute<AdminControllerAttribute>()?.Enable == true)
                 .Where(t => t.GetCustomAttribute<AdminControllerAttribute>()?.AdminType == modelType)
                 .FirstOrDefault();
-            var modelControllerName = modelControllerType.Name.Substring(0, controllerMetadata.ControllerType.Name.LastIndexOf("Controller"));
+            var modelControllerName = modelControllerType.Name.Substring(0, modelControllerType.Name.LastIndexOf("Controller"));
 
             Code = modelControllerName.ToKebabCase();
         }

@@ -16,12 +16,12 @@ export default {
 	},
 
 	data() {
-		let value = {};
+		let data = {};
 		for (let field of this.fields) {
-			value[field.key] = undefined;
+			data[field.key] = null;
 		}
 
-		return { value };
+		return { data };
 	},
 
 	computed: {
@@ -34,13 +34,19 @@ export default {
 
 <template>
 	<v-container>
-		<v-row>
+		<v-row class="pb-3">
 			<v-col
 				v-for="field in renderFields"
+				class="pb-0"
 				:key="field.key"
-				:cols="field.gridCol"
+				:sm="field.gridCol"
+				cols="12"
 			>
-				<FieldItem :field="field" :input-mode="inputMode" />
+				<FieldItem
+					v-model="data[field.key]"
+					:field="field"
+					:input-mode="inputMode"
+				/>
 			</v-col>
 		</v-row>
 	</v-container>

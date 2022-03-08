@@ -27,7 +27,7 @@ export default {
 		offset-y
 		:close-on-content-click="false"
 	>
-		<template v-slot:activator="{ on, attrs }">
+		<template #activator="{ on, attrs }">
 			<slot v-bind:on="on" v-bind:attrs="attrs"></slot>
 		</template>
 

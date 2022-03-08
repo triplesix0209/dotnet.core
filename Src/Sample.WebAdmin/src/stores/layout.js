@@ -16,6 +16,14 @@ const CONST = {
 	METHOD_TYPE_EXPORT: 9,
 	PERMISSION_AND: 1,
 	PERMISSION_OR: 2,
+	FIELD_OPERATOR_EQUAL: "equal",
+	FIELD_OPERATOR_IS: "is",
+	FIELD_OPERATOR_NULL: "isNull",
+	FIELD_OPERATOR_NOT_NULL: "notNull",
+	FIELD_OPERATOR_IN: "in",
+	FIELD_OPERATOR_NOT_IN: "notIn",
+	FIELD_OPERATOR_BETWEEN: "between",
+	FIELD_OPERATOR_NOT_BETWEEN: "notBetween",
 
 	generateMethodUrl(type, { controller, id } = {}) {
 		if (!controller) throw Error("method controller is invalid");

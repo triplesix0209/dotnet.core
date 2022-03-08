@@ -5,14 +5,12 @@ export default {
 	name: "input-field-string",
 	mixins: [FieldMixin],
 
-	props: {
-		value: { type: String },
+	components: {
+		FieldOperator: () => import("@/components/BaseAuto/Field/FieldOperator"),
 	},
 
-	data: () => ({ items: ["Foo", "Bar", "Fizz", "Buzz"] }),
-
 	computed: {
-		rules() {
+		fieldRules() {
 			let rules = [];
 
 			if (this.field.isRequired)
@@ -40,24 +38,50 @@ export default {
 
 <template>
 	<v-text-field
+		v-if="!isListOperator"
 		class="input-field"
-		v-model="inputValue"
-		:label="field.name | strFormat('capitalize')"
-		:placeholder="field.defaultValue"
-		:hint="field.description"
-		:rules="rules"
+		v-model="input.value"
+		:rules="fieldRules"
+		:readonly="fieldReadonly"
+		:label="fieldLabel"
 		:counter="field.max"
-		:persistent-placeholder="field.defaultValue !== null"
+		:placeholder="fieldPlaceholder"
+		:persistent-placeholder="fieldPlaceholder !== null"
+		:hint="fieldHint"
 		persistent-hint
 		clearable
 	>
 		<template #prepend>
-			<v-select
-				v-if="inputOperators.length > 0"
-				class="ma-0 pa-0"
-				:items="inputOperators"
-				hide-details
-			/>
+			<FieldOperator v-model="input.operator" :field="field" />
+		</template>
+
+		<template #append>
+			<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
 		</template>
 	</v-text-field>
+
+	<v-combobox
+		v-else
+		class="input-field"
+		v-model="input.value"
+		:rules="fieldRules"
+		:readonly="fieldReadonly"
+		:label="fieldLabel"
+		:placeholder="fieldPlaceholder"
+		:persistent-placeholder="fieldPlaceholder !== null"
+		:hint="fieldHint"
+		persistent-hint
+		clearable
+		multiple
+		small-chips
+		deletable-chips
+	>
+		<template #prepend>
+			<FieldOperator v-model="input.operator" :field="field" />
+		</template>
+
+		<template #append>
+			<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
+		</template>
+	</v-combobox>
 </template>

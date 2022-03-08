@@ -34,8 +34,6 @@ namespace TripleSix.Core.AutoAdmin
                 Operator = EnumHelper.GetValues<FilterParameterStringOperators>()
                     .ToDictionary(x => x.ToString(), x => EnumHelper.GetDescription(x));
             }
-
-            //DefaultValue = Operator is null ? fieldType.GetValue(fieldType.ReflectedType.CreateDefaultInstance()) : null;
         }
 
         public Dictionary<string, string> Operator { get; set; }

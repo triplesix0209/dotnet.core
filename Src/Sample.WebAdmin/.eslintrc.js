@@ -47,7 +47,7 @@ module.exports = {
 		"prefer-object-spread": [2],
 		"prefer-rest-params": [2],
 		"prefer-template": [2],
-		"quote-props": [2, "consistent-as-needed"],
+		"quote-props": [0],
 		"quotes": [2, "double", { avoidEscape: true, allowTemplateLiterals: true }],
 		"rest-spread-spacing": [2],
 		"semi": [2, "always"],
