@@ -20,6 +20,7 @@ export default {
 
 	computed: {
 		...mapGetters(["layout/layout", "layout/menu"]),
+		...mapGetters("lightbox", ["mediaList", "mediaIndex"]),
 
 		controller() {
 			if (!this.$route.params.controller) return null;
@@ -184,7 +185,7 @@ export default {
 </script>
 
 <template>
-	<v-app>
+	<v-main>
 		<div v-if="!['layout/layout']" class="screen-center text-center">
 			<v-progress-circular
 				color="primary"
@@ -210,13 +211,11 @@ export default {
 				@menu:change="menuChanged"
 			/>
 
-			<v-main>
-				<v-scroll-y-transition hide-on-leave>
-					<router-view :key="path" />
-				</v-scroll-y-transition>
-			</v-main>
+			<v-scroll-y-transition hide-on-leave>
+				<router-view :key="path" />
+			</v-scroll-y-transition>
 		</template>
-	</v-app>
+	</v-main>
 </template>
 
 <style lang="scss" scoped>

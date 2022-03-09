@@ -3,7 +3,7 @@ import FieldMixin from "@/mixins/field";
 import { CONST } from "@/stores/layout";
 
 export default {
-	name: "input-field-datetime",
+	name: "field-type-datetime",
 	mixins: [FieldMixin],
 
 	components: {
@@ -91,7 +91,15 @@ export default {
 </script>
 
 <template>
-	<div class="input-field">
+	<div v-if="mode === 'list'">
+		<div v-if="isEmptyFieldData">-</div>
+		<template v-else>
+			<div>{{ data[field.key] | moment("DD/MM/YYYY") }}</div>
+			<div>{{ data[field.key] | moment("HH:mm") }}</div>
+		</template>
+	</div>
+
+	<div v-else class="input-field">
 		<datetime
 			ref="datetime-1"
 			input-class="d-none"
@@ -107,6 +115,7 @@ export default {
 		/>
 
 		<FieldOperator
+			v-if="input.operator"
 			class="input-operator"
 			v-model="input.operator"
 			:field="field"

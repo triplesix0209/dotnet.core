@@ -3,7 +3,7 @@ import FieldMixin from "@/mixins/field";
 import { CONST } from "@/stores/layout";
 
 export default {
-	name: "input-field-id",
+	name: "field-type-id",
 	mixins: [FieldMixin],
 
 	components: {
@@ -86,43 +86,56 @@ export default {
 </script>
 
 <template>
-	<v-autocomplete
-		:key="renderKey"
-		class="input-field"
-		v-model="input.value"
-		:items="items"
-		:loading="loading"
-		:search-input.sync="search"
-		:rules="fieldRules"
-		:readonly="fieldReadonly"
-		:label="fieldLabel"
-		:counter="field.max"
-		:placeholder="fieldPlaceholder"
-		:persistent-placeholder="fieldPlaceholder !== null"
-		:hint="fieldHint"
-		:multiple="isListOperator"
-		:item-value="modelFieldKey"
-		:item-text="modelFieldText"
-		persistent-hint
-		hide-no-data
-		hide-selected
-		no-filter
-		clearable
-	>
-		<template #prepend>
-			<FieldOperator v-model="input.operator" :field="field" />
-		</template>
+	<div v-if="mode === 'list'">
+		<div v-if="isEmptyFieldData">-</div>
+		<div v-else>
+			<router-link :to="{ path: detailUrl({ id: data[field.key] }) }">
+				{{ data[field.key] }}
+			</router-link>
+		</div>
+	</div>
 
-		<template #append>
-			<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
-		</template>
+	<div v-else class="input-field">
+		<v-autocomplete
+			v-model="input.value"
+			:items="items"
+			:loading="loading"
+			:search-input.sync="search"
+			:rules="fieldRules"
+			:readonly="fieldReadonly"
+			:label="fieldLabel"
+			:counter="field.max"
+			:placeholder="fieldPlaceholder"
+			:persistent-placeholder="fieldPlaceholder !== null"
+			:hint="fieldHint"
+			:multiple="isListOperator"
+			:item-value="modelFieldKey"
+			:item-text="modelFieldText"
+			persistent-hint
+			hide-no-data
+			hide-selected
+			no-filter
+			clearable
+		>
+			<template #prepend>
+				<FieldOperator
+					v-if="input.operator"
+					v-model="input.operator"
+					:field="field"
+				/>
+			</template>
 
-		<template #item="{ item }">
-			{{ item[modelFieldText] | strFormat("capitalize") }}
-		</template>
+			<template #append>
+				<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
+			</template>
 
-		<template #selection="{ item }">
-			{{ item[modelFieldText] | strFormat("capitalize") }}
-		</template>
-	</v-autocomplete>
+			<template #item="{ item }">
+				{{ item[modelFieldText] | strFormat("capitalize") }}
+			</template>
+
+			<template #selection="{ item }">
+				{{ item[modelFieldText] | strFormat("capitalize") }}
+			</template>
+		</v-autocomplete>
+	</div>
 </template>

@@ -8,17 +8,16 @@ export default {
 
 	components: {
 		FieldPanel: () => import("@/components/BaseAuto/Field/FieldPanel"),
+		DataTable: () => import("@/components/BaseAuto/DataTable"),
 	},
 
 	props: {},
 
 	data: () => ({
-		page: 1,
-		size: 10,
-		pageCount: null,
+		filter: { old: null, current: null, toggle: false },
 		total: null,
 		items: [],
-		filter: { old: null, current: null, toggle: false },
+		pagination: {},
 	}),
 
 	computed: {
@@ -48,7 +47,16 @@ export default {
 		},
 	},
 
-	watch: {},
+	watch: {
+		async "pagination"() {
+			if (this.pagination.sortBy.length > 0) await this.loadData();
+		},
+
+		async "pagination.page"(val, old) {
+			if (old === undefined) return;
+			await this.loadData();
+		},
+	},
 
 	methods: {
 		_validatePage() {
@@ -77,9 +85,13 @@ export default {
 
 		async loadData({ force, setPage } = {}) {
 			if (!force && this.loading) return;
-			if (setPage) this.page = setPage;
+			if (setPage) this.pagination.page = setPage;
 
-			let params = { page: this.page, size: this.size };
+			let params = {
+				page: this.pagination.page,
+				size: this.pagination.itemsPerPage,
+			};
+
 			for (let key in this.filter.current) {
 				let filter = this.filter.current[key];
 				if (!filter) continue;
@@ -98,6 +110,16 @@ export default {
 				}
 			}
 
+			if (this.pagination.sortBy) {
+				for (let i = 0; i < this.pagination.sortBy.length; i++) {
+					let field = this.listMethod.itemFields[this.pagination.sortBy[i]];
+					params[`sortColumn[${i}].name`] = field.sortColumn;
+					params[`sortColumn[${i}].order`] = this.pagination.sortDesc[i]
+						? "desc"
+						: "asc";
+				}
+			}
+
 			let { meta, data } = await this.requestApi({
 				controllerMethod: this.listMethod,
 				params,
@@ -107,7 +129,6 @@ export default {
 			this.filter.old = this.filter.current;
 
 			this.total = meta.total;
-			this.pageCount = meta.pageCount;
 			this.items = data;
 		},
 
@@ -119,7 +140,7 @@ export default {
 		loadFilterFromQuery() {
 			let query = this.$route.query;
 
-			if (query.page) this.page = Number(query.page);
+			if (query.page) this.pagination.page = Number(query.page);
 
 			this.filter.current = {};
 			for (let queryKey in query) {
@@ -160,7 +181,8 @@ export default {
 		saveFilterToQuery() {
 			let query = {};
 
-			if (this.page && this.page > 1) query.page = this.page;
+			if (this.pagination.page && this.pagination.page > 1)
+				query.page = this.pagination.page;
 
 			if (this.filter.current) {
 				for (let key in this.filter.current) {
@@ -195,7 +217,7 @@ export default {
 			<v-form
 				v-if="filter.toggle"
 				:disabled="loading"
-				@submit.stop.prevent="loadData"
+				@submit.stop.prevent="loadData({ setPage: 1 })"
 			>
 				<v-row>
 					<v-col>
@@ -204,13 +226,17 @@ export default {
 								v-model="filter.current"
 								:fields="this.listMethod.filterFields"
 								field-lg="3"
-								input-mode
 							/>
 
 							<v-card-actions>
 								<v-row>
 									<v-col>
-										<v-tooltip bottom nudge-right="35">
+										<v-tooltip
+											open-delay="100"
+											color="rgba(0, 0, 0, 1)"
+											nudge-right="35"
+											bottom
+										>
 											<template v-slot:activator="{ on, attrs }">
 												<v-btn
 													v-bind="attrs"
@@ -226,7 +252,12 @@ export default {
 											<span>Ẩn bảng lọc</span>
 										</v-tooltip>
 
-										<v-tooltip bottom nudge-right="35">
+										<v-tooltip
+											open-delay="100"
+											color="rgba(0, 0, 0, 1)"
+											nudge-right="35"
+											bottom
+										>
 											<template v-slot:activator="{ on, attrs }">
 												<v-btn
 													v-bind="attrs"
@@ -236,7 +267,7 @@ export default {
 													icon
 													@click="clearFilter"
 												>
-													<v-icon>mdi-filter-off</v-icon>
+													<v-icon color="red">mdi-filter-off</v-icon>
 												</v-btn>
 											</template>
 											<span>Loại bỏ các tiêu chí lọc</span>
@@ -261,7 +292,13 @@ export default {
 
 		<v-row>
 			<v-col>
-				<v-tooltip v-if="!filter.toggle" bottom nudge-right="35">
+				<v-tooltip
+					v-if="!filter.toggle"
+					open-delay="100"
+					color="rgba(0, 0, 0, 1)"
+					nudge-right="35"
+					bottom
+				>
 					<template v-slot:activator="{ on, attrs }">
 						<v-btn
 							v-bind="attrs"
@@ -283,17 +320,34 @@ export default {
 					<span>Mở bảng dữ liệu</span>
 				</v-tooltip>
 
-				<span>
+				<span v-if="total">
 					Tổng có <strong>{{ total | numeral("0,0") }}</strong> mục
 				</span>
 			</v-col>
 		</v-row>
 
-		<v-row>
+		<v-row v-if="total === 0">
 			<v-col>
-				<v-alert v-if="filterCount > 0 && total === 0" text type="error">
+				<v-alert v-if="filterCount > 0" text type="error">
 					Không có dữ liệu nào phù hợp với tiêu chí lọc của bạn
 				</v-alert>
+
+				<v-alert v-else text type="info">
+					Hiện không có dữ liệu để hiển thị
+				</v-alert>
+			</v-col>
+		</v-row>
+
+		<v-row v-if="total > 0">
+			<v-col>
+				<DataTable
+					:fields="listMethod.itemFields"
+					:loading="loading"
+					:items="items"
+					:total="total"
+					:pagination.sync="pagination"
+					:controller="controller.code"
+				/>
 			</v-col>
 		</v-row>
 	</v-container>

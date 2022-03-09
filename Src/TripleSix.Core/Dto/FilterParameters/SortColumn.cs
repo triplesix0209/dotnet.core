@@ -18,7 +18,7 @@ namespace TripleSix.Core.Dto
 
     public enum SortColumnOrder
     {
-        Asc = 0,
-        Desc = 1,
+        Asc = 1,
+        Desc = 2,
     }
 }

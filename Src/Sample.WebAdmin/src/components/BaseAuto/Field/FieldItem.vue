@@ -1,23 +1,40 @@
 <script>
 import FieldMixin from "@/mixins/field";
-import FieldItemString from "@/components/BaseAuto/Field/FieldItemString";
-import FieldItemNumber from "@/components/BaseAuto/Field/FieldItemNumber";
-import FieldItemEnum from "@/components/BaseAuto/Field/FieldItemEnum";
-import FieldItemDatetime from "@/components/BaseAuto/Field/FieldItemDatetime";
-import FieldItemId from "@/components/BaseAuto/Field/FieldItemId";
+import FieldDatetime from "@/components/BaseAuto/FieldType/Datetime";
+import FieldEnum from "@/components/BaseAuto/FieldType/Enum";
+import FieldId from "@/components/BaseAuto/FieldType/Id";
+import FieldMedia from "@/components/BaseAuto/FieldType/Media";
+import FieldNumber from "@/components/BaseAuto/FieldType/Number";
+import FieldString from "@/components/BaseAuto/FieldType/String";
 
 export default {
 	name: "field-item",
 	mixins: [FieldMixin],
 
+	props: { fieldList: { type: Array } },
+
 	computed: {
+		fieldDisplay() {
+			if (this.field.displayBy)
+				return this.fieldList.find((x) => x.key === this.field.displayBy);
+			return this.field;
+		},
+
 		fieldComponent() {
-			if (this.inputMode) {
-				if (this.field.type === "number") return FieldItemNumber;
-				if (this.field.type === "string") return FieldItemString;
-				if (this.field.type === "enum") return FieldItemEnum;
-				if (this.field.type === "dateTime") return FieldItemDatetime;
-				if (["id", "parentId"].includes(this.field.type)) return FieldItemId;
+			switch (this.fieldDisplay.type) {
+				case "id":
+				case "parentId":
+					return FieldId;
+				case "number":
+					return FieldNumber;
+				case "string":
+					return FieldString;
+				case "enum":
+					return FieldEnum;
+				case "datetime":
+					return FieldDatetime;
+				case "media":
+					return FieldMedia;
 			}
 
 			return null;
@@ -27,13 +44,29 @@ export default {
 </script>
 
 <template>
+	<div v-if="!fieldComponent">{{ field.key }}</div>
+
+	<router-link
+		v-else-if="mode === 'list' && field.type === 'id' && data[field.key]"
+		:to="{ path: detailUrl({ id: data[field.key] }) }"
+	>
+		<component
+			:is="fieldComponent"
+			:field="fieldDisplay"
+			:field-base="field"
+			:data="data"
+			:mode="mode"
+			v-model="input"
+		/>
+	</router-link>
+
 	<component
-		v-if="fieldComponent"
+		v-else
 		:is="fieldComponent"
-		:field="field"
-		:input-mode="inputMode"
+		:field="fieldDisplay"
+		:field-base="field"
+		:data="data"
+		:mode="mode"
 		v-model="input"
 	/>
-
-	<div v-else>{{ field.key }}</div>
 </template>

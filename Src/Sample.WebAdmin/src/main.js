@@ -13,6 +13,7 @@ import "@/filters/strFormat";
 
 // plugins
 import "@/plugins/vue-datetime";
+import "@/plugins/vue-lightbox";
 import "@/plugins/vue-moment";
 import "@/plugins/vue-numeral";
 import "@/plugins/vue-toast";

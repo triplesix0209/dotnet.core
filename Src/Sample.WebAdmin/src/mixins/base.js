@@ -1,7 +1,7 @@
 import { CONST } from "@/stores/layout";
 import ApiService from "@/services/api";
 import PermissionService from "@/services/permission";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
 	computed: {
@@ -9,6 +9,8 @@ export default {
 	},
 
 	methods: {
+		...mapActions("lightbox", ["showLightbox"]),
+
 		$numeral(value, format) {
 			return this.$options.filters.numeral(value, format);
 		},
@@ -135,6 +137,118 @@ export default {
 				this.toastError(e);
 				throw e;
 			}
+		},
+
+		canPerformList({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_LIST,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformDetail({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_DETAIL,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformCreate({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_CREATE,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformUpdate({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_UPDATE,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformDelete({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_DELETE,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformRestore({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_RESTORE,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformChangeLog({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_LIST_CHANGELOG,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
+		},
+
+		canPerformExport({ controller }) {
+			let method = this.getMethod({
+				type: CONST.METHOD_TYPE_LIST_EXPORT,
+				controller,
+				firstOrDefault: true,
+			});
+			if (!method) return false;
+
+			return this.checkPermission(
+				method.permissionCodes,
+				method.permissionOperator,
+			);
 		},
 	},
 };

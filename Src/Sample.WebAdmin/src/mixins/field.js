@@ -6,13 +6,20 @@ export default {
 
 	props: {
 		field: { type: Object, required: true },
+		fieldBase: { type: Object },
+		data: { type: Object },
 		value: { type: Object },
-		inputMode: { type: Boolean, default: false },
+		mode: {
+			type: String,
+			default: "input",
+			validator(value) {
+				return ["detail", "list", "input"].includes(value);
+			},
+		},
 	},
 
 	data() {
 		return {
-			renderKey: 0,
 			loading: false,
 			input: this.inputFromValue(),
 		};
@@ -72,13 +79,12 @@ export default {
 				this.input.prevValue !== undefined &&
 				this.input.prevValue !== null &&
 				this.input.value !== this.input.prevValue;
+			if (!this.field.operator) return checkValue;
 
 			let checkOperator =
-				!this.field.operator ||
-				(this.input.prevOperator !== undefined &&
-					this.input.prevOperator !== null &&
-					this.input.operator !== this.input.prevOperator);
-
+				this.input.prevOperator !== undefined &&
+				this.input.prevOperator !== null &&
+				this.input.operator !== this.input.prevOperator;
 			return checkValue || checkOperator;
 		},
 
@@ -92,6 +98,14 @@ export default {
 				CONST.FIELD_OPERATOR_IN,
 				CONST.FIELD_OPERATOR_NOT_IN,
 			]);
+		},
+
+		isEmptyFieldData() {
+			return (
+				!this.data ||
+				this.data[this.field.key] === undefined ||
+				this.data[this.field.key] === null
+			);
 		},
 	},
 
@@ -149,6 +163,19 @@ export default {
 				input.operator = Object.getOwnPropertyNames(this.field.operator)[0];
 
 			return input;
+		},
+
+		detailUrl({ id, field } = {}) {
+			if (!id) throw Error("id is invaild");
+			if (!field) field = this.field;
+
+			let controller = field.modelController?.code;
+			if (!controller) return null;
+
+			return CONST.generateMethodUrl(CONST.METHOD_TYPE_DETAIL, {
+				controller,
+				id,
+			});
 		},
 	},
 };

@@ -94,14 +94,7 @@ namespace TripleSix.Core.AutoAdmin
             var fieldInfo = fieldType.GetCustomAttribute<AdminFieldAttribute>() ?? new AdminFieldAttribute();
             Type = propertyType.Name.ToCamelCase();
 
-            if (propertyType == typeof(byte) || propertyType == typeof(decimal)
-                || propertyType == typeof(int) || propertyType == typeof(uint)
-                || propertyType == typeof(long) || propertyType == typeof(ulong)
-                || propertyType == typeof(float) || propertyType == typeof(double))
-            {
-                Type = "number";
-            }
-            else if (propertyType.IsEnum)
+            if (propertyType.IsEnum)
             {
                 Type = "enum";
                 Enum = new Dictionary<string, string>();
@@ -109,6 +102,17 @@ namespace TripleSix.Core.AutoAdmin
                 var values = EnumHelper.GetValues(propertyType);
                 foreach (var value in values)
                     Enum.Add(((int)value).ToString(), EnumHelper.GetDescription(propertyType, value));
+            }
+            else if (propertyType == typeof(byte) || propertyType == typeof(decimal)
+                || propertyType == typeof(int) || propertyType == typeof(uint)
+                || propertyType == typeof(long) || propertyType == typeof(ulong)
+                || propertyType == typeof(float) || propertyType == typeof(double))
+            {
+                Type = "number";
+            }
+            else if (propertyType == typeof(DateTime))
+            {
+                Type = "datetime";
             }
             else if (propertyType == typeof(bool))
             {

@@ -16,7 +16,13 @@ export default {
 		fieldSm: [Number, String],
 		fieldMd: [Number, String],
 		fieldLg: [Number, String],
-		inputMode: { type: Boolean },
+		mode: {
+			type: String,
+			default: "input",
+			validator(value) {
+				return ["detail", "list", "input"].includes(value);
+			},
+		},
 	},
 
 	data() {
@@ -73,9 +79,10 @@ export default {
 				cols="12"
 			>
 				<FieldItem
-					:field="field"
-					:input-mode="inputMode"
 					v-model="inputs[field.key]"
+					:field="field"
+					:field-list="fields"
+					:mode="mode"
 				/>
 			</v-col>
 		</v-row>

@@ -114,7 +114,7 @@ namespace TripleSix.Core.Helpers
         public static Array GetValues(Type enumType)
         {
             var values = Enum.GetValues(enumType).Cast<int>();
-            return values.Where(x => x > 0).OrderBy(x => x)
+            return values.Where(x => x >= 0).OrderBy(x => x)
                 .Concat(values.Where(x => x < 0).OrderByDescending(x => x))
                 .ToArray();
         }
