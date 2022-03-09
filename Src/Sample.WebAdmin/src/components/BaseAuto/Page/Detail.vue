@@ -7,10 +7,12 @@ export default {
 	mixins: [PageMixin],
 
 	components: {
-		// FieldPanel: () => import("@/components/BaseAuto/Field/FieldPanel"),
+		FieldPanel: () => import("@/components/BaseAuto/Field/FieldPanel"),
 	},
 
-	data: () => ({}),
+	data: () => ({
+		data: null,
+	}),
 
 	computed: {
 		detailMethod() {
@@ -53,11 +55,36 @@ export default {
 			];
 		},
 
-		async _loaded() {},
+		async _loaded() {
+			await this.loadData();
+		},
+
+		async loadData({ force } = {}) {
+			if (!force && this.loading) return;
+
+			let { data } = await this.requestApi({
+				controllerMethod: this.detailMethod,
+				path: { id: this.id },
+			});
+
+			this.data = data;
+		},
 	},
 };
 </script>
 
 <template>
-	<v-container v-if="!initialing"> Detail </v-container>
+	<v-container v-if="!initialing">
+		<v-row>
+			<v-col>
+				<v-card>
+					<FieldPanel
+						:data="data"
+						:fields="this.detailMethod.detailFields"
+						mode="detail"
+					/>
+				</v-card>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>

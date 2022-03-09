@@ -228,6 +228,7 @@ export default {
 								v-model="filter.current"
 								:fields="this.listMethod.filterFields"
 								field-lg="3"
+								mode="input"
 							/>
 
 							<v-card-actions>

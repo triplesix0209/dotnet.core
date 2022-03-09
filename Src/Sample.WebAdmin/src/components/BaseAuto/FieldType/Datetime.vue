@@ -36,6 +36,10 @@ export default {
 			]);
 		},
 
+		fieldDisplayValue() {
+			return this.$moment(this.data[this.field.key]).format("DD/MM/YYYY HH:mm");
+		},
+
 		dateDisplay1: {
 			get() {
 				if (!this.dates[0]) return null;
@@ -99,7 +103,24 @@ export default {
 		</template>
 	</div>
 
-	<div v-else class="input-field">
+	<div v-else-if="mode === 'detail'">
+		<v-text-field
+			v-if="data"
+			v-model="fieldDisplayValue"
+			:label="fieldLabel"
+			:placeholder="fieldEmptyValue"
+			:hint="fieldHint"
+			persistent-placeholder
+			persistent-hint
+			readonly
+		>
+			<template #append>
+				<FieldLink :field="fieldBase" :data="data" />
+			</template>
+		</v-text-field>
+	</div>
+
+	<div v-else>
 		<datetime
 			ref="datetime-1"
 			input-class="d-none"

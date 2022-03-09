@@ -93,6 +93,7 @@ export default {
 
 		async requestApi({
 			controllerMethod,
+			path,
 			params,
 			data,
 			form,
@@ -117,7 +118,8 @@ export default {
 				let response = await ApiService.admin[controllerMethod.api][
 					controllerMethod.method
 				]({
-					url: `${controllerMethod.url}`,
+					url: controllerMethod.url,
+					path,
 					params,
 					data,
 					form,

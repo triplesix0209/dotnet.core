@@ -92,9 +92,4 @@ const router = new Router({
 
 // #endregion
 
-router.beforeEach(async (to, from, next) => {
-	setTimeout(() => window.scrollTo(0, 0), 100);
-	next();
-});
-
 export default router;

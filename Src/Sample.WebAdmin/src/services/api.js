@@ -1,7 +1,8 @@
-import Axios from "axios";
 import * as Jose from "jose";
-import Moment from "moment-timezone";
 import TokenService from "@/services/token";
+import axios from "axios";
+import moment from "moment-timezone";
+import stringTemplate from "string-template";
 
 const service = {
 	identity: {
@@ -16,7 +17,7 @@ const service = {
 
 function init(context) {
 	if (!context.client) {
-		context.client = Axios.create({
+		context.client = axios.create({
 			baseURL: context.baseUrl,
 		});
 	}
@@ -37,9 +38,9 @@ async function refreshAccessToken({ accessToken, refreshToken } = {}) {
 	if (!refreshToken) throw Error("missing refreshToken");
 
 	if (
-		Moment.duration(
-			Moment.unix(Jose.decodeJwt(accessToken).exp).diff(Moment.utc()),
-		).asSeconds() > 5
+		moment
+			.duration(moment.unix(Jose.decodeJwt(accessToken).exp).diff(moment.utc()))
+			.asSeconds() > 5
 	)
 		return accessToken;
 
@@ -57,6 +58,7 @@ async function request({
 	client,
 	method,
 	url,
+	path,
 	params,
 	data,
 	form,
@@ -78,6 +80,8 @@ async function request({
 		headers["Content-Type"] = "multipart/form-data";
 		data = form;
 	}
+
+	url = stringTemplate(url, path);
 
 	try {
 		let response = await client({

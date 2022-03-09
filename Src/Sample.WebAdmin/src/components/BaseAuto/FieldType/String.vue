@@ -6,6 +6,7 @@ export default {
 	mixins: [FieldMixin],
 
 	components: {
+		FieldLink: () => import("@/components/BaseAuto/Field/FieldLink"),
 		FieldOperator: () => import("@/components/BaseAuto/Field/FieldOperator"),
 	},
 
@@ -42,7 +43,24 @@ export default {
 		<div v-else>{{ data[field.key] }}</div>
 	</div>
 
-	<div v-else class="input-field">
+	<div v-else-if="mode === 'detail'">
+		<v-text-field
+			v-if="data"
+			v-model="fieldDisplayValue"
+			:label="fieldLabel"
+			:placeholder="fieldEmptyValue"
+			:hint="fieldHint"
+			persistent-placeholder
+			persistent-hint
+			readonly
+		>
+			<template #append>
+				<FieldLink :field="fieldBase" :data="data" />
+			</template>
+		</v-text-field>
+	</div>
+
+	<div v-else>
 		<v-text-field
 			v-if="!isListOperator"
 			v-model="input.value"

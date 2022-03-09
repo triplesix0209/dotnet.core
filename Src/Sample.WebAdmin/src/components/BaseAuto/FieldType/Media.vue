@@ -41,7 +41,40 @@ export default {
 		</div>
 	</div>
 
-	<div v-else class="input-field">
+	<div v-else-if="mode === 'detail'">
+		<v-text-field
+			v-if="data"
+			v-model="fieldDisplayValue"
+			:label="fieldLabel"
+			:placeholder="fieldEmptyValue"
+			:hint="fieldHint"
+			persistent-placeholder
+			persistent-hint
+			readonly
+		>
+			<template #prepend>
+				<v-avatar
+					v-if="data[field.key]"
+					:style="{ cursor: 'zoom-in' }"
+					size="30"
+					rounded
+					@click="showLightbox(data[field.key])"
+				>
+					<v-img :src="data[field.key]" />
+				</v-avatar>
+
+				<v-avatar v-else rounded size="30">
+					<v-img src="/assets/no-image.png" />
+				</v-avatar>
+			</template>
+
+			<template #append>
+				<FieldLink :field="fieldBase" :data="data" />
+			</template>
+		</v-text-field>
+	</div>
+
+	<div v-else>
 		<v-text-field
 			v-if="!isListOperator"
 			v-model="input.value"

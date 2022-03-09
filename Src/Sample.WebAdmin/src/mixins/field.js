@@ -7,8 +7,8 @@ export default {
 	props: {
 		field: { type: Object, required: true },
 		fieldBase: { type: Object },
-		data: { type: Object },
 		value: { type: Object },
+		data: { type: Object },
 		mode: {
 			type: String,
 			default: "input",
@@ -68,6 +68,14 @@ export default {
 				return this.$strFormat(this.operatorText, "capitalize");
 
 			return this.field.defaultValue;
+		},
+
+		fieldDisplayValue() {
+			return this.data[this.field.key];
+		},
+
+		fieldEmptyValue() {
+			return "(không có)";
 		},
 
 		fieldHint() {

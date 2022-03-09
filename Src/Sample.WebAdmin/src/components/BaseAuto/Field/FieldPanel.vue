@@ -11,6 +11,7 @@ export default {
 
 	props: {
 		value: { type: Object },
+		data: { type: Object },
 		fields: { type: Array, required: true },
 		groups: { type: Array, default: () => [] },
 		fieldSm: [Number, String],
@@ -80,6 +81,7 @@ export default {
 			>
 				<FieldItem
 					v-model="inputs[field.key]"
+					:data="data"
 					:field="field"
 					:field-list="fields"
 					:mode="mode"
