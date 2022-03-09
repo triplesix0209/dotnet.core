@@ -56,12 +56,12 @@ export default {
 	watch: {
 		$route() {
 			if (this.currentMenu.code !== this.active.current[0].code)
-				this.selectMenu([this.currentMenu]);
+				this.selectMenu([this.currentMenu], false);
 		},
 	},
 
 	methods: {
-		selectMenu(value) {
+		selectMenu(value, pushRoute = true) {
 			this.search = null;
 			this.searchActive = null;
 			let menuItem = value.length === 0 ? null : value[0];
@@ -109,7 +109,7 @@ export default {
 			if (!menuItem.path) return;
 
 			if (menuItem.path === this.$route.path) return;
-			this.$router.push({ path: menuItem.path });
+			if (pushRoute) this.$router.push({ path: menuItem.path });
 		},
 	},
 

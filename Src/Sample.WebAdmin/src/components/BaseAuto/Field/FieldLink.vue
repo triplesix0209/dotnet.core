@@ -13,6 +13,13 @@ export default {
 
 	computed: {
 		detailUrl() {
+			if (
+				!this.field.modelController ||
+				!this.data ||
+				!this.data[this.field.key]
+			)
+				return null;
+
 			return CONST.generateMethodUrl(CONST.METHOD_TYPE_DETAIL, {
 				controller: this.field.modelController.code,
 				id: this.data[this.field.key],

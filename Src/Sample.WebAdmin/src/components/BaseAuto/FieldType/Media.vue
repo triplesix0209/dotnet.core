@@ -6,6 +6,7 @@ export default {
 	mixins: [FieldMixin],
 
 	components: {
+		FieldLink: () => import("@/components/BaseAuto/Field/FieldLink"),
 		FieldOperator: () => import("@/components/BaseAuto/Field/FieldOperator"),
 	},
 
