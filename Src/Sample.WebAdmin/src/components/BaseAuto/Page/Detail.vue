@@ -115,8 +115,19 @@ export default {
 			</v-col>
 
 			<v-col class="pt-0 pr-0" cols="10" sm="5">
-				<div :class="{ 'object-change-container': canPerformChangeLog }">
-					<v-tooltip v-if="canPerformChangeLog" right color="rgba(0,0,0,1)">
+				<div
+					:class="{
+						'object-change-container': canPerformChangeLog({
+							controller: controller.code,
+							id,
+						}),
+					}"
+				>
+					<v-tooltip
+						v-if="canPerformChangeLog({ controller: controller.code, id })"
+						right
+						color="rgba(0,0,0,1)"
+					>
 						<template #activator="{ on, attrs }">
 							<router-link
 								:to="{ path: changelogUrl }"
@@ -168,7 +179,7 @@ export default {
 
 			<v-col class="d-flex pt-0 pl-0 justify-end" cols="12" sm="7">
 				<v-btn
-					v-if="canPerformCreate"
+					v-if="canPerformCreate({ controller: controller.code })"
 					class="ml-2"
 					color="info"
 					:disabled="loading"
@@ -180,7 +191,7 @@ export default {
 				</v-btn>
 
 				<v-btn
-					v-if="canPerformUpdate"
+					v-if="canPerformUpdate({ controller: controller.code, id })"
 					class="ml-2"
 					color="success"
 					:disabled="loading"
@@ -210,7 +221,7 @@ export default {
 		<v-row>
 			<v-col class="d-flex justify-end" cols="12">
 				<v-btn
-					v-if="canPerformCreate"
+					v-if="canPerformCreate({ controller: controller.code })"
 					class="ml-2"
 					color="info"
 					:disabled="loading"
@@ -222,7 +233,7 @@ export default {
 				</v-btn>
 
 				<v-btn
-					v-if="canPerformUpdate"
+					v-if="canPerformUpdate({ controller: controller.code, id })"
 					class="ml-2"
 					color="success"
 					:disabled="loading"

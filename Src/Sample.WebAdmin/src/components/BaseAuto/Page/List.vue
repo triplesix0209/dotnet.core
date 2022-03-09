@@ -346,7 +346,7 @@ export default {
 
 			<v-col class="d-flex justify-end" cols="12" sm="6">
 				<v-btn
-					v-if="canPerformCreate"
+					v-if="canPerformCreate({ controller: controller.code })"
 					class="ml-2"
 					color="info"
 					:disabled="loading"
@@ -392,7 +392,7 @@ export default {
 		<v-row>
 			<v-col class="d-flex justify-end">
 				<v-btn
-					v-if="canPerformCreate"
+					v-if="canPerformCreate({ controller: controller.code })"
 					class="ml-2"
 					color="info"
 					:disabled="loading"
