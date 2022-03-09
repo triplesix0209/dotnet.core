@@ -102,18 +102,16 @@ export default {
 			accessToken,
 			refreshToken,
 			loadingField,
-			toggleLoadingOnDone,
-			toggleLoadingOnError,
+			toggleLoading,
 		} = {}) {
 			if (!controllerMethod)
 				throw Error("parameter 'controllerMethod' is invalid");
 
 			if (loadingField === undefined) loadingField = "loading";
-			if (toggleLoadingOnDone === undefined) toggleLoadingOnDone = true;
-			if (toggleLoadingOnError === undefined) toggleLoadingOnError = true;
+			if (toggleLoading === undefined) toggleLoading = true;
 
 			try {
-				if (loadingField in this) this[loadingField] = true;
+				if (toggleLoading && loadingField in this) this[loadingField] = true;
 
 				let response = await ApiService.admin[controllerMethod.api][
 					controllerMethod.method
@@ -129,15 +127,47 @@ export default {
 					refreshToken,
 				});
 
-				if (toggleLoadingOnDone && loadingField in this)
-					this[loadingField] = false;
+				if (toggleLoading && loadingField in this) this[loadingField] = false;
 
 				return response;
 			} catch (e) {
-				if (toggleLoadingOnError && loadingField in this)
-					this[loadingField] = false;
+				if (toggleLoading && loadingField in this) this[loadingField] = false;
 				this.toastError(e);
 				throw e;
+			}
+		},
+
+		async doSubmit({
+			handler,
+			error,
+			form,
+			loadingField,
+			toggleLoading,
+			confirmMessage,
+			successMessage,
+		} = {}) {
+			if (form === undefined) form = "form";
+			if (loadingField === undefined) loadingField = "loading";
+			if (toggleLoading === undefined) toggleLoading = true;
+
+			try {
+				if (form) if (!this.$refs[form].validate()) return;
+				if (
+					confirmMessage &&
+					!(await this.confirm({ message: confirmMessage }))
+				)
+					return;
+
+				if (toggleLoading && loadingField in this) this[loadingField] = true;
+				let result = await handler();
+				if (successMessage) this.toastSuccess({ message: successMessage });
+				if (toggleLoading && loadingField in this) this[loadingField] = false;
+
+				return result;
+			} catch (e) {
+				this.toastError(e);
+				if (error) await error(e);
+				if (toggleLoading && loadingField in this) this[loadingField] = false;
 			}
 		},
 

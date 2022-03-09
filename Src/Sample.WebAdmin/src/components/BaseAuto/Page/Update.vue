@@ -35,6 +35,13 @@ export default {
 		id() {
 			return this.$route.params.id;
 		},
+
+		detailUrl() {
+			return CONST.generateMethodUrl(CONST.METHOD_TYPE_DETAIL, {
+				controller: this.controller.code,
+				id: this.id,
+			});
+		},
 	},
 
 	methods: {
@@ -65,10 +72,7 @@ export default {
 				},
 				{
 					text: `Chi tiết`,
-					href: CONST.generateMethodUrl(CONST.METHOD_TYPE_DETAIL, {
-						controller: this.controller.code,
-						id: this.id,
-					}),
+					href: this.detailUrl,
 				},
 				{
 					text: `Chỉnh sửa`,
@@ -91,14 +95,6 @@ export default {
 			this.data = data;
 		},
 
-		async submit() {
-			this.doSubmit({
-				handler: async () => {
-					console.log(this.inputs);
-				},
-			});
-		},
-
 		async cancel() {
 			if (!(await this.$confirm("Bạn chắc chắn muốn hủy thao tác?"))) return;
 
@@ -107,6 +103,24 @@ export default {
 					controller: this.controller.code,
 					id: this.id,
 				}),
+			});
+		},
+
+		async submit() {
+			await this.doSubmit({
+				successMessage: `Đã chỉnh sửa ${this.controller.name} thành công`,
+				handler: async () => {
+					await this.requestApi({
+						controllerMethod: this.updateMethod,
+						path: { id: this.id },
+						data: await this.prepareInput({
+							fields: this.updateMethod.inputFields,
+							inputs: this.inputs,
+						}),
+					});
+
+					this.$router.push({ path: this.detailUrl });
+				},
 			});
 		},
 	},
@@ -187,6 +201,25 @@ export default {
 							mode="input"
 						/>
 					</v-card>
+				</v-col>
+			</v-row>
+
+			<v-row>
+				<v-col class="d-flex justify-end" cols="12">
+					<v-btn class="ml-2" :disabled="loading" small @click="cancel">
+						Hủy bỏ
+					</v-btn>
+
+					<v-btn
+						class="ml-2"
+						type="submit"
+						color="success"
+						:disabled="loading || !inputs"
+						small
+					>
+						Ghi nhận
+						<v-icon dark right> mdi-pencil </v-icon>
+					</v-btn>
 				</v-col>
 			</v-row>
 		</v-form>

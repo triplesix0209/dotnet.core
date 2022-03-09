@@ -133,6 +133,7 @@ if (service.static) {
 
 		let { data } = await service.static.post({
 			url: "/upload",
+			params: { key: process.env.VUE_APP_API_STATIC_KEY },
 			form,
 		});
 

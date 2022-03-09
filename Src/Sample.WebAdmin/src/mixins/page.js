@@ -1,4 +1,5 @@
 import BaseMixin from "@/mixins/base";
+import ApiService from "@/services/api";
 import { mapActions } from "vuex";
 
 export default {
@@ -28,29 +29,27 @@ export default {
 		...mapActions(["auth/load", "layout/load"]),
 		...mapActions("layout", ["setPageTitle", "setBreadcrumb"]),
 
-		async doSubmit({
-			handler,
-			error,
-			form,
-			toggleLoadingOnDone,
-			toggleLoadingOnError,
-		} = {}) {
-			if (form === undefined) form = "form";
-			if (toggleLoadingOnDone === undefined) toggleLoadingOnDone = true;
-			if (toggleLoadingOnError === undefined) toggleLoadingOnError = true;
+		async prepareInput({ inputs, fields }) {
+			let result = {};
+			for (let field of fields) {
+				let input = inputs[field.key];
+				let value = input.value;
 
-			try {
-				if (!this.$refs[form].validate()) return;
+				if (field.type === "media") {
+					if (input.file) {
+						let { url } = await ApiService.static.upload(input.file);
+						input.file = null;
+						input.value = url;
+						value = url;
+					}
+				} else if (field.type === "datetime") {
+					if (input.value) value = this.$moment(input.value).valueOf();
+				}
 
-				this.loading = true;
-				let result = await handler();
-				if (toggleLoadingOnDone) this.loading = false;
-
-				return result;
-			} catch (e) {
-				if (error) await error(e);
-				if (toggleLoadingOnError) this.loading = false;
+				if (value !== undefined) result[field.key] = value;
 			}
+
+			return result;
 		},
 
 		_validatePage() {},

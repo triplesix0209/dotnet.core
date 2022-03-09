@@ -22,10 +22,9 @@ export default {
 	methods: {
 		...mapActions("auth", ["login"]),
 
-		submit() {
-			this.doSubmit({
-				toggleLoadingOnDone: false,
-
+		async submit() {
+			this.loading = true;
+			await this.doSubmit({
 				handler: async () => {
 					this.errors = [];
 
@@ -38,6 +37,7 @@ export default {
 
 				error: (e) => {
 					this.errors.push(e.message);
+					this.loading = false;
 				},
 			});
 		},

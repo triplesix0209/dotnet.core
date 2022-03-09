@@ -1,12 +1,12 @@
 <script>
-import PageMixin from "@/mixins/page";
-
 export default {
 	name: "auto-create",
-	mixins: [PageMixin],
+	components: {
+		BaseCreatePage: () => import("@/components/BaseAuto/Page/Create"),
+	},
 };
 </script>
 
 <template>
-	<div>Create</div>
+	<BaseCreatePage />
 </template>

@@ -13,6 +13,7 @@ export default {
 		total: { type: Number },
 		pagination: { type: Object, default: () => ({}) },
 		controller: { type: String },
+		curd: { type: Boolean, default: false },
 	},
 
 	components: {
@@ -70,6 +71,22 @@ export default {
 
 			return headers;
 		},
+
+		deleteMethod() {
+			return this.getMethod({
+				controller: this.controller,
+				type: CONST.METHOD_TYPE_DELETE,
+				firstOrDefault: true,
+			});
+		},
+
+		restoreMethod() {
+			return this.getMethod({
+				controller: this.controller,
+				type: CONST.METHOD_TYPE_RESTORE,
+				firstOrDefault: true,
+			});
+		},
 	},
 
 	methods: {
@@ -79,6 +96,43 @@ export default {
 			return CONST.generateMethodUrl(CONST.METHOD_TYPE_DETAIL, {
 				controller: this.controller,
 				id: item.id,
+			});
+		},
+
+		async deleteItem(item) {
+			await this.doSubmit({
+				form: null,
+				toggleLoading: false,
+				confirmMessage: `Bạn chắc chắn muốn khóa mục`,
+				successMessage: `Đã khóa thành công`,
+				handler: async () => {
+					await this.requestApi({
+						controllerMethod: this.deleteMethod,
+						path: { id: item.id },
+						toggleLoading: false,
+					});
+
+					this.$emit("item-deleted");
+				},
+			});
+		},
+
+		async restoreItem(item) {
+			await this.doSubmit({
+				form: null,
+				confirm: true,
+				toggleLoading: false,
+				confirmMessage: `Bạn chắc chắn muốn mở khóa mục`,
+				successMessage: `Đã mở khóa thành công`,
+				handler: async () => {
+					await this.requestApi({
+						controllerMethod: this.restoreMethod,
+						path: { id: item.id },
+						toggleLoading: false,
+					});
+
+					this.$emit("item-restored");
+				},
 			});
 		},
 	},
@@ -113,6 +167,60 @@ export default {
 			<template v-slot:[`item.[action]`]="{ item }">
 				<div class="text-right">
 					<v-tooltip
+						v-if="
+							canPerformDelete({ controller: controller, id: item.id }) &&
+							!item.isDeleted
+						"
+						open-delay="100"
+						color="rgba(0, 0, 0, 1)"
+						left
+					>
+						<template #activator="{ on, attrs }">
+							<v-btn
+								v-bind="attrs"
+								v-on="on"
+								class="ma-1"
+								color="orange"
+								:disabled="loading"
+								x-small
+								fab
+								dark
+								@click="deleteItem(item)"
+							>
+								<v-icon dark> mdi-lock-outline </v-icon>
+							</v-btn>
+						</template>
+						<span>Khóa</span>
+					</v-tooltip>
+
+					<v-tooltip
+						v-if="
+							canPerformRestore({ controller: controller, id: item.id }) &&
+							item.isDeleted
+						"
+						open-delay="100"
+						color="rgba(0, 0, 0, 1)"
+						left
+					>
+						<template #activator="{ on, attrs }">
+							<v-btn
+								v-bind="attrs"
+								v-on="on"
+								class="ma-1"
+								color="red"
+								:disabled="loading"
+								x-small
+								fab
+								dark
+								@click="restoreItem(item)"
+							>
+								<v-icon dark> mdi-lock-open-variant </v-icon>
+							</v-btn>
+						</template>
+						<span>Mở khóa</span>
+					</v-tooltip>
+
+					<v-tooltip
 						v-if="canPerformDetail({ controller: controller, id: item.id })"
 						open-delay="100"
 						color="rgba(0, 0, 0, 1)"
@@ -122,7 +230,7 @@ export default {
 							<v-btn
 								v-bind="attrs"
 								v-on="on"
-								class="m-1"
+								class="ma-1"
 								color="primary"
 								:disabled="loading"
 								:to="{ path: detailUrl(item) }"

@@ -44,6 +44,14 @@ export default {
 				id: this.id,
 			});
 		},
+
+		createUrl() {
+			if (!this.controller) return null;
+
+			return CONST.generateMethodUrl(CONST.METHOD_TYPE_CREATE, {
+				controller: this.controller.code,
+			});
+		},
 	},
 
 	methods: {
@@ -77,8 +85,8 @@ export default {
 			await this.loadData();
 		},
 
-		async loadData({ force } = {}) {
-			if (!force && this.loading) return;
+		async loadData() {
+			if (this.loading) return;
 
 			let { data } = await this.requestApi({
 				controllerMethod: this.detailMethod,
@@ -160,6 +168,18 @@ export default {
 
 			<v-col class="d-flex pt-0 pl-0 justify-end" cols="12" sm="7">
 				<v-btn
+					v-if="canPerformCreate"
+					class="ml-2"
+					color="info"
+					:disabled="loading"
+					:to="{ path: createUrl }"
+					small
+				>
+					Tạo
+					<v-icon dark right> mdi-plus </v-icon>
+				</v-btn>
+
+				<v-btn
 					v-if="canPerformUpdate"
 					class="ml-2"
 					color="success"
@@ -184,6 +204,36 @@ export default {
 						mode="detail"
 					/>
 				</v-card>
+			</v-col>
+		</v-row>
+
+		<v-row>
+			<v-col class="d-flex justify-end" cols="12">
+				<v-btn
+					v-if="canPerformCreate"
+					class="ml-2"
+					color="info"
+					:disabled="loading"
+					:to="{ path: createUrl }"
+					small
+				>
+					Tạo
+					<v-icon dark right> mdi-plus </v-icon>
+				</v-btn>
+
+				<v-btn
+					v-if="canPerformUpdate"
+					class="ml-2"
+					color="success"
+					:disabled="loading"
+					:to="{ path: updateUrl }"
+					small
+				>
+					Sửa
+					<v-icon dark right> mdi-pencil </v-icon>
+				</v-btn>
+
+				<slot name="external-button" v-bind:loading="loading" />
 			</v-col>
 		</v-row>
 	</v-container>

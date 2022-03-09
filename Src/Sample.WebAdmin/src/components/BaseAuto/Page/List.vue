@@ -43,6 +43,14 @@ export default {
 
 			return count;
 		},
+
+		createUrl() {
+			if (!this.controller) return null;
+
+			return CONST.generateMethodUrl(CONST.METHOD_TYPE_CREATE, {
+				controller: this.controller.code,
+			});
+		},
 	},
 
 	watch: {
@@ -85,8 +93,8 @@ export default {
 			].includes(operator);
 		},
 
-		async loadData({ force, setPage } = {}) {
-			if (!force && this.loading) return;
+		async loadData({ setPage } = {}) {
+			if (this.loading) return;
 			if (setPage) this.pagination.page = setPage;
 
 			let params = {
@@ -132,6 +140,13 @@ export default {
 
 			this.total = meta.total;
 			this.items = data;
+		},
+
+		async reloadData() {
+			await this.loadData();
+
+			if (this.total === 0 && this.page > 1)
+				await this.loadData({ setPage: 1 });
 		},
 
 		async clearFilter() {
@@ -294,7 +309,7 @@ export default {
 		</v-scroll-x-transition>
 
 		<v-row>
-			<v-col>
+			<v-col cols="12" sm="6">
 				<v-tooltip
 					v-if="!filter.toggle"
 					open-delay="100"
@@ -328,6 +343,22 @@ export default {
 					Tổng có <strong>{{ total | numeral("0,0") }}</strong> mục
 				</span>
 			</v-col>
+
+			<v-col class="d-flex justify-end" cols="12" sm="6">
+				<v-btn
+					v-if="canPerformCreate"
+					class="ml-2"
+					color="info"
+					:disabled="loading"
+					:to="{ path: createUrl }"
+					small
+				>
+					Tạo
+					<v-icon dark right> mdi-plus </v-icon>
+				</v-btn>
+
+				<slot name="external-button" v-bind:loading="loading" />
+			</v-col>
 		</v-row>
 
 		<v-row v-if="total === 0">
@@ -351,7 +382,28 @@ export default {
 					:total="total"
 					:pagination.sync="pagination"
 					:controller="controller.code"
+					curd
+					@item-deleted="reloadData"
+					@item-restored="reloadData"
 				/>
+			</v-col>
+		</v-row>
+
+		<v-row>
+			<v-col class="d-flex justify-end">
+				<v-btn
+					v-if="canPerformCreate"
+					class="ml-2"
+					color="info"
+					:disabled="loading"
+					:to="{ path: createUrl }"
+					small
+				>
+					Tạo
+					<v-icon dark right> mdi-plus </v-icon>
+				</v-btn>
+
+				<slot name="external-button" v-bind:loading="loading" />
 			</v-col>
 		</v-row>
 	</v-container>
