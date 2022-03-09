@@ -26,6 +26,7 @@ export default {
 
 	methods: {
 		...mapActions(["auth/load", "layout/load"]),
+		...mapActions("layout", ["setPageTitle", "setBreadcrumb"]),
 
 		async doSubmit({
 			handler,
@@ -53,6 +54,15 @@ export default {
 		},
 
 		_validatePage() {},
+
+		_pageTitle() {
+			if (this.controller) return this.controller.name;
+			return this.$route.meta?.title;
+		},
+
+		_breadcrumbs() {
+			return [];
+		},
 	},
 
 	async mounted() {
@@ -79,6 +89,9 @@ export default {
 			this.redirectToErrorPage();
 			throw e;
 		}
+
+		this.setPageTitle(await this._pageTitle());
+		this.setBreadcrumb(await this._breadcrumbs());
 
 		this.initialing = false;
 		if (this._loaded) await this._loaded();

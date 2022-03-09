@@ -1,6 +1,5 @@
 <script>
 import BaseMixin from "@/mixins/base";
-import { CONST } from "@/stores/layout";
 import { mapGetters } from "vuex";
 
 export default {
@@ -17,71 +16,10 @@ export default {
 	},
 
 	computed: {
-		...mapGetters("layout", ["pageTitle"]),
+		...mapGetters("layout", ["pageTitle", "breadcrumbs"]),
 
 		path() {
 			return this.$route.path;
-		},
-
-		breadcrumbs() {
-			let result = [];
-			if (!this.currentMenu) return result;
-
-			if (this.currentMenu.method) {
-				let methods = this.getMethod({
-					controller: this.currentMenu.method.controller,
-				});
-
-				if (
-					[CONST.METHOD_TYPE_UPDATE, CONST.METHOD_TYPE_LIST_CHANGELOG].includes(
-						this.currentMenu.method.type,
-					)
-				) {
-					let method = methods.find((x) => x.type === CONST.METHOD_TYPE_DETAIL);
-					if (
-						method &&
-						this.checkPermission(
-							method.permissionCodes,
-							method.permissionOperator,
-						)
-					) {
-						result.push({
-							text: method.name,
-							href: CONST.generateMethodUrl(method.type, {
-								controller: method.controller,
-								id: this.$route.params?.id,
-							}),
-						});
-					}
-				}
-
-				if (
-					[
-						CONST.METHOD_TYPE_DETAIL,
-						CONST.METHOD_TYPE_CREATE,
-						CONST.METHOD_TYPE_UPDATE,
-						CONST.METHOD_TYPE_LIST_CHANGELOG,
-					].includes(this.currentMenu.method.type)
-				) {
-					let method = methods.find((x) => x.type === CONST.METHOD_TYPE_LIST);
-					if (
-						method &&
-						this.checkPermission(
-							method.permissionCodes,
-							method.permissionOperator,
-						)
-					) {
-						result.push({
-							text: method.name,
-							href: CONST.generateMethodUrl(method.type, {
-								controller: method.controller,
-							}),
-						});
-					}
-				}
-			}
-
-			return result.reverse();
 		},
 
 		_toggleLeftBar: {
@@ -119,12 +57,6 @@ export default {
 				<v-icon v-else dark> mdi-close </v-icon>
 			</v-btn>
 
-			<v-scroll-y-reverse-transition hide-on-leave>
-				<v-app-bar-title :key="path">
-					{{ pageTitle | strFormat("capitalize") }}
-				</v-app-bar-title>
-			</v-scroll-y-reverse-transition>
-
 			<v-spacer />
 
 			<UserMenu v-slot="{ attrs, on }">
@@ -138,25 +70,29 @@ export default {
 
 		<v-scroll-y-reverse-transition hide-on-leave>
 			<div :key="path" class="header-row">
-				<div v-if="breadcrumbs.length > 0" class="d-none d-md-flex">
-					<v-breadcrumbs class="pa-0" :items="breadcrumbs">
-						<template #divider>
-							<v-icon>mdi-chevron-right</v-icon>
-						</template>
+				<h4>{{ pageTitle | strFormat("titleCase") }}</h4>
 
-						<template v-slot:item="{ item }">
-							<v-breadcrumbs-item :to="item.href" :disabled="item.disabled">
-								{{ item.text | strFormat("capitalize") }}
-							</v-breadcrumbs-item>
-						</template>
-					</v-breadcrumbs>
+				<v-divider v-if="breadcrumbs.length > 0" class="mx-2" vertical />
 
-					<v-divider class="mx-2" vertical />
-				</div>
+				<v-breadcrumbs
+					v-if="breadcrumbs.length > 0"
+					class="pa-0"
+					:items="breadcrumbs"
+				>
+					<template #divider>
+						<v-icon>mdi-chevron-right</v-icon>
+					</template>
 
-				<h4 v-if="currentMenu">
-					{{ currentMenu.name | strFormat("capitalize") }}
-				</h4>
+					<template v-slot:item="{ item }">
+						<router-link v-if="item.href" :to="{ path: item.href }">
+							{{ item.text | strFormat("capitalize") }}
+						</router-link>
+
+						<span v-else>
+							{{ item.text | strFormat("capitalize") }}
+						</span>
+					</template>
+				</v-breadcrumbs>
 			</div>
 		</v-scroll-y-reverse-transition>
 	</v-app-bar>

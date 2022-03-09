@@ -61,7 +61,8 @@ export default {
 
 	state: {
 		layout: null,
-		page: null,
+		pageTitle: null,
+		breadcrumbs: [],
 	},
 
 	mutations: {
@@ -69,8 +70,12 @@ export default {
 			state.layout = data;
 		},
 
-		setPage(state, data) {
-			state.page = data;
+		setPageTitle(state, data) {
+			state.pageTitle = data;
+		},
+
+		setBreadcrumb(state, data) {
+			state.breadcrumbs = data;
 		},
 	},
 
@@ -79,8 +84,8 @@ export default {
 		menu: (state) => state.layout?.menu ?? [],
 		controller: (state) => state.layout?.controllers ?? [],
 		method: (state) => state.layout?.methods ?? [],
-		page: (state) => state.page,
-		pageTitle: (state) => state.page?.title ?? null,
+		pageTitle: (state) => state.pageTitle,
+		breadcrumbs: (state) => state.breadcrumbs,
 	},
 
 	actions: {
@@ -165,13 +170,12 @@ export default {
 			return layout;
 		},
 
-		setPageTitle(context, title) {
-			let page = context.getters.page;
-			if (!page) page = {};
+		setPageTitle(context, pageTitle) {
+			context.commit("setPageTitle", pageTitle);
+		},
 
-			page.title = title?.trim();
-
-			context.commit("setPage", page);
+		setBreadcrumb(context, breadcrumbs) {
+			context.commit("setBreadcrumb", breadcrumbs);
 		},
 	},
 };

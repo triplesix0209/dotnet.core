@@ -11,8 +11,6 @@ export default {
 		DataTable: () => import("@/components/BaseAuto/DataTable"),
 	},
 
-	props: {},
-
 	data: () => ({
 		filter: { old: null, current: null, toggle: false },
 		total: null,
@@ -69,6 +67,10 @@ export default {
 				)
 			)
 				throw Error("access is denied");
+		},
+
+		_breadcrumbs() {
+			return [{ text: `Danh sách` }];
 		},
 
 		async _loaded() {
