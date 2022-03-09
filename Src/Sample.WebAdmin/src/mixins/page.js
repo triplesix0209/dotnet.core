@@ -11,7 +11,7 @@ export default {
 		},
 
 		initialing: true,
-		loading: false,
+		loading: true,
 	}),
 
 	computed: {
@@ -94,6 +94,7 @@ export default {
 		this.setBreadcrumb(await this._breadcrumbs());
 
 		this.initialing = false;
+		this.loading = false;
 		if (this._loaded) await this._loaded();
 	},
 };

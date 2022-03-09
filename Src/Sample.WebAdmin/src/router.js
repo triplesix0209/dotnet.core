@@ -39,35 +39,30 @@ adminRoute.children.push({
 	path: "/:controller",
 	name: "auto-list",
 	component: () => import("@/views/pages/Auto/List"),
-	meta: { pageType: "list" },
 });
 
 adminRoute.children.push({
 	path: "/:controller/create",
 	name: "auto-create",
 	component: () => import("@/views/pages/Auto/Create"),
-	meta: { pageType: "create" },
 });
 
 adminRoute.children.push({
 	path: "/:controller/:id/update",
 	name: "auto-update",
 	component: () => import("@/views/pages/Auto/Update"),
-	meta: { pageType: "update" },
 });
 
 adminRoute.children.push({
 	path: "/:controller/:id",
 	name: "auto-detail",
 	component: () => import("@/views/pages/Auto/Detail"),
-	meta: { pageType: "detail" },
 });
 
 adminRoute.children.push({
 	path: "/:controller/:id/changelog",
 	name: "auto-changelog",
 	component: () => import("@/views/pages/Auto/ChangeLog"),
-	meta: { pageType: "changelog" },
 });
 
 let routeItems = [];

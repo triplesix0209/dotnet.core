@@ -1,6 +1,6 @@
 <script>
 export default {
-	name: "auto-list",
+	name: "auto-detail",
 	components: {
 		BaseDetailPage: () => import("@/components/BaseAuto/Page/Detail"),
 	},

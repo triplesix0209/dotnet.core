@@ -240,7 +240,7 @@ export default {
 											nudge-right="35"
 											bottom
 										>
-											<template v-slot:activator="{ on, attrs }">
+											<template #activator="{ on, attrs }">
 												<v-btn
 													v-bind="attrs"
 													v-on="on"
@@ -261,7 +261,7 @@ export default {
 											nudge-right="35"
 											bottom
 										>
-											<template v-slot:activator="{ on, attrs }">
+											<template #activator="{ on, attrs }">
 												<v-btn
 													v-bind="attrs"
 													v-on="on"
@@ -302,12 +302,13 @@ export default {
 					nudge-right="35"
 					bottom
 				>
-					<template v-slot:activator="{ on, attrs }">
+					<template #activator="{ on, attrs }">
 						<v-btn
 							v-bind="attrs"
 							v-on="on"
 							class="mr-2"
 							color="primary"
+							small
 							dark
 							@click="
 								() => {
@@ -320,7 +321,7 @@ export default {
 							<v-badge v-if="filterCount" color="red" :content="filterCount" />
 						</v-btn>
 					</template>
-					<span>Mở bảng dữ liệu</span>
+					<span>Mở bảng lọc dữ liệu</span>
 				</v-tooltip>
 
 				<span v-if="total">

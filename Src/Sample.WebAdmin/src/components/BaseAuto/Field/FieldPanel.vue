@@ -56,7 +56,13 @@ export default {
 			let result = {};
 
 			for (let field of this.fields) {
-				result[field.key] = null;
+				result[field.key] = { value: null, operator: null };
+
+				if (!!this.data && !!this.data[field.key]) {
+					result[field.key].value = this.data[field.key];
+					result[field.key].prevValue = this.data[field.key];
+				}
+
 				if (!!this.value && !!this.value[field.key])
 					result[field.key] = this.value[field.key];
 			}

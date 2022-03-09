@@ -20,14 +20,18 @@ export default {
 			if (this.field.min !== null)
 				rules.push(
 					(v) =>
-						(v !== undefined && v !== null && v >= this.field.min) ||
+						v === undefined ||
+						v === null ||
+						v >= this.field.min ||
 						`Phải >= ${this.$numeral(this.field.min)}`,
 				);
 
 			if (this.field.max !== null)
 				rules.push(
 					(v) =>
-						(v !== undefined && v !== null && v <= this.field.max) ||
+						v === undefined ||
+						v === null ||
+						v <= this.field.max ||
 						`Phải <= ${this.$numeral(this.field.max)}`,
 				);
 

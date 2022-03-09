@@ -20,14 +20,16 @@ export default {
 			if (this.field.min !== null)
 				rules.push(
 					(v) =>
-						(v && v.length >= this.field.min) ||
+						!v ||
+						v.length >= this.field.min ||
 						`Phải >= ${this.$numeral(this.field.min)} ký tự`,
 				);
 
 			if (this.field.max !== null)
 				rules.push(
 					(v) =>
-						(v && v.length <= this.field.max) ||
+						!v ||
+						v.length <= this.field.max ||
 						`Phải <= ${this.$numeral(this.field.max)} ký tự`,
 				);
 

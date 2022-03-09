@@ -1,12 +1,12 @@
 <script>
-import PageMixin from "@/mixins/page";
-
 export default {
 	name: "auto-update",
-	mixins: [PageMixin],
+	components: {
+		BaseUpdatePage: () => import("@/components/BaseAuto/Page/Update"),
+	},
 };
 </script>
 
 <template>
-	<div>Update</div>
+	<BaseUpdatePage />
 </template>
