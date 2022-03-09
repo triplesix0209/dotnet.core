@@ -58,9 +58,13 @@ export default {
 			for (let field of this.fields) {
 				result[field.key] = { value: null, operator: null };
 
-				if (!!this.data && !!this.data[field.key]) {
-					result[field.key].value = this.data[field.key];
-					result[field.key].prevValue = this.data[field.key];
+				if (!!this.data && this.data[field.key] !== undefined) {
+					let value = this.data[field.key];
+
+					if (field.type === "enum") value = value.toString();
+
+					result[field.key].value = value;
+					result[field.key].prevValue = value;
 				}
 
 				if (!!this.value && !!this.value[field.key])

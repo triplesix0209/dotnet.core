@@ -10,6 +10,8 @@ export default {
 		FieldOperator: () => import("@/components/BaseAuto/Field/FieldOperator"),
 	},
 
+	props: { type: { type: String } },
+
 	computed: {
 		fieldRules() {
 			let rules = [];
@@ -49,6 +51,7 @@ export default {
 		<v-text-field
 			v-if="data"
 			v-model="fieldDisplayValue"
+			:type="type"
 			:label="fieldLabel"
 			:placeholder="fieldEmptyValue"
 			:hint="fieldHint"
@@ -66,6 +69,7 @@ export default {
 		<v-text-field
 			v-if="!isListOperator"
 			v-model="input.value"
+			:type="type"
 			:rules="fieldRules"
 			:readonly="fieldReadonly"
 			:label="fieldLabel"
@@ -93,6 +97,7 @@ export default {
 			v-else
 			class="input-field"
 			v-model="input.value"
+			:type="type"
 			:rules="fieldRules"
 			:readonly="fieldReadonly"
 			:label="fieldLabel"

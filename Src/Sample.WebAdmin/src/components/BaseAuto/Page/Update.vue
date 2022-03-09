@@ -92,7 +92,11 @@ export default {
 		},
 
 		async submit() {
-			console.log(this.input);
+			this.doSubmit({
+				handler: async () => {
+					console.log(this.inputs);
+				},
+			});
 		},
 
 		async cancel() {
@@ -119,7 +123,7 @@ export default {
 	</v-container>
 
 	<v-container v-else>
-		<v-form :disabled="loading" @submit.stop.prevent="submit">
+		<v-form ref="form" :disabled="loading" @submit.stop.prevent="submit">
 			<v-row class="pt-5" align="end">
 				<v-col cols="12">
 					ID: <b>{{ id }}</b>
@@ -164,7 +168,7 @@ export default {
 						class="ml-2"
 						type="submit"
 						color="success"
-						:disabled="loading"
+						:disabled="loading || !inputs"
 						small
 					>
 						Ghi nhận

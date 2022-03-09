@@ -7,7 +7,6 @@ export default {
 
 	components: {
 		FieldLink: () => import("@/components/BaseAuto/Field/FieldLink"),
-		FieldOperator: () => import("@/components/BaseAuto/Field/FieldOperator"),
 	},
 
 	computed: {
@@ -18,6 +17,33 @@ export default {
 				rules.push((v) => !!v || "Không được phép bỏ trống");
 
 			return rules;
+		},
+	},
+
+	methods: {
+		fileChanged(e) {
+			this.input.file = e.target.files[0];
+			this.input.value = `${
+				this.input.file.name
+			} (${this.$options.filters.numeral(this.input.file.size, "0 b")})`;
+		},
+
+		clearFile() {
+			this.$refs.file.value = null;
+			this.input.file = null;
+			this.input.value = null;
+		},
+
+		inputMediaLink() {
+			if (this.input.file) return URL.createObjectURL(this.input.file);
+			if (this.input.value) return this.input.value;
+			return "/assets/no-image.png";
+		},
+
+		undo() {
+			this.input.value = this.input.prevValue;
+			this.input.operator = this.input.prevOperator;
+			this.input.file = null;
 		},
 	},
 };
@@ -75,56 +101,41 @@ export default {
 		</v-text-field>
 	</div>
 
-	<div v-else>
-		<v-text-field
-			v-if="!isListOperator"
-			v-model="input.value"
-			:rules="fieldRules"
-			:readonly="fieldReadonly"
-			:label="fieldLabel"
-			:counter="field.max"
-			:placeholder="fieldPlaceholder"
-			:persistent-placeholder="fieldPlaceholder !== null"
-			:hint="fieldHint"
-			persistent-hint
-			clearable
-		>
-			<template #prepend>
-				<FieldOperator
-					v-if="input.operator"
-					v-model="input.operator"
-					:field="field"
-				/>
-			</template>
+	<v-text-field
+		v-else
+		v-model="input.value"
+		:rules="fieldRules"
+		:readonly="fieldReadonly || !!input.file"
+		:label="fieldLabel"
+		:counter="field.max"
+		:placeholder="fieldPlaceholder"
+		:persistent-placeholder="fieldPlaceholder !== null"
+		:hint="fieldHint"
+		persistent-hint
+		clearable
+		@click:clear="clearFile"
+	>
+		<template #prepend>
+			<v-avatar
+				size="30"
+				rounded
+				:style="{ cursor: 'pointer' }"
+				@click="$refs[`file`].click()"
+			>
+				<v-img :src="inputMediaLink()" />
+			</v-avatar>
 
-			<template #append>
-				<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
-			</template>
-		</v-text-field>
+			<input
+				ref="file"
+				class="d-none"
+				type="file"
+				accept="image/*"
+				@change="fileChanged"
+			/>
+		</template>
 
-		<v-combobox
-			v-else
-			class="input-field"
-			v-model="input.value"
-			:rules="fieldRules"
-			:readonly="fieldReadonly"
-			:label="fieldLabel"
-			:placeholder="fieldPlaceholder"
-			:persistent-placeholder="fieldPlaceholder !== null"
-			:hint="fieldHint"
-			persistent-hint
-			clearable
-			multiple
-			small-chips
-			deletable-chips
-		>
-			<template #prepend>
-				<FieldOperator v-model="input.operator" :field="field" />
-			</template>
-
-			<template #append>
-				<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
-			</template>
-		</v-combobox>
-	</div>
+		<template #append>
+			<v-icon v-if="canUndo" @click="undo">mdi-arrow-u-left-top</v-icon>
+		</template>
+	</v-text-field>
 </template>
