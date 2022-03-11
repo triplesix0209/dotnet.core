@@ -5,8 +5,14 @@ using TripleSix.Core.Dto;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public class ObjectLogDto : ModelDataDto
+    public class ObjectLogDto : DataDto
     {
+        [DisplayName("mã định danh")]
+        public Guid Id { get; set; }
+
+        [DisplayName("thời gian thao tác")]
+        public DateTime Datetime { get; set; }
+
         [DisplayName("loại đối tượng")]
         public string ObjectType { get; set; }
 
