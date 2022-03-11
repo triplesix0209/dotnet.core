@@ -41,8 +41,8 @@ namespace TripleSix.Core.AutoAdmin
                 .Where(x => x.Id == objectLogId)
                 .FirstAsync<ObjectLogDto>(Mapper);
 
-            if (objectLog.CreatorId.HasValue)
-                objectLog.Actor = (await GetActor(identity, objectLog.CreatorId.Value))?.First();
+            if (objectLog.ActorId.HasValue)
+                objectLog.Actor = (await GetActor(identity, objectLog.ActorId.Value))?.First();
 
             return objectLog;
         }
@@ -56,8 +56,8 @@ namespace TripleSix.Core.AutoAdmin
                 .ToPagingAsync<ObjectLogDto>(Mapper, page, size);
 
             var actorIds = objectLogs.Items
-                .Where(x => x.CreatorId.HasValue)
-                .Select(x => x.CreatorId.Value)
+                .Where(x => x.ActorId.HasValue)
+                .Select(x => x.ActorId.Value)
                 .Distinct()
                 .ToArray();
 
@@ -68,8 +68,8 @@ namespace TripleSix.Core.AutoAdmin
                 {
                     foreach (var objectLog in objectLogs.Items)
                     {
-                        if (objectLog.CreatorId.HasValue)
-                            objectLog.Actor = actors.FirstOrDefault(x => x.Id == objectLog.CreatorId.Value);
+                        if (objectLog.ActorId.HasValue)
+                            objectLog.Actor = actors.FirstOrDefault(x => x.Id == objectLog.ActorId.Value);
                     }
                 }
             }

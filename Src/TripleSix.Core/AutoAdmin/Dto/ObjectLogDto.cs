@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Newtonsoft.Json;
 using TripleSix.Core.Dto;
 
 namespace TripleSix.Core.AutoAdmin
@@ -23,5 +24,8 @@ namespace TripleSix.Core.AutoAdmin
 
         [DisplayName("ghi chú")]
         public string Note { get; set; }
+
+        [JsonIgnore]
+        public Guid? ActorId { get; set; }
     }
 }
