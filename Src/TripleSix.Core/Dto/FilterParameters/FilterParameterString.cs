@@ -17,7 +17,7 @@ namespace TripleSix.Core.Dto
 
     public enum FilterParameterStringOperators
     {
-        [Description("=")]
+        [Description("chính xác")]
         Equal = 1,
 
         [Description("chứa")]

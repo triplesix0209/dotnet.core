@@ -249,7 +249,7 @@ namespace TripleSix.Core.Helpers
 
             switch (filter.Operator)
             {
-                case FilterParameterOperators.Is:
+                case FilterParameterOperators.Equal:
                     query = query.Where(x => EF.Property<TType>(x, fieldName).Equals(filter.Value[0]));
                     break;
                 case FilterParameterOperators.In:
@@ -258,7 +258,7 @@ namespace TripleSix.Core.Helpers
                 case FilterParameterOperators.IsNull:
                     query = query.Where(x => EF.Property<TType>(x, fieldName) == null);
                     break;
-                case FilterParameterOperators.NotIs:
+                case FilterParameterOperators.NotEqual:
                     query = query.Where(x => !EF.Property<TType>(x, fieldName).Equals(filter.Value[0]));
                     break;
                 case FilterParameterOperators.NotIn:
@@ -384,7 +384,7 @@ namespace TripleSix.Core.Helpers
 
             switch (filter.Operator)
             {
-                case FilterParameterDatetimeOperators.Is:
+                case FilterParameterDatetimeOperators.Equal:
                     query = query.Where(x => EF.Property<DateTime>(x, fieldName) == filter.Value[0]);
                     break;
                 case FilterParameterDatetimeOperators.Begin:
@@ -400,7 +400,7 @@ namespace TripleSix.Core.Helpers
                 case FilterParameterDatetimeOperators.IsNull:
                     query = query.Where(x => EF.Property<string>(x, fieldName) == null);
                     break;
-                case FilterParameterDatetimeOperators.NotIs:
+                case FilterParameterDatetimeOperators.NotEqual:
                     query = query.Where(x => EF.Property<DateTime>(x, fieldName) != filter.Value[0]);
                     break;
                 case FilterParameterDatetimeOperators.NotBegin:

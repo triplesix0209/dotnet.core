@@ -12,13 +12,13 @@ namespace TripleSix.Core.Dto
 
         [DisplayName("loại lọc của [parameter-name]")]
         [EnumValidate]
-        public FilterParameterOperators Operator { get; set; } = FilterParameterOperators.Is;
+        public FilterParameterOperators Operator { get; set; } = FilterParameterOperators.Equal;
     }
 
     public enum FilterParameterOperators
     {
-        [Description("=")]
-        Is = 1,
+        [Description("chính xác")]
+        Equal = 1,
 
         [Description("thuộc danh sách")]
         In = 2,
@@ -27,7 +27,7 @@ namespace TripleSix.Core.Dto
         IsNull = 3,
 
         [Description("khác")]
-        NotIs = -1,
+        NotEqual = -1,
 
         [Description("không thuộc danh sách")]
         NotIn = -2,

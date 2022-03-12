@@ -13,13 +13,13 @@ namespace TripleSix.Core.Dto
 
         [DisplayName("loại lọc của [parameter-name]")]
         [EnumValidate]
-        public FilterParameterDatetimeOperators Operator { get; set; } = FilterParameterDatetimeOperators.Is;
+        public FilterParameterDatetimeOperators Operator { get; set; } = FilterParameterDatetimeOperators.Equal;
     }
 
     public enum FilterParameterDatetimeOperators
     {
-        [Description("=")]
-        Is = 1,
+        [Description("chính xác")]
+        Equal = 1,
 
         [Description("bắt đầu lúc")]
         Begin = 2,
@@ -34,7 +34,7 @@ namespace TripleSix.Core.Dto
         IsNull = 5,
 
         [Description("khác")]
-        NotIs = -1,
+        NotEqual = -1,
 
         [Description("không bắt đầu lúc")]
         NotBegin = -2,
