@@ -7,8 +7,9 @@ using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerDeleteMethod<TEntity>
+    public abstract class BaseAdminControllerDeleteMethod<TAdmin, TEntity>
         : BaseAdminController
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
     {
         public ICommonService<TEntity> Service { get; set; }

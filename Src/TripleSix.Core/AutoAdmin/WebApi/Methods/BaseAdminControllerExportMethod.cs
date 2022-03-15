@@ -11,8 +11,9 @@ using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerExportMethod<TEntity, TFilterDto, TDetailDto>
+    public abstract class BaseAdminControllerExportMethod<TAdmin, TEntity, TFilterDto, TDetailDto>
         : BaseAdminController
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TFilterDto : IModelFilterDto
         where TDetailDto : class, IModelDataDto

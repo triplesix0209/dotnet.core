@@ -17,22 +17,22 @@ namespace Sample.WebApi.Controllers.Admins.Auto
         {
             base.Load(builder);
 
-            builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,>))
+            builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
 
-            builder.RegisterGeneric(typeof(AdminControllerCreateMethod<,>))
+            builder.RegisterGeneric(typeof(AdminControllerCreateMethod<,,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
 
-            builder.RegisterGeneric(typeof(AdminControllerUpdateMethod<,>))
+            builder.RegisterGeneric(typeof(AdminControllerUpdateMethod<,,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
 
-            builder.RegisterGeneric(typeof(AdminControllerDeleteMethod<>))
+            builder.RegisterGeneric(typeof(AdminControllerDeleteMethod<,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
 
-            builder.RegisterGeneric(typeof(AdminControllerChangeLogMethod<>))
+            builder.RegisterGeneric(typeof(AdminControllerChangeLogMethod<,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
 
-            builder.RegisterGeneric(typeof(AdminControllerExportMethod<,,>))
+            builder.RegisterGeneric(typeof(AdminControllerExportMethod<,,,>))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
         }
     }

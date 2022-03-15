@@ -8,8 +8,9 @@ using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerReadMethod<TEntity, TFilterDto, TItemDto, TDetailDto>
+    public abstract class BaseAdminControllerReadMethod<TAdmin, TEntity, TFilterDto, TItemDto, TDetailDto>
         : BaseAdminController
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TFilterDto : IModelFilterDto
         where TItemDto : class, IModelDataDto

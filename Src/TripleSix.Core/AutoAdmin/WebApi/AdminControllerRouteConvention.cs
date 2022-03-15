@@ -19,15 +19,15 @@ namespace TripleSix.Core.AutoAdmin
         {
             if (!controller.ControllerType.IsGenericType) return;
 
-            var entityType = controller.ControllerType.GetGenericArguments()[0];
-            if (!entityType.IsAssignableTo<IModelEntity>()) return;
+            var adminType = controller.ControllerType.GetGenericArguments()[0];
+            if (!adminType.IsAssignableTo<IAdminDto>()) return;
 
             var controllerBase = _executingAssembly.GetExportedTypes()
                .FirstOrDefault(t =>
                {
                    var metadata = t.GetCustomAttribute<AdminControllerAttribute>();
                    if (metadata is null) return false;
-                   return metadata.AdminType is not null && metadata.EntityType == entityType;
+                   return metadata.AdminType == adminType && metadata.EntityType is not null;
                });
             if (controllerBase is null) return;
 

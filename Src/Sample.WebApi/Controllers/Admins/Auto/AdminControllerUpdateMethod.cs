@@ -13,8 +13,9 @@ namespace Sample.WebApi.Controllers.Admins.Auto
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize(AuthenticationSchemes = "account-token")]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerUpdateMethod<TEntity, TUpdateDto>
-        : BaseAdminControllerUpdateMethod<TEntity, TUpdateDto>
+    public class AdminControllerUpdateMethod<TAdmin, TEntity, TUpdateDto>
+        : BaseAdminControllerUpdateMethod<TAdmin, TEntity, TUpdateDto>
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TUpdateDto : class, IDataDto
     {

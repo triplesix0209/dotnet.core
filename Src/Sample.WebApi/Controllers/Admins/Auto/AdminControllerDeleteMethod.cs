@@ -13,8 +13,9 @@ namespace Sample.WebApi.Controllers.Admins.Auto
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize(AuthenticationSchemes = "account-token")]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerDeleteMethod<TEntity>
-        : BaseAdminControllerDeleteMethod<TEntity>
+    public class AdminControllerDeleteMethod<TAdmin, TEntity>
+        : BaseAdminControllerDeleteMethod<TAdmin, TEntity>
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
     {
         protected override IIdentity GenerateIdentity()

@@ -8,8 +8,9 @@ using TripleSix.Core.WebApi.Filters;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerUpdateMethod<TEntity, TUpdateDto>
+    public abstract class BaseAdminControllerUpdateMethod<TAdmin, TEntity, TUpdateDto>
         : BaseAdminController
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TUpdateDto : class, IDataDto
     {

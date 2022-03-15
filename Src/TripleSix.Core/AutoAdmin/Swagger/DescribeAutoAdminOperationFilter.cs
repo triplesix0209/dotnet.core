@@ -21,8 +21,8 @@ namespace TripleSix.Core.AutoAdmin
 
             var controllerType = controllerDescriptor.ControllerTypeInfo;
             if (!controllerType.IsGenericType) return;
-            var entityType = controllerType.GetGenericArguments()[0];
-            if (!entityType.IsAssignableTo<IModelEntity>()) return;
+            var adminType = controllerType.GetGenericArguments()[0];
+            if (!adminType.IsAssignableTo<IAdminDto>()) return;
 
             var controllerBase = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
@@ -31,7 +31,7 @@ namespace TripleSix.Core.AutoAdmin
                 {
                     var info = x.GetCustomAttribute<AdminControllerAttribute>();
                     if (info is null) return false;
-                    return info.AdminType is not null && info.EntityType == entityType;
+                    return info.AdminType == adminType && info.EntityType is not null;
                 })
                 .FirstOrDefault();
             if (controllerBase is null) return;
@@ -40,12 +40,12 @@ namespace TripleSix.Core.AutoAdmin
             if (swaggerTag?.Description is not null && operation.Summary is not null)
                 operation.Summary = Regex.Replace(operation.Summary, @"\[controller\]", swaggerTag.Description);
 
-            if (controllerType.IsSubclassOfRawGeneric(typeof(BaseAdminControllerReadMethod<,,,>)))
+            if (controllerType.IsSubclassOfRawGeneric(typeof(BaseAdminControllerReadMethod<,,,,>)))
             {
                 if (controllerDescriptor.ActionName == "GetPage")
                 {
                     var resultType = typeof(PagingResult<>)
-                        .MakeGenericType(controllerType.GetGenericArguments()[2]);
+                        .MakeGenericType(controllerType.GetGenericArguments()[3]);
 
                     var responseType = new OpenApiMediaType();
                     responseType.Schema = resultType.GenerateSchema(
@@ -60,7 +60,7 @@ namespace TripleSix.Core.AutoAdmin
                 else if (controllerDescriptor.ActionName == "GetDetail")
                 {
                     var resultType = typeof(DataResult<>)
-                        .MakeGenericType(controllerType.GetGenericArguments()[3]);
+                        .MakeGenericType(controllerType.GetGenericArguments()[4]);
 
                     var responseType = new OpenApiMediaType();
                     responseType.Schema = resultType.GenerateSchema(

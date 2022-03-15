@@ -145,6 +145,7 @@ namespace TripleSix.Core.Repositories
             }
             else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
             {
+                BUG
                 entityName = propertyInfo.ReflectedType.DeclaringType.Name
                     .Replace("AdminDto", string.Empty);
                 entityName += "Entity";

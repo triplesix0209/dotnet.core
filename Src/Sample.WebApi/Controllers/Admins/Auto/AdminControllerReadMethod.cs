@@ -13,8 +13,9 @@ namespace Sample.WebApi.Controllers.Admins.Auto
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize(AuthenticationSchemes = "account-token")]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerReadMethod<TEntity, TFilterDto, TItemDto, TDetailDto>
-        : BaseAdminControllerReadMethod<TEntity, TFilterDto, TItemDto, TDetailDto>
+    public class AdminControllerReadMethod<TAdmin, TEntity, TFilterDto, TItemDto, TDetailDto>
+        : BaseAdminControllerReadMethod<TAdmin, TEntity, TFilterDto, TItemDto, TDetailDto>
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TFilterDto : IModelFilterDto
         where TItemDto : class, IModelDataDto

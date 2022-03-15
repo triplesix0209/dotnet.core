@@ -13,8 +13,9 @@ namespace Sample.WebApi.Controllers.Admins.Auto
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize(AuthenticationSchemes = "account-token")]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerExportMethod<TEntity, TFilterDto, TDetailDto>
-        : BaseAdminControllerExportMethod<TEntity, TFilterDto, TDetailDto>
+    public class AdminControllerExportMethod<TAdmin, TEntity, TFilterDto, TDetailDto>
+        : BaseAdminControllerExportMethod<TAdmin, TEntity, TFilterDto, TDetailDto>
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TFilterDto : IModelFilterDto
         where TDetailDto : class, IModelDataDto

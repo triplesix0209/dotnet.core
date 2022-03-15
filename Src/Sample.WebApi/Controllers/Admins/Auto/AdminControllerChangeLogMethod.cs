@@ -13,8 +13,9 @@ namespace Sample.WebApi.Controllers.Admins.Auto
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize(AuthenticationSchemes = "account-token")]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerChangeLogMethod<TEntity>
-        : BaseAdminControllerChangeLogMethod<TEntity>
+    public class AdminControllerChangeLogMethod<TAdmin, TEntity>
+        : BaseAdminControllerChangeLogMethod<TAdmin, TEntity>
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
     {
         protected override IIdentity GenerateIdentity()

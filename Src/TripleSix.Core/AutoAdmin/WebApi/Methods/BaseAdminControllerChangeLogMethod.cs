@@ -10,8 +10,9 @@ using TripleSix.Core.WebApi.Results;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerChangeLogMethod<TEntity>
+    public abstract class BaseAdminControllerChangeLogMethod<TAdmin, TEntity>
         : BaseAdminController
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
     {
         public ICommonService<TEntity> Service { get; set; }

@@ -10,8 +10,9 @@ using TripleSix.Core.WebApi.Results;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerCreateMethod<TEntity, TCreateDto>
+    public abstract class BaseAdminControllerCreateMethod<TAdmin, TEntity, TCreateDto>
         : BaseAdminController
+        where TAdmin : class, IAdminDto
         where TEntity : class, IModelEntity
         where TCreateDto : class, IDataDto
     {
