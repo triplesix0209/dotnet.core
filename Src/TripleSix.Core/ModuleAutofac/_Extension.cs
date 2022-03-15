@@ -10,6 +10,7 @@ using Autofac.Extras.Quartz;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
+using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContexts;
 using TripleSix.Core.Mappers;
@@ -93,6 +94,7 @@ namespace TripleSix.Core.ModuleAutofac
             builder.Register(c => new MapperConfiguration(config =>
                 {
                     config.AddExpressionMapping();
+                    config.Internal().AllowAdditiveTypeMapCreation = true;
 
                     foreach (var mapper in mappers)
                         config.AddProfile(mapper);
@@ -124,6 +126,7 @@ namespace TripleSix.Core.ModuleAutofac
             builder.Register(c => new MapperConfiguration(config =>
             {
                 config.AddExpressionMapping();
+                config.Internal().AllowAdditiveTypeMapCreation = true;
 
                 var mappers = assembly.GetTypes()
                     .Where(t => t.IsClass && t.IsAssignableTo<BaseMapper>())
