@@ -15,9 +15,7 @@ namespace TripleSix.Core.Mappers
             Type destinationType,
             MemberList memberList = MemberList.Destination)
         {
-            var map = base.CreateMap(sourceType, destinationType, memberList)
-                .IncludeAllDerived();
-
+            var map = base.CreateMap(sourceType, destinationType, memberList);
             if (sourceType.IsAssignableTo<IPropertyTracking>())
             {
                 foreach (var property in destinationType.GetProperties())
@@ -47,9 +45,7 @@ namespace TripleSix.Core.Mappers
         protected new IMappingExpression<TSource, TDestination> CreateMap<TSource, TDestination>(
             MemberList memberList = MemberList.Destination)
         {
-            var map = base.CreateMap<TSource, TDestination>(memberList)
-                .IncludeAllDerived();
-
+            var map = base.CreateMap<TSource, TDestination>(memberList);
             if (typeof(TSource).IsAssignableTo<IPropertyTracking>())
             {
                 foreach (var property in typeof(TDestination).GetProperties())
@@ -85,7 +81,6 @@ namespace TripleSix.Core.Mappers
                 throw new Exception($"{destinationType.Name} need implement {nameof(IEntity)}> interface");
 
             var map = CreateMap(sourceType, destinationType, memberList);
-
             var ignoreProperties = destinationType.GetProperties()
                 .Where(property =>
                 {
@@ -105,7 +100,6 @@ namespace TripleSix.Core.Mappers
             where TEntity : IEntity
         {
             var map = CreateMap<TSource, TEntity>(memberList);
-
             var ignoreProperties = typeof(TEntity).GetProperties()
                 .Where(property =>
                 {
@@ -129,7 +123,6 @@ namespace TripleSix.Core.Mappers
                 throw new Exception($"{sourceType.Name} need implement {nameof(IEntity)}> interface");
 
             var map = CreateMap(sourceType, destinationType, memberList);
-
             var ignoreProperties = sourceType.GetProperties()
                 .Where(property =>
                 {
@@ -149,7 +142,6 @@ namespace TripleSix.Core.Mappers
             where TEntity : IEntity
         {
             var map = CreateMap<TEntity, TDestination>(memberList);
-
             var ignoreProperties = typeof(TEntity).GetProperties()
                 .Where(property =>
                 {
