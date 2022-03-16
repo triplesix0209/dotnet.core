@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.DataTypes;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
@@ -42,7 +43,7 @@ namespace TripleSix.Core.Mappers
                 var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assembly => assembly.GetTypes()
                     .Where(t => t.IsPublic)
-                    .Where(t => t.Name == objectName + "AdminDto")
+                    .Where(t => t.IsAssignableTo<IAdminDto>())
                     .SelectMany(t => t.GetNestedTypes())
                     .Where(t => t.IsAssignableTo<IDataDto>()));
                 var dtoTypes = SelectDtoType(objectName).Concat(adminDtos);

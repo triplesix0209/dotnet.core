@@ -10,7 +10,7 @@ namespace TripleSix.Core.AutoAdmin
     {
         public static Type GetEntityType(this Type adminType)
         {
-            if (adminType is null || !adminType.IsAssignableTo(typeof(IAdminDto)))
+            if (adminType is null || !adminType.IsAssignableTo<IAdminDto>())
                 return null;
 
             string entityName;
@@ -32,7 +32,7 @@ namespace TripleSix.Core.AutoAdmin
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
-                .Where(t => t.IsAssignableTo(typeof(IEntity)))
+                .Where(t => t.IsAssignableTo<IEntity>())
                 .Where(t => t.Name == entityName)
                 .FirstOrDefault();
         }

@@ -78,7 +78,7 @@ namespace TripleSix.Core.Helpers
                 return array;
             }
 
-            if (type.IsGenericType && type.IsAssignableTo(typeof(IList)))
+            if (type.IsGenericType && type.IsAssignableTo<IList>())
             {
                 var elementType = type.GetGenericArguments()[0];
                 var list = Activator.CreateInstance(type) as IList;
