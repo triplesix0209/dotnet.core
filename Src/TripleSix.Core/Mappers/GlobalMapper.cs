@@ -32,28 +32,23 @@ namespace TripleSix.Core.Mappers
 
         private void CreateProfile()
         {
-            var entityTypes = SelectEntityType();
-            foreach (var entityType in entityTypes)
+            foreach (var entityType in SelectEntityType())
             {
                 var objectName = entityType.Name.Substring(0, entityType.Name.IndexOf("Entity", StringComparison.Ordinal));
 
                 CreateMapToEntity(entityType, entityType);
                 CreateMapToEntity(typeof(ModelDataDto), entityType, MemberList.None);
 
-                var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(assembly => assembly.GetTypes()
-                    .Where(t => t.IsPublic)
-                    .Where(t => t.IsAssignableTo<IAdminDto>())
-                    .SelectMany(t => t.GetNestedTypes())
-                    .Where(t => t.IsAssignableTo<IDataDto>()));
-                var dtoTypes = SelectDtoType(objectName).Concat(adminDtos);
-
-                foreach (var dtoType in dtoTypes)
-                {
-                    CreateMap(typeof(ModelDataDto), dtoType, MemberList.None).ReverseMap();
-                    CreateMapToEntity(dtoType, entityType, MemberList.None).ReverseMap();
-                }
+                foreach (var dtoType in SelectDtoType(objectName))
+                    CreateMapDto(entityType, dtoType);
             }
+
+            var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(assembly => assembly.GetTypes()
+                    .Where(t => t.IsPublic))
+                    .Where(t => t.IsAssignableTo<IAdminDto>());
+            foreach (var adminDto in adminDtos)
+                CreateMapAdmin(adminDto.GetEntityType(), adminDto);
         }
     }
 }

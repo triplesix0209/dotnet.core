@@ -186,7 +186,7 @@ namespace TripleSix.Core.Mappers
                 CreateMapDto(entityType, dtoType);
         }
 
-        protected void CreateMapAdminToEntity<TEntity, TAdmin>()
+        protected void CreateMapAdmin<TEntity, TAdmin>()
             where TEntity : IEntity
             where TAdmin : IAdminDto
         {
