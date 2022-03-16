@@ -139,17 +139,9 @@ namespace TripleSix.Core.Repositories
 
             string entityName = null;
             if (metadata is not null && metadata.EntityName.IsNotNullOrWhiteSpace())
-            {
                 entityName = metadata.EntityName;
-                if (!entityName.EndsWith("Entity")) entityName += "Entity";
-            }
             else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
-            {
-                BUG
-                entityName = propertyInfo.ReflectedType.DeclaringType.Name
-                    .Replace("AdminDto", string.Empty);
-                entityName += "Entity";
-            }
+                entityName = propertyInfo.ReflectedType.DeclaringType.GetEntityType().Name;
 
             var vaildColumns = new List<string>();
             if (entityName.IsNotNullOrWhiteSpace())

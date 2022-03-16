@@ -19,7 +19,6 @@ namespace TripleSix.Core.AutoAdmin
             var controllerCode = controllerMetadata.ControllerCode;
             var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
             var methodInfo = methodType.GetCustomAttribute<AdminMethodAttribute>();
-            if (methodInfo.EntityType is null) methodInfo.EntityType = controllerInfo.EntityType;
             if (methodInfo.AdminType is null) methodInfo.AdminType = controllerInfo.AdminType;
 
             var route = controllerType.GetCustomAttributes().FirstOrDefault(x => x is RouteAttribute) as RouteAttribute;
@@ -117,8 +116,8 @@ namespace TripleSix.Core.AutoAdmin
         public static MethodInfo[] GetListMethodOfController(Type controllerType)
         {
             var controllerInfo = controllerType.GetCustomAttribute<AdminControllerAttribute>();
-            var entityType = controllerInfo.EntityType;
             var adminType = controllerInfo.AdminType;
+            var entityType = adminType.GetEntityType();
             var filterType = adminType.GetNestedType("Filter");
             var itemType = adminType.GetNestedType("Item");
             var detailType = adminType.GetNestedType("Detail");

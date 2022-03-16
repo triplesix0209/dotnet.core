@@ -11,11 +11,6 @@ namespace TripleSix.Core.AutoAdmin
         public Type AdminType { get; set; }
 
         /// <summary>
-        /// Entity sử dụng của controller.
-        /// </summary>
-        public Type EntityType { get; set; }
-
-        /// <summary>
         /// tên gọi.
         /// </summary>
         public string Name { get; set; } = null;

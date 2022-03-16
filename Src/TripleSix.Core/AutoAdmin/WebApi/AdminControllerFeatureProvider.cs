@@ -24,14 +24,14 @@ namespace TripleSix.Core.AutoAdmin
                 {
                     var metadata = t.GetCustomAttribute<AdminControllerAttribute>();
                     if (metadata is null) return false;
-                    return metadata.Enable && metadata.AdminType is not null && metadata.EntityType is not null;
+                    return metadata.Enable && metadata.AdminType is not null;
                 });
 
             foreach (var candidate in candidates)
             {
                 var info = candidate.GetCustomAttribute<AdminControllerAttribute>();
-                var entityType = info.EntityType;
                 var adminType = info.AdminType;
+                var entityType = adminType.GetEntityType();
                 var filterType = adminType.GetNestedType("Filter");
                 var itemType = adminType.GetNestedType("Item");
                 var detailType = adminType.GetNestedType("Detail");

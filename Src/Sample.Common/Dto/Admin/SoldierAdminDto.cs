@@ -7,7 +7,7 @@ using TripleSix.Core.Dto;
 
 namespace Sample.Common.Dto
 {
-
+    [AdminModel(EntityName = "AccountEntity")]
     public class SoldierAdminDto : BaseAdminDto
     {
         public class Filter : ModelFilterDto

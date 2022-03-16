@@ -11,11 +11,6 @@ namespace TripleSix.Core.AutoAdmin
         public Type AdminType { get; set; }
 
         /// <summary>
-        /// Entity sử dụng.
-        /// </summary>
-        public Type EntityType { get; set; }
-
-        /// <summary>
         /// bật/tắt.
         /// </summary>
         public bool Enable { get; set; } = true;

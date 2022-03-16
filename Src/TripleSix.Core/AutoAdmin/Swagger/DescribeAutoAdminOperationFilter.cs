@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.WebApi.Results;
 
@@ -27,12 +26,7 @@ namespace TripleSix.Core.AutoAdmin
             var controllerBase = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
                 .Where(x => x.IsPublic && !x.IsAbstract)
-                .Where(x =>
-                {
-                    var info = x.GetCustomAttribute<AdminControllerAttribute>();
-                    if (info is null) return false;
-                    return info.AdminType == adminType && info.EntityType is not null;
-                })
+                .Where(x => x.GetCustomAttribute<AdminControllerAttribute>()?.AdminType == adminType)
                 .FirstOrDefault();
             if (controllerBase is null) return;
 

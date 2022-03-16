@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
@@ -23,12 +22,7 @@ namespace TripleSix.Core.AutoAdmin
             if (!adminType.IsAssignableTo<IAdminDto>()) return;
 
             var controllerBase = _executingAssembly.GetExportedTypes()
-               .FirstOrDefault(t =>
-               {
-                   var metadata = t.GetCustomAttribute<AdminControllerAttribute>();
-                   if (metadata is null) return false;
-                   return metadata.AdminType == adminType && metadata.EntityType is not null;
-               });
+               .FirstOrDefault(t => t.GetCustomAttribute<AdminControllerAttribute>()?.AdminType == adminType);
             if (controllerBase is null) return;
 
             controller.ControllerName = controllerBase.Name.Substring(0, controllerBase.Name.IndexOf("Controller"));

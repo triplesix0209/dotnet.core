@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Common;
 using Sample.Common.Dto;
-using Sample.Data.Entities;
 using Sample.Middle.Services;
 using Sample.WebApi.Abstracts;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,7 +15,6 @@ namespace Sample.WebApi.Controllers.Admins
     [SwaggerTag("tài khoản")]
     [AdminController(
         AdminType = typeof(AccountAdminDto),
-        EntityType = typeof(AccountEntity),
         GroupName = "hệ thống")]
     public class AccountController : AdminController
     {

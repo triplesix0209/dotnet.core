@@ -14,11 +14,7 @@ namespace TripleSix.Core.AutoAdmin
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(t => !t.IsAbstract)
                 .Where(t => t.GetCustomAttribute<AdminControllerAttribute>()?.Enable == true)
-                .Where(t =>
-                {
-                    var info = t.GetCustomAttribute<AdminControllerAttribute>();
-                    return info.EntityType is not null && info.AdminType is not null;
-                });
+                .Where(t => t.GetCustomAttribute<AdminControllerAttribute>()?.AdminType is not null);
 
             Controllers = allControllers
                 .OrderBy(t => t.GetCustomAttribute<AdminControllerAttribute>()?.LoadOrder)

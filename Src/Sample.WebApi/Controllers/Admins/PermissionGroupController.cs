@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Common;
 using Sample.Common.Dto;
-using Sample.Data.Entities;
 using Sample.Middle.Services;
 using Sample.WebApi.Abstracts;
 using Swashbuckle.AspNetCore.Annotations;
@@ -15,7 +14,6 @@ namespace Sample.WebApi.Controllers.Admins
     [SwaggerTag("nhóm quyền")]
     [AdminController(
         AdminType = typeof(PermissionGroupAdminDto),
-        EntityType = typeof(PermissionGroupEntity),
         GroupName = "hệ thống",
         PermissionGroup = "permission")]
     public class PermissionGroupController : AdminController
