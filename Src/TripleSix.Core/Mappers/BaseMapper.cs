@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
@@ -154,6 +155,46 @@ namespace TripleSix.Core.Mappers
                 map.ForSourceMember(property.Name, opt => opt.DoNotValidate());
 
             return map;
+        }
+
+        protected IMappingExpression CreateMapDto(Type entityType, Type dataType)
+        {
+            if (!entityType.IsAssignableTo<IEntity>()) throw new ArgumentException("must be implement of IEntity", nameof(entityType));
+            if (!dataType.IsAssignableTo<IDataDto>()) throw new ArgumentException("must be implement of IDataDto", nameof(dataType));
+
+            CreateMap(typeof(ModelDataDto), dataType, MemberList.None).ReverseMap();
+            return CreateMapToEntity(dataType, entityType, MemberList.None).ReverseMap();
+        }
+
+        protected IMappingExpression<TEntity, TData> CreateMapDto<TEntity, TData>()
+            where TEntity : IEntity
+            where TData : IDataDto
+        {
+            CreateMap<ModelDataDto, TData>(MemberList.None).ReverseMap();
+            return CreateMapToEntity<TData, TEntity>(MemberList.None).ReverseMap();
+        }
+
+        protected void CreateMapAdmin(Type entityType, Type adminType)
+        {
+            if (!entityType.IsAssignableTo<IEntity>()) throw new ArgumentException("must be implement of IEntity", nameof(entityType));
+            if (!adminType.IsAssignableTo<IAdminDto>()) throw new ArgumentException("must be implement of IAdminDto", nameof(adminType));
+
+            var adminDtos = adminType.GetNestedTypes()
+                .Where(t => t.IsAssignableTo<IDataDto>());
+
+            foreach (var dtoType in adminDtos)
+                CreateMapDto(entityType, dtoType);
+        }
+
+        protected void CreateMapAdminToEntity<TEntity, TAdmin>()
+            where TEntity : IEntity
+            where TAdmin : IAdminDto
+        {
+            var adminDtos = typeof(TAdmin).GetNestedTypes()
+                .Where(t => t.IsAssignableTo<IDataDto>());
+
+            foreach (var dtoType in adminDtos)
+                CreateMapDto(typeof(TEntity), dtoType);
         }
     }
 }
