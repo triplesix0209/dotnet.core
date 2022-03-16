@@ -46,9 +46,14 @@ namespace TripleSix.Core.Mappers
             var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assembly => assembly.GetTypes()
                     .Where(t => t.IsPublic))
+                    .Where(t => !t.IsAbstract)
                     .Where(t => t.IsAssignableTo<IAdminDto>());
             foreach (var adminDto in adminDtos)
-                CreateMapAdmin(adminDto.GetEntityType(), adminDto);
+            {
+                var entityType = adminDto.GetEntityType();
+                if (entityType is null) continue;
+                CreateMapAdmin(entityType, adminDto);
+            }
         }
     }
 }
