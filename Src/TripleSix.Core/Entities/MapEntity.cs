@@ -11,8 +11,6 @@ namespace TripleSix.Core.Entities
 
         public Guid? CreatorId { get; set; }
 
-        public abstract void SetIds(params Guid[] listIds);
-
         protected override void ModelConfigure(EntityTypeBuilder<TEntity> builder)
         {
             base.ModelConfigure(builder);

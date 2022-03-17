@@ -7,7 +7,5 @@ namespace TripleSix.Core.Entities
         DateTime? CreateDatetime { get; set; }
 
         Guid? CreatorId { get; set; }
-
-        void SetIds(params Guid[] listIds);
     }
 }
