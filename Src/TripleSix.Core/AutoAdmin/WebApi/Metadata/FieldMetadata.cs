@@ -17,7 +17,7 @@ namespace TripleSix.Core.AutoAdmin
             FieldType = fieldType;
             Render = fieldInfo.Render;
             Key = fieldType.Name.ToCamelCase();
-            GridCol = fieldInfo.GridCol ?? 6;
+            GridCol = fieldInfo.GridCol <= 0 ? 6 : fieldInfo.GridCol;
             ScriptDisplay = fieldInfo.ScriptDisplay?.Trim();
 
             if (fieldInfo.GroupCode.IsNotNullOrWhiteSpace() || fieldInfo.GroupName.IsNotNullOrWhiteSpace())
@@ -146,7 +146,7 @@ namespace TripleSix.Core.AutoAdmin
             else if (fieldInfo.Type == AdminFieldTypes.TextArea)
             {
                 Type = "textarea";
-                if (fieldInfo.GridCol is null) GridCol = 12;
+                if (fieldInfo.GridCol == 0) GridCol = 12;
             }
             else if (propertyType == typeof(Guid))
             {
