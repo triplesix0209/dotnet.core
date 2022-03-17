@@ -17,7 +17,7 @@ namespace TripleSix.Core.AutoAdmin
             FieldType = fieldType;
             Render = fieldInfo.Render;
             Key = fieldType.Name.ToCamelCase();
-            GridCol = fieldInfo.GridCol;
+            GridCol = fieldInfo.GridCol ?? 6;
             ScriptDisplay = fieldInfo.ScriptDisplay?.Trim();
 
             if (fieldInfo.GroupCode.IsNotNullOrWhiteSpace() || fieldInfo.GroupName.IsNotNullOrWhiteSpace())
@@ -142,6 +142,11 @@ namespace TripleSix.Core.AutoAdmin
 
                 Type = "ParentId".ToCamelCase();
                 ModelController = new ModelMetadata(controllerMetadata, methodMetadata, this, modelType);
+            }
+            else if (fieldInfo.Type == AdminFieldTypes.TextArea)
+            {
+                Type = "textarea";
+                if (fieldInfo.GridCol is null) GridCol = 12;
             }
             else if (propertyType == typeof(Guid))
             {

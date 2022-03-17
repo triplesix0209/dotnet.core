@@ -13,5 +13,8 @@
 
         // mã định danh mục cha
         HierarchyParentId = 3,
+
+        // khung text
+        TextArea = 4,
     }
 }

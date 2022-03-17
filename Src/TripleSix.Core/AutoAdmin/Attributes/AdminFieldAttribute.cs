@@ -33,7 +33,7 @@ namespace TripleSix.Core.AutoAdmin
         /// <summary>
         /// số col chiếm ở grid.
         /// </summary>
-        public int GridCol { get; set; } = 6;
+        public int? GridCol { get; set; } = null;
 
         /// <summary>
         /// cho phép sort theo field này?.
