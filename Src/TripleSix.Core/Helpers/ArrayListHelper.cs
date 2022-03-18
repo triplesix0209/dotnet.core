@@ -67,5 +67,23 @@ namespace TripleSix.Core.Helpers
         {
             return enumerable != null && enumerable.Count() > 0;
         }
+
+        public static string JoinString(this string[] array, string separator)
+        {
+            if (array.Count(x => x.IsNotNullOrWhiteSpace()) == 0) return null;
+            return string.Join(separator, array.Where(x => x.IsNotNullOrWhiteSpace()));
+        }
+
+        public static string JoinString(this IList<string> list, string separator)
+        {
+            if (list.Count(x => x.IsNotNullOrWhiteSpace()) == 0) return null;
+            return string.Join(separator, list.Where(x => x.IsNotNullOrWhiteSpace()));
+        }
+
+        public static string JoinString(this IEnumerable<string> enumerable, string separator)
+        {
+            if (enumerable.Count(x => x.IsNotNullOrWhiteSpace()) == 0) return null;
+            return string.Join(separator, enumerable.Where(x => x.IsNotNullOrWhiteSpace()));
+        }
     }
 }
