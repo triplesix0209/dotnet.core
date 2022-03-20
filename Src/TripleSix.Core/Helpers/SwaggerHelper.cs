@@ -185,7 +185,9 @@ namespace TripleSix.Core.Helpers
                 if (entityName.IsNotNullOrWhiteSpace())
                 {
                     entityType = AppDomain.CurrentDomain.GetAssemblies()
-                        .SelectMany(x => x.GetExportedTypes())
+                        .SelectMany(x => x.GetTypes())
+                        .Where(x => x.IsPublic)
+                        .Where(x => !x.IsAbstract)
                         .Where(x => x.IsAssignableTo<IEntity>())
                         .Where(x => x.Name == entityName)
                         .FirstOrDefault();
