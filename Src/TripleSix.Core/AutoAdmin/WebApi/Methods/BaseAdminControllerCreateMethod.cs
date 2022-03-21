@@ -23,7 +23,7 @@ namespace TripleSix.Core.AutoAdmin
         [AdminMethod(Type = AdminMethodTypes.Create)]
         [PermissionRequirement(AutoGroup = true, ListCode = new[] { "create" })]
         [Transactional]
-        public async Task<IActionResult> Create([FromBody] TCreateDto input)
+        public virtual async Task<IActionResult> Create([FromBody] TCreateDto input)
         {
             var identity = GenerateIdentity();
             TEntity data;

@@ -19,7 +19,7 @@ namespace TripleSix.Core.AutoAdmin
         [AdminMethod(Type = AdminMethodTypes.Delete)]
         [PermissionRequirement(AutoGroup = true, Code = "delete")]
         [Transactional]
-        public async Task<IActionResult> Delete(RouteId route)
+        public virtual async Task<IActionResult> Delete(RouteId route)
         {
             var identity = GenerateIdentity();
 
@@ -35,7 +35,7 @@ namespace TripleSix.Core.AutoAdmin
         [AdminMethod(Type = AdminMethodTypes.Restore)]
         [PermissionRequirement(AutoGroup = true, Code = "delete")]
         [Transactional]
-        public async Task<IActionResult> Restore(RouteId route)
+        public virtual async Task<IActionResult> Restore(RouteId route)
         {
             var identity = GenerateIdentity();
 

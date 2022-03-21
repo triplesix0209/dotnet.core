@@ -146,7 +146,6 @@ namespace TripleSix.Core.AutoAdmin
             else if (fieldInfo.Type == AdminFieldTypes.TextArea)
             {
                 Type = "textarea";
-                if (fieldInfo.GridCol == 0) GridCol = 12;
             }
             else if (propertyType == typeof(Guid))
             {

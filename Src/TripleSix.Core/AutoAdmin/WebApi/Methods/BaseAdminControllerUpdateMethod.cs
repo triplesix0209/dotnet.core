@@ -21,7 +21,7 @@ namespace TripleSix.Core.AutoAdmin
         [AdminMethod(Type = AdminMethodTypes.Update)]
         [PermissionRequirement(AutoGroup = true, ListCode = new[] { "update" })]
         [Transactional]
-        public async Task<IActionResult> Update(RouteId route, [FromBody] TUpdateDto input)
+        public virtual async Task<IActionResult> Update(RouteId route, [FromBody] TUpdateDto input)
         {
             var identity = GenerateIdentity();
             var beforeData = await Service.SerializeEntity(identity, await Service.GetFirstById(identity, route.Id));
