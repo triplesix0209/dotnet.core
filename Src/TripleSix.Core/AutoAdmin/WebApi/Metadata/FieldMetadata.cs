@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using TripleSix.Core.Dto;
@@ -65,6 +66,8 @@ namespace TripleSix.Core.AutoAdmin
         public string ScriptDisplay { get; set; }
 
         public ModelMetadata ModelController { get; set; }
+
+        public FieldInputMetadata[] ListItemFields { get; set; }
 
         [JsonIgnore]
         public PropertyInfo FieldType { get; set; }
@@ -151,6 +154,13 @@ namespace TripleSix.Core.AutoAdmin
             {
                 Type = "id";
                 ModelController = new ModelMetadata(controllerMetadata, methodMetadata, this, fieldInfo.ModelType);
+            }
+            else if (propertyType.IsArray)
+            {
+                Type = "list";
+                ListItemFields = propertyType.GetElementType().GetProperties()
+                    .Select(propertyType => new FieldInputMetadata(controllerMetadata, methodMetadata, propertyType))
+                    .ToArray();
             }
         }
     }
