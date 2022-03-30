@@ -83,7 +83,7 @@ namespace TripleSix.Core.Services
 
         public virtual async Task Delete(IIdentity identity, TEntity entity)
         {
-            Repo.Delete(entity);
+            Repo.Delete(identity, entity);
             await Repo.SaveChanges();
         }
 
@@ -169,14 +169,14 @@ namespace TripleSix.Core.Services
 
         public async Task<TEntity> GetFirstOrDefaultByFilter(IIdentity identity, IFilterDto filter)
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             return await query.FirstOrDefaultAsync<TEntity>(Mapper);
         }
 
         public async Task<TResult> GetFirstOrDefaultByFilter<TResult>(IIdentity identity, IFilterDto filter)
             where TResult : class
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             return await query.FirstOrDefaultAsync<TResult>(Mapper);
         }
 
@@ -204,14 +204,14 @@ namespace TripleSix.Core.Services
 
         public async Task<TEntity[]> GetListByFilter(IIdentity identity, IFilterDto filter)
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             return await query.ToArrayAsync<TEntity>(Mapper);
         }
 
         public async Task<TResult[]> GetListByFilter<TResult>(IIdentity identity, IFilterDto filter)
             where TResult : class
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             return await query.ToArrayAsync<TResult>(Mapper);
         }
 
@@ -239,14 +239,14 @@ namespace TripleSix.Core.Services
 
         public async Task<IPaging<TEntity>> GetPageByFilter(IIdentity identity, IPagingFilterDto filter)
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             return await query.ToPagingAsync<TEntity>(Mapper, filter.Page, filter.Size);
         }
 
         public async Task<IPaging<TResult>> GetPageByFilter<TResult>(IIdentity identity, IPagingFilterDto filter)
             where TResult : class
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             return await query.ToPagingAsync<TResult>(Mapper, filter.Page, filter.Size);
         }
 
