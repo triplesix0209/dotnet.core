@@ -30,6 +30,9 @@ namespace Sample.Common.Dto
 
         public class Item : ModelDataDto
         {
+            [AdminField(Render = true)]
+            public override Guid? Id { get; set; }
+
             [DisplayName("ảnh đại diện")]
             [AdminField(Type = AdminFieldTypes.Media, GroupName = "hình ảnh")]
             public string AvatarLink { get; set; }

@@ -30,7 +30,6 @@ namespace TripleSix.Core.AutoAdmin
                 .ToArray();
 
             ItemFields = itemType.GetProperties()
-                .Where(x => x.Name != nameof(IModelDataDto.Id))
                 .Where(x => x.Name != nameof(IModelDataDto.IsDeleted))
                 .Where(x => x.Name != nameof(IModelDataDto.CreatorId))
                 .Where(x => x.Name != nameof(IModelDataDto.UpdaterId))

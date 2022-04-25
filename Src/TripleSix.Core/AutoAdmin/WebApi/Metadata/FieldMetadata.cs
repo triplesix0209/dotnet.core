@@ -153,7 +153,8 @@ namespace TripleSix.Core.AutoAdmin
             else if (propertyType == typeof(Guid))
             {
                 Type = "id";
-                ModelController = new ModelMetadata(controllerMetadata, methodMetadata, this, fieldInfo.ModelType);
+                if (fieldType.Name != nameof(ModelDataDto.Id))
+                    ModelController = new ModelMetadata(controllerMetadata, methodMetadata, this, fieldInfo.ModelType);
             }
             else if (propertyType.IsArray)
             {

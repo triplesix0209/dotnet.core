@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using Newtonsoft.Json;
 using TripleSix.Core.Attributes;
+using TripleSix.Core.AutoAdmin;
 
 namespace TripleSix.Core.Dto
 {
@@ -10,6 +11,7 @@ namespace TripleSix.Core.Dto
     {
         [DisplayName("mã định danh")]
         [JsonProperty(Order = -10)]
+        [AdminField(Render = false)]
         public virtual Guid? Id { get; set; }
 
         [DisplayName("đã bị xóa?")]
