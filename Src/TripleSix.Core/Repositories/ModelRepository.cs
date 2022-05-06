@@ -140,7 +140,8 @@ namespace TripleSix.Core.Repositories
             string entityName = null;
             if (metadata is not null && metadata.EntityName.IsNotNullOrWhiteSpace())
                 entityName = metadata.EntityName;
-            else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
+            else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType is not null
+                && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
                 entityName = propertyInfo.ReflectedType.DeclaringType.GetEntityType().Name;
 
             var vaildColumns = new List<string>();
