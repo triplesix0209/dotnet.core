@@ -38,11 +38,11 @@ namespace TripleSix.Core.WebApi.Authentication
             BaseException error = null;
             try
             {
-                if (!Request.Headers.ContainsKey(HeaderNames.Authorization))
+                if (!Request.Headers.ContainsKey(Options.TokenHeaderKey))
                     throw new Exception("không tìm thấy token");
 
                 var tokenResult = new JsonWebTokenHandler().ValidateToken(
-                   Request.Headers.GetValue(HeaderNames.Authorization).Replace("Bearer", string.Empty).Trim(),
+                   Request.Headers.GetValue(Options.TokenHeaderKey).Replace("Bearer", string.Empty).Trim(),
                    new TokenValidationParameters
                    {
                        ValidateIssuerSigningKey = true,
