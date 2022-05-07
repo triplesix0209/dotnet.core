@@ -325,7 +325,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entity = await query.FirstAsync<TEntity>(Mapper);
-            return (await EntityToModel<TResult>(identity, entity)).First();
+            return EntityToModel<TResult>(identity, entity).First();
         }
 
         public Task<TEntity> GetFirstByCode(IIdentity identity, string code, bool includeDeleted = true)
@@ -367,7 +367,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entity = await query.FirstAsync<TEntity>(Mapper);
-            return (await EntityToModel<TResult>(identity, entity)).First();
+            return EntityToModel<TResult>(identity, entity).First();
         }
 
         public Task<TEntity> GetFirstOrDefaultById(IIdentity identity, Guid id, bool includeDeleted = true)
@@ -400,7 +400,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entity = await query.FirstOrDefaultAsync<TEntity>(Mapper);
-            return (await EntityToModel<TResult>(identity, entity)).First();
+            return EntityToModel<TResult>(identity, entity).First();
         }
 
         public Task<TEntity> GetFirstOrDefaultByCode(IIdentity identity, string code, bool includeDeleted = true)
@@ -442,7 +442,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entity = await query.FirstOrDefaultAsync<TEntity>(Mapper);
-            return (await EntityToModel<TResult>(identity, entity)).First();
+            return EntityToModel<TResult>(identity, entity).First();
         }
 
         public Task<TEntity[]> GetList(IIdentity identity, bool includeDeleted = true)
@@ -472,7 +472,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entities = await query.ToArrayAsync<TEntity>(Mapper);
-            return await EntityToModel<TResult>(identity, entities);
+            return EntityToModel<TResult>(identity, entities);
         }
 
         public async Task<TEntity[]> GetListByFilter(IIdentity identity, IFilterDto filter, bool includeDeleted = true)
@@ -499,7 +499,7 @@ namespace TripleSix.Core.Services
         {
             var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
             var entities = await query.ToArrayAsync<TEntity>(Mapper);
-            return await EntityToModel<TResult>(identity, entities);
+            return EntityToModel<TResult>(identity, entities);
         }
 
         public Task<TEntity[]> GetListById(IIdentity identity, IEnumerable<Guid> listId, bool includeDeleted = true)
@@ -532,7 +532,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entities = await query.ToArrayAsync<TEntity>(Mapper);
-            return await EntityToModel<TResult>(identity, entities);
+            return EntityToModel<TResult>(identity, entities);
         }
 
         public Task<TEntity[]> GetListByCode(IIdentity identity, IEnumerable<string> listCode, bool includeDeleted = true)
@@ -574,7 +574,7 @@ namespace TripleSix.Core.Services
                 query = query.WhereNotDeleted();
 
             var entities = await query.ToArrayAsync<TEntity>(Mapper);
-            return await EntityToModel<TResult>(identity, entities);
+            return EntityToModel<TResult>(identity, entities);
         }
 
         public Task<IPaging<TEntity>> GetPage(IIdentity identity, int page, int size = 10, bool includeDeleted = true)
@@ -609,7 +609,7 @@ namespace TripleSix.Core.Services
                 Page = data.Page,
                 Size = data.Size,
                 Total = data.Total,
-                Items = await EntityToModel<TResult>(identity, data.Items),
+                Items = EntityToModel<TResult>(identity, data.Items),
             };
         }
 
@@ -623,11 +623,11 @@ namespace TripleSix.Core.Services
                 Page = data.Page,
                 Size = data.Size,
                 Total = data.Total,
-                Items = await EntityToModel<TResult>(identity, data.Items),
+                Items = EntityToModel<TResult>(identity, data.Items),
             };
         }
 
-        protected async Task<TModel[]> EntityToModel<TModel>(IIdentity identity, params TEntity[] entities)
+        protected TModel[] EntityToModel<TModel>(IIdentity identity, params TEntity[] entities)
             where TModel : class, IDto
         {
             var serviceType = GetType();
@@ -640,17 +640,22 @@ namespace TripleSix.Core.Services
                 x.GetParameters().Length == 3 &&
                 x.GetParameters()[2].ParameterType == typeof(TModel));
 
-            var result = new List<Task<TModel>>();
+            var result = new List<TModel>();
             foreach (var entity in entities)
             {
                 if (entity == null)
-                    result.Add(Task.FromResult<TModel>(null));
-                else
-                    result.Add((Task<TModel>)convertMethod.Invoke(this, new object[] { identity, entity, null }));
+                {
+                    result.Add(null);
+                    continue;
+                }
+
+                var task = (Task<TModel>)convertMethod.Invoke(this, new object[] { identity, entity, null });
+                task.Wait();
+
+                result.Add(task.Result);
             }
 
-            await Task.WhenAll(result);
-            return result.Select(x => x.Result).ToArray();
+            return result.ToArray();
         }
     }
 }
