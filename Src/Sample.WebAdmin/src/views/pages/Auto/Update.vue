@@ -2,7 +2,7 @@
 export default {
 	name: "auto-update",
 	components: {
-		BaseUpdatePage: () => import("@/components/BaseAuto/Page/Update"),
+		BaseUpdatePage: () => import("@/components/Core/Page/Update"),
 	},
 };
 </script>

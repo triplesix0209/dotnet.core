@@ -16,8 +16,8 @@ namespace Sample.Middle.Mappers
             CreateMap<AccountEntity, AccountAdminDto.Item>()
                 .ForMember(d => d.Username, o => o.MapFrom(s => s.Auths.FirstOrDefault(x => x.Type == AccountAuthTypes.UsernamePassword).Username));
 
-            CreateMap<AccountEntity, SoldierAdminDto.Item>()
-                .ForMember(d => d.Username, o => o.MapFrom(s => s.Auths.FirstOrDefault(x => x.Type == AccountAuthTypes.UsernamePassword).Username));
+            CreateMap<AccountEntity, AccountAdminDto.Detail>()
+                .IncludeBase<AccountEntity, AccountAdminDto.Item>();
         }
     }
 }

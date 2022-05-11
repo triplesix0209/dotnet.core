@@ -10,12 +10,12 @@ namespace Sample.Common.Dto
     {
         public class Filter : ModelFilterDto
         {
+            [DisplayName("lọc theo tên gọi")]
+            public FilterParameterString Name { get; set; }
+
             [DisplayName("lọc theo nhóm cha")]
             [AdminField(Type = AdminFieldTypes.HierarchyParentId)]
             public FilterParameter<Guid> HierarchyParentId { get; set; }
-
-            [DisplayName("lọc theo tên gọi")]
-            public FilterParameterString Name { get; set; }
         }
 
         public class Item : ModelDataDto

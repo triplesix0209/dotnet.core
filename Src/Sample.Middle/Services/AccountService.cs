@@ -87,9 +87,9 @@ namespace Sample.Middle.Services
         public async Task<TResult> CreateWithModel<TResult>(IIdentity identity, IdentityRegisterDto input, bool autoGenerateCode = true)
             where TResult : class
         {
-            var username = input.Email;
-            if (await GetByUsername<AccountEntity>(identity, username) != null)
-                throw new AppException(AppExceptions.UsernameIsExisted, args: username);
+            input.Username = input.Username.Trim().ToLower();
+            if (await GetByUsername<AccountEntity>(identity, input.Username) != null)
+                throw new AppException(AppExceptions.UsernameIsExisted, args: input.Username);
 
             var account = await Create(
                 identity,
@@ -105,7 +105,7 @@ namespace Sample.Middle.Services
             {
                 AccountId = account.Id,
                 Type = AccountAuthTypes.UsernamePassword,
-                Username = username,
+                Username = input.Username,
                 HashPasswordKey = RandomHelper.RandomString(10),
             });
 
@@ -162,12 +162,12 @@ namespace Sample.Middle.Services
                 await SetPassword(identity, id, input.Password);
         }
 
-        public override async Task SetAsDelete(IIdentity identity, AccountEntity entity)
+        public override Task Update(IIdentity identity, AccountEntity entity, Action<AccountEntity> @delegate)
         {
             if (entity.AccessLevel == AccountLevels.Root)
                 throw new AppException(AppExceptions.RootAccountUnmodified);
 
-            await base.SetAsDelete(identity, entity);
+            return base.Update(identity, entity, @delegate);
         }
 
         public Task<TResult> GetByUsername<TResult>(IIdentity identity, string username)

@@ -14,6 +14,7 @@ using Sample.Data.Entities;
 using Sample.Data.Repositories;
 using TripleSix.Core.Dto;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Mappers;
 using TripleSix.Core.Services;
 
 namespace Sample.Middle.Services
@@ -112,20 +113,24 @@ namespace Sample.Middle.Services
                     profile.Name,
                     ClaimValueTypes.String),
                 new Claim(
-                    nameof(AccountEntity.Code).ToCamelCase(),
-                    profile.Code,
-                    ClaimValueTypes.String),
-                new Claim(
                     nameof(AccountEntity.AccessLevel).ToCamelCase(),
                     account.AccessLevel.ToString("D"),
                     ClaimValueTypes.Boolean),
             };
 
-            if (account.AccessLevel != AccountLevels.Root)
+            if (profile.Username.IsNotNullOrWhiteSpace())
             {
                 claims.Add(new Claim(
-                    "Permission".ToCamelCase(),
-                    string.Join(" ", listPermission.Select(x => x.Code)),
+                    nameof(profile.Username).ToCamelCase(),
+                    profile.Username,
+                    ClaimValueTypes.String));
+            }
+
+            if (profile.Email.IsNotNullOrWhiteSpace())
+            {
+                claims.Add(new Claim(
+                    nameof(profile.Email).ToCamelCase(),
+                    profile.Email,
                     ClaimValueTypes.String));
             }
 
@@ -134,6 +139,14 @@ namespace Sample.Middle.Services
                 claims.Add(new Claim(
                     nameof(profile.AvatarLink).ToCamelCase(),
                     profile.AvatarLink,
+                    ClaimValueTypes.String));
+            }
+
+            if (account.AccessLevel != AccountLevels.Root)
+            {
+                claims.Add(new Claim(
+                    "Permission".ToCamelCase(),
+                    string.Join(" ", listPermission.Select(x => x.Code)),
                     ClaimValueTypes.String));
             }
 
@@ -177,17 +190,7 @@ namespace Sample.Middle.Services
 
         public async Task<IdentityProfileDto> GetProfileByAccountId(IIdentity identity, Guid accountId)
         {
-            var account = await AccountService.GetFirstById(identity, accountId);
-            if (account.IsDeleted)
-                throw new AppException(AppExceptions.AccountInactive);
-
-            return new IdentityProfileDto
-            {
-                AccountId = account.Id,
-                Name = account.Name,
-                Code = account.Code,
-                AvatarLink = account.AvatarLink,
-            };
+            return await AccountService.GetFirstById<IdentityProfileDto>(identity, accountId, false);
         }
 
         public async Task<IdentityTokenDto> LoginByUsernamePassword(IIdentity identity, IdentityLoginUsernamePasswordDto input)

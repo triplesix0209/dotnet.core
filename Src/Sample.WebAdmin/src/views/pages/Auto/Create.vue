@@ -2,7 +2,7 @@
 export default {
 	name: "auto-create",
 	components: {
-		BaseCreatePage: () => import("@/components/BaseAuto/Page/Create"),
+		BaseCreatePage: () => import("@/components/Core/Page/Create"),
 	},
 };
 </script>

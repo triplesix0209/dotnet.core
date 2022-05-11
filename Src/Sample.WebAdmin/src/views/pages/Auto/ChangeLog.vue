@@ -1,12 +1,12 @@
 <script>
-import PageMixin from "@/mixins/page";
-
 export default {
 	name: "auto-changelog",
-	mixins: [PageMixin],
+	components: {
+		BaseChangeLogPage: () => import("@/components/Core/Page/ChangeLog"),
+	},
 };
 </script>
 
 <template>
-	<div>Changelog</div>
+	<BaseChangeLogPage />
 </template>

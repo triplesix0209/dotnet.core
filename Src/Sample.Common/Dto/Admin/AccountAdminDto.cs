@@ -30,8 +30,8 @@ namespace Sample.Common.Dto
 
         public class Item : ModelDataDto
         {
-            [AdminField(Render = true)]
-            public override Guid? Id { get; set; }
+            [DisplayName("tên gọi")]
+            public string Name { get; set; }
 
             [DisplayName("ảnh đại diện")]
             [AdminField(Type = AdminFieldTypes.Media, GroupName = "hình ảnh")]
@@ -40,20 +40,20 @@ namespace Sample.Common.Dto
             [DisplayName("e-mail")]
             public string Email { get; set; }
 
-            [DisplayName("tên gọi")]
-            public string Name { get; set; }
-
             [DisplayName("username")]
+            [AdminField(GroupName = "đăng nhập")]
             public string Username { get; set; }
 
             [DisplayName("cấp độ tài khoản")]
+            [AdminField(GroupName = "phân quyền")]
             public AccountLevels AccessLevel { get; set; }
 
             [DisplayName("mã nhóm quyền")]
-            [AdminField(ModelType = typeof(PermissionGroupAdminDto), DisplayBy = nameof(PermissionGroupName))]
+            [AdminField(ModelType = typeof(PermissionGroupAdminDto), DisplayBy = nameof(PermissionGroupName), GroupName = "phân quyền")]
             public Guid? PermissionGroupId { get; set; }
 
             [DisplayName("tên nhóm quyền")]
+            [AdminField(GroupName = "phân quyền")]
             public string PermissionGroupName { get; set; }
         }
 
@@ -65,84 +65,81 @@ namespace Sample.Common.Dto
 
         public class Create : DataDto
         {
-            [DisplayName("mã số")]
-            [Description("bỏ trống để tự phát sinh")]
-            [StringLengthValidate(100)]
-            public string Code { get; set; }
-
-            [DisplayName("e-mail")]
-            [StringLengthValidate(100)]
-            public string Email { get; set; }
-
             [DisplayName("tên gọi")]
             [StringLengthValidate(100)]
             [RequiredValidate]
             public string Name { get; set; }
 
-            [DisplayName("username")]
+            [DisplayName("e-mail")]
             [StringLengthValidate(100)]
-            [RequiredValidate]
-            public string Username { get; set; }
+            public string Email { get; set; }
 
-            [DisplayName("mật khẩu")]
-            [RequiredValidate]
-            public string Password { get; set; }
+            [DisplayName("đã xác thực e-mail?")]
+            public bool? IsEmailVerified { get; set; }
 
             [DisplayName("ảnh đại diện")]
             [AdminField(Type = AdminFieldTypes.Media, GroupName = "hình ảnh")]
             public string AvatarLink { get; set; }
 
+            [DisplayName("username")]
+            [AdminField(GroupName = "đăng nhập")]
+            [StringLengthValidate(100)]
+            [RequiredValidate]
+            public string Username { get; set; }
+
+            [DisplayName("mật khẩu")]
+            [AdminField(GroupName = "đăng nhập")]
+            [RequiredValidate]
+            public string Password { get; set; }
+
             [DisplayName("cấp độ tài khoản")]
+            [AdminField(GroupName = "phân quyền")]
             [RequiredValidate]
             [EnumValidate]
             public AccountLevels? AccessLevel { get; set; }
 
             [DisplayName("mã nhóm quyền")]
-            [AdminField(ModelType = typeof(PermissionGroupAdminDto), ScriptDisplay = "data.accessLevel !== '1'")]
+            [AdminField(ModelType = typeof(PermissionGroupAdminDto), ScriptDisplay = "data.accessLevel !== '1'", GroupName = "phân quyền")]
             public Guid? PermissionGroupId { get; set; }
-
-            [DisplayName("đã xác thực e-mail?")]
-            public bool? IsEmailVerified { get; set; }
         }
 
         public class Update : DataDto
         {
-            [DisplayName("mã số")]
-            [StringLengthValidate(100)]
-            public string Code { get; set; }
-
-            [DisplayName("e-mail")]
-            [StringLengthValidate(100)]
-            public string Email { get; set; }
-
             [DisplayName("tên gọi")]
             [StringLengthValidate(100)]
             [RequiredValidate]
             public string Name { get; set; }
 
-            [DisplayName("username")]
+            [DisplayName("e-mail")]
             [StringLengthValidate(100)]
-            [RequiredValidate]
-            public string Username { get; set; }
+            public string Email { get; set; }
 
-            [DisplayName("mật khẩu")]
-            public string Password { get; set; }
+            [DisplayName("đã xác thực e-mail?")]
+            public bool? IsEmailVerified { get; set; }
 
             [DisplayName("ảnh đại diện")]
             [AdminField(Type = AdminFieldTypes.Media, GroupName = "hình ảnh")]
             public string AvatarLink { get; set; }
 
+            [DisplayName("username")]
+            [AdminField(GroupName = "đăng nhập")]
+            [StringLengthValidate(100)]
+            [RequiredValidate]
+            public string Username { get; set; }
+
+            [DisplayName("mật khẩu")]
+            [AdminField(GroupName = "đăng nhập")]
+            public string Password { get; set; }
+
             [DisplayName("cấp độ tài khoản")]
+            [AdminField(GroupName = "phân quyền")]
             [RequiredValidate]
             [EnumValidate]
             public AccountLevels? AccessLevel { get; set; }
 
             [DisplayName("mã nhóm quyền")]
-            [AdminField(ModelType = typeof(PermissionGroupAdminDto), ScriptDisplay = "data.accessLevel !== '1'")]
+            [AdminField(ModelType = typeof(PermissionGroupAdminDto), ScriptDisplay = "data.accessLevel !== '1'", GroupName = "phân quyền")]
             public Guid? PermissionGroupId { get; set; }
-
-            [DisplayName("đã xác thực e-mail?")]
-            public bool? IsEmailVerified { get; set; }
         }
     }
 }

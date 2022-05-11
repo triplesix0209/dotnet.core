@@ -92,6 +92,8 @@ async function request({
 			responseType,
 			headers,
 		});
+
+		if (responseType === "blob") return response;
 		return response.data;
 	} catch ({ response }) {
 		let { status, statusText, data } = response;

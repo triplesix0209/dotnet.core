@@ -9,6 +9,7 @@ export default {
 		fieldBase: { type: Object },
 		value: { type: Object },
 		data: { type: Object },
+		objectId: { type: String },
 		mode: {
 			type: String,
 			default: "input",
@@ -21,7 +22,7 @@ export default {
 	data() {
 		return {
 			loading: false,
-			input: this.inputFromValue(),
+			input: this._inputFromValue(),
 		};
 	},
 
@@ -32,7 +33,7 @@ export default {
 
 		fieldReadonly() {
 			if (
-				this.isOperator([
+				this._isOperator([
 					CONST.FIELD_OPERATOR_NULL,
 					CONST.FIELD_OPERATOR_NOT_NULL,
 				])
@@ -47,9 +48,8 @@ export default {
 
 			if (
 				this.operatorText &&
-				!this.isOperator([
+				!this._isOperator([
 					CONST.FIELD_OPERATOR_EQUAL,
-					CONST.FIELD_OPERATOR_IS,
 					CONST.FIELD_OPERATOR_NULL,
 					CONST.FIELD_OPERATOR_NOT_NULL,
 				])
@@ -60,14 +60,25 @@ export default {
 
 		fieldPlaceholder() {
 			if (
-				this.isOperator([
+				this.field.defaultValue === undefined ||
+				this.field.defaultValue === null
+			)
+				return null;
+
+			if (
+				this._isOperator([
 					CONST.FIELD_OPERATOR_NULL,
 					CONST.FIELD_OPERATOR_NOT_NULL,
 				])
 			)
 				return this.$strFormat(this.operatorText, "capitalize");
 
-			return this.field.defaultValue;
+			if (this.field.enum)
+				return this.$strFormat(
+					this.field.enum[this.field.defaultValue.toString()],
+					"capitalize",
+				);
+			return this.field.defaultValue.toString();
 		},
 
 		fieldDisplayValue() {
@@ -102,7 +113,7 @@ export default {
 		},
 
 		isListOperator() {
-			return this.isOperator([
+			return this._isOperator([
 				CONST.FIELD_OPERATOR_IN,
 				CONST.FIELD_OPERATOR_NOT_IN,
 			]);
@@ -119,7 +130,7 @@ export default {
 
 	watch: {
 		"value"() {
-			this.input = this.inputFromValue();
+			this.input = this._inputFromValue();
 		},
 
 		"input"() {
@@ -149,28 +160,9 @@ export default {
 	},
 
 	methods: {
-		isOperator(operators) {
-			if (!Array.isArray(operators)) operators = [operators];
-			return (
-				this.input &&
-				!!this.input.operator &&
-				operators.includes(this.input.operator)
-			);
-		},
-
 		undo() {
 			this.input.value = this.input.prevValue;
 			this.input.operator = this.input.prevOperator;
-		},
-
-		inputFromValue() {
-			let input = this.value;
-			if (input === undefined || input === null) input = {};
-
-			if (!input.operator && !!this.field.operator)
-				input.operator = Object.getOwnPropertyNames(this.field.operator)[0];
-
-			return input;
 		},
 
 		detailUrl({ id, field } = {}) {
@@ -184,6 +176,30 @@ export default {
 				controller,
 				id,
 			});
+		},
+
+		raiseChangeInput({ value, field } = {}) {
+			if (!field) field = this.field;
+			this.$emit("change", { value, field });
+		},
+
+		_isOperator(operators) {
+			if (!Array.isArray(operators)) operators = [operators];
+			return (
+				this.input &&
+				!!this.input.operator &&
+				operators.includes(this.input.operator)
+			);
+		},
+
+		_inputFromValue() {
+			let input = this.value;
+			if (input === undefined || input === null) input = {};
+
+			if (!input.operator && !!this.field.operator)
+				input.operator = Object.getOwnPropertyNames(this.field.operator)[0];
+
+			return input;
 		},
 	},
 };

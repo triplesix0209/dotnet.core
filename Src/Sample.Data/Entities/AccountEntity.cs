@@ -11,9 +11,6 @@ namespace Sample.Data.Entities
     public class AccountEntity : ModelEntity<AccountEntity>
     {
         [Required]
-        public override string Code { get; set; }
-
-        [Required]
         [MaxLength(100)]
         public string Name { get; set; }
 

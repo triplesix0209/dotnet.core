@@ -11,7 +11,6 @@ export default {
 	},
 
 	props: {
-		currentMenu: { type: Object, require: true },
 		toggleLeftBar: { type: Boolean, default: null },
 	},
 

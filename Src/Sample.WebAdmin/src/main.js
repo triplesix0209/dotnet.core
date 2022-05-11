@@ -12,6 +12,7 @@ import "@/directives/permission";
 import "@/filters/strFormat";
 
 // plugins
+import "@/plugins/ckeditor";
 import "@/plugins/vue-datetime";
 import "@/plugins/vue-lightbox";
 import "@/plugins/vue-moment";

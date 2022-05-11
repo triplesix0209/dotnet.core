@@ -6,15 +6,20 @@ namespace Sample.Common.Dto
 {
     public class IdentityRegisterDto : DataDto
     {
+        [DisplayName("tên gọi")]
+        [StringLengthValidate(100)]
+        [RequiredValidate]
+        public string Name { get; set; }
+
         [DisplayName("e-mail")]
         [StringLengthValidate(100)]
         [RequiredValidate]
         public string Email { get; set; }
 
-        [DisplayName("tên gọi")]
+        [DisplayName("tên đăng nhập")]
         [StringLengthValidate(100)]
         [RequiredValidate]
-        public string Name { get; set; }
+        public string Username { get; set; }
 
         [DisplayName("mật khẩu")]
         [RequiredValidate]

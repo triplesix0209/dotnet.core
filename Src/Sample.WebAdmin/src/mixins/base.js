@@ -28,10 +28,11 @@ export default {
 			return result;
 		},
 
-		getMethod({ type, controller, firstOrDefault } = {}) {
+		getMethod({ type, api, controller, firstOrDefault } = {}) {
 			let result = this.$store.getters["layout/method"];
 
 			if (type) result = result.filter((x) => x.type === type);
+			if (api) result = result.filter((x) => x.api === api);
 			if (controller)
 				result = result.filter((x) => x.controller === controller);
 
@@ -93,6 +94,9 @@ export default {
 
 		async requestApi({
 			controllerMethod,
+			api,
+			method,
+			url,
 			path,
 			params,
 			data,
@@ -103,20 +107,26 @@ export default {
 			refreshToken,
 			loadingField,
 			toggleLoading,
+			showError,
 		} = {}) {
-			if (!controllerMethod)
-				throw Error("parameter 'controllerMethod' is invalid");
+			if (!controllerMethod && (!method || !url))
+				throw Error("missing api connection");
 
 			if (loadingField === undefined) loadingField = "loading";
-			if (toggleLoading === undefined) toggleLoading = true;
+			if (toggleLoading === undefined) toggleLoading = false;
+			if (showError === undefined) showError = true;
+
+			if (controllerMethod) {
+				api = controllerMethod.api;
+				method = controllerMethod.method;
+				url = controllerMethod.url;
+			} else if (!api) api = "api";
 
 			try {
 				if (toggleLoading && loadingField in this) this[loadingField] = true;
 
-				let response = await ApiService.admin[controllerMethod.api][
-					controllerMethod.method
-				]({
-					url: controllerMethod.url,
+				let response = await ApiService.admin[api][method]({
+					url,
 					path,
 					params,
 					data,
@@ -132,7 +142,7 @@ export default {
 				return response;
 			} catch (e) {
 				if (toggleLoading && loadingField in this) this[loadingField] = false;
-				this.toastError(e);
+				if (showError) this.toastError(e);
 				throw e;
 			}
 		},
@@ -141,31 +151,39 @@ export default {
 			handler,
 			error,
 			form,
-			loadingField,
-			toggleLoading,
 			confirmMessage,
 			successMessage,
+			loadingField,
+			toggleLoading,
+			showError,
 		} = {}) {
 			if (form === undefined) form = "form";
 			if (loadingField === undefined) loadingField = "loading";
 			if (toggleLoading === undefined) toggleLoading = true;
+			if (showError === undefined) showError = false;
 
 			try {
 				if (form) if (!this.$refs[form].validate()) return;
 				if (
 					confirmMessage &&
-					!(await this.confirm({ message: confirmMessage }))
+					!(await this.confirm({
+						message: this.$strFormat(confirmMessage, "capitalize"),
+					}))
 				)
 					return;
 
 				if (toggleLoading && loadingField in this) this[loadingField] = true;
 				let result = await handler();
-				if (successMessage) this.toastSuccess({ message: successMessage });
+				if (successMessage) {
+					this.toastSuccess({
+						message: this.$strFormat(successMessage, "capitalize"),
+					});
+				}
 				if (toggleLoading && loadingField in this) this[loadingField] = false;
 
 				return result;
 			} catch (e) {
-				this.toastError(e);
+				if (showError) this.toastError(e);
 				if (error) await error(e);
 				if (toggleLoading && loadingField in this) this[loadingField] = false;
 			}
@@ -281,6 +299,36 @@ export default {
 				method.permissionCodes,
 				method.permissionOperator,
 			);
+		},
+
+		async prepareInput({ inputs, fields }) {
+			let result = {};
+
+			if (inputs) {
+				for (let field of fields) {
+					let input = inputs[field.key];
+					let value = input.value;
+
+					if (field.type === "media") {
+						if (input.file) {
+							let { url } = await ApiService.static.upload(input.file);
+							input.file = null;
+							input.value = url;
+							value = url;
+						}
+					} else if (field.type === "datetime") {
+						if (input.value) value = this.$moment(input.value).valueOf();
+					} else if (field.type === "list") {
+						value = input.value;
+					}
+
+					if (value !== undefined) result[field.key] = value;
+					if (result[field.key] === null && field.defaultValue !== null)
+						result[field.key] = field.defaultValue;
+				}
+			}
+
+			return result;
 		},
 	},
 };

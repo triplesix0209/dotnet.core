@@ -1,5 +1,4 @@
 import BaseMixin from "@/mixins/base";
-import ApiService from "@/services/api";
 import { mapActions } from "vuex";
 
 export default {
@@ -17,11 +16,11 @@ export default {
 
 	computed: {
 		controller() {
-			if (!this.$route.params.controller) return null;
-			return this.getController({
-				code: this.$route.params.controller,
-				firstOrDefault: true,
-			});
+			let controller = this.$route.params?.controller;
+			if (!controller) controller = this.$route.meta?.controller;
+			if (!controller) return null;
+
+			return this.getController({ code: controller, firstOrDefault: true });
 		},
 	},
 
@@ -29,38 +28,9 @@ export default {
 		...mapActions(["auth/load", "layout/load"]),
 		...mapActions("layout", ["setPageTitle", "setBreadcrumb"]),
 
-		async prepareInput({ inputs, fields }) {
-			let result = {};
-			for (let field of fields) {
-				let input = inputs[field.key];
-				let value = input.value;
-
-				if (field.type === "media") {
-					if (input.file) {
-						let { url } = await ApiService.static.upload(input.file);
-						input.file = null;
-						input.value = url;
-						value = url;
-					}
-				} else if (field.type === "datetime") {
-					if (input.value) value = this.$moment(input.value).valueOf();
-				}
-
-				if (value !== undefined) result[field.key] = value;
-			}
-
-			return result;
-		},
-
-		_validatePage() {},
-
 		_pageTitle() {
 			if (this.controller) return this.controller.name;
 			return this.$route.meta?.title;
-		},
-
-		_breadcrumbs() {
-			return [];
 		},
 	},
 
@@ -82,18 +52,22 @@ export default {
 			}
 		}
 
-		try {
-			await this._validatePage();
-		} catch (e) {
-			this.redirectToErrorPage();
-			throw e;
+		if (this._validatePage) {
+			try {
+				await this._validatePage();
+			} catch (e) {
+				this.redirectToErrorPage();
+				throw e;
+			}
 		}
 
 		this.setPageTitle(await this._pageTitle());
-		this.setBreadcrumb(await this._breadcrumbs());
+		if (this._breadcrumbs) this.setBreadcrumb(await this._breadcrumbs());
+		else this.setBreadcrumb([]);
 
 		this.initialing = false;
 		this.loading = false;
 		if (this._loaded) await this._loaded();
+		this.$emit("loaded");
 	},
 };

@@ -163,11 +163,6 @@ namespace TripleSix.Core.AutoAdmin
             return Task.FromResult(workbook);
         }
 
-        public override Task<string> GenerateCode(IIdentity identity, TEntity entity)
-        {
-            return Task.FromResult(RandomHelper.RandomString(10));
-        }
-
         protected virtual Task<string> SerializeData(object data, params string[] excludeProperties)
         {
             var jsonText = JsonConvert.SerializeObject(data, EntityContractResolver.SerializerSettings);

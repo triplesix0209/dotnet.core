@@ -9,11 +9,14 @@ namespace Sample.Common.Dto
         [DisplayName("định danh tài khoản")]
         public Guid AccountId { get; set; }
 
-        [DisplayName("mã số")]
-        public string Code { get; set; }
-
         [DisplayName("tên gọi")]
         public string Name { get; set; }
+
+        [DisplayName("e-mail")]
+        public string Email { get; set; }
+
+        [DisplayName("tên đăng nhập")]
+        public string Username { get; set; }
 
         [DisplayName("link ảnh đại diện")]
         public string AvatarLink { get; set; }
