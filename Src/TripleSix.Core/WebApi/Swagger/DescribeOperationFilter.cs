@@ -26,6 +26,8 @@ namespace TripleSix.Core.WebApi.Swagger
 
             foreach (var parameterDescription in context.ApiDescription.ParameterDescriptions)
             {
+                if (parameterDescription.Type is null) continue;
+
                 var parameterLocation = parameterDescription.Source.DisplayName;
                 if (parameterLocation == "ModelBinding")
                 {

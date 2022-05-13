@@ -175,7 +175,8 @@ namespace TripleSix.Core.Helpers
                     entityName = metadata.EntityName;
                     if (!entityName.EndsWith("Entity")) entityName += "Entity";
                 }
-                else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
+                else if (propertyInfo.ReflectedType is not null && propertyInfo.ReflectedType.DeclaringType is not null
+                    && propertyInfo.ReflectedType.DeclaringType.IsAssignableTo<IAdminDto>())
                 {
                     entityName = propertyInfo.ReflectedType.DeclaringType.Name
                         .Replace("AdminDto", string.Empty);

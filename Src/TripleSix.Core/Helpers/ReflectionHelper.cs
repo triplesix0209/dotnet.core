@@ -86,7 +86,14 @@ namespace TripleSix.Core.Helpers
                 return list;
             }
 
-            return Activator.CreateInstance(type);
+            try
+            {
+                return Activator.CreateInstance(type);
+            }
+            catch (MissingMethodException)
+            {
+                return null;
+            }
         }
     }
 }
