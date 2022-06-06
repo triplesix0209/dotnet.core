@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
 
     <PackageId>TripleSix.Core</PackageId>
-    <Version>5.0.49</Version>
+    <Version>5.0.50</Version>
     <Authors>triplesix0209@gmail.com</Authors>
   </PropertyGroup>
 

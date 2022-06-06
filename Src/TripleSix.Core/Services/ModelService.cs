@@ -477,7 +477,7 @@ namespace TripleSix.Core.Services
 
         public async Task<TEntity[]> GetListByFilter(IIdentity identity, IFilterDto filter, bool includeDeleted = true)
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             if (!includeDeleted)
                 query = query.WhereNotDeleted();
 
@@ -487,7 +487,7 @@ namespace TripleSix.Core.Services
         public async Task<TResult[]> GetListByFilter<TResult>(IIdentity identity, IFilterDto filter, bool includeDeleted = true)
             where TResult : class
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             if (!includeDeleted)
                 query = query.WhereNotDeleted();
 
@@ -497,7 +497,7 @@ namespace TripleSix.Core.Services
         public async Task<TResult[]> GetListByFilterWithModel<TResult>(IIdentity identity, IFilterDto filter)
             where TResult : class, IDto
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             var entities = await query.ToArrayAsync<TEntity>(Mapper);
             return EntityToModel<TResult>(identity, entities);
         }
@@ -616,7 +616,7 @@ namespace TripleSix.Core.Services
         public async Task<IPaging<TResult>> GetPageByFilterWithModel<TResult>(IIdentity identity, IPagingFilterDto filter)
             where TResult : class, IDto
         {
-            var query = await Repo.BuildQueryOfFilter(filter, filter.GetType());
+            var query = await Repo.BuildQueryOfFilter(identity, filter, filter.GetType());
             var data = await query.ToPagingAsync<TEntity>(Mapper, filter.Page, filter.Size);
             return new Paging<TResult>
             {
