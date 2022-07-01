@@ -385,33 +385,32 @@ namespace TripleSix.Core.Helpers
             switch (filter.Operator)
             {
                 case FilterParameterDatetimeOperators.Equal:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) == filter.Value[0]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) == DateTimeHelper.ParseEpochTimestamp(filter.Value[0]));
                     break;
                 case FilterParameterDatetimeOperators.Begin:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) >= filter.Value[0]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) >= DateTimeHelper.ParseEpochTimestamp(filter.Value[0]));
                     break;
                 case FilterParameterDatetimeOperators.End:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) <= filter.Value[0]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) <= DateTimeHelper.ParseEpochTimestamp(filter.Value[0]));
                     break;
                 case FilterParameterDatetimeOperators.Between:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) >= filter.Value[0]
-                        && EF.Property<DateTime>(x, fieldName) <= filter.Value[1]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) >= DateTimeHelper.ParseEpochTimestamp(filter.Value[0])
+                        && EF.Property<DateTime>(x, fieldName) <= DateTimeHelper.ParseEpochTimestamp(filter.Value[1]));
                     break;
                 case FilterParameterDatetimeOperators.IsNull:
                     query = query.Where(x => EF.Property<string>(x, fieldName) == null);
                     break;
                 case FilterParameterDatetimeOperators.NotEqual:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) != filter.Value[0]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) != DateTimeHelper.ParseEpochTimestamp(filter.Value[0]));
                     break;
                 case FilterParameterDatetimeOperators.NotBegin:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) < filter.Value[0]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) < DateTimeHelper.ParseEpochTimestamp(filter.Value[0]));
                     break;
                 case FilterParameterDatetimeOperators.NotEnd:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) > filter.Value[0]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) > DateTimeHelper.ParseEpochTimestamp(filter.Value[0]));
                     break;
                 case FilterParameterDatetimeOperators.NotBetween:
-                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) < filter.Value[0]
-                        || EF.Property<DateTime>(x, fieldName) > filter.Value[1]);
+                    query = query.Where(x => EF.Property<DateTime>(x, fieldName) < DateTimeHelper.ParseEpochTimestamp(filter.Value[0]) || EF.Property<DateTime>(x, fieldName) > DateTimeHelper.ParseEpochTimestamp(filter.Value[1]));
                     break;
                 case FilterParameterDatetimeOperators.NotNull:
                     query = query.Where(x => EF.Property<string>(x, fieldName) != null);

@@ -1,6 +1,5 @@
 ﻿#pragma warning disable SA1201 // Elements should appear in the correct order
 
-using System;
 using System.ComponentModel;
 using TripleSix.Core.Attributes;
 
@@ -9,7 +8,7 @@ namespace TripleSix.Core.Dto
     public class FilterParameterDatetime : IFilterParameter
     {
         [DisplayName("[parameter-display-name]")]
-        public DateTime[] Value { get; set; }
+        public long[] Value { get; set; }
 
         [DisplayName("loại lọc của [parameter-name]")]
         [EnumValidate]
