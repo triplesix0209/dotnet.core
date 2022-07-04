@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <PackageId>TripleSix.Core</PackageId>
+    <Version>6.0.0</Version>
+    <Authors>triplesix0209@gmail.com</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>dist</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+</Project>
