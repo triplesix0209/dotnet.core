@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sample.Domain.Entities;
 
 namespace Sample.Infrastructure.Persistences
 {

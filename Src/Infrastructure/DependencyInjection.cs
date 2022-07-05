@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Infrastructure.Persistences;
-using TripleSix.Core.Interfaces.DbContext;
 
 namespace Sample.Infrastructure
 {

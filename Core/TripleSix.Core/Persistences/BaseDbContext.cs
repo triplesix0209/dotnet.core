@@ -4,7 +4,7 @@ using TripleSix.Core.Interfaces.DbContext;
 
 namespace TripleSix.Core.Persistences
 {
-    public abstract class BaseDbContext : DbContext, IApplicationDbContext
+    public abstract class BaseDbContext : DbContext, IDbContext
     {
         private readonly Assembly _assembly;
 
@@ -12,7 +12,6 @@ namespace TripleSix.Core.Persistences
         /// Khởi tạo đối tượng BaseDbContext.
         /// </summary>
         /// <param name="assembly">Assembly được sử dụng để nạp config của các Entity.</param>
-        /// <param name="configuration">Configuration (appsettings) chứa connection string đến database.</param>
         protected BaseDbContext(Assembly assembly)
             : base()
         {

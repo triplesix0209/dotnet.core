@@ -12,6 +12,10 @@
   <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
+      
+  <ItemGroup>
+    <Content Include="Config\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\TripleSix.Core\TripleSix.Core.csproj" />
