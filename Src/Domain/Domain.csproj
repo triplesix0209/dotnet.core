@@ -1,21 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>Sample.Domain</RootNamespace>
+    <AssemblyName>Sample.Domain</AssemblyName>
+    
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
-    <PackageId>TripleSix.Core</PackageId>
-    <Version>6.0.0</Version>
-    <Authors>triplesix0209@gmail.com</Authors>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputPath>dist</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\TripleSix.Core\TripleSix.Core.csproj" />
+  </ItemGroup>
+  
 </Project>
