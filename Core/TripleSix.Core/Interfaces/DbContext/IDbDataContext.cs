@@ -1,9 +1,9 @@
 ﻿namespace TripleSix.Core.Interfaces.DbContext
 {
     /// <summary>
-    /// Interface DbContext.
+    /// Interface DbContext xử lý dữ liệu.
     /// </summary>
-    public interface IDbContext
+    public interface IDbDataContext
     {
         /// <summary>
         /// Ghi nhận các thay đổi trên DbContext xuống database.

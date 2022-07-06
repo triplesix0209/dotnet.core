@@ -5,7 +5,7 @@ using TripleSix.Core.Persistences;
 
 namespace Sample.Infrastructure.Persistences
 {
-    public partial class ApplicationDbContext : BaseDbContext, IApplicationDbContext
+    public class ApplicationDbContext : BaseDbContext, IApplicationDbContext
     {
         private IConfiguration _configuration;
 
@@ -14,6 +14,8 @@ namespace Sample.Infrastructure.Persistences
         {
             _configuration = configuration;
         }
+
+        public DbSet<Account>? Account { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {

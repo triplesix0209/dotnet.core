@@ -1,2 +1,2 @@
 ﻿global using Sample.Domain.Entities;
-global using Sample.Domain.Interfaces;
+global using Sample.Domain.Persistences;

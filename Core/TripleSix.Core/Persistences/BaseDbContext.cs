@@ -4,7 +4,10 @@ using TripleSix.Core.Interfaces.DbContext;
 
 namespace TripleSix.Core.Persistences
 {
-    public abstract class BaseDbContext : DbContext, IDbContext
+    /// <summary>
+    /// DbContext cơ bản.
+    /// </summary>
+    public abstract class BaseDbContext : DbContext, IDbDataContext, IDbMigrationContext
     {
         private readonly Assembly _assembly;
 
@@ -16,6 +19,12 @@ namespace TripleSix.Core.Persistences
             : base()
         {
             _assembly = assembly;
+        }
+
+        /// <inheritdoc/>
+        public Task MigrateAsync(CancellationToken cancellationToken = default)
+        {
+            return Database.MigrateAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

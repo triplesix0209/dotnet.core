@@ -17,5 +17,10 @@
     <ProjectReference Include="..\..\Core\TripleSix.Core\TripleSix.Core.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mappers\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
   
 </Project>

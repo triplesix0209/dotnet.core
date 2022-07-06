@@ -1,2 +1,3 @@
 ﻿global using System.ComponentModel.DataAnnotations;
+global using Sample.Domain.Entities;
 global using TripleSix.Core.Persistences;
