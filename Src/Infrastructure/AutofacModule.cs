@@ -8,22 +8,21 @@ namespace Sample.Infrastructure
 {
     public class AutofacModule : BaseModule
     {
-        private readonly Assembly _assembly;
+        private readonly Assembly _migrationAssembly;
 
-        public AutofacModule(IConfiguration configuration, Assembly assembly)
+        public AutofacModule(IConfiguration configuration, Assembly migrationAssembly)
             : base(configuration)
         {
-            _assembly = assembly;
+            _migrationAssembly = migrationAssembly;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
 
-            builder.Register(c => new ApplicationDbContext(_assembly, Configuration))
-                .PropertiesAutowired()
-                .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
+            builder.Register(c => new ApplicationDbContext(_migrationAssembly, Configuration))
+                .InstancePerLifetimeScope()
+                .AsImplementedInterfaces();
         }
     }
 }

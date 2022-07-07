@@ -1,13 +1,15 @@
+using TripleSix.Core.WebApi.Controllers;
+
 namespace Sample.WebApi.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
+        public IAccountService AccountService { get; set; }
+
         [HttpGet]
-        public async Task<string> Test()
+        public Task<string> Test()
         {
-            return "Hello World";
+            return AccountService.Test();
         }
     }
 }

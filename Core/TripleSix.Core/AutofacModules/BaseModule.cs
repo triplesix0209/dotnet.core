@@ -10,6 +10,9 @@ namespace TripleSix.Core.AutofacModules
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Configuration từ appsetting.
+        /// </summary>
         protected IConfiguration Configuration { get; }
     }
 }

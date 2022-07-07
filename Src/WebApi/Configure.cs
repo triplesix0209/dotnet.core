@@ -2,6 +2,7 @@
 using Autofac;
 using Microsoft.OpenApi.Models;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.AutofacModules;
 
 namespace Sample.WebApi
 {
@@ -9,9 +10,12 @@ namespace Sample.WebApi
     {
         public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            builder.RegisterAllController(assembly);
             builder.RegisterModule(new Domain.AutofacModule(configuration));
             builder.RegisterModule(new Application.AutofacModule(configuration));
-            builder.RegisterModule(new Infrastructure.AutofacModule(configuration, Assembly.GetExecutingAssembly()));
+            builder.RegisterModule(new Infrastructure.AutofacModule(configuration, assembly));
         }
 
         public static void ConfigureService(this IServiceCollection services, IConfiguration configuration)
