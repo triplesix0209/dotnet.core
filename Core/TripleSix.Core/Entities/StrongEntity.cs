@@ -1,19 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TripleSix.Core.Interfaces.Entity;
+using TripleSix.Core.Entities.Interfaces;
 
-namespace TripleSix.Core.Persistences
+namespace TripleSix.Core.Entities
 {
     /// <summary>
     /// Entity độc lập.
     /// </summary>
     /// <typeparam name="TEntity">Kiểu Entity, khai báo lại để sử dụng cho IEntityTypeConfiguration.</typeparam>
-    public abstract class StrongEntity<TEntity> : BaseEntity<TEntity>,
-        IIdentifiableEntity,
-        ISoftDeletableEntity,
-        IAuditableEntity
-        where TEntity : class, IIdentifiableEntity, ISoftDeletableEntity, IAuditableEntity
+    public abstract class StrongEntity<TEntity> : BaseEntity<TEntity>, IStrongEntity
+        where TEntity : class, IStrongEntity
     {
         /// <inheritdoc/>
         [Key]

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TripleSix.Core.Interfaces.Entity;
+using TripleSix.Core.Entities.Interfaces;
 
-namespace TripleSix.Core.Persistences
+namespace TripleSix.Core.Entities
 {
     /// <summary>
     /// Entity cơ bản.

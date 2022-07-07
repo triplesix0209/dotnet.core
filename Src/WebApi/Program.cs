@@ -1,9 +1,10 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Sample.Infrastructure.Persistences;
-using TripleSix.Core.Interfaces.DbContext;
+using Sample.WebApi;
+using TripleSix.Core.Appsettings;
+using TripleSix.Core.Persistences.Interfaces;
 
+// load configuration
 var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var configuration = new ConfigurationBuilder()
    .AddJsonFile(Path.Combine("Config", "appsettings.json"), true)
@@ -12,30 +13,26 @@ var configuration = new ConfigurationBuilder()
    .AddCommandLine(args)
    .Build();
 
+// build host
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureAppConfiguration((host, builder) => builder.AddConfiguration(configuration));
-
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
-{
-    builder.Register(c => new ApplicationDbContext(Assembly.GetExecutingAssembly(), configuration))
-        .AsImplementedInterfaces()
-        .InstancePerLifetimeScope();
-});
+builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
+builder.Services.ConfigureService(configuration);
 
-var services = builder.Services;
-services.AddMvc().AddControllersAsServices();
-
+// build app
 var app = builder.Build();
-app.UseRouting();
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+app.ConfigureApp(configuration);
 
+// startup action
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<IDbMigrationContext>();
-    await db.MigrateAsync();
+    var migrationAppsetting = new MigrationAppsetting(configuration);
+    if (migrationAppsetting.ApplyOnStartup)
+    {
+        var db = scope.ServiceProvider.GetRequiredService<IDbMigrationContext>();
+        await db.MigrateAsync();
+    }
 }
 
 app.Run();

@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Interfaces.Entity
+﻿namespace TripleSix.Core.Entities.Interfaces
 {
     /// <summary>
     /// Entity có thể xem thời điểm được tạo, sửa cuối và ai là người thao tác.

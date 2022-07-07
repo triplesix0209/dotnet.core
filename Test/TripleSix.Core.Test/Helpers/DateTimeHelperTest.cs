@@ -3,7 +3,7 @@
 namespace TripleSix.Core.Test.Helpers
 {
     [TestClass]
-    public class DateTimeTest
+    public class DateTimeHelperTest
     {
         [TestMethod]
         public void ToEpochTimestamp()

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using TripleSix.Core.Interfaces.DbContext;
+using TripleSix.Core.Persistences.Interfaces;
 
 namespace TripleSix.Core.Persistences
 {

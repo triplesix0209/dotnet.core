@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TripleSix.Core.Entities;
 
 namespace Sample.Domain.Entities
 {

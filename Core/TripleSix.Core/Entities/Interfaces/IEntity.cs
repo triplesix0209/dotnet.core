@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Interfaces.Entity
+﻿namespace TripleSix.Core.Entities.Interfaces
 {
     /// <summary>
     /// Entity.

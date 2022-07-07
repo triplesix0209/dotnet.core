@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Interfaces.DbContext
+﻿namespace TripleSix.Core.Persistences.Interfaces
 {
     /// <summary>
     /// Interface DbContext xử lý dữ liệu.

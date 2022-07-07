@@ -1,6 +1,8 @@
-﻿namespace Sample.Domain.Services
+﻿using TripleSix.Core.Services.Interfaces;
+
+namespace Sample.Domain.Services
 {
-    public interface IAccountService
+    public interface IAccountService : IService
     {
     }
 }
