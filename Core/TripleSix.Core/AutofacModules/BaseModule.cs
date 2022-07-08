@@ -11,7 +11,7 @@ namespace TripleSix.Core.AutofacModules
         }
 
         /// <summary>
-        /// Configuration từ appsetting.
+        /// Represents a set of key/value application configuration properties.
         /// </summary>
         protected IConfiguration Configuration { get; }
     }

@@ -2,8 +2,7 @@
 
 namespace Sample.Domain.Services
 {
-    public interface IAccountService : IService
+    public interface IAccountService : IService<Account>
     {
-        Task<string> Test();
     }
 }

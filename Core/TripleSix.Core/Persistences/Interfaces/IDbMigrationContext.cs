@@ -6,10 +6,12 @@
     public interface IDbMigrationContext
     {
         /// <summary>
-        /// Chạy các migrations cho database.
+        /// Apply all migrations.
         /// </summary>
-        /// <param name="cancellationToken">Token hỗ việc việc ngắt tiến trình xử lý.</param>
-        /// <returns>Task xử lý.</returns>
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// A task that represents the asynchronous migrate operation.
+        /// </returns>
         Task MigrateAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using TripleSix.Core.Entities.Interfaces;
 using TripleSix.Core.Persistences.Interfaces;
 
 namespace TripleSix.Core.Persistences
@@ -25,6 +26,37 @@ namespace TripleSix.Core.Persistences
         public Task MigrateAsync(CancellationToken cancellationToken = default)
         {
             return Database.MigrateAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var now = DateTime.UtcNow;
+
+            var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+            foreach (var entity in addedEntities)
+            {
+                var createDateTime = entity.Properties
+                    .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreateDateTime));
+                if (createDateTime != null && createDateTime.CurrentValue == null)
+                    createDateTime.CurrentValue = now;
+
+                var updateDateTime = entity.Properties
+                    .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateDateTime));
+                if (updateDateTime != null && updateDateTime.CurrentValue == null)
+                    updateDateTime.CurrentValue = now;
+            }
+
+            var modifiedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
+            foreach (var entity in modifiedEntities)
+            {
+                var updateDateTime = entity.Properties
+                    .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateDateTime));
+                if (updateDateTime != null && updateDateTime.CurrentValue == null)
+                    updateDateTime.CurrentValue = now;
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -10,7 +10,7 @@ namespace TripleSix.Core.WebApi.Controllers
     public abstract class BaseController : ControllerBase
     {
         /// <summary>
-        /// Configuration từ appsetting.
+        /// Represents a set of key/value application configuration properties.
         /// </summary>
         public IConfiguration Configuration { get; set; }
 

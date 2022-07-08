@@ -1,10 +1,9 @@
-﻿namespace Sample.Application.Services
+﻿using Sample.Domain.Entities;
+using TripleSix.Core.Services;
+
+namespace Sample.Application.Services
 {
-    public class AccountService : IAccountService
+    public class AccountService : BaseService<Account>, IAccountService
     {
-        public async Task<string> Test()
-        {
-            return "Hello World";
-        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Builder;
+using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
@@ -12,7 +14,13 @@ namespace TripleSix.Core.AutofacModules
 {
     public static class Extension
     {
-        public static void RegisterAllMapper(this ContainerBuilder builder, Assembly assembly)
+        /// <summary>
+        /// Đăng ký các mapper dưới dạng InstancePerLifetimeScope với IMapper.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các mapper để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAllMapper(this ContainerBuilder builder, Assembly assembly)
         {
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -43,7 +51,7 @@ namespace TripleSix.Core.AutofacModules
                 .SingleInstance()
                 .AsSelf();
 
-            builder.Register(c =>
+            return builder.Register(c =>
             {
                 var context = c.Resolve<IComponentContext>();
                 var config = context.Resolve<MapperConfiguration>();
@@ -53,20 +61,33 @@ namespace TripleSix.Core.AutofacModules
                 .As<IMapper>();
         }
 
-        public static void RegisterAllRepository(this ContainerBuilder builder, Assembly assembly)
+        /// <summary>
+        /// Đăng ký các repository dưới dạng InstancePerLifetimeScope với class khai báo.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các repository để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllRepository(this ContainerBuilder builder, Assembly assembly)
         {
-            builder.RegisterAssemblyTypes(assembly)
+            return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IRepository>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces()
+                .AsSelf();
         }
 
-        public static void RegisterAllService(this ContainerBuilder builder, Assembly assembly)
+        /// <summary>
+        /// Đăng ký các service dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các service để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllService(this ContainerBuilder builder, Assembly assembly)
         {
-            builder.RegisterAssemblyTypes(assembly)
+            return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IService>())
@@ -75,13 +96,20 @@ namespace TripleSix.Core.AutofacModules
                 .AsImplementedInterfaces();
         }
 
-        public static void RegisterAllController(this ContainerBuilder builder, Assembly assembly)
+        /// <summary>
+        /// Đăng ký các controller dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các controller để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllController(this ContainerBuilder builder, Assembly assembly)
         {
-            builder.RegisterAssemblyTypes(assembly)
+            return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<BaseController>())
-                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope();
         }
     }
 }

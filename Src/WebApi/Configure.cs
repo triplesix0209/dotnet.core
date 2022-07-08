@@ -12,14 +12,16 @@ namespace Sample.WebApi
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            builder.RegisterAllController(assembly);
             builder.RegisterModule(new Domain.AutofacModule(configuration));
             builder.RegisterModule(new Application.AutofacModule(configuration));
             builder.RegisterModule(new Infrastructure.AutofacModule(configuration, assembly));
+
+            builder.RegisterAllController(assembly);
         }
 
         public static void ConfigureService(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpContextAccessor();
             services.AddMvc().AddControllersAsServices();
 
             // config swagger
