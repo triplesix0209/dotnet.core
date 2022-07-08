@@ -8,7 +8,8 @@ namespace TripleSix.Core.Persistences
     /// <summary>
     /// DbContext cơ bản.
     /// </summary>
-    public abstract class BaseDbContext : DbContext, IDbDataContext, IDbMigrationContext
+    public abstract class BaseDbContext : DbContext,
+        IDbDataContext, IDbMigrationContext
     {
         private readonly Assembly _assembly;
 

@@ -8,6 +8,6 @@
         /// <summary>
         /// Mã số.
         /// </summary>
-        string Code { get; set; }
+        string? Code { get; set; }
     }
 }

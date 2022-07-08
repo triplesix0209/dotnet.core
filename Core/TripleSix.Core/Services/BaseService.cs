@@ -8,7 +8,8 @@ namespace TripleSix.Core.Services
     /// <summary>
     /// Service cơ bản.
     /// </summary>
-    public abstract class BaseService : IService
+    public abstract class BaseService
+        : IService
     {
         /// <summary>
         /// Represents a set of key/value application configuration properties.

@@ -4,7 +4,7 @@
     /// Entity độc lập.
     /// </summary>
     public interface IStrongEntity
-        : IIdentifiableEntity, ISoftDeletableEntity, IAuditableEntity
+        : IIdentifiableEntity, ISoftDeletableEntity, IAuditableEntity, IHasCodeEntity
     {
     }
 }

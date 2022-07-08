@@ -9,28 +9,32 @@ namespace TripleSix.Core.Entities
     /// Entity độc lập.
     /// </summary>
     /// <typeparam name="TEntity">Kiểu Entity, khai báo lại để sử dụng cho IEntityTypeConfiguration.</typeparam>
-    public abstract class StrongEntity<TEntity> : BaseEntity<TEntity>, IStrongEntity
+    public abstract class StrongEntity<TEntity> : BaseEntity<TEntity>,
+        IStrongEntity
         where TEntity : class, IStrongEntity
     {
         /// <inheritdoc/>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public virtual Guid Id { get; set; }
 
         /// <inheritdoc/>
-        public bool IsDeleted { get; set; }
+        public virtual bool IsDeleted { get; set; }
 
         /// <inheritdoc/>
-        public DateTime? CreateDateTime { get; set; }
+        public virtual DateTime? CreateDateTime { get; set; }
 
         /// <inheritdoc/>
-        public Guid? CreatorId { get; set; }
+        public virtual Guid? CreatorId { get; set; }
 
         /// <inheritdoc/>
-        public DateTime? UpdateDateTime { get; set; }
+        public virtual DateTime? UpdateDateTime { get; set; }
 
         /// <inheritdoc/>
-        public Guid? UpdatorId { get; set; }
+        public virtual Guid? UpdatorId { get; set; }
+
+        /// <inheritdoc/>
+        public virtual string? Code { get; set; }
 
         /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<TEntity> builder)
