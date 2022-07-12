@@ -1,7 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using TripleSix.Core.Jsons;
 
-namespace TripleSix.Core.Jsons
+namespace TripleSix.Core.Helpers
 {
+    /// <summary>
+    /// Helper xử lý json.
+    /// </summary>
     public static class JsonHelper
     {
         /// <summary>
@@ -20,6 +25,16 @@ namespace TripleSix.Core.Jsons
         public static string SerializeObject(object value)
         {
             return JsonConvert.SerializeObject(value, SerializerSettings);
+        }
+
+        /// <summary>
+        /// Thêm bộ xử lý json cho IDto.
+        /// </summary>
+        /// <param name="newtonsoftJsonOptions">Newtonsoft json options.</param>
+        public static void AddDtoConverter(this MvcNewtonsoftJsonOptions newtonsoftJsonOptions)
+        {
+            newtonsoftJsonOptions.SerializerSettings.ContractResolver = new BaseContractResolver();
+            newtonsoftJsonOptions.SerializerSettings.Converters.Add(new DtoConverter());
         }
     }
 }

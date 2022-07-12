@@ -1,29 +1,25 @@
-﻿using TripleSix.Core.Types;
-
-namespace Sample.WebApi.Controllers.Commons
+﻿namespace Sample.WebApi.Controllers.Commons
 {
     public class AccountController : CommonController
     {
         public IAccountService? AccountService { get; set; }
 
         [HttpGet]
-        public async Task<IPaging<AccountDto>> GetPage(int page = 1, int size = 10)
+        public Task<IPaging<AccountDto>> GetPage(int page = 1, int size = 10)
         {
-            var result = await AccountService!.GetPage<AccountDto>(page: page, size: size);
-            return result;
+            return AccountService!.GetPage<AccountDto>(page: page, size: size);
         }
 
         [HttpPost]
-        public async Task<AccountDto> Create([FromBody] AccountDto input)
+        public Task<AccountDto> Create([FromBody] AccountDto input)
         {
-            var result = await AccountService!.CreateWithMapper<AccountDto>(input);
-            return result;
+            return AccountService!.CreateWithMapper<AccountDto>(input);
         }
 
         [HttpPut]
-        public async Task Update(Guid id, [FromBody] AccountDto input)
+        public Task Update(Guid id, [FromBody] AccountDto input)
         {
-            await AccountService!.UpdateWithMapper(id, false, input);
+            return AccountService!.UpdateWithMapper(id, false, input);
         }
     }
 }

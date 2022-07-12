@@ -1,27 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Jsons
 {
     public class DtoConverter : JsonConverter<IDto>
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializer _jsonSerializer;
 
-        public DtoConverter(IHttpContextAccessor httpContextAccessor)
+        public DtoConverter()
         {
-            _httpContextAccessor = httpContextAccessor;
-
             _jsonSerializer = JsonSerializer.Create(JsonHelper.SerializerSettings);
             _jsonSerializer.ContractResolver = new BaseContractResolver();
         }
 
-        public DtoConverter(IHttpContextAccessor httpContextAccessor, BaseContractResolver contractResolver)
+        public DtoConverter(IContractResolver contractResolver)
         {
-            _httpContextAccessor = httpContextAccessor;
-
             _jsonSerializer = JsonSerializer.Create(JsonHelper.SerializerSettings);
             _jsonSerializer.ContractResolver = contractResolver;
         }
@@ -45,8 +41,6 @@ namespace TripleSix.Core.Jsons
                 (result as IDataDto)?.SetPropertyChanged(p.Name, true);
             }
 
-            if (_httpContextAccessor.HttpContext != null)
-                result.SetHttpContext(_httpContextAccessor.HttpContext);
             return result;
         }
 
