@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Entities.Interfaces
+﻿namespace TripleSix.Core.Entities
 {
     /// <summary>
     /// Entity có thể soft delete (chỉ đánh dấu đã xóa, chứ không thật sự bị xóa mất khỏi database).

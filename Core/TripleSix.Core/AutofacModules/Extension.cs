@@ -6,9 +6,9 @@ using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
 using TripleSix.Core.Mappers;
-using TripleSix.Core.Repositories.Interfaces;
-using TripleSix.Core.Services.Interfaces;
-using TripleSix.Core.WebApi.Controllers;
+using TripleSix.Core.Repositories;
+using TripleSix.Core.Services;
+using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.AutofacModules
 {
@@ -46,6 +46,7 @@ namespace TripleSix.Core.AutofacModules
                     return 0;
                 });
 
+                config.AddProfile(new DefaultMapper(assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));
             }))
                 .SingleInstance()

@@ -2,7 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Sample.WebApi;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.Persistences.Interfaces;
+using TripleSix.Core.Persistences;
 
 // load configuration
 var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

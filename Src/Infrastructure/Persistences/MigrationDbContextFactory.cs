@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Sample.Domain.Persistences;
 
 namespace Sample.Infrastructure.Persistences
 {

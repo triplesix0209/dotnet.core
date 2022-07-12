@@ -19,12 +19,18 @@ namespace Sample.Infrastructure.Migrations
                     CreateDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     UpdateDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UpdatorId = table.Column<Guid>(type: "uuid", nullable: true)
+                    UpdatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Code = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Account", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Account_Code",
+                table: "Account",
+                column: "Code");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Account_CreateDateTime",

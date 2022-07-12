@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Services.Interfaces
+﻿namespace TripleSix.Core.Services
 {
     /// <summary>
     /// Service cơ bản.

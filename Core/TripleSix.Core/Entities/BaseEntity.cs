@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TripleSix.Core.Entities.Interfaces;
 
 namespace TripleSix.Core.Entities
 {

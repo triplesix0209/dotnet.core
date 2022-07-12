@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TripleSix.Core.Entities.Interfaces;
 
 namespace TripleSix.Core.Entities
 {
@@ -44,6 +43,7 @@ namespace TripleSix.Core.Entities
             builder.HasIndex(x => x.CreatorId);
             builder.HasIndex(x => x.UpdateDateTime);
             builder.HasIndex(x => x.UpdatorId);
+            builder.HasIndex(x => x.Code);
         }
     }
 }

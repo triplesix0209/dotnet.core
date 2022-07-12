@@ -1,8 +1,6 @@
-﻿using TripleSix.Core.Services.Interfaces;
-
-namespace Sample.Domain.Services
+﻿namespace Sample.Domain.Services
 {
-    public interface IAccountService : IService<Account>
+    public interface IAccountService : IStrongService<Account>
     {
     }
 }

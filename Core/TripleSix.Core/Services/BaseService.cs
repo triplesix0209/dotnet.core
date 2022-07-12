@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using TripleSix.Core.Services.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace TripleSix.Core.Services
 {
@@ -12,18 +9,8 @@ namespace TripleSix.Core.Services
         : IService
     {
         /// <summary>
-        /// Represents a set of key/value application configuration properties.
-        /// </summary>
-        public IConfiguration Configuration { get; set; }
-
-        /// <summary>
-        /// Automapper.
-        /// </summary>
-        public IMapper Mapper { get; set; }
-
-        /// <summary>
         /// Provides access to the current HttpContext.
         /// </summary>
-        public IHttpContextAccessor HttpContextAccessor { get; set; }
+        public IHttpContextAccessor? HttpContextAccessor { get; set; }
     }
 }

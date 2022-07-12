@@ -31,6 +31,9 @@ namespace Sample.Infrastructure.Migrations
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("CreateDateTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -51,6 +54,8 @@ namespace Sample.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code");
 
                     b.HasIndex("CreateDateTime");
 

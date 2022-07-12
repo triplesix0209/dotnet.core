@@ -12,7 +12,7 @@ using Sample.Infrastructure.Persistences;
 namespace Sample.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220706094530_Init")]
+    [Migration("20220712022237_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace Sample.Infrastructure.Migrations
 
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("CreateDateTime")
                         .HasColumnType("timestamp with time zone");
@@ -53,6 +56,8 @@ namespace Sample.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code");
 
                     b.HasIndex("CreateDateTime");
 

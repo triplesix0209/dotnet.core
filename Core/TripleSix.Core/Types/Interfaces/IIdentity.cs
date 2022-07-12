@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace TripleSix.Core.Types.Interfaces
+namespace TripleSix.Core.Types
 {
     /// <summary>
     /// Định danh người thao tác.

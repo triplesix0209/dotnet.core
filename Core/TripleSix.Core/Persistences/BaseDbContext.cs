@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using TripleSix.Core.Entities.Interfaces;
-using TripleSix.Core.Persistences.Interfaces;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Persistences
 {

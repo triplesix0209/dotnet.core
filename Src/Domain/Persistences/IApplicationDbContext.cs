@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TripleSix.Core.Persistences.Interfaces;
+using TripleSix.Core.Persistences;
 
 namespace Sample.Domain.Persistences
 {

@@ -1,6 +1,6 @@
-﻿using TripleSix.Core.Entities.Interfaces;
+﻿using TripleSix.Core.Entities;
 
-namespace TripleSix.Core.Services.Interfaces
+namespace TripleSix.Core.Services
 {
     /// <summary>
     /// Service xử lý strong entity.
@@ -12,9 +12,10 @@ namespace TripleSix.Core.Services.Interfaces
         /// <summary>
         /// Hàm phát sinh entity.
         /// </summary>
-        /// <param name="entity">Entity sử dụng.</param>
+        /// <param name="entity">Entity đính kèm trong quá trình phát sinh mã.</param>
+        /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Mã số được phát sinh.</returns>
-        Task<string?> GenerateCode(TEntity entity);
+        Task<string?> GenerateCode(TEntity? entity = default, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Khởi tạo entity.
@@ -22,8 +23,8 @@ namespace TripleSix.Core.Services.Interfaces
         /// <param name="entity">Entity sử dụng để ghi nhận.</param>
         /// <param name="generateCode">Có phát sinh code hay không? Nếu entity đã có code thì sẽ không phát sinh.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
-        /// <returns>Task xử lý.</returns>
-        Task CreateAsync(TEntity entity, bool generateCode, CancellationToken cancellationToken = default);
+        /// <returns>Entity đã được tạo.</returns>
+        Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Đánh dấu xóa entity.
@@ -31,7 +32,7 @@ namespace TripleSix.Core.Services.Interfaces
         /// <param name="entity">Entity sẽ bị đánh dấu xóa.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Task xử lý.</returns>
-        Task SoftDeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
+        Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Khôi phục các entity bị soft delete.
@@ -39,6 +40,62 @@ namespace TripleSix.Core.Services.Interfaces
         /// <param name="entity">Entity sẽ bị đánh dấu xóa.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Task xử lý.</returns>
-        Task RestoreAsync(TEntity entity, CancellationToken cancellationToken = default);
+        Task Restore(TEntity entity, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Kiểm tra có bất kỳ entity.
+        /// </summary>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param
+        /// <returns><c>True</c> nếu có bất kỳ entity nào tồn tại, ngược lại là <c>False</c>.</returns>
+        Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Đếm số lượng tất cả các entity.
+        /// </summary>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param
+        /// <returns>Số lượng entity.</returns>
+        Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lấy entity đầu tiên theo Id.
+        /// </summary>
+        /// <param name="id">Id tìm kiếm.</param>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param>
+        /// <returns>Entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
+        Task<TEntity?> GetFirstOrDefault(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lấy entity đầu tiên theo Id và convert với Mapper.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="id">Id tìm kiếm.</param>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param>
+        /// <returns>Dữ liệu của entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
+        Task<TResult?> GetFirstOrDefault<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+            where TResult : class;
+
+        /// <summary>
+        /// Lấy entity đầu tiên theo Id.
+        /// </summary>
+        /// <param name="id">Id tìm kiếm.</param>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param>
+        /// <returns>Entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
+        Task<TEntity> GetFirst(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lấy entity đầu tiên theo Id và convert với Mapper.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="id">Id tìm kiếm.</param>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param>
+        /// <returns>Dữ liệu entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
+        Task<TResult> GetFirst<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+            where TResult : class;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Microsoft.OpenApi.Models;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
@@ -42,6 +44,10 @@ namespace Sample.WebApi
 
         public static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
+            var autofacContainer = app.Services.GetAutofacRoot();
+            if (autofacContainer.IsRegistered<MapperConfiguration>())
+                autofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
+
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthorization();

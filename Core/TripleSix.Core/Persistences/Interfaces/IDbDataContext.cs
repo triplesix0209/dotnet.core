@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace TripleSix.Core.Persistences.Interfaces
+namespace TripleSix.Core.Persistences
 {
     /// <summary>
     /// Interface DbContext xử lý dữ liệu.

@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Repositories.Interfaces
+﻿namespace TripleSix.Core.Repositories
 {
     /// <summary>
     /// Repository cơ bản.

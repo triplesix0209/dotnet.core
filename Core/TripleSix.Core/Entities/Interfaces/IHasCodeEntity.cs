@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Entities.Interfaces
+﻿namespace TripleSix.Core.Entities
 {
     /// <summary>
     /// Entity có mã số phục vụ cho việc hiển thị.
