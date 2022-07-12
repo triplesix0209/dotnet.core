@@ -47,7 +47,7 @@ namespace TripleSix.Core.Services
         Task UpdateWithMapper(TEntity entity, IDataDto input, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Xóa vĩnh viễn entity.
+        /// Xóa bỏ entity.
         /// </summary>
         /// <param name="entity">Entity sẽ bị xóa.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>

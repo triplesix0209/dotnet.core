@@ -6,11 +6,22 @@
     public class EntityNotFoundException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EntityNotFoundException"/> class.
+        /// Khởi tạo <see cref="EntityNotFoundException"/>.
         /// </summary>
-        /// <param name="entityType">Type of entity.</param>
-        /// <param name="query">Queries against a specific data source.</param>
-        public EntityNotFoundException(Type entityType, IQueryable? query)
+        /// <param name="entityType">Loại entity.</param>
+        public EntityNotFoundException(Type entityType)
+            : base($"{entityType.Name} not found")
+        {
+            EntityType = entityType;
+            Query = null;
+        }
+
+        /// <summary>
+        /// Khởi tạo <see cref="EntityNotFoundException"/>.
+        /// </summary>
+        /// <param name="entityType">Loại entity.</param>
+        /// <param name="query">Câu query.</param>
+        public EntityNotFoundException(Type entityType, IQueryable query)
             : base($"{entityType.Name} not found")
         {
             EntityType = entityType;
@@ -23,7 +34,7 @@
         public Type EntityType { get; }
 
         /// <summary>
-        /// Câu quyery.
+        /// Câu query.
         /// </summary>
         public IQueryable? Query { get; }
     }

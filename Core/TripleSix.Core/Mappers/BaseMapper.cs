@@ -2,6 +2,7 @@
 using AutoMapper;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Mappers
 {
@@ -57,6 +58,30 @@ namespace TripleSix.Core.Mappers
         {
             var map = base.CreateMap(sourceType, entityType, memberList);
 
+            // xử lý khi chỉ map các property có thay đổi của Data DTO
+            if (sourceType.IsAssignableTo<IDataDto>())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    map.ForMember(property.Name, opt =>
+                    {
+                        opt.Condition((
+                            source,
+                            desc,
+                            sourceVal,
+                            descVal,
+                            context) =>
+                        {
+                            if (!context.Items.ContainsKey("mapPropertyChangedOnly")) return true;
+                            var mode = (string)context.Items["mapPropertyChangedOnly"];
+                            if (mode == null) return true;
+
+                            return mode.Trim() == "true" && ((IDataDto)source).IsPropertyChanged(property.Name);
+                        });
+                    });
+                }
+            }
+
             // bỏ qua các property reference
             var ignoreProperties = entityType
                 .GetProperties()
@@ -87,6 +112,32 @@ namespace TripleSix.Core.Mappers
             var map = base.CreateMap<TSource, TDestination>(memberList);
             var sourceType = typeof(TSource);
             var entityType = typeof(TDestination);
+
+            // xử lý khi chỉ map các property có thay đổi của Data DTO
+            if (sourceType.IsAssignableTo<IDataDto>())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    map.ForMember(property.Name, opt =>
+                    {
+                        opt.Condition((
+                            source,
+                            desc,
+                            sourceVal,
+                            descVal,
+                            context) =>
+                        {
+                            if (!context.Items.ContainsKey("mapPropertyChangedOnly")) return true;
+                            var mode = (string)context.Items["mapPropertyChangedOnly"];
+                            if (mode == null) return true;
+
+                            var sourceData = source as IDataDto;
+                            return mode.Trim() == "true" && sourceData != null
+                                && sourceData.IsPropertyChanged(property.Name);
+                        });
+                    });
+                }
+            }
 
             // bỏ qua các property reference
             var ignoreProperties = entityType

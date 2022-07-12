@@ -8,6 +8,22 @@ namespace TripleSix.Core.Helpers
     public static class ReflectionHelper
     {
         /// <summary>
+        /// Lấy danh sách type chỉ định và các type mà nó kế thừa.
+        /// </summary>
+        /// <param name="type">Type chỉ định.</param>
+        /// <returns>Danh sách type.</returns>
+        public static IEnumerable<Type> BaseTypesAndSelf(this Type? type)
+        {
+            while (type != null)
+            {
+                yield return type;
+
+                if (type.BaseType == null) break;
+                type = type.BaseType;
+            }
+        }
+
+        /// <summary>
         /// Kiểm tra một type có thể null hay không.
         /// </summary>
         /// <param name="type">Type cần kiểm tra.</param>
@@ -15,18 +31,6 @@ namespace TripleSix.Core.Helpers
         public static bool IsNullableType(this Type type)
         {
             return Nullable.GetUnderlyingType(type) != null || type.IsClass;
-        }
-
-        /// <summary>
-        /// Lấy chính xác type, nếu type có thể null thì trả về type gốc.
-        /// </summary>
-        /// <param name="type">Type cần xử lý.</param>
-        /// <returns>Type dữ liệu không null.</returns>
-        public static Type GetUnderlyingType(this Type type)
-        {
-            var result = Nullable.GetUnderlyingType(type);
-            if (result == null) return type;
-            return result;
         }
 
         /// <summary>
@@ -51,6 +55,18 @@ namespace TripleSix.Core.Helpers
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Lấy chính xác type, nếu type có thể null thì trả về type gốc.
+        /// </summary>
+        /// <param name="type">Type cần xử lý.</param>
+        /// <returns>Type dữ liệu không null.</returns>
+        public static Type GetUnderlyingType(this Type type)
+        {
+            var result = Nullable.GetUnderlyingType(type);
+            if (result == null) return type;
+            return result;
         }
 
         /// <summary>

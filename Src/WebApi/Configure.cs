@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.OpenApi.Models;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
+using TripleSix.Core.Jsons;
 
 namespace Sample.WebApi
 {
@@ -24,7 +25,16 @@ namespace Sample.WebApi
         public static void ConfigureService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpContextAccessor();
-            services.AddMvc().AddControllersAsServices();
+
+            services.AddMvc()
+                .AddControllersAsServices()
+                .AddNewtonsoftJson(options =>
+                {
+                    var contractResolver = new BaseContractResolver();
+                    var httpContextAccessor = new HttpContextAccessor();
+                    options.SerializerSettings.ContractResolver = contractResolver;
+                    options.SerializerSettings.Converters.Add(new DtoConverter(httpContextAccessor, contractResolver));
+                });
 
             // config swagger
             var swaggerOption = new SwaggerAppsetting(configuration);

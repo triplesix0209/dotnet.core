@@ -23,8 +23,7 @@ namespace Sample.WebApi.Controllers.Commons
         [HttpPut]
         public async Task Update(Guid id, [FromBody] AccountDto input)
         {
-            var entity = await AccountService!.GetFirst(id);
-            await AccountService!.UpdateWithMapper(entity, input);
+            await AccountService!.UpdateWithMapper(id, false, input);
         }
     }
 }

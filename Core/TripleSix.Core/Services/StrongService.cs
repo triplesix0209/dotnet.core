@@ -1,5 +1,6 @@
 ﻿using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Services
 {
@@ -42,6 +43,27 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
+        public async Task Update(Guid id, bool includeDeleted, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetFirst(id, includeDeleted, cancellationToken);
+            await Update(entity, updateMethod, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateWithMapper(Guid id, bool includeDeleted, IDataDto input, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetFirst(id, includeDeleted, cancellationToken);
+            await UpdateWithMapper(entity, input, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task Delete(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetFirst(id, includeDeleted, cancellationToken);
+            await Delete(entity, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public virtual async Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
         {
             await Update(
@@ -51,12 +73,26 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
+        public async Task SoftDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetFirst(id, true, cancellationToken);
+            await SoftDelete(entity, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public virtual async Task Restore(TEntity entity, CancellationToken cancellationToken = default)
         {
             await Update(
                 entity,
                 e => { e.IsDeleted = false; },
                 cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task Restore(Guid id, CancellationToken cancellationToken = default)
+        {
+            var entity = await GetFirst(id, true, cancellationToken);
+            await Restore(entity, cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -58,9 +58,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task UpdateWithMapper(TEntity entity, IDataDto input, CancellationToken cancellationToken = default)
+        public async Task UpdateWithMapper(TEntity entity, IDataDto input, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (!input.IsAnyPropertyChanged()) return;
+
+            await Update(
+                entity,
+                e => Mapper.Map(input, e, o => o.Items["mapPropertyChangedOnly"] = "true"),
+                cancellationToken);
         }
 
         /// <inheritdoc/>
