@@ -5,23 +5,33 @@
         public IAccountService? AccountService { get; set; }
 
         [HttpGet]
-        public async Task<IActionResult> GetPage(int page = 1, int size = 10)
+        public async Task<IActionResult> GetPage(PagingFilterDto filter)
         {
-            var result = await AccountService!.GetPage<AccountDto>(page: page, size: size);
+            var result = await AccountService!.GetPage<AccountDto>(page: filter.Page, size: filter.Size);
             return PagingResult(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AccountDto input)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDetail(RouteId route)
         {
-            var result = await AccountService!.CreateWithMapper<AccountDto>(input);
+            var result = await AccountService!.GetFirst(route.Id, false);
             return DataResult(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(Guid id, [FromBody] AccountDto input)
+        [HttpPost]
+        [Transactional]
+        public async Task<IActionResult> Create([FromBody] AccountDto input)
         {
-            await AccountService!.UpdateWithMapper(id, false, input);
+            var result = await AccountService!.CreateWithMapper<AccountDto>(input);
+            throw new Exception("OK");
+            return DataResult(result);
+        }
+
+        [HttpPut("{id}")]
+        [Transactional]
+        public async Task<IActionResult> Update(RouteId route, [FromBody] AccountDto input)
+        {
+            await AccountService!.UpdateWithMapper(route.Id, false, input);
             return SuccessResult();
         }
     }
