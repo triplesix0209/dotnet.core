@@ -15,12 +15,12 @@ namespace TripleSix.Core.Test.Helpers
         }
 
         [TestMethod]
-        public void ParseEpochTimestamp()
+        public void ToDateTime()
         {
             var datetime = new DateTime(1993, 9, 2, 4, 0, 0);
             var timestamp = 746942400000;
 
-            Assert.AreEqual(timestamp.ToEpochTimestamp(), datetime);
+            Assert.AreEqual(timestamp.ToDateTime(), datetime);
         }
     }
 }

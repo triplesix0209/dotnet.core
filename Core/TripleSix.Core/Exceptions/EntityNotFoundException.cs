@@ -1,28 +1,23 @@
-﻿namespace TripleSix.Core.Exceptions
+﻿using TripleSix.Core.Helpers;
+
+namespace TripleSix.Core.Exceptions
 {
     /// <summary>
     /// Lỗi không tìm thấy entity.
     /// </summary>
-    public class EntityNotFoundException : Exception
+    public class EntityNotFoundException : BaseException
     {
         /// <summary>
         /// Khởi tạo <see cref="EntityNotFoundException"/>.
         /// </summary>
         /// <param name="entityType">Loại entity.</param>
-        public EntityNotFoundException(Type entityType)
-            : base($"{entityType.Name} not found")
-        {
-            EntityType = entityType;
-            Query = null;
-        }
-
-        /// <summary>
-        /// Khởi tạo <see cref="EntityNotFoundException"/>.
-        /// </summary>
-        /// <param name="entityType">Loại entity.</param>
-        /// <param name="query">Câu query.</param>
-        public EntityNotFoundException(Type entityType, IQueryable? query)
-            : base($"{entityType.Name} not found")
+        /// <param name="query">Câu query gây lỗi.</param>
+        /// <param name="message"><inheritdoc/></param>
+        public EntityNotFoundException(
+            Type entityType,
+            IQueryable? query = null,
+            string? message = null)
+            : base(message.IsNullOrWhiteSpace() ? $"{entityType.Name} not found" : message)
         {
             EntityType = entityType;
             Query = query;
@@ -31,11 +26,14 @@
         /// <summary>
         /// Loại entity.
         /// </summary>
-        public Type EntityType { get; }
+        public virtual Type EntityType { get; }
 
         /// <summary>
-        /// Câu query.
+        /// Câu query gây lỗi.
         /// </summary>
-        public IQueryable? Query { get; }
+        public virtual IQueryable? Query { get; }
+
+        /// <inheritdoc/>
+        public override int HttpCodeStatus => 404;
     }
 }

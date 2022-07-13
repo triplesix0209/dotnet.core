@@ -3,9 +3,10 @@
 namespace TripleSix.Core.Types
 {
     /// <summary>
-    /// Id định danh.
+    /// DTO lọc.
     /// </summary>
-    public class PagingFilterDto : IFilterDto
+    public class PagingFilterDto : BaseDto,
+        IFilterDto
     {
         [DisplayName("số trang")]
         public virtual int Page { get; set; } = 1;

@@ -5,8 +5,6 @@ using AutoMapper;
 using Microsoft.OpenApi.Models;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
-using TripleSix.Core.Helpers;
-using TripleSix.Core.Jsons;
 
 namespace Sample.WebApi
 {
@@ -50,6 +48,7 @@ namespace Sample.WebApi
             if (autofacContainer.IsRegistered<MapperConfiguration>())
                 autofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
 
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthorization();
