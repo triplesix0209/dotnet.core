@@ -22,8 +22,7 @@
         [Transactional]
         public async Task<IActionResult> Create([FromBody] AccountDto input)
         {
-            var result = await AccountService!.CreateWithMapper<AccountDto>(input);
-            throw new Exception("OK");
+            var result = await AccountService!.CreateWithMapper<AccountDto>(input);\
             return DataResult(result);
         }
 
