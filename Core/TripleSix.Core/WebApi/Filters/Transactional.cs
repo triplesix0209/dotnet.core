@@ -4,6 +4,9 @@ using TripleSix.Core.Persistences;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Bật transaction cho các request.
+    /// </summary>
     public class Transactional : TypeFilterAttribute
     {
         public Transactional()
