@@ -60,10 +60,10 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task Delete(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task HardDelete(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
             var entity = await GetById(id, includeDeleted, cancellationToken);
-            await Delete(entity, cancellationToken);
+            await HardDelete(entity, cancellationToken);
         }
 
         /// <inheritdoc/>

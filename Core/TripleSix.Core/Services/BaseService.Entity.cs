@@ -71,7 +71,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task Delete(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task HardDelete(TEntity entity, CancellationToken cancellationToken = default)
         {
             Db.Set<TEntity>().Remove(entity);
 

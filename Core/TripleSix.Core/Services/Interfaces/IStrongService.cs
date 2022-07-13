@@ -54,7 +54,7 @@ namespace TripleSix.Core.Services
         /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa khi tiến hành tìm kiếm.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Task xử lý.</returns>
-        Task Delete(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
+        Task HardDelete(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Tạm xóa entity.

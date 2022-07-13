@@ -52,7 +52,7 @@ namespace TripleSix.Core.Services
         /// <param name="entity">Entity sẽ bị xóa.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Task xử lý.</returns>
-        Task Delete(TEntity entity, CancellationToken cancellationToken = default);
+        Task HardDelete(TEntity entity, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Kiểm tra có bất kỳ entity.
