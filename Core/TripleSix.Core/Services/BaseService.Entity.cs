@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Persistences;
 using TripleSix.Core.Types;
 
@@ -43,9 +44,9 @@ namespace TripleSix.Core.Services
         public async Task<TResult> CreateWithMapper<TResult>(IDataDto input, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            var entity = Mapper.Map<IDataDto, TEntity>(input);
+            var entity = Mapper.MapData<IDataDto, TEntity>(input);
             var result = await Create(entity, cancellationToken);
-            return Mapper.Map<TEntity, TResult>(result);
+            return Mapper.MapData<TEntity, TResult>(result);
         }
 
         /// <inheritdoc/>
@@ -64,7 +65,7 @@ namespace TripleSix.Core.Services
 
             await Update(
                 entity,
-                e => Mapper.Map(input, e, o => o.Items["mapPropertyChangedOnly"] = "true"),
+                e => Mapper.MapUpdate(input, e),
                 cancellationToken);
         }
 
@@ -102,7 +103,7 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var result = await GetFirstOrDefault(query, cancellationToken);
-            return Mapper.Map<TResult>(result);
+            return result == null ? null : Mapper.MapData<TResult>(result);
         }
 
         /// <inheritdoc/>
@@ -120,7 +121,7 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var result = await GetFirst(query, cancellationToken);
-            return Mapper.Map<TResult>(result);
+            return Mapper.MapData<TResult>(result);
         }
 
         /// <inheritdoc/>
@@ -135,7 +136,7 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var result = await GetList(query, cancellationToken);
-            return Mapper.Map<List<TResult>>(result);
+            return Mapper.MapData<List<TResult>>(result);
         }
 
         /// <inheritdoc/>
@@ -153,7 +154,7 @@ namespace TripleSix.Core.Services
                     .Take(size)
                     .ToListAsync(cancellationToken);
 
-            return new Paging<TEntity>(items, total);
+            return new Paging<TEntity>(items, total, page, size);
         }
 
         /// <inheritdoc/>
@@ -161,9 +162,12 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var result = await GetPage(query, page, size, cancellationToken);
+            var items = Mapper.MapData<List<TResult>>(result.Items);
             return new Paging<TResult>(
-                Mapper.Map<List<TResult>>(result.Items),
-                result.Total);
+                items,
+                result.Total,
+                result.Page,
+                result.Size);
         }
     }
 }

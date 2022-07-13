@@ -125,7 +125,7 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var result = await GetFirstOrDefault(id, includeDeleted, cancellationToken);
-            return Mapper.Map<TResult>(result);
+            return result == null ? null : Mapper.MapData<TResult>(result);
         }
 
         /// <inheritdoc/>
@@ -142,7 +142,7 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var result = await GetFirst(id, includeDeleted, cancellationToken);
-            return Mapper.Map<TResult>(result);
+            return Mapper.MapData<TResult>(result);
         }
     }
 }

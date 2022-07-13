@@ -15,5 +15,15 @@
         /// Danh sách dữ liệu.
         /// </summary>
         List<TItem> Items { get; set; }
+
+        /// <summary>
+        /// Vị trí trang hiện tại.
+        /// </summary>
+        int Page { get; set; }
+
+        /// <summary>
+        /// Kích thước trang dữ liệu.
+        /// </summary>
+        int Size { get; set; }
     }
 }

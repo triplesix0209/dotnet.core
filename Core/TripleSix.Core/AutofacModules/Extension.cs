@@ -37,14 +37,7 @@ namespace TripleSix.Core.AutofacModules
 
                 var mappers = assembly.GetExportedTypes()
                     .Where(x => !x.IsAbstract)
-                    .Where(x => x.IsAssignableTo<BaseMapper>())
-                    .ToList();
-                mappers.Sort((a, b) =>
-                {
-                    //if (a.IsAssignableTo<GlobalMapper>()) return -1;
-                    //else if (b.IsAssignableTo<GlobalMapper>()) return 1;
-                    return 0;
-                });
+                    .Where(x => x.IsAssignableTo<BaseMapper>());
 
                 config.AddProfile(new DefaultMapper(assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));

@@ -12,10 +12,12 @@
         /// </summary>
         /// <param name="items">Danh sách dữ liệu.</param>
         /// <param name="total">Tổng số lượng mục.</param>
-        public Paging(List<TItem> items, long total)
+        public Paging(List<TItem> items, long total, int page, int size)
         {
             Total = total;
             Items = items;
+            Page = page;
+            Size = size;
         }
 
         /// <inheritdoc/>
@@ -23,5 +25,11 @@
 
         /// <inheritdoc/>
         public List<TItem> Items { get; set; }
+
+        /// <inheritdoc/>
+        public int Page { get; set; }
+
+        /// <inheritdoc/>
+        public int Size { get; set; }
     }
 }

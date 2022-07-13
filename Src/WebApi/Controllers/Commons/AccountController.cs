@@ -5,21 +5,24 @@
         public IAccountService? AccountService { get; set; }
 
         [HttpGet]
-        public Task<IPaging<AccountDto>> GetPage(int page = 1, int size = 10)
+        public async Task<IActionResult> GetPage(int page = 1, int size = 10)
         {
-            return AccountService!.GetPage<AccountDto>(page: page, size: size);
+            var result = await AccountService!.GetPage<AccountDto>(page: page, size: size);
+            return PagingResult(result);
         }
 
         [HttpPost]
-        public Task<AccountDto> Create([FromBody] AccountDto input)
+        public async Task<IActionResult> Create([FromBody] AccountDto input)
         {
-            return AccountService!.CreateWithMapper<AccountDto>(input);
+            var result = await AccountService!.CreateWithMapper<AccountDto>(input);
+            return DataResult(result);
         }
 
         [HttpPut]
-        public Task Update(Guid id, [FromBody] AccountDto input)
+        public async Task<IActionResult> Update(Guid id, [FromBody] AccountDto input)
         {
-            return AccountService!.UpdateWithMapper(id, false, input);
+            await AccountService!.UpdateWithMapper(id, false, input);
+            return SuccessResult();
         }
     }
 }

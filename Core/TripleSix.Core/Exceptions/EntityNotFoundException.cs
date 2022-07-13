@@ -21,7 +21,7 @@
         /// </summary>
         /// <param name="entityType">Loại entity.</param>
         /// <param name="query">Câu query.</param>
-        public EntityNotFoundException(Type entityType, IQueryable query)
+        public EntityNotFoundException(Type entityType, IQueryable? query)
             : base($"{entityType.Name} not found")
         {
             EntityType = entityType;

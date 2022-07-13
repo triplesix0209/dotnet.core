@@ -9,7 +9,7 @@ namespace TripleSix.Core.Services
         : IService
     {
         /// <summary>
-        /// Provides access to the current HttpContext.
+        /// Http context accessor.
         /// </summary>
         public IHttpContextAccessor? HttpContextAccessor { get; set; }
     }
