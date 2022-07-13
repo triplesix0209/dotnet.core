@@ -34,8 +34,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await Db.Set<TEntity>()
-                .AddAsync(entity, cancellationToken);
+            await Db.Set<TEntity>().AddAsync(entity, cancellationToken);
 
             await Db.SaveChangesAsync(cancellationToken);
             return entity;
@@ -79,30 +78,30 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
             if (query == null) query = Db.Set<TEntity>();
+
             return query.AnyAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
             if (query == null) query = Db.Set<TEntity>();
+
             return query.LongCountAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
             where TResult : class
         {
             if (query == null) query = Db.Set<TEntity>();
 
-            if (typeof(TResult) == typeof(TEntity))
-                return await query.FirstOrDefaultAsync(cancellationToken) as TResult;
-
-            var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
-            return await pQuery.FirstOrDefaultAsync(cancellationToken);
+            return typeof(TResult) == typeof(TEntity)
+                ? await query.FirstOrDefaultAsync(cancellationToken) as TResult
+                : await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -112,27 +111,12 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            if (query == null) query = Db.Set<TEntity>();
-            IQueryable executedQuery;
-            TResult? data;
+            var data = await GetFirstOrDefault<TResult>(query, cancellationToken);
+            if (data == null) throw new EntityNotFoundException(typeof(TEntity));
 
-            if (typeof(TResult) == typeof(TEntity))
-            {
-                data = await query.FirstOrDefaultAsync(cancellationToken) as TResult;
-                executedQuery = query;
-            }
-            else
-            {
-                var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
-                data = await pQuery.FirstOrDefaultAsync(cancellationToken);
-                executedQuery = pQuery;
-            }
-
-            if (data == null)
-                throw new EntityNotFoundException(typeof(TEntity), executedQuery);
             return data;
         }
 
@@ -143,19 +127,16 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
             where TResult : class
         {
             if (query == null) query = Db.Set<TEntity>();
 
-            if (typeof(TResult) == typeof(TEntity))
-            {
-                var data = await query.ToListAsync(cancellationToken);
-                return data.Cast<TResult>().ToList();
-            }
+            var data = typeof(TResult) == typeof(TEntity)
+                ? (await query.ToListAsync(cancellationToken)).Cast<TResult>().ToList()
+                : await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).ToListAsync(cancellationToken);
 
-            var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
-            return await pQuery.ToListAsync(cancellationToken);
+            return data;
         }
 
         /// <inheritdoc/>
@@ -165,14 +146,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
             where TResult : class
         {
             if (page <= 0) throw new ArgumentOutOfRangeException(nameof(page), "must be greater than 0");
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
-            if (query == null) query = Db.Set<TEntity>();
             var result = new Paging<TResult>(page, size);
 
+            if (query == null) query = Db.Set<TEntity>();
             var total = await Count(query, cancellationToken);
             if (total <= 0) return result;
 

@@ -33,16 +33,17 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default)
         {
             // tự phát sinh mã nếu không được nhập
             if (generateCode && entity.Code.IsNullOrWhiteSpace())
             {
                 entity.Code = await GenerateCode(entity);
-                if (entity.Code.IsNullOrWhiteSpace()) entity.Code = null;
+                if (entity.Code.IsNullOrWhiteSpace())
+                    entity.Code = null;
             }
 
-            return await base.Create(entity, cancellationToken);
+            return base.Create(entity, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -67,9 +68,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await Update(
+            return Update(
                 entity,
                 e => { e.IsDeleted = true; },
                 cancellationToken);
@@ -83,9 +84,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task Restore(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual Task Restore(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await Update(
+            return Update(
                 entity,
                 e => { e.IsDeleted = false; },
                 cancellationToken);
@@ -103,6 +104,7 @@ namespace TripleSix.Core.Services
         {
             var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
+
             return Any(query, cancellationToken);
         }
 
@@ -111,22 +113,21 @@ namespace TripleSix.Core.Services
         {
             var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
+
             return Count(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<TResult?> GetOrDefaultById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task<TResult?> GetOrDefaultById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
             where TResult : class
         {
             var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
 
-            if (typeof(TResult) == typeof(TEntity))
-                return await query.SingleOrDefaultAsync(cancellationToken) as TResult;
-
-            var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
-            return await pQuery.SingleOrDefaultAsync(cancellationToken);
+            return typeof(TResult) == typeof(TEntity)
+                ? await query.SingleOrDefaultAsync(cancellationToken) as TResult
+                : await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).SingleOrDefaultAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -136,30 +137,12 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual async Task<TResult> GetById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task<TResult> GetById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            IQueryable executedQuery;
-            TResult? data;
+            var data = await GetOrDefaultById<TResult>(id, includeDeleted, cancellationToken);
+            if (data == null) throw new EntityNotFoundException(typeof(TEntity));
 
-            var query = Db.Set<TEntity>()
-                .WhereIf(includeDeleted == false, x => !x.IsDeleted)
-                .Where(x => x.Id == id);
-
-            if (typeof(TResult) == typeof(TEntity))
-            {
-                data = await query.SingleOrDefaultAsync(cancellationToken) as TResult;
-                executedQuery = query;
-            }
-            else
-            {
-                var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
-                data = await pQuery.SingleOrDefaultAsync(cancellationToken);
-                executedQuery = pQuery;
-            }
-
-            if (data == null)
-                throw new EntityNotFoundException(typeof(TEntity), executedQuery);
             return data;
         }
 

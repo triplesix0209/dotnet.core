@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
-using System.Web;
-using TripleSix.Core.Helpers;
-using TripleSix.Core.WebApi;
-
-namespace TripleSix.Core.Exceptions
+﻿namespace TripleSix.Core.Exceptions
 {
     /// <summary>
     /// Lỗi không tìm thấy entity.
@@ -16,16 +9,21 @@ namespace TripleSix.Core.Exceptions
         /// Khởi tạo <see cref="EntityNotFoundException"/>.
         /// </summary>
         /// <param name="entityType">Loại entity.</param>
-        /// <param name="query">Câu query gây lỗi.</param>
-        /// <param name="message"><inheritdoc/></param>
-        public EntityNotFoundException(
-            Type entityType,
-            IQueryable? query = null,
-            string? message = null)
-            : base(message.IsNullOrWhiteSpace() ? $"{entityType.Name} not found" : message)
+        public EntityNotFoundException(Type entityType)
+            : base($"{entityType.Name} not found")
         {
             EntityType = entityType;
-            Query = query;
+        }
+
+        /// <summary>
+        /// Khởi tạo <see cref="EntityNotFoundException"/>.
+        /// </summary>
+        /// <param name="entityType">Loại entity.</param>
+        /// <param name="message"><inheritdoc/></param>
+        public EntityNotFoundException(Type entityType, string message)
+            : base(message)
+        {
+            EntityType = entityType;
         }
 
         /// <summary>
@@ -33,23 +31,7 @@ namespace TripleSix.Core.Exceptions
         /// </summary>
         public virtual Type EntityType { get; }
 
-        /// <summary>
-        /// Câu query gây lỗi.
-        /// </summary>
-        public virtual IQueryable? Query { get; }
-
         /// <inheritdoc/>
         public override int HttpCodeStatus => 404;
-
-        /// <inheritdoc/>
-        public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
-        {
-            var error = base.ToErrorResult(httpContext);
-
-            if (Query != null)
-                error.Detail.Add(Query.ToQueryString());
-
-            return error;
-        }
     }
 }
