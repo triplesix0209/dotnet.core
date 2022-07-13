@@ -105,43 +105,44 @@ namespace TripleSix.Core.Services
         Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Lấy entity đầu tiên.
-        /// </summary>
-        /// <param name="id">Id tìm kiếm.</param>
-        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa khi tiến hành tìm kiếm.</param>
-        /// <param name="cancellationToken">Token để cancel tiến trình.</param>
-        /// <returns>Entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TEntity?> GetFirstOrDefault(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Lấy entity đầu tiên và convert với Mapper.
+        /// Lấy entity theo Id và convert với Mapper, không có sẽ trả về null.
         /// </summary>
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="id">Id tìm kiếm.</param>
         /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa khi tiến hành tìm kiếm.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
-        /// <returns>Dữ liệu của entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TResult?> GetFirstOrDefault<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        /// <returns>Dữ liệu của entity khớp với id chỉ định, trả về null nếu không tìm thấy.</returns>
+        Task<TResult?> GetOrDefaultById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
             where TResult : class;
 
         /// <summary>
-        /// Lấy entity đầu tiên.
+        /// Lấy entity theo Id, không có sẽ trả về null.
         /// </summary>
         /// <param name="id">Id tìm kiếm.</param>
         /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa khi tiến hành tìm kiếm.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
-        /// <returns>Entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TEntity> GetFirst(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
+        /// <returns>Entity khớp với id chỉ định, trả về null nếu không tìm thấy.</returns>
+        Task<TEntity?> GetOrDefaultById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Lấy entity đầu tiên và convert với Mapper.
+        /// Lấy entity theo Id và convert với Mapper.
         /// </summary>
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="id">Id tìm kiếm.</param>
         /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa khi tiến hành tìm kiếm.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
-        /// <returns>Dữ liệu entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TResult> GetFirst<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        /// <returns>Dữ liệu entity khớp với id chỉ định, nếu không tìm thấy sẽ trả lỗi.</returns>
+        Task<TResult> GetById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
             where TResult : class;
+
+        /// <summary>
+        /// Lấy entity theo Id.
+        /// </summary>
+        /// <param name="id">Id tìm kiếm.</param>
+        /// <param name="includeDeleted">Có tính các mục đã bị đánh dấu xóa khi tiến hành tìm kiếm.</param>
+        /// <param name="cancellationToken">Token để cancel tiến trình.</param>
+        /// <returns>Entity khớp với id chỉ định, nếu không tìm thấy sẽ trả lỗi.</returns>
+        Task<TEntity> GetById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
+
     }
 }

@@ -1,4 +1,7 @@
-﻿using TripleSix.Core.Entities;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using TripleSix.Core.Entities;
+using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
@@ -45,21 +48,21 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public async Task Update(Guid id, bool includeDeleted, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
         {
-            var entity = await GetFirst(id, includeDeleted, cancellationToken);
+            var entity = await GetById(id, includeDeleted, cancellationToken);
             await Update(entity, updateMethod, cancellationToken);
         }
 
         /// <inheritdoc/>
         public async Task UpdateWithMapper(Guid id, bool includeDeleted, IDataDto input, CancellationToken cancellationToken = default)
         {
-            var entity = await GetFirst(id, includeDeleted, cancellationToken);
+            var entity = await GetById(id, includeDeleted, cancellationToken);
             await UpdateWithMapper(entity, input, cancellationToken);
         }
 
         /// <inheritdoc/>
         public async Task Delete(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var entity = await GetFirst(id, includeDeleted, cancellationToken);
+            var entity = await GetById(id, includeDeleted, cancellationToken);
             await Delete(entity, cancellationToken);
         }
 
@@ -75,7 +78,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public async Task SoftDelete(Guid id, CancellationToken cancellationToken = default)
         {
-            var entity = await GetFirst(id, true, cancellationToken);
+            var entity = await GetById(id, true, cancellationToken);
             await SoftDelete(entity, cancellationToken);
         }
 
@@ -91,7 +94,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public async Task Restore(Guid id, CancellationToken cancellationToken = default)
         {
-            var entity = await GetFirst(id, true, cancellationToken);
+            var entity = await GetById(id, true, cancellationToken);
             await Restore(entity, cancellationToken);
         }
 
@@ -112,37 +115,58 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TEntity?> GetFirstOrDefault(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult?> GetOrDefaultById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+            where TResult : class
         {
             var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
-            return GetFirstOrDefault(query, cancellationToken);
+
+            if (typeof(TResult) == typeof(TEntity))
+                return await query.SingleOrDefaultAsync(cancellationToken) as TResult;
+
+            var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
+            return await pQuery.SingleOrDefaultAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult?> GetFirstOrDefault<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public Task<TEntity?> GetOrDefaultById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        {
+            return GetOrDefaultById<TEntity>(id, includeDeleted, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<TResult> GetById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            var result = await GetFirstOrDefault(id, includeDeleted, cancellationToken);
-            return result == null ? null : Mapper.MapData<TResult>(result);
-        }
+            IQueryable executedQuery;
+            TResult? data;
 
-        /// <inheritdoc/>
-        public Task<TEntity> GetFirst(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
-        {
             var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
-            return GetFirst(query, cancellationToken);
+
+            if (typeof(TResult) == typeof(TEntity))
+            {
+                data = await query.SingleOrDefaultAsync(cancellationToken) as TResult;
+                executedQuery = query;
+            }
+            else
+            {
+                var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
+                data = await pQuery.SingleOrDefaultAsync(cancellationToken);
+                executedQuery = pQuery;
+            }
+
+            if (data == null)
+                throw new EntityNotFoundException(typeof(TEntity), executedQuery);
+            return data;
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> GetFirst<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
-            where TResult : class
+        public Task<TEntity> GetById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var result = await GetFirst(id, includeDeleted, cancellationToken);
-            return Mapper.MapData<TResult>(result);
+            return GetById<TEntity>(id, includeDeleted, cancellationToken);
         }
     }
 }

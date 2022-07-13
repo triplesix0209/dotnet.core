@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
@@ -92,82 +93,112 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
-        {
-            if (query == null) query = Db.Set<TEntity>();
-            return query.FirstOrDefaultAsync(cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            var result = await GetFirstOrDefault(query, cancellationToken);
-            return result == null ? null : Mapper.MapData<TResult>(result);
+            if (query == null) query = Db.Set<TEntity>();
+
+            if (typeof(TResult) == typeof(TEntity))
+                return await query.FirstOrDefaultAsync(cancellationToken) as TResult;
+
+            var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
+            return await pQuery.FirstOrDefaultAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            var data = await GetFirstOrDefault(query, cancellationToken);
-            if (data == null)
-                throw new EntityNotFoundException(typeof(TEntity), query);
+            return GetFirstOrDefault<TEntity>(query, cancellationToken);
+        }
 
+        /// <inheritdoc/>
+        public virtual async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+            where TResult : class
+        {
+            if (query == null) query = Db.Set<TEntity>();
+            IQueryable executedQuery;
+            TResult? data;
+
+            if (typeof(TResult) == typeof(TEntity))
+            {
+                data = await query.FirstOrDefaultAsync(cancellationToken) as TResult;
+                executedQuery = query;
+            }
+            else
+            {
+                var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
+                data = await pQuery.FirstOrDefaultAsync(cancellationToken);
+                executedQuery = pQuery;
+            }
+
+            if (data == null)
+                throw new EntityNotFoundException(typeof(TEntity), executedQuery);
             return data;
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
-            where TResult : class
+        public Task<TEntity> GetFirst(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            var result = await GetFirst(query, cancellationToken);
-            return Mapper.MapData<TResult>(result);
+            return GetFirst<TEntity>(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public virtual async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+            where TResult : class
         {
             if (query == null) query = Db.Set<TEntity>();
-            return query.ToListAsync(cancellationToken);
+
+            if (typeof(TResult) == typeof(TEntity))
+            {
+                var data = await query.ToListAsync(cancellationToken);
+                return data.Cast<TResult>().ToList();
+            }
+
+            var pQuery = query.ProjectTo<TResult>(Mapper.ConfigurationProvider);
+            return await pQuery.ToListAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
-            where TResult : class
+        public Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            var result = await GetList(query, cancellationToken);
-            return Mapper.MapData<List<TResult>>(result);
+            return GetList<TEntity>(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public virtual async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+            where TResult : class
         {
             if (page <= 0) throw new ArgumentOutOfRangeException(nameof(page), "must be greater than 0");
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
             if (query == null) query = Db.Set<TEntity>();
+            var result = new Paging<TResult>(page, size);
 
             var total = await Count(query, cancellationToken);
-            var items = total == 0
-                ? new List<TEntity>()
-                : await query
+            if (total <= 0) return result;
+
+            if (typeof(TResult) == typeof(TEntity))
+            {
+                var data = await query
                     .Skip((page - 1) * size)
                     .Take(size)
                     .ToListAsync(cancellationToken);
+                result.Items = data.Cast<TResult>().ToList();
+            }
+            else
+            {
+                result.Items = await query.ProjectTo<TResult>(Mapper.ConfigurationProvider)
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToListAsync(cancellationToken);
+            }
 
-            return new Paging<TEntity>(items, total, page, size);
+            return result;
         }
 
         /// <inheritdoc/>
-        public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
-            where TResult : class
+        public Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
         {
-            var result = await GetPage(query, page, size, cancellationToken);
-            var items = Mapper.MapData<List<TResult>>(result.Items);
-            return new Paging<TResult>(
-                items,
-                result.Total,
-                result.Page,
-                result.Size);
+            return GetPage<TEntity>(query, page, size, cancellationToken);
         }
     }
 }

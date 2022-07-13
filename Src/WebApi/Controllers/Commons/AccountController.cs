@@ -14,7 +14,7 @@
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(RouteId route)
         {
-            var result = await AccountService!.GetFirst<AccountDto>(route.Id, false);
+            var result = await AccountService!.GetById<AccountDto>(route.Id, false);
             return DataResult(result);
         }
 
