@@ -1,4 +1,9 @@
-﻿using TripleSix.Core.Helpers;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
+using System.Web;
+using TripleSix.Core.Helpers;
+using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.Exceptions
 {
@@ -35,5 +40,16 @@ namespace TripleSix.Core.Exceptions
 
         /// <inheritdoc/>
         public override int HttpCodeStatus => 404;
+
+        /// <inheritdoc/>
+        public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
+        {
+            var error = base.ToErrorResult(httpContext);
+
+            if (Query != null)
+                error.Detail.Add(Query.ToQueryString());
+
+            return error;
+        }
     }
 }

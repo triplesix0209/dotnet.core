@@ -28,48 +28,41 @@ namespace TripleSix.Core.WebApi
             }
             catch (BaseException e)
             {
-                await HandleBaseException(httpContext, e);
+                await SendResponse(httpContext, e.ToErrorResult(httpContext));
                 throw;
             }
             catch (Exception e)
             {
-                await HandleUnexpectedException(httpContext, e);
+                var error = ConvertExceptionToErrorResult(httpContext, e);
+                await SendResponse(httpContext, error);
                 throw;
             }
         }
 
-        private async Task HandleBaseException(HttpContext context, BaseException exception)
+        private ErrorResult ConvertExceptionToErrorResult(HttpContext httpContext, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = exception.HttpCodeStatus;
+            var error = new ErrorResult(httpContext.Response.StatusCode, "exception", exception.Message);
 
-            var result = new ErrorResult(exception.HttpCodeStatus, exception.Code, exception.Message);
-            await context.Response.WriteAsync(JsonHelper.SerializeObject(result));
-            await context.Response.CompleteAsync();
-        }
-
-        private async Task HandleUnexpectedException(HttpContext context, Exception exception)
-        {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = 500;
-
-            var message = "internal server error";
-            if (_webApiAppsetting.DisplayUnexpectedException)
+            var innerException = exception.InnerException;
+            while (innerException != null)
             {
-                var messages = new List<string>();
-                var currentException = exception;
-                while (currentException != null)
-                {
-                    messages.Add(currentException.Message);
-                    currentException = currentException.InnerException;
-                }
-
-                message = messages.ToString(" ");
+                error.Detail.Add(innerException.Message);
+                innerException = innerException.InnerException;
             }
 
-            var result = new ErrorResult(context.Response.StatusCode, "exception", message);
-            await context.Response.WriteAsync(JsonHelper.SerializeObject(result));
-            await context.Response.CompleteAsync();
+            return error;
+        }
+
+        private async Task SendResponse(HttpContext httpContext, ErrorResult error)
+        {
+            var json = _webApiAppsetting.ShowErrorDetail
+                ? JsonHelper.SerializeObject(error)
+                : JsonHelper.SerializeObject(error, nameof(ErrorResult.Detail));
+
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = error.HttpStatusCode;
+            await httpContext.Response.WriteAsync(json);
+            await httpContext.Response.CompleteAsync();
         }
     }
 }

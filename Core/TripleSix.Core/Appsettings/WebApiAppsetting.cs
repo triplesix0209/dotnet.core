@@ -10,8 +10,8 @@ namespace TripleSix.Core.Appsettings
         }
 
         /// <summary>
-        /// Hiển thị lỗi đầy đủ của <see cref="Exception"/>.
+        /// Hiển thị chi tiết lỗi.
         /// </summary>
-        public bool DisplayUnexpectedException { get; set; } = false;
+        public bool ShowErrorDetail { get; set; } = false;
     }
 }

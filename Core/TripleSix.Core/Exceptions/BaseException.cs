@@ -1,11 +1,13 @@
-﻿using TripleSix.Core.Helpers;
+﻿using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Helpers;
+using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.Exceptions
 {
     /// <summary>
     /// Lỗi cơ bản.
     /// </summary>
-    public class BaseException : Exception
+    public abstract class BaseException : Exception
     {
         /// <summary>
         /// Khởi tạo <see cref="BaseException"/>.
@@ -38,5 +40,15 @@ namespace TripleSix.Core.Exceptions
         /// Mã số trạng thái HTTP.
         /// </summary>
         public virtual int HttpCodeStatus => 500;
+
+        /// <summary>
+        /// Chuyển đổi thành <see cref=">ErrorResult"/>.
+        /// </summary>x`
+        /// <param name="httpContext"><see cref=">HttpContext"/>.</param>
+        /// <returns><see cref="ErrorResult"/>.</returns>
+        public virtual ErrorResult ToErrorResult(HttpContext? httpContext = default)
+        {
+            return new ErrorResult(HttpCodeStatus, Code, Message);
+        }
     }
 }

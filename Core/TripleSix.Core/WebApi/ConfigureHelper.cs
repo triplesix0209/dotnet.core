@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.WebApi
@@ -19,15 +20,17 @@ namespace TripleSix.Core.WebApi
             return services
                 .AddMvc(options =>
                 {
-                    options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
                     options.AllowEmptyInputInBodyModelBinding = true;
+                    foreach (var modelBinderProviders in JsonHelper.ModelBinderProviders)
+                        options.ModelBinderProviders.Insert(0, modelBinderProviders);
                 })
                 .AddControllersAsServices()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new BaseContractResolver();
                     options.SerializerSettings.Converters.Add(new DtoConverter());
-                    options.SerializerSettings.Converters.Add(new TimestampConverter());
+                    foreach (var converter in JsonHelper.Converters)
+                        options.SerializerSettings.Converters.Add(converter);
                 });
         }
     }
