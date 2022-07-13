@@ -13,9 +13,9 @@ namespace TripleSix.Core.WebApi
 
         private class TransactionalImplement : ActionFilterAttribute
         {
-            private readonly BaseDbContext _dbContext;
+            private readonly IDbDataContext _dbContext;
 
-            public TransactionalImplement(BaseDbContext dbContext)
+            public TransactionalImplement(IDbDataContext dbContext)
             {
                 _dbContext = dbContext;
             }
@@ -24,7 +24,7 @@ namespace TripleSix.Core.WebApi
                 ActionExecutingContext context,
                 ActionExecutionDelegate next)
             {
-                await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                await using var transaction = await _dbContext.BeginTransactionAsync();
                 var result = await next();
                 if (result.Exception == null) await transaction.CommitAsync();
                 else await transaction.RollbackAsync();

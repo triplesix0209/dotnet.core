@@ -21,7 +21,7 @@ namespace TripleSix.Core.Services
         /// <summary>
         /// Database context.
         /// </summary>
-        public IDbDataContext DbContext { get; set; }
+        public IDbDataContext Db { get; set; }
 
         /// <summary>
         /// Automapper.
@@ -33,10 +33,10 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await DbContext.Set<TEntity>()
+            await Db.Set<TEntity>()
                 .AddAsync(entity, cancellationToken);
 
-            await DbContext.SaveChangesAsync(cancellationToken);
+            await Db.SaveChangesAsync(cancellationToken);
             return entity;
         }
 
@@ -53,9 +53,9 @@ namespace TripleSix.Core.Services
         public virtual async Task Update(TEntity entity, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
         {
             updateMethod(entity);
-            DbContext.Set<TEntity>().Update(entity);
+            Db.Set<TEntity>().Update(entity);
 
-            await DbContext.SaveChangesAsync(cancellationToken);
+            await Db.SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -72,29 +72,29 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual async Task Delete(TEntity entity, CancellationToken cancellationToken = default)
         {
-            DbContext.Set<TEntity>().Remove(entity);
+            Db.Set<TEntity>().Remove(entity);
 
-            await DbContext.SaveChangesAsync(cancellationToken);
+            await Db.SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public virtual Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            if (query == null) query = DbContext.Set<TEntity>();
+            if (query == null) query = Db.Set<TEntity>();
             return query.AnyAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public virtual Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            if (query == null) query = DbContext.Set<TEntity>();
+            if (query == null) query = Db.Set<TEntity>();
             return query.LongCountAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public virtual Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            if (query == null) query = DbContext.Set<TEntity>();
+            if (query == null) query = Db.Set<TEntity>();
             return query.FirstOrDefaultAsync(cancellationToken);
         }
 
@@ -127,7 +127,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            if (query == null) query = DbContext.Set<TEntity>();
+            if (query == null) query = Db.Set<TEntity>();
             return query.ToListAsync(cancellationToken);
         }
 
@@ -144,7 +144,7 @@ namespace TripleSix.Core.Services
         {
             if (page <= 0) throw new ArgumentOutOfRangeException(nameof(page), "must be greater than 0");
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
-            if (query == null) query = DbContext.Set<TEntity>();
+            if (query == null) query = Db.Set<TEntity>();
 
             var total = await Count(query, cancellationToken);
             var items = total == 0

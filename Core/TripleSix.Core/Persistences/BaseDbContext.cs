@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Persistences
@@ -20,6 +21,12 @@ namespace TripleSix.Core.Persistences
             : base()
         {
             _assembly = assembly;
+        }
+
+        /// <inheritdoc/>
+        public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            return Database.BeginTransactionAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

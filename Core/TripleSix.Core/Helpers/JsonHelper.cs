@@ -15,6 +15,10 @@ namespace TripleSix.Core.Helpers
         public static readonly JsonSerializerSettings SerializerSettings = new ()
         {
             ContractResolver = new BaseContractResolver(),
+            Converters = new JsonConverter[]
+            {
+                new TimestampConverter(),
+            },
         };
 
         /// <summary>
@@ -25,16 +29,6 @@ namespace TripleSix.Core.Helpers
         public static string SerializeObject(object value)
         {
             return JsonConvert.SerializeObject(value, SerializerSettings);
-        }
-
-        /// <summary>
-        /// Thêm bộ xử lý json cho IDto.
-        /// </summary>
-        /// <param name="newtonsoftJsonOptions">Newtonsoft json options.</param>
-        public static void AddDtoConverter(this MvcNewtonsoftJsonOptions newtonsoftJsonOptions)
-        {
-            newtonsoftJsonOptions.SerializerSettings.ContractResolver = new BaseContractResolver();
-            newtonsoftJsonOptions.SerializerSettings.Converters.Add(new DtoConverter());
         }
     }
 }

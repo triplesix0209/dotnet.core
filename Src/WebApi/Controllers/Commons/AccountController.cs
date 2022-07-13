@@ -14,7 +14,7 @@
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(RouteId route)
         {
-            var result = await AccountService!.GetFirst(route.Id, false);
+            var result = await AccountService!.GetFirst<AccountDto>(route.Id, false);
             return DataResult(result);
         }
 
@@ -22,7 +22,7 @@
         [Transactional]
         public async Task<IActionResult> Create([FromBody] AccountDto input)
         {
-            var result = await AccountService!.CreateWithMapper<AccountDto>(input);\
+            var result = await AccountService!.CreateWithMapper<AccountDto>(input);
             return DataResult(result);
         }
 

@@ -98,7 +98,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = DbContext.Set<TEntity>()
+            var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
             return Any(query, cancellationToken);
         }
@@ -106,7 +106,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = DbContext.Set<TEntity>()
+            var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
             return Count(query, cancellationToken);
         }
@@ -114,7 +114,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<TEntity?> GetFirstOrDefault(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = DbContext.Set<TEntity>()
+            var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
             return GetFirstOrDefault(query, cancellationToken);
@@ -131,7 +131,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<TEntity> GetFirst(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = DbContext.Set<TEntity>()
+            var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
             return GetFirst(query, cancellationToken);
