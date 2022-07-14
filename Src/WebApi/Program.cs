@@ -9,6 +9,7 @@ namespace Sample.WebApi
     {
         public static async Task Main(string[] args)
         {
+            // load configuration
             var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
                .AddJsonFile(Path.Combine("Config", "appsettings.json"), true)
