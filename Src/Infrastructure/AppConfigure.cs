@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry.Internal;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Sample.Infrastructure.Appsettings;
@@ -17,16 +18,14 @@ namespace Sample.Infrastructure
 
         private static void AddOpenTelemetry(IServiceCollection services, IConfiguration configuration)
         {
-            var openTelemetryAppsetting = new OpenTelemetryAppsetting(configuration);
+            var appsetting = new OpenTelemetryAppsetting(configuration);
 
-            services.AddOpenTelemetryTracing(tracerProviderBuilder =>
+            services.AddOpenTelemetryTracing(builder =>
             {
-                tracerProviderBuilder
-                    .AddSource(openTelemetryAppsetting.ServiceName)
+                builder.AddSource(appsetting.ServiceName)
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(
-                        serviceName: openTelemetryAppsetting.ServiceName,
-                        serviceVersion: openTelemetryAppsetting.ServiceVersion))
-                    .AddHttpClientInstrumentation()
+                        serviceName: appsetting.ServiceName,
+                        serviceVersion: appsetting.ServiceVersion))
                     .AddAspNetCoreInstrumentation(options =>
                     {
                         options.Enrich = (activity, eventName, rawObject) =>
@@ -48,7 +47,19 @@ namespace Sample.Infrastructure
                         options.SetDbStatementForText = true;
                         options.SetDbStatementForStoredProcedure = true;
                     })
-                    .AddConsoleExporter();
+                    .AddHttpClientInstrumentation();
+
+                if (appsetting.EnableConsoleExporter)
+                    builder.AddConsoleExporter();
+
+                if (appsetting.EnableJaegerExporter)
+                {
+                    builder.AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = appsetting.JaegerHost;
+                        options.AgentPort = appsetting.JaegerPort;
+                    });
+                }
             });
         }
     }

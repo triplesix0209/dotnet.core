@@ -20,5 +20,25 @@ namespace Sample.Infrastructure.Appsettings
         /// Phiên bản của service.
         /// </summary>
         public string ServiceVersion { get; set; } = "1.0.0";
+
+        /// <summary>
+        /// Bật/tắt hiển thị trace trên console.
+        /// </summary>
+        public bool EnableConsoleExporter { get; set; } = false;
+
+        /// <summary>
+        /// Bật/tắt gửi trace lên jarger.
+        /// </summary>
+        public bool EnableJaegerExporter { get; set; } = false;
+
+        /// <summary>
+        /// Jaeger host để gửi trace.
+        /// </summary>
+        public string? JaegerHost { get; set; }
+
+        /// <summary>
+        /// Jaeger port để gửi trace.
+        /// </summary>
+        public int JaegerPort { get; set; } = 6831;
     }
 }
