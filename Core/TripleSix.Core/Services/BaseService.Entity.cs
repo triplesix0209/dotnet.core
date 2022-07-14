@@ -99,9 +99,9 @@ namespace TripleSix.Core.Services
         {
             if (query == null) query = Db.Set<TEntity>();
 
-            return typeof(TResult) == typeof(TEntity)
-                ? await query.FirstOrDefaultAsync(cancellationToken) as TResult
-                : await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+            return typeof(TResult) == typeof(TEntity) ?
+                await query.FirstOrDefaultAsync(cancellationToken) as TResult :
+                await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -132,9 +132,9 @@ namespace TripleSix.Core.Services
         {
             if (query == null) query = Db.Set<TEntity>();
 
-            var data = typeof(TResult) == typeof(TEntity)
-                ? (await query.ToListAsync(cancellationToken)).Cast<TResult>().ToList()
-                : await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+            var data = typeof(TResult) == typeof(TEntity) ?
+                (await query.ToListAsync(cancellationToken)).Cast<TResult>().ToList() :
+                await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).ToListAsync(cancellationToken);
 
             return data;
         }

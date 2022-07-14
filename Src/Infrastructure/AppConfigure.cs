@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Internal;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Sample.Infrastructure.Appsettings;
+using TripleSix.Core.OpenTelemetry;
 
 namespace Sample.Infrastructure
 {
@@ -22,31 +21,13 @@ namespace Sample.Infrastructure
 
             services.AddOpenTelemetryTracing(builder =>
             {
-                builder.AddSource(appsetting.ServiceName)
+                builder.AddSourceTripleSixCore()
+                    .AddSource(appsetting.ServiceName)
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(
                         serviceName: appsetting.ServiceName,
                         serviceVersion: appsetting.ServiceVersion))
-                    .AddAspNetCoreInstrumentation(options =>
-                    {
-                        options.Enrich = (activity, eventName, rawObject) =>
-                        {
-                            if (eventName.Equals("OnStartActivity"))
-                            {
-                                if (rawObject is HttpRequest httpRequest)
-                                    activity.SetTag("requestProtocol", httpRequest.Protocol);
-                            }
-                            else if (eventName.Equals("OnStopActivity"))
-                            {
-                                if (rawObject is HttpResponse httpResponse)
-                                    activity.SetTag("responseLength", httpResponse.ContentLength);
-                            }
-                        };
-                    })
-                    .AddEntityFrameworkCoreInstrumentation(options =>
-                    {
-                        options.SetDbStatementForText = true;
-                        options.SetDbStatementForStoredProcedure = true;
-                    })
+                    .AddAspNetCoreInstrumentationEx()
+                    .AddEntityFrameworkCoreInstrumentation()
                     .AddHttpClientInstrumentation();
 
                 if (appsetting.EnableConsoleExporter)
