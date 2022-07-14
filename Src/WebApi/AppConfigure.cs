@@ -3,12 +3,14 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
+using Sample.Infrastructure;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
+using TripleSix.Core.Persistences;
 
 namespace Sample.WebApi
 {
-    public static class Configure
+    public static class AppConfigure
     {
         public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
@@ -21,16 +23,18 @@ namespace Sample.WebApi
             builder.RegisterAllController(assembly);
         }
 
-        public static void ConfigureService(this IServiceCollection services, IConfiguration configuration)
+        public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
-            services.AddHttpContextAccessor();
-            services.ConfigureMvcService();
+            builder.AddInfrastructure(configuration);
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.ConfigureMvcService();
 
-            // config swagger
+            #region [swagger]
+
             var swaggerOption = new SwaggerAppsetting(configuration);
             if (swaggerOption.Enable)
             {
-                services.AddSwaggerGen(options =>
+                builder.Services.AddSwaggerGen(options =>
                 {
                     options.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
                     options.CustomSchemaIds(x => x.FullName);
@@ -40,10 +44,13 @@ namespace Sample.WebApi
                     options.SwaggerDoc("admin", new OpenApiInfo { Title = "Admin API Document", Version = "1.0" });
                 });
             }
-        }
 
-        public static void ConfigureApp(this WebApplication app, IConfiguration configuration)
-        {
+            #endregion
+
+            #region [build app]
+
+            var app = builder.Build();
+
             var autofacContainer = app.Services.GetAutofacRoot();
             if (autofacContainer.IsRegistered<MapperConfiguration>())
                 autofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
@@ -53,6 +60,10 @@ namespace Sample.WebApi
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            #endregion
+
+            #region [redoc]
 
             var swaggerAppsetting = new SwaggerAppsetting(configuration);
             if (swaggerAppsetting.Enable)
@@ -82,6 +93,24 @@ namespace Sample.WebApi
                     });
                 });
             }
+
+            #endregion
+
+            #region [startup action]
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var migrationAppsetting = new MigrationAppsetting(configuration);
+                if (migrationAppsetting.ApplyOnStartup)
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<IDbMigrationContext>();
+                    await db.MigrateAsync();
+                }
+            }
+
+            #endregion
+
+            return app;
         }
     }
 }

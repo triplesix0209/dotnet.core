@@ -19,7 +19,8 @@ namespace Sample.Infrastructure.Persistences
         {
             base.OnConfiguring(builder);
 
-            builder.UseNpgsql(_configuration.GetConnectionString("Default"));
+            var serverVersion = new MySqlServerVersion(new Version(8, 0));
+            builder.UseMySql(_configuration.GetConnectionString("Default"), serverVersion);
         }
     }
 }

@@ -10,8 +10,8 @@ namespace TripleSix.Core.WebApi
     {
         protected BaseResult(bool success, int httpStatusCode)
         {
-            Meta = new TMeta { Success = success };
             HttpStatusCode = httpStatusCode;
+            Meta = new TMeta { Success = success };
         }
 
         [JsonIgnore]

@@ -5,7 +5,7 @@ using TripleSix.Core.Jsons;
 namespace TripleSix.Core.WebApi
 {
     /// <summary>
-    /// Helper hỗ trợ cấu hình Web Api
+    /// Helper hỗ trợ cấu hình Web Api.
     /// </summary>
     public static class ConfigureHelper
     {

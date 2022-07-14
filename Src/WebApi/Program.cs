@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using TripleSix.Core.Appsettings;
-using TripleSix.Core.Persistences;
 
 namespace Sample.WebApi
 {
@@ -18,28 +16,14 @@ namespace Sample.WebApi
                .AddCommandLine(args)
                .Build();
 
-            // build host
+            // setup builder
             var builder = WebApplication.CreateBuilder(args);
             builder.Host.ConfigureAppConfiguration((host, builder) => builder.AddConfiguration(configuration));
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
-            builder.Services.ConfigureService(configuration);
 
-            // build app
-            var app = builder.Build();
-            app.ConfigureApp(configuration);
-
-            // startup action
-            using (var scope = app.Services.CreateScope())
-            {
-                var migrationAppsetting = new MigrationAppsetting(configuration);
-                if (migrationAppsetting.ApplyOnStartup)
-                {
-                    var db = scope.ServiceProvider.GetRequiredService<IDbMigrationContext>();
-                    await db.MigrateAsync();
-                }
-            }
-
+            // build app & run
+            var app = await builder.BuildApp(configuration);
             app.Run();
         }
     }
