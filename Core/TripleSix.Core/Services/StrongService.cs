@@ -33,7 +33,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default)
         {
             // tự phát sinh mã nếu không được nhập
             if (generateCode && entity.Code.IsNullOrWhiteSpace())
@@ -43,7 +43,7 @@ namespace TripleSix.Core.Services
                     entity.Code = null;
             }
 
-            return base.Create(entity, cancellationToken);
+            return await base.Create(entity, cancellationToken);
         }
 
         /// <inheritdoc/>

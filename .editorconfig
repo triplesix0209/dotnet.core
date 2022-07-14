@@ -62,3 +62,6 @@ dotnet_diagnostic.CS8618.severity = warning
 
 # SA1625: Element documentation should not be copied and pasted
 dotnet_diagnostic.SA1625.severity = none
+
+# SA1413: Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1413.severity = suggestion

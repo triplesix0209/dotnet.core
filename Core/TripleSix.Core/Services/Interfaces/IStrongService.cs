@@ -143,6 +143,5 @@ namespace TripleSix.Core.Services
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Entity khớp với id chỉ định, nếu không tìm thấy sẽ trả lỗi.</returns>
         Task<TEntity> GetById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default);
-
     }
 }
