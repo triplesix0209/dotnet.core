@@ -71,13 +71,11 @@ namespace TripleSix.Core.OpenTelemetry
             var options = new EntityFrameworkCoreInstrumentationOptions();
             configureOptions?.Invoke(options);
 
-            builder.AddInstrumentation(() => new EntityFrameworkCoreInstrumentation(options));
-
-            return builder;
+            return builder.AddInstrumentation(() => new EntityFrameworkCoreInstrumentation(options));
         }
 
         /// <summary>
-        /// Kích hoạt Instrumentation cho Http Client (mở rộng).
+        /// Kích hoạt Instrumentation cho <see cref="HttpClient"/> (mở rộng).
         /// </summary>
         /// <param name="builder"><see cref="TracerProviderBuilder"/> sẽ được cấu hình.</param>
         /// <param name="configureOptions">Hàm cấu hình với <see cref="HttpClientInstrumentationOptions"/>.</param>
@@ -99,9 +97,7 @@ namespace TripleSix.Core.OpenTelemetry
                     if (!host.IsNullOrWhiteSpace() && host.StartsWith("www."))
                         host = host[4..];
 
-                    activity.DisplayName = host.IsNullOrWhiteSpace() ?
-                        $"<HTTP REQUEST>" :
-                        $"<HTTP> {host}";
+                    activity.DisplayName = host.IsNullOrWhiteSpace() ? "<HTTP REQUEST>" : $"<HTTP> {host}";
                 };
 
                 configureOptions?.Invoke(options);

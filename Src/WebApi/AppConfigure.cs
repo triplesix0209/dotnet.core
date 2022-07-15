@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Diagnostics;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
@@ -25,9 +26,9 @@ namespace Sample.WebApi
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
-            builder.AddInfrastructure(configuration);
             builder.Services.AddHttpContextAccessor();
             builder.Services.ConfigureMvcService();
+            builder.AddInfrastructure(configuration);
 
             #region [swagger]
 

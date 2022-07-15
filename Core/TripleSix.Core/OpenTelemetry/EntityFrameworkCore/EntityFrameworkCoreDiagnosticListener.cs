@@ -62,7 +62,7 @@ namespace TripleSix.Core.OpenTelemetry
 
                         var connection = connectionFetcher.Fetch(command);
                         var database = databaseFetcher.Fetch(connection) as string;
-                        activity.DisplayName = $"[db] " + (database ?? string.Empty);
+                        activity.DisplayName = $"<db> " + (database ?? string.Empty);
                         if (!activity.IsAllDataRequested) return;
 
                         var dataSource = dataSourceFetcher.Fetch(connection) as string;
@@ -81,7 +81,9 @@ namespace TripleSix.Core.OpenTelemetry
                             _ => "db",
                         };
 
-                        activity.DisplayName = $"[{dbSystem}] " + (database ?? string.Empty);
+                        activity.DisplayName = database.IsNullOrWhiteSpace() ?
+                            $"<{dbSystem}>" :
+                            $"<{dbSystem}> {database}";
                         activity.AddTag(SemanticConventions.AttributeDbName, database);
                         activity.AddTag(SemanticConventions.AttributeDbSystem, dbSystem);
                         activity.AddTag(AttributeEfProvider, providerName);
