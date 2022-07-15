@@ -1,32 +1,35 @@
 ﻿#pragma warning disable SA1402 // File may only contain a single type
+#pragma warning disable SA1649 // File name should match first type name
 
 using System.Diagnostics;
 
 namespace TestConsole
 {
-    internal class HTTPClient
+    internal class SampleClient
     {
-        private static DiagnosticSource httpLogger = new DiagnosticListener("System.Net.Http");
+        private static readonly DiagnosticSource _logger = new DiagnosticListener("Sample.Client");
 
         public byte[] SendWebRequest(string url)
         {
-            if (httpLogger.IsEnabled("RequestStart"))
-                httpLogger.Write("RequestStart", new { Url = url });
+            if (_logger.IsEnabled("RequestStart"))
+                _logger.Write("RequestStart", new { Url = url });
 
-            byte[] reply = new byte[] { };
+            var reply = Array.Empty<byte>();
             return reply;
         }
     }
 
     internal class Observer<T> : IObserver<T>
     {
-        private Action<T> _onNext;
-        private Action _onCompleted;
+        private readonly Action _onCompleted;
+        private readonly Action<Exception> _onError;
+        private readonly Action<T> _onNext;
 
-        public Observer(Action<T> onNext, Action onCompleted)
+        public Observer(Action? onCompleted = default, Action<Exception>? onError = default, Action<T>? onNext = default)
         {
-            _onNext = onNext ?? new Action<T>(_ => { });
             _onCompleted = onCompleted ?? new Action(() => { });
+            _onError = onError ?? new Action<Exception>(_ => { });
+            _onNext = onNext ?? new Action<T>(_ => { });
         }
 
         public void OnCompleted()
@@ -38,48 +41,44 @@ namespace TestConsole
         {
         }
 
-        public void OnNext(T value) {
+        public void OnNext(T value)
+        {
             _onNext(value);
         }
     }
 
-    class MyListener
+    internal class SampleListener
     {
-        IDisposable networkSubscription;
-        IDisposable listenerSubscription;
-        private readonly object allListeners = new();
+        private readonly object _allListeners = new ();
+        private IDisposable? _networkSubscription;
+        private IDisposable? _listenerSubscription;
+
         public void Listening()
         {
-            Action<KeyValuePair<string, object>> whenHeard = delegate (KeyValuePair<string, object> data)
+            Action<KeyValuePair<string, object?>> whenHeard = data =>
             {
                 Console.WriteLine($"Data received: {data.Key}: {data.Value}");
             };
-            Action<DiagnosticListener> onNewListener = delegate (DiagnosticListener listener)
+
+            Action<DiagnosticListener> onNewListener = listener =>
             {
                 Console.WriteLine($"New Listener discovered: {listener.Name}");
-                //Suscribe to the specific DiagnosticListener of interest.
-                if (listener.Name == "System.Net.Http")
-                {
-                    //Use lock to ensure the callback code is thread safe.
-                    lock (allListeners)
-                    {
-                        if (networkSubscription != null)
-                        {
-                            networkSubscription.Dispose();
-                        }
-                        IObserver<KeyValuePair<string, object>> iobserver = new Observer<KeyValuePair<string, object>>(whenHeard, null);
-                        networkSubscription = listener.Subscribe(iobserver);
-                    }
 
+                if (listener.Name == "Sample.Client")
+                {
+                    lock (_allListeners)
+                    {
+                        if (_networkSubscription != null)
+                            _networkSubscription.Dispose();
+
+                        var iobserver = new Observer<KeyValuePair<string, object?>>(onNext: whenHeard);
+                        _networkSubscription = listener.Subscribe(iobserver);
+                    }
                 }
             };
-            //Subscribe to discover all DiagnosticListeners
-            IObserver<DiagnosticListener> observer = new Observer<DiagnosticListener>(onNewListener, null);
-            //When a listener is created, invoke the onNext function which calls the delegate.
-            listenerSubscription = DiagnosticListener.AllListeners.Subscribe(observer);
+
+            var observer = new Observer<DiagnosticListener>(onNext: onNewListener);
+            _listenerSubscription = DiagnosticListener.AllListeners.Subscribe(observer);
         }
-        // Typically you leave the listenerSubscription subscription active forever.
-        // However when you no longer want your callback to be called, you can
-        // call listenerSubscription.Dispose() to cancel your subscription to the IObservable.
     }
 }
