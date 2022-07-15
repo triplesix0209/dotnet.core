@@ -7,6 +7,9 @@
         [HttpGet]
         public async Task<IActionResult> GetPage(PagingFilterDto filter)
         {
+            var client = new HttpClient();
+            var data = await client.GetAsync("https://www.google.com/search?q=sample+api&oq=sample+api&aqs=chrome..69i57j0i512l2j0i22i30l3j0i10i22i30l4.3308j0j7&sourceid=chrome&ie=UTF-8");
+
             var result = await AccountService!.GetPage<AccountDto>(page: filter.Page, size: filter.Size);
             return PagingResult(result);
         }

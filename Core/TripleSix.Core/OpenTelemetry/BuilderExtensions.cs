@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Trace;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.OpenTelemetry.Shared;
@@ -58,12 +59,12 @@ namespace TripleSix.Core.OpenTelemetry
         }
 
         /// <summary>
-        /// Kích hoạt Instrumentation cho Microsoft.EntityFrameworkCore.
+        /// Kích hoạt Instrumentation cho Microsoft.EntityFrameworkCore (mở rộng).
         /// </summary>
         /// <param name="builder"><see cref="TracerProviderBuilder"/> sẽ được cấu hình.</param>
         /// <param name="configureOptions">Hàm cấu hình với <see cref="EntityFrameworkCoreInstrumentationOptions"/>.</param>
         /// <returns><see cref="TracerProviderBuilder"/> sau khi được cấu hình.</returns>
-        public static TracerProviderBuilder AddEntityFrameworkCoreInstrumentation(
+        public static TracerProviderBuilder AddEntityFrameworkInstrumentationEx(
             this TracerProviderBuilder builder,
             Action<EntityFrameworkCoreInstrumentationOptions>? configureOptions = default)
         {
@@ -73,6 +74,38 @@ namespace TripleSix.Core.OpenTelemetry
             builder.AddInstrumentation(() => new EntityFrameworkCoreInstrumentation(options));
 
             return builder;
+        }
+
+        /// <summary>
+        /// Kích hoạt Instrumentation cho Http Client (mở rộng).
+        /// </summary>
+        /// <param name="builder"><see cref="TracerProviderBuilder"/> sẽ được cấu hình.</param>
+        /// <param name="configureOptions">Hàm cấu hình với <see cref="HttpClientInstrumentationOptions"/>.</param>
+        /// <returns><see cref="TracerProviderBuilder"/> sau khi được cấu hình.</returns>
+        public static TracerProviderBuilder AddHttpClientInstrumentationEx(
+            this TracerProviderBuilder builder,
+            Action<HttpClientInstrumentationOptions>? configureOptions = default)
+        {
+            return builder.AddHttpClientInstrumentation(options =>
+            {
+                options.SetHttpFlavor = true;
+                options.RecordException = true;
+                options.Enrich = (activity, eventName, rawObject) =>
+                {
+                    if (!eventName.Equals("OnStopActivity")) return;
+                    if (rawObject is not HttpResponseMessage httpResponseMessage) return;
+
+                    var host = httpResponseMessage.RequestMessage?.RequestUri?.Host;
+                    if (!host.IsNullOrWhiteSpace() && host.StartsWith("www."))
+                        host = host[4..];
+
+                    activity.DisplayName = host.IsNullOrWhiteSpace() ?
+                        $"<HTTP REQUEST>" :
+                        $"<HTTP> {host}";
+                };
+
+                configureOptions?.Invoke(options);
+            });
         }
     }
 }

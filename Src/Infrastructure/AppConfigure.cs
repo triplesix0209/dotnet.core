@@ -27,8 +27,8 @@ namespace Sample.Infrastructure
                         serviceName: appsetting.ServiceName,
                         serviceVersion: appsetting.ServiceVersion))
                     .AddAspNetCoreInstrumentationEx()
-                    .AddEntityFrameworkCoreInstrumentation()
-                    .AddHttpClientInstrumentation();
+                    .AddEntityFrameworkInstrumentationEx()
+                    .AddHttpClientInstrumentationEx();
 
                 if (appsetting.EnableConsoleExporter)
                     builder.AddConsoleExporter();
