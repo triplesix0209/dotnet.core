@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Autofac.Diagnostics;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.OpenApi.Models;

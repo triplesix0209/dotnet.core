@@ -19,30 +19,31 @@ namespace Sample.Infrastructure
         {
             var appsetting = new OpenTelemetryAppsetting(configuration);
 
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder.AddSourceTripleSixCore()
-                    .AddSource(appsetting.ServiceName)
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(
-                        serviceName: appsetting.ServiceName,
-                        serviceVersion: appsetting.ServiceVersion))
-                    .AddAspNetCoreInstrumentationEx()
-                    .AddEntityFrameworkInstrumentationEx()
-                    .AddHttpClientInstrumentationEx()
-                    .AddServiceInstrumentation();
-
-                if (appsetting.EnableConsoleExporter)
-                    builder.AddConsoleExporter();
-
-                if (appsetting.EnableJaegerExporter)
+            services
+                .AddOpenTelemetryTracing(builder =>
                 {
-                    builder.AddJaegerExporter(options =>
+                    builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(
+                            serviceName: appsetting.ServiceName,
+                            serviceVersion: appsetting.ServiceVersion))
+                        .AddSource(appsetting.ServiceName)
+                        .AddSourceTripleSixCore()
+                        .AddAspNetCoreInstrumentationEx()
+                        .AddEntityFrameworkInstrumentationEx()
+                        .AddHttpClientInstrumentationEx();
+
+                    if (appsetting.EnableConsoleExporter)
+                        builder.AddConsoleExporter();
+
+                    if (appsetting.EnableJaegerExporter)
                     {
-                        options.AgentHost = appsetting.JaegerHost;
-                        options.AgentPort = appsetting.JaegerPort;
-                    });
-                }
-            });
+                        builder.AddJaegerExporter(options =>
+                        {
+                            options.AgentHost = appsetting.JaegerHost;
+                            options.AgentPort = appsetting.JaegerPort;
+                        });
+                    }
+                });
         }
     }
 }
