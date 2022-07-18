@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Builder;
+using Autofac.Extras.DynamicProxy;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
@@ -81,13 +82,18 @@ namespace TripleSix.Core.AutofacModules
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllService(this ContainerBuilder builder, Assembly assembly)
         {
+            builder.Register(c => new ServiceInterceptor())
+                .SingleInstance();
+
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IService>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(ServiceInterceptor));
         }
 
         /// <summary>

@@ -68,9 +68,11 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
         {
-            return Update(
+            using var activity = StartTraceMethodActivity();
+
+            await Update(
                 entity,
                 e => { e.IsDeleted = true; },
                 cancellationToken);
@@ -84,9 +86,11 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public virtual Task Restore(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task Restore(TEntity entity, CancellationToken cancellationToken = default)
         {
-            return Update(
+            using var activity = StartTraceMethodActivity();
+
+            await Update(
                 entity,
                 e => { e.IsDeleted = false; },
                 cancellationToken);
@@ -121,6 +125,8 @@ namespace TripleSix.Core.Services
         public async Task<TResult?> GetOrDefaultById<TResult>(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
             where TResult : class
         {
+            using var activity = StartTraceMethodActivity();
+
             var query = Db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);

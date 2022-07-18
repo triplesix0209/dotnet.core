@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
@@ -35,6 +34,8 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
         {
+            using var activity = StartTraceMethodActivity();
+
             await Db.Set<TEntity>().AddAsync(entity, cancellationToken);
 
             await Db.SaveChangesAsync(cancellationToken);
@@ -53,6 +54,8 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual async Task Update(TEntity entity, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
         {
+            using var activity = StartTraceMethodActivity();
+
             updateMethod(entity);
             Db.Set<TEntity>().Update(entity);
 
@@ -73,31 +76,39 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public virtual async Task HardDelete(TEntity entity, CancellationToken cancellationToken = default)
         {
+            using var activity = StartTraceMethodActivity();
+
             Db.Set<TEntity>().Remove(entity);
 
             await Db.SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
+            using var activity = StartTraceMethodActivity();
+
             if (query == null) query = Db.Set<TEntity>();
 
-            return query.AnyAsync(cancellationToken);
+            return await query.AnyAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
+            using var activity = StartTraceMethodActivity();
+
             if (query == null) query = Db.Set<TEntity>();
 
-            return query.LongCountAsync(cancellationToken);
+            return await query.LongCountAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
             where TResult : class
         {
+            using var activity = StartTraceMethodActivity();
+
             if (query == null) query = Db.Set<TEntity>();
 
             return typeof(TResult) == typeof(TEntity) ?
@@ -131,6 +142,8 @@ namespace TripleSix.Core.Services
         public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
             where TResult : class
         {
+            using var activity = StartTraceMethodActivity();
+
             if (query == null) query = Db.Set<TEntity>();
 
             var data = typeof(TResult) == typeof(TEntity) ?
@@ -150,6 +163,8 @@ namespace TripleSix.Core.Services
         public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
             where TResult : class
         {
+            using var activity = StartTraceMethodActivity();
+
             if (page <= 0) throw new ArgumentOutOfRangeException(nameof(page), "must be greater than 0");
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
             var result = new Paging<TResult>(page, size);

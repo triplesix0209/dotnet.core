@@ -16,5 +16,10 @@ namespace TripleSix.Core.OpenTelemetry
         /// Ghi nhận câu truy vấn SQL vào tag <see cref="SemanticConventions.AttributeDbStatement"/>. Mặc định là True.
         /// </summary>
         public bool SetDbStatementForText { get; set; } = true;
+
+        /// <summary>
+        /// Ghi nhận tham số SQL vào tag "db.parameters". Mặc định là True.
+        /// </summary>
+        public bool SetDbParameter { get; set; } = true;
     }
 }

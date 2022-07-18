@@ -34,19 +34,19 @@ namespace TripleSix.Core.OpenTelemetry
         {
             return builder.AddAspNetCoreInstrumentation(options =>
             {
-                options.Enrich = (activity, eventName, rawObject) =>
+                options.Enrich = async (activity, eventName, rawObject) =>
                 {
                     if (eventName.Equals("OnStartActivity"))
                     {
                         if (rawObject is not HttpRequest httpRequest) return;
 
-                        activity.SetTag("requestProtocol", httpRequest.Protocol);
+                        activity.SetTag("http.request_protocol", httpRequest.Protocol);
                     }
                     else if (eventName.Equals("OnStopActivity"))
                     {
                         if (rawObject is not HttpResponse httpResponse) return;
 
-                        activity.SetTag("responseLength", httpResponse.ContentLength);
+                        activity.SetTag(SemanticConventions.AttributeHttpResponseContentLength, httpResponse.ContentLength);
 
                         var httpMethod = activity.GetTagItem(SemanticConventions.AttributeHttpMethod) as string;
                         if (!httpMethod.IsNullOrWhiteSpace())
