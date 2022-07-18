@@ -170,8 +170,8 @@ namespace TripleSix.Core.Services
             var result = new Paging<TResult>(page, size);
 
             if (query == null) query = Db.Set<TEntity>();
-            var total = await Count(query, cancellationToken);
-            if (total <= 0) return result;
+            result.Total = await Count(query, cancellationToken);
+            if (result.Total <= 0) return result;
 
             if (typeof(TResult) == typeof(TEntity))
             {
