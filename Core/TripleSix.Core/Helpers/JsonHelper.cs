@@ -13,7 +13,7 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Danh sách Json Converter mặc định.
         /// </summary>
-        public static readonly IList<JsonConverter> Converters = new[]
+        public static readonly JsonConverter[] Converters = new[]
         {
             new TimestampConverter(),
         };
@@ -21,7 +21,7 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Danh sách Model Binder Provider mặc định.
         /// </summary>
-        public static readonly IList<IModelBinderProvider> ModelBinderProviders = new[]
+        public static readonly IModelBinderProvider[] ModelBinderProviders = new[]
         {
             new TimestampModelBinderProvider(),
         };

@@ -55,6 +55,8 @@ namespace Sample.WebApi
             if (autofacContainer.IsRegistered<MapperConfiguration>())
                 autofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthorization();

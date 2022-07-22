@@ -31,6 +31,17 @@ namespace TripleSix.Core.WebApi
                 await SendResponse(httpContext, e.ToErrorResult(httpContext));
                 throw;
             }
+            catch (AggregateException e)
+            {
+                ErrorResult error;
+                if (e.InnerExceptions.Count == 1 && e.InnerException is BaseException exception)
+                    error = exception.ToErrorResult(httpContext);
+                else
+                    error = ConvertExceptionToErrorResult(httpContext, e);
+
+                await SendResponse(httpContext, error);
+                throw;
+            }
             catch (Exception e)
             {
                 var error = ConvertExceptionToErrorResult(httpContext, e);

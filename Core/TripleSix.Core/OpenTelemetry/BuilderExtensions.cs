@@ -41,6 +41,7 @@ namespace TripleSix.Core.OpenTelemetry
                         if (rawObject is not HttpRequest httpRequest) return;
 
                         activity.SetTag("http.request_protocol", httpRequest.Protocol);
+                        activity.SetTag("http.request_curl", await httpRequest.ToCurl());
                     }
                     else if (eventName.Equals("OnStopActivity"))
                     {
