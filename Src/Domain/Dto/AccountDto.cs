@@ -1,5 +1,6 @@
 ﻿namespace Sample.Domain.Dto
 {
+    [MapEntity(typeof(Account))]
     public class AccountDto : DataDto
     {
         public Guid? Id { get; set; }
