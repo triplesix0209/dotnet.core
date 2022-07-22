@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Sample.Infrastructure.Appsettings;
+using TripleSix.Core.Appsettings;
 using TripleSix.Core.OpenTelemetry;
 
 namespace Sample.Infrastructure

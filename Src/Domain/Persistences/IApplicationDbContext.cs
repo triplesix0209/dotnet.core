@@ -5,6 +5,6 @@ namespace Sample.Domain.Persistences
 {
     public interface IApplicationDbContext : IDbDataContext
     {
-        DbSet<Account>? Account { get; set; }
+        DbSet<Account> Account { get; set; }
     }
 }

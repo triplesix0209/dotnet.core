@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using TripleSix.Core.Appsettings;
 
-namespace Sample.Infrastructure.Appsettings
+namespace TripleSix.Core.Appsettings
 {
     public class OpenTelemetryAppsetting : BaseAppsetting
     {

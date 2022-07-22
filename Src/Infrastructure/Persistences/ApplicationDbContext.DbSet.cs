@@ -6,6 +6,6 @@ namespace Sample.Infrastructure.Persistences
 {
     public partial class ApplicationDbContext : IApplicationDbContext
     {
-        public DbSet<Account>? Account { get; set; }
+        public DbSet<Account> Account { get; set; }
     }
 }
