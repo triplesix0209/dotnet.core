@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Persistences;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Services
@@ -10,11 +11,18 @@ namespace TripleSix.Core.Services
     /// <summary>
     /// Service xử lý strong entity.
     /// </summary>
+    /// <typeparam name="TDbDataContext">Loại db data context xử lý.</typeparam>
     /// <typeparam name="TEntity">Loại entity xử lý.</typeparam>
-    public abstract class StrongService<TEntity> : BaseService<TEntity>,
+    public abstract class StrongService<TDbDataContext, TEntity> : BaseService<TDbDataContext, TEntity>,
         IStrongService<TEntity>
+        where TDbDataContext : IDbDataContext
         where TEntity : class, IStrongEntity
     {
+        protected StrongService(TDbDataContext db)
+            : base(db)
+        {
+        }
+
         /// <summary>
         /// Khởi tạo entity kèm code tự phát sinh.
         /// </summary>

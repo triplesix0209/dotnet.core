@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
-using TripleSix.Core.Jsons;
-using TripleSix.Core.WebApi;
-
-namespace TripleSix.Core.Helpers
+﻿namespace TripleSix.Core.Helpers
 {
     /// <summary>
     /// Helper xử lý exception.

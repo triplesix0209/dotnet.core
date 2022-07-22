@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
@@ -12,24 +11,22 @@ namespace TripleSix.Core.Services
     /// <summary>
     /// Service cơ bản xử lý entity.
     /// </summary>
+    /// <typeparam name="TDbDataContext">Loại db data context xử lý.</typeparam>
     /// <typeparam name="TEntity">Loại entity xử lý.</typeparam>
-    public abstract class BaseService<TEntity> : BaseService,
+    public abstract class BaseService<TDbDataContext, TEntity> : BaseService,
         IService<TEntity>
+        where TDbDataContext : IDbDataContext
         where TEntity : class, IEntity
     {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        protected BaseService(TDbDataContext db)
+        {
+            Db = db;
+        }
 
         /// <summary>
-        /// Database context.
+        /// <see cref="IDbDataContext"/>.
         /// </summary>
-        public IDbDataContext Db { get; set; }
-
-        /// <summary>
-        /// Automapper.
-        /// </summary>
-        public IMapper Mapper { get; set; }
-
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        protected TDbDataContext Db { get; }
 
         /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
