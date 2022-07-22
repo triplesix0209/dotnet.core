@@ -167,12 +167,11 @@ namespace TripleSix.Core.Services
 
             if (page <= 0) throw new ArgumentOutOfRangeException(nameof(page), "must be greater than 0");
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
+
             var result = new Paging<TResult>(page, size);
-
             if (query == null) query = Db.Set<TEntity>();
-            result.Total = await Count(query, cancellationToken);
-            if (result.Total <= 0) return result;
 
+            result.Total = await query.LongCountAsync(cancellationToken);
             if (typeof(TResult) == typeof(TEntity))
             {
                 var data = await query
