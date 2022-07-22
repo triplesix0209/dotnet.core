@@ -72,10 +72,10 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            await Update(
-                entity,
-                e => { e.IsDeleted = true; },
-                cancellationToken);
+            entity.IsDeleted = true;
+            Db.Set<TEntity>().Update(entity);
+
+            await Db.SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -90,10 +90,10 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            await Update(
-                entity,
-                e => { e.IsDeleted = false; },
-                cancellationToken);
+            entity.IsDeleted = false;
+            Db.Set<TEntity>().Update(entity);
+
+            await Db.SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
