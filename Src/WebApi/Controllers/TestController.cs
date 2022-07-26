@@ -1,14 +1,11 @@
-﻿using TripleSix.Core.Helpers;
-
-namespace Sample.WebApi.Controllers.Commons
+﻿namespace Sample.WebApi.Controllers
 {
     public class TestController : BaseController
     {
-        [HttpGet("Curl")]
-        public async Task<IActionResult> Curl()
+        [HttpGet]
+        public async Task<IActionResult> Test()
         {
-            var result = await HttpContext.Request.ToCurl();
-            return DataResult(result);
+            return SuccessResult();
         }
     }
 }

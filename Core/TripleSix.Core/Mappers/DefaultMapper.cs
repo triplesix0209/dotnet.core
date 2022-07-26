@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
 using AutoMapper;
-using TripleSix.Core.Attributes;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Types;
 
@@ -27,7 +26,11 @@ namespace TripleSix.Core.Mappers
                 foreach (var dtoType in matchedDtoTypes)
                 {
                     CreateMap(entityType, dtoType, MemberList.None);
-                    CreateMap(dtoType, entityType, MemberList.Destination);
+                    var mapToEntity = CreateMap(dtoType, entityType, MemberList.Destination);
+
+                    var mapEntity = dtoType.GetCustomAttribute<MapEntityAttribute>();
+                    if (mapEntity == null) continue;
+
                 }
             }
         }
