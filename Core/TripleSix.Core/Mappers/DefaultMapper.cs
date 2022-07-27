@@ -2,6 +2,7 @@
 using Autofac;
 using AutoMapper;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Mappers
@@ -28,9 +29,17 @@ namespace TripleSix.Core.Mappers
                     CreateMap(entityType, dtoType, MemberList.None);
                     var mapToEntity = CreateMap(dtoType, entityType, MemberList.Destination);
 
-                    var mapEntity = dtoType.GetCustomAttribute<MapEntityAttribute>();
-                    if (mapEntity == null) continue;
+                    var config = dtoType.GetCustomAttribute<MapEntityAttribute>();
+                    if (config == null) continue;
 
+                    if (config.IgnoreUnmapedProperties)
+                    {
+                        var unmapProperties = entityType
+                            .GetPublicProperties()
+                            .Where(x => dtoType.GetProperty(x.Name) == null);
+                        foreach (var property in unmapProperties)
+                            mapToEntity.ForMember(property.Name, o => o.Ignore());
+                    }
                 }
             }
         }
