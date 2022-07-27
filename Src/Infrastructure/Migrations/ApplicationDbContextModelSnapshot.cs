@@ -44,11 +44,18 @@ namespace Sample.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("UpdateDateTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<Guid?>("UpdatorId")
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -65,6 +72,9 @@ namespace Sample.Infrastructure.Migrations
                     b.HasIndex("UpdateDateTime");
 
                     b.HasIndex("UpdatorId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Account");
                 });
