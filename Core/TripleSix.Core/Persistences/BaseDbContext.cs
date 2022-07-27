@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using TripleSix.Core.Entities;
@@ -11,16 +12,19 @@ namespace TripleSix.Core.Persistences
     public abstract class BaseDbContext : DbContext,
         IDbDataContext, IDbMigrationContext
     {
-        private readonly Assembly _assembly;
+        private readonly Assembly _entityAssembly;
+        private readonly Assembly _seedAssembly;
 
         /// <summary>
         /// Khởi tạo đối tượng BaseDbContext.
         /// </summary>
-        /// <param name="assembly">Assembly được sử dụng để nạp config của các Entity.</param>
-        protected BaseDbContext(Assembly assembly)
+        /// <param name="entityAssembly">Assembly chứa các config của Entity.</param>
+        /// <param name="seedAssembly">Assembly chứa các data seed.</param>
+        protected BaseDbContext(Assembly entityAssembly, Assembly seedAssembly)
             : base()
         {
-            _assembly = assembly;
+            _entityAssembly = entityAssembly;
+            _seedAssembly = seedAssembly;
         }
 
         /// <inheritdoc/>
@@ -79,7 +83,16 @@ namespace TripleSix.Core.Persistences
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(_assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(_entityAssembly);
+
+            var dataSeedTypes = _seedAssembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableTo<IDataSeed>());
+            foreach (var dataSeedType in dataSeedTypes)
+            {
+                var dataSeed = Activator.CreateInstance(dataSeedType) as IDataSeed;
+                dataSeed!.OnDataSeeding(modelBuilder);
+            }
         }
     }
 }

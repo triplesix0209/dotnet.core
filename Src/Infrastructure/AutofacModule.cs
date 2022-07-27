@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Configuration;
-using Sample.Domain.Persistences;
 using Sample.Infrastructure.Persistences;
 using TripleSix.Core.AutofacModules;
 
@@ -17,7 +16,7 @@ namespace Sample.Infrastructure
         {
             base.Load(builder);
 
-            builder.Register(c => new ApplicationDbContext(typeof(IApplicationDbContext).Assembly, Configuration))
+            builder.Register(c => new ApplicationDbContext(Configuration))
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces();
         }

@@ -34,6 +34,8 @@ namespace Sample.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Code = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -41,8 +43,6 @@ namespace Sample.Infrastructure.Migrations
                     CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     UpdateDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    Code = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ParentId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     HierarchyLevel = table.Column<int>(type: "int", nullable: false)
                 },
@@ -196,6 +196,79 @@ namespace Sample.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Account",
+                columns: new[] { "Id", "AccessLevel", "AvatarLink", "Code", "CreateDateTime", "CreatorId", "IsDeleted", "Name", "PermissionGroupId", "UpdateDateTime", "UpdatorId" },
+                values: new object[] { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), 0, null, null, null, null, true, "Root", null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "Permission",
+                columns: new[] { "Code", "CategoryName", "Name" },
+                values: new object[,]
+                {
+                    { "account.changelog", "Tài khoản", "Xem log tài khoản" },
+                    { "account.create", "Tài khoản", "Tạo tài khoản" },
+                    { "account.delete", "Tài khoản", "Xóa tài khoản" },
+                    { "account.export", "Tài khoản", "Xuất tài khoản" },
+                    { "account.read", "Tài khoản", "Đọc tài khoản" },
+                    { "account.update", "Tài khoản", "Sửa tài khoản" },
+                    { "permission.changelog", "Quyền", "Xem log quyền" },
+                    { "permission.create", "Quyền", "Tạo quyền" },
+                    { "permission.delete", "Quyền", "Xóa quyền" },
+                    { "permission.export", "Quyền", "Xuất quyền" },
+                    { "permission.read", "Quyền", "Đọc quyền" },
+                    { "permission.update", "Quyền", "Sửa quyền" },
+                    { "profile.update", "Thông tin cá nhân", "Sửa thông tin cá nhân" },
+                    { "setting.changelog", "Thiết lập", "Xem log thiết lập" },
+                    { "setting.export", "Thiết lập", "Xuất thiết lập" },
+                    { "setting.read", "Thiết lập", "Đọc thiết lập" },
+                    { "setting.update", "Thiết lập", "Sửa thiết lập" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PermissionGroup",
+                columns: new[] { "Id", "Code", "CreateDateTime", "CreatorId", "HierarchyLevel", "IsDeleted", "Name", "ParentId", "UpdateDateTime", "UpdatorId" },
+                values: new object[] { new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), "Admin", null, null, 0, false, "Nhóm quyền quản trị", null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "Account",
+                columns: new[] { "Id", "AccessLevel", "AvatarLink", "Code", "CreateDateTime", "CreatorId", "IsDeleted", "Name", "PermissionGroupId", "UpdateDateTime", "UpdatorId" },
+                values: new object[] { new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"), 1, null, null, null, null, false, "Admin", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), null, null });
+
+            migrationBuilder.InsertData(
+                table: "AccountAuth",
+                columns: new[] { "Id", "AccountId", "Code", "CreateDateTime", "CreatorId", "HashPasswordKey", "HashedPassword", "IsDeleted", "UpdateDateTime", "UpdatorId", "Username" },
+                values: new object[] { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), null, null, null, "8sBXJjPl1BaK1ppd0PNMB366NHhmAx", "F0DC6BFBD368CDD9D63FC264C8B76E9F", false, null, null, "root" });
+
+            migrationBuilder.InsertData(
+                table: "PermissionValue",
+                columns: new[] { "Code", "GroupId", "ActualValue", "Value" },
+                values: new object[,]
+                {
+                    { "account.changelog", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "account.create", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "account.delete", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "account.export", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "account.read", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "account.update", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "permission.changelog", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "permission.create", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "permission.delete", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "permission.export", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "permission.read", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "permission.update", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "profile.update", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "setting.changelog", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "setting.export", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "setting.read", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 },
+                    { "setting.update", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), true, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AccountAuth",
+                columns: new[] { "Id", "AccountId", "Code", "CreateDateTime", "CreatorId", "HashPasswordKey", "HashedPassword", "IsDeleted", "UpdateDateTime", "UpdatorId", "Username" },
+                values: new object[] { new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"), new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"), null, null, null, "xE8czZlAixQOJDQ0oR7PqlYJUcywj6", "73906ACDE3F2288B37120E99886A57D7", false, null, null, "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Account_AccessLevel",

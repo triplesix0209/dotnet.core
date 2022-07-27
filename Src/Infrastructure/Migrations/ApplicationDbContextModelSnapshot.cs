@@ -77,6 +77,23 @@ namespace Sample.Infrastructure.Migrations
                     b.HasIndex("UpdatorId");
 
                     b.ToTable("Account");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
+                            AccessLevel = 0,
+                            IsDeleted = true,
+                            Name = "Root"
+                        },
+                        new
+                        {
+                            Id = new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"),
+                            AccessLevel = 1,
+                            IsDeleted = false,
+                            Name = "Admin",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77")
+                        });
                 });
 
             modelBuilder.Entity("Sample.Domain.Entities.AccountAuth", b =>
@@ -138,6 +155,26 @@ namespace Sample.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("AccountAuth");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
+                            AccountId = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
+                            HashPasswordKey = "8sBXJjPl1BaK1ppd0PNMB366NHhmAx",
+                            HashedPassword = "F0DC6BFBD368CDD9D63FC264C8B76E9F",
+                            IsDeleted = false,
+                            Username = "root"
+                        },
+                        new
+                        {
+                            Id = new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"),
+                            AccountId = new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"),
+                            HashPasswordKey = "xE8czZlAixQOJDQ0oR7PqlYJUcywj6",
+                            HashedPassword = "73906ACDE3F2288B37120E99886A57D7",
+                            IsDeleted = false,
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Sample.Domain.Entities.AccountSession", b =>
@@ -217,6 +254,110 @@ namespace Sample.Infrastructure.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("Permission");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "profile.update",
+                            CategoryName = "Thông tin cá nhân",
+                            Name = "Sửa thông tin cá nhân"
+                        },
+                        new
+                        {
+                            Code = "account.create",
+                            CategoryName = "Tài khoản",
+                            Name = "Tạo tài khoản"
+                        },
+                        new
+                        {
+                            Code = "account.read",
+                            CategoryName = "Tài khoản",
+                            Name = "Đọc tài khoản"
+                        },
+                        new
+                        {
+                            Code = "account.update",
+                            CategoryName = "Tài khoản",
+                            Name = "Sửa tài khoản"
+                        },
+                        new
+                        {
+                            Code = "account.delete",
+                            CategoryName = "Tài khoản",
+                            Name = "Xóa tài khoản"
+                        },
+                        new
+                        {
+                            Code = "account.changelog",
+                            CategoryName = "Tài khoản",
+                            Name = "Xem log tài khoản"
+                        },
+                        new
+                        {
+                            Code = "account.export",
+                            CategoryName = "Tài khoản",
+                            Name = "Xuất tài khoản"
+                        },
+                        new
+                        {
+                            Code = "permission.create",
+                            CategoryName = "Quyền",
+                            Name = "Tạo quyền"
+                        },
+                        new
+                        {
+                            Code = "permission.read",
+                            CategoryName = "Quyền",
+                            Name = "Đọc quyền"
+                        },
+                        new
+                        {
+                            Code = "permission.update",
+                            CategoryName = "Quyền",
+                            Name = "Sửa quyền"
+                        },
+                        new
+                        {
+                            Code = "permission.delete",
+                            CategoryName = "Quyền",
+                            Name = "Xóa quyền"
+                        },
+                        new
+                        {
+                            Code = "permission.changelog",
+                            CategoryName = "Quyền",
+                            Name = "Xem log quyền"
+                        },
+                        new
+                        {
+                            Code = "permission.export",
+                            CategoryName = "Quyền",
+                            Name = "Xuất quyền"
+                        },
+                        new
+                        {
+                            Code = "setting.read",
+                            CategoryName = "Thiết lập",
+                            Name = "Đọc thiết lập"
+                        },
+                        new
+                        {
+                            Code = "setting.update",
+                            CategoryName = "Thiết lập",
+                            Name = "Sửa thiết lập"
+                        },
+                        new
+                        {
+                            Code = "setting.changelog",
+                            CategoryName = "Thiết lập",
+                            Name = "Xem log thiết lập"
+                        },
+                        new
+                        {
+                            Code = "setting.export",
+                            CategoryName = "Thiết lập",
+                            Name = "Xuất thiết lập"
+                        });
                 });
 
             modelBuilder.Entity("Sample.Domain.Entities.PermissionGroup", b =>
@@ -226,7 +367,9 @@ namespace Sample.Infrastructure.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Code")
-                        .HasColumnType("varchar(255)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("CreateDateTime")
                         .HasColumnType("datetime(6)");
@@ -273,6 +416,16 @@ namespace Sample.Infrastructure.Migrations
                     b.HasIndex("UpdatorId");
 
                     b.ToTable("PermissionGroup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            Code = "Admin",
+                            HierarchyLevel = 0,
+                            IsDeleted = false,
+                            Name = "Nhóm quyền quản trị"
+                        });
                 });
 
             modelBuilder.Entity("Sample.Domain.Entities.PermissionValue", b =>
@@ -295,6 +448,127 @@ namespace Sample.Infrastructure.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("PermissionValue");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "profile.update",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "account.create",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "account.read",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "account.update",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "account.delete",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "account.changelog",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "account.export",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "permission.create",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "permission.read",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "permission.update",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "permission.delete",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "permission.changelog",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "permission.export",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "setting.read",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "setting.update",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "setting.changelog",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            Code = "setting.export",
+                            GroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        });
                 });
 
             modelBuilder.Entity("Sample.Domain.Entities.Setting", b =>

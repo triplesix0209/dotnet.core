@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Sample.Domain.Persistences;
 
 namespace Sample.Infrastructure.Persistences
 {
@@ -8,12 +7,11 @@ namespace Sample.Infrastructure.Persistences
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            var assembly = typeof(IApplicationDbContext).Assembly;
             var configuration = new ConfigurationBuilder()
                .AddJsonFile(Path.Combine("Config", "appsettings.json"), true)
                .Build();
 
-            return new ApplicationDbContext(assembly, configuration);
+            return new ApplicationDbContext(configuration);
         }
     }
 }

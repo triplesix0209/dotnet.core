@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Sample.Domain.Entities;
-using Sample.Domain.Persistences;
+﻿using Sample.Domain.Persistences;
 
 namespace Sample.Infrastructure.Persistences
 {
