@@ -49,7 +49,7 @@ namespace TestConsole
 
     internal class SampleListener
     {
-        private readonly object _allListeners = new ();
+        private readonly object _allListeners = new();
         private IDisposable? _networkSubscription;
         private IDisposable? _listenerSubscription;
 

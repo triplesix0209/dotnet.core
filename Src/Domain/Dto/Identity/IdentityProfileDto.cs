@@ -1,6 +1,6 @@
 ﻿namespace Sample.Domain.Dto
 {
-    public class IdentityProfileDto : DataDto
+    public class IdentityProfileDto : BaseDto
     {
         [DisplayName("định danh tài khoản")]
         public Guid AccountId { get; set; }

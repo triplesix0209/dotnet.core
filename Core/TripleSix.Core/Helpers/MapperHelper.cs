@@ -139,7 +139,7 @@ namespace TripleSix.Core.Helpers
             TSource source,
             TDestination destination,
             Action<IMappingOperationOptions<TSource, TDestination>>? opts = null)
-            where TSource : class, IDataDto
+            where TSource : class, IDto
             where TDestination : class
         {
             return mapper.Map(source, destination, context =>

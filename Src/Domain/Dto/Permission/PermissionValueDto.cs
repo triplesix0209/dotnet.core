@@ -1,7 +1,7 @@
 ﻿namespace Sample.Domain.Dto
 {
     [MapFromEntity(typeof(PermissionValue))]
-    public class PermissionValueDto : DataDto
+    public class PermissionValueDto : BaseDto
     {
         [DisplayName("mã số")]
         public string? Code { get; set; }

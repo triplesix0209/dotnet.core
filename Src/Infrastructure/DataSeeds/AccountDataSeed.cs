@@ -1,4 +1,4 @@
-﻿using TripleSix.Core.Helpers;
+﻿using Sample.Application.Services;
 
 namespace Sample.Infrastructure.Seeds
 {
@@ -47,7 +47,7 @@ namespace Sample.Infrastructure.Seeds
                 Id = x.Id,
                 Username = x.Username,
                 HashPasswordKey = x.HashPasswordKey,
-                HashedPassword = HashHelper.MD5Hash(x.Password + x.HashPasswordKey),
+                HashedPassword = AccountService.HashPassword(x.Password, x.HashPasswordKey),
                 AccountId = x.Id,
             });
             builder.Entity<AccountAuth>().HasData(auths);

@@ -62,7 +62,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task UpdateWithMapper(Guid id, bool includeDeleted, IDataDto input, CancellationToken cancellationToken = default)
+        public async Task UpdateWithMapper(Guid id, bool includeDeleted, IDto input, CancellationToken cancellationToken = default)
         {
             var entity = await GetById(id, includeDeleted, cancellationToken);
             await UpdateWithMapper(entity, input, cancellationToken);

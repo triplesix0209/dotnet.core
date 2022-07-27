@@ -1,6 +1,6 @@
 ﻿namespace Sample.Domain.Dto
 {
-    public class IdentityTokenDto : DataDto
+    public class IdentityTokenDto : BaseDto
     {
         [DisplayName("token truy cập")]
         public string? AccessToken { get; set; }

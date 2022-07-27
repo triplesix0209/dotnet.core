@@ -45,7 +45,7 @@ namespace TripleSix.Core.Services
         /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Task xử lý.</returns>
-        Task UpdateWithMapper(Guid id, bool includeDeleted, IDataDto input, CancellationToken cancellationToken = default);
+        Task UpdateWithMapper(Guid id, bool includeDeleted, IDto input, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Xóa bỏ entity.

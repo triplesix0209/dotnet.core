@@ -40,10 +40,10 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> CreateWithMapper<TResult>(IDataDto input, CancellationToken cancellationToken = default)
+        public async Task<TResult> CreateWithMapper<TResult>(IDto input, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            var entity = Mapper.MapData<IDataDto, TEntity>(input);
+            var entity = Mapper.MapData<IDto, TEntity>(input);
             var result = await Create(entity, cancellationToken);
             return Mapper.MapData<TEntity, TResult>(result);
         }
@@ -60,7 +60,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task UpdateWithMapper(TEntity entity, IDataDto input, CancellationToken cancellationToken = default)
+        public async Task UpdateWithMapper(TEntity entity, IDto input, CancellationToken cancellationToken = default)
         {
             if (!input.IsAnyPropertyChanged()) return;
 

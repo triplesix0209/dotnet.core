@@ -6,7 +6,7 @@ namespace TripleSix.Core.OpenTelemetry
     [EventSource(Name = "TripleSixCore-Instrumentation-EntityFrameworkCore")]
     internal class EntityFrameworkCoreInstrumentationEventSource : EventSource
     {
-        private static readonly EntityFrameworkCoreInstrumentationEventSource _log = new ();
+        private static readonly EntityFrameworkCoreInstrumentationEventSource _log = new();
 
         public static EntityFrameworkCoreInstrumentationEventSource Log => _log;
 

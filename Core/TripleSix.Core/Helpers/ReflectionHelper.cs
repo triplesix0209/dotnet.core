@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 
 namespace TripleSix.Core.Helpers
 {
@@ -111,6 +112,20 @@ namespace TripleSix.Core.Helpers
 
             return type.GetProperties(BindingFlags.FlattenHierarchy
                 | BindingFlags.Public | BindingFlags.Instance);
+        }
+
+        /// <summary>
+        /// Lấy tên hiển thị của property được khai báo bằng <see cref="DisplayNameAttribute"/>.
+        /// </summary>
+        /// <param name="propertyInfo">Property cần xử lý.</param>
+        /// <returns>Tên hiển thị của property.</returns>
+        public static string GetDisplayName(this MemberInfo propertyInfo)
+        {
+            var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
+            if (displayName == null || displayName.DisplayName.IsNullOrWhiteSpace())
+                return propertyInfo.Name;
+
+            return char.ToUpper(displayName.DisplayName[0]) + displayName.DisplayName[1..];
         }
     }
 }

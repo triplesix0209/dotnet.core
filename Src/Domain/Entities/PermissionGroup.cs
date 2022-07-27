@@ -8,11 +8,11 @@
 
         [Required]
         [MaxLength(100)]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public virtual List<Account>? Accounts { get; set; }
+        public virtual List<Account> Accounts { get; set; }
 
-        public virtual List<PermissionValue>? PermissionValues { get; set; }
+        public virtual List<PermissionValue> PermissionValues { get; set; }
 
         public override void Configure(EntityTypeBuilder<PermissionGroup> builder)
         {

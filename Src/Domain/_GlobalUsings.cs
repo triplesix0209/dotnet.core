@@ -1,6 +1,7 @@
 ﻿global using System.ComponentModel;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using FluentValidation;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Sample.Domain.Entities;
 global using Sample.Domain.Enum;
@@ -8,3 +9,4 @@ global using TripleSix.Core.Entities;
 global using TripleSix.Core.Mappers;
 global using TripleSix.Core.Services;
 global using TripleSix.Core.Types;
+global using TripleSix.Core.Validators;

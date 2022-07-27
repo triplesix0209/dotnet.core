@@ -1,11 +1,13 @@
 ﻿namespace Sample.Domain.Dto
 {
-    public class IdentityLoginDto : DataDto
+    public class IdentityLoginDto : BaseDto
     {
         [DisplayName("tên đăng nhập")]
-        public string? Username { get; set; }
+        [Required]
+        public string Username { get; set; }
 
         [DisplayName("mật khẩu")]
-        public string? Password { get; set; }
+        [Required]
+        public string Password { get; set; }
     }
 }

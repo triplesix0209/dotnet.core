@@ -29,7 +29,7 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Cấu hình Json serializer mặc đình.
         /// </summary>
-        public static readonly JsonSerializerSettings SerializerSettings = new ()
+        public static readonly JsonSerializerSettings SerializerSettings = new()
         {
             ContractResolver = new BaseContractResolver(),
             Converters = Converters,

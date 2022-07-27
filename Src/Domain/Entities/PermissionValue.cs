@@ -4,7 +4,7 @@
     {
         [Required]
         [MaxLength(100)]
-        public string? Code { get; set; }
+        public string Code { get; set; }
 
         public Guid GroupId { get; set; }
 
@@ -13,10 +13,10 @@
         public bool ActualValue { get; set; }
 
         [ForeignKey(nameof(Code))]
-        public virtual Permission? Permission { get; set; }
+        public virtual Permission Permission { get; set; }
 
         [ForeignKey(nameof(GroupId))]
-        public virtual PermissionGroup? PermissionGroup { get; set; }
+        public virtual PermissionGroup PermissionGroup { get; set; }
 
         public override void Configure(EntityTypeBuilder<PermissionValue> builder)
         {

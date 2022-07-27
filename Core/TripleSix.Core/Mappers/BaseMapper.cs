@@ -59,7 +59,7 @@ namespace TripleSix.Core.Mappers
             var map = base.CreateMap(sourceType, entityType, memberList);
 
             // xử lý khi chỉ map các property có thay đổi của Data DTO
-            if (sourceType.IsAssignableTo<IDataDto>())
+            if (sourceType.IsAssignableTo<IDto>())
             {
                 foreach (var property in entityType.GetProperties())
                 {
@@ -76,7 +76,7 @@ namespace TripleSix.Core.Mappers
                             var mode = (string)context.Items["mapPropertyChangedOnly"];
                             if (mode == null) return true;
 
-                            return mode.Trim() == "true" && ((IDataDto)source).IsPropertyChanged(property.Name);
+                            return mode.Trim() == "true" && ((IDto)source).IsPropertyChanged(property.Name);
                         });
                     });
                 }
@@ -114,7 +114,7 @@ namespace TripleSix.Core.Mappers
             var entityType = typeof(TDestination);
 
             // xử lý khi chỉ map các property có thay đổi của Data DTO
-            if (sourceType.IsAssignableTo<IDataDto>())
+            if (sourceType.IsAssignableTo<IDto>())
             {
                 foreach (var property in entityType.GetProperties())
                 {
@@ -131,7 +131,7 @@ namespace TripleSix.Core.Mappers
                             var mode = (string)context.Items["mapPropertyChangedOnly"];
                             if (mode == null) return true;
 
-                            var sourceData = source as IDataDto;
+                            var sourceData = source as IDto;
                             return mode.Trim() == "true" && sourceData != null
                                 && sourceData.IsPropertyChanged(property.Name);
                         });

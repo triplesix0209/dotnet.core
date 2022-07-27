@@ -22,17 +22,17 @@ namespace TripleSix.Core.OpenTelemetry
         private const string AttributeEfProvider = "ef.provider";
         private const string AttributeDbParameters = "db.parameters";
 
-        private readonly PropertyFetcher<object> commandFetcher = new ("Command");
-        private readonly PropertyFetcher<object> connectionFetcher = new ("Connection");
-        private readonly PropertyFetcher<object> dbContextFetcher = new ("Context");
-        private readonly PropertyFetcher<object> dbContextDatabaseFetcher = new ("Database");
-        private readonly PropertyFetcher<string> providerNameFetcher = new ("ProviderName");
-        private readonly PropertyFetcher<object> dataSourceFetcher = new ("DataSource");
-        private readonly PropertyFetcher<object> databaseFetcher = new ("Database");
-        private readonly PropertyFetcher<CommandType> commandTypeFetcher = new ("CommandType");
-        private readonly PropertyFetcher<string> commandTextFetcher = new ("CommandText");
-        private readonly PropertyFetcher<DbParameterCollection> parameterCollectionFetcher = new ("DbParameterCollection");
-        private readonly PropertyFetcher<Exception> exceptionFetcher = new ("Exception");
+        private readonly PropertyFetcher<object> commandFetcher = new("Command");
+        private readonly PropertyFetcher<object> connectionFetcher = new("Connection");
+        private readonly PropertyFetcher<object> dbContextFetcher = new("Context");
+        private readonly PropertyFetcher<object> dbContextDatabaseFetcher = new("Database");
+        private readonly PropertyFetcher<string> providerNameFetcher = new("ProviderName");
+        private readonly PropertyFetcher<object> dataSourceFetcher = new("DataSource");
+        private readonly PropertyFetcher<object> databaseFetcher = new("Database");
+        private readonly PropertyFetcher<CommandType> commandTypeFetcher = new("CommandType");
+        private readonly PropertyFetcher<string> commandTextFetcher = new("CommandText");
+        private readonly PropertyFetcher<DbParameterCollection> parameterCollectionFetcher = new("DbParameterCollection");
+        private readonly PropertyFetcher<Exception> exceptionFetcher = new("Exception");
 
         private readonly EntityFrameworkCoreInstrumentationOptions options;
 

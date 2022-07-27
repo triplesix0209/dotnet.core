@@ -14,7 +14,7 @@
         public Guid AccountId { get; set; }
 
         [ForeignKey(nameof(AccountId))]
-        public virtual Account? Account { get; set; }
+        public virtual Account Account { get; set; }
 
         public override void Configure(EntityTypeBuilder<AccountAuth> builder)
         {

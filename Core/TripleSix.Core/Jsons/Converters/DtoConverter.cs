@@ -38,7 +38,7 @@ namespace TripleSix.Core.Jsons
                 if (!data.Properties().Any(x => x.Name.ToLower() == p.Name.ToLower()))
                     continue;
 
-                (result as IDataDto)?.SetPropertyChanged(p.Name, true);
+                (result as IDto)?.SetPropertyChanged(p.Name, true);
             }
 
             return result;

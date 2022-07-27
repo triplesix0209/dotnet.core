@@ -25,7 +25,7 @@ namespace TripleSix.Core.Services
         /// <param name="input">Dữ liệu đầu vào dùng để map sang entity.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Dữ liệu được map từ entity dã tạo.</returns>
-        Task<TResult> CreateWithMapper<TResult>(IDataDto input, CancellationToken cancellationToken = default)
+        Task<TResult> CreateWithMapper<TResult>(IDto input, CancellationToken cancellationToken = default)
             where TResult : class;
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace TripleSix.Core.Services
         /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Task xử lý.</returns>
-        Task UpdateWithMapper(TEntity entity, IDataDto input, CancellationToken cancellationToken = default);
+        Task UpdateWithMapper(TEntity entity, IDto input, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Xóa bỏ entity.

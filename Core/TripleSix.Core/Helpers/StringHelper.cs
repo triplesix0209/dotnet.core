@@ -32,7 +32,7 @@ namespace TripleSix.Core.Helpers
         public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? text)
         {
             return string.IsNullOrWhiteSpace(text);
-         }
+        }
 
         /// <summary>
         /// Chuyển chuỗi sang dạng Camel Case.

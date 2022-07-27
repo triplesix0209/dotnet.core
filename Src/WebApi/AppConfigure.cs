@@ -7,6 +7,7 @@ using Sample.Infrastructure;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
 using TripleSix.Core.Persistences;
+using TripleSix.Core.Validators;
 
 namespace Sample.WebApi
 {
@@ -55,11 +56,13 @@ namespace Sample.WebApi
             if (autofacContainer.IsRegistered<MapperConfiguration>())
                 autofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
 
-            app.UseMiddleware<ExceptionMiddleware>();
+            BaseValidator.SetupGlobal();
+            BaseValidator.ValidateDtoValidator(typeof(Domain.AutofacModule).Assembly);
 
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             #endregion

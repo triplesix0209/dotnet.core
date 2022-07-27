@@ -5,7 +5,7 @@ namespace TripleSix.Core.OpenTelemetry.Shared
     [EventSource(Name = "OpenTelemetry-Instrumentation")]
     internal class InstrumentationEventSource : EventSource
     {
-        private static readonly InstrumentationEventSource _log = new ();
+        private static readonly InstrumentationEventSource _log = new();
 
         public static InstrumentationEventSource Log => _log;
 
