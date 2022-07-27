@@ -30,9 +30,9 @@ namespace TripleSix.Core.Persistences
         }
 
         /// <inheritdoc/>
-        public Task MigrateAsync(CancellationToken cancellationToken = default)
+        public async Task MigrateAsync(CancellationToken cancellationToken = default)
         {
-            return Database.MigrateAsync(cancellationToken);
+            await Database.MigrateAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

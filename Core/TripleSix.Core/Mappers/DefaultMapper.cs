@@ -26,19 +26,24 @@ namespace TripleSix.Core.Mappers
                 var matchedDtoTypes = SelectDto(entityType, dtoTypes);
                 foreach (var dtoType in matchedDtoTypes)
                 {
-                    CreateMap(entityType, dtoType, MemberList.None);
-                    var mapToEntity = CreateMap(dtoType, entityType, MemberList.Destination);
-
-                    var config = dtoType.GetCustomAttribute<MapEntityAttribute>();
-                    if (config == null) continue;
-
-                    if (config.IgnoreUnmapedProperties)
+                    var configFromEntity = dtoType.GetCustomAttribute<MapFromEntityAttribute>();
+                    if (configFromEntity != null)
                     {
-                        var unmapProperties = entityType
-                            .GetPublicProperties()
-                            .Where(x => dtoType.GetProperty(x.Name) == null);
-                        foreach (var property in unmapProperties)
-                            mapToEntity.ForMember(property.Name, o => o.Ignore());
+                        CreateMap(entityType, dtoType, MemberList.None);
+                    }
+
+                    var configToEntity = dtoType.GetCustomAttribute<MapToEntityAttribute>();
+                    if (configToEntity != null)
+                    {
+                        var map = CreateMap(dtoType, entityType, MemberList.Destination);
+                        if (configToEntity.IgnoreUnmapedProperties)
+                        {
+                            var unmapProperties = entityType
+                                .GetPublicProperties()
+                                .Where(x => dtoType.GetProperty(x.Name) == null);
+                            foreach (var property in unmapProperties)
+                                map.ForMember(property.Name, o => o.Ignore());
+                        }
                     }
                 }
             }
@@ -48,8 +53,10 @@ namespace TripleSix.Core.Mappers
         {
             return dtoTypes.Where(x =>
             {
-                var mapEntity = x.GetCustomAttribute<MapEntityAttribute>();
-                return mapEntity != null && mapEntity.EntityType == entityType;
+                var mapFromEntity = x.GetCustomAttribute<MapFromEntityAttribute>();
+                var mapToEntity = x.GetCustomAttribute<MapToEntityAttribute>();
+                return (mapFromEntity != null && mapFromEntity.EntityType == entityType)
+                    || (mapToEntity != null && mapToEntity.EntityType == entityType);
             });
         }
     }

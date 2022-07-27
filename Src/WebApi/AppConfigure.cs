@@ -18,7 +18,7 @@ namespace Sample.WebApi
 
             builder.RegisterModule(new Domain.AutofacModule(configuration));
             builder.RegisterModule(new Application.AutofacModule(configuration));
-            builder.RegisterModule(new Infrastructure.AutofacModule(configuration, assembly));
+            builder.RegisterModule(new Infrastructure.AutofacModule(configuration));
 
             builder.RegisterAllController(assembly);
         }

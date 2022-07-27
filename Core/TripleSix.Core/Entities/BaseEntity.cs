@@ -12,6 +12,8 @@ namespace TripleSix.Core.Entities
         where TEntity : class, IEntity
     {
         /// <inheritdoc/>
-        public abstract void Configure(EntityTypeBuilder<TEntity> builder);
+        public virtual void Configure(EntityTypeBuilder<TEntity> builder)
+        {
+        }
     }
 }
