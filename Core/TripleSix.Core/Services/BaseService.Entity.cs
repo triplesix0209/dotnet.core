@@ -1,5 +1,4 @@
-﻿using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;

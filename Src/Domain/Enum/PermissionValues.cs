@@ -1,14 +1,14 @@
 ﻿namespace Sample.Domain.Enum
 {
-    public enum AccountLevels
+    public enum PermissionValues
     {
-        [Description("root")]
-        Root = 0,
+        [Description("kế thừa")]
+        Inherit = 0,
 
-        [Description("quản trị")]
-        Admin = 1,
+        [Description("cho phép")]
+        Allow = 1,
 
-        [Description("thông thường")]
-        Common = 2,
+        [Description("cấm")]
+        Deny = -1,
     }
 }

@@ -1,6 +1,4 @@
-﻿using TripleSix.Core.Exceptions;
-
-namespace Sample.Domain.Exceptions
+﻿namespace Sample.Domain.Exceptions
 {
     /// <summary>
     /// Lỗi phiên đăng nhập.

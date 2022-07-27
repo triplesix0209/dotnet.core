@@ -1,6 +1,4 @@
-﻿using TripleSix.Core.Exceptions;
-
-namespace Sample.Domain.Exceptions
+﻿namespace Sample.Domain.Exceptions
 {
     /// <summary>
     /// Lỗi không tìm thấy tài khoản.

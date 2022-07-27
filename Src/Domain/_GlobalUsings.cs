@@ -6,6 +6,7 @@ global using Sample.Domain.Dto;
 global using Sample.Domain.Entities;
 global using Sample.Domain.Enum;
 global using TripleSix.Core.Entities;
+global using TripleSix.Core.Exceptions;
 global using TripleSix.Core.Helpers;
 global using TripleSix.Core.Mappers;
 global using TripleSix.Core.Services;
