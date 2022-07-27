@@ -6,6 +6,8 @@ using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
+using TripleSix.Core.Appsettings;
+using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
@@ -15,6 +17,37 @@ namespace TripleSix.Core.AutofacModules
 {
     public static class Extension
     {
+        /// <summary>
+        /// Đăng ký các Identity Context dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <typeparam name="TIdentityContext">Class Identity Context sử dụng.</typeparam>
+        /// <param name="builder">Container builder.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<TIdentityContext,ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterIdentityContext<TIdentityContext>(this ContainerBuilder builder)
+            where TIdentityContext : IIdentityContext
+        {
+            return builder.RegisterType<TIdentityContext>()
+                .InstancePerLifetimeScope()
+                .As<IIdentityContext>()
+                .AsSelf();
+        }
+
+        /// <summary>
+        /// Đăng ký các appsetting dưới dạng SingleInstance.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các appsetting để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllAppsetting(this ContainerBuilder builder, Assembly assembly)
+        {
+            return builder.RegisterAssemblyTypes(assembly)
+                .PublicOnly()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableTo<BaseAppsetting>())
+                .SingleInstance()
+                .AsSelf();
+        }
+
         /// <summary>
         /// Đăng ký các mapper dưới dạng InstancePerLifetimeScope với IMapper.
         /// </summary>

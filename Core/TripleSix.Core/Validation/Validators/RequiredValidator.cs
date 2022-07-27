@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
-namespace TripleSix.Core.Validators.PropertyValidators
+namespace TripleSix.Core.Validation.Validators
 {
     public class RequiredValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
@@ -16,7 +16,7 @@ namespace TripleSix.Core.Validators.PropertyValidators
             switch (value)
             {
                 case null:
-                case string s when s.IsNullOrWhiteSpace():
+                case string str when str.IsNullOrWhiteSpace():
                 case ICollection { Count: 0 }:
                 case Array { Length: 0 }:
                 case IEnumerable e when !e.GetEnumerator().MoveNext():

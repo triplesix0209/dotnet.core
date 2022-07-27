@@ -2,7 +2,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-using TripleSix.Core.Validators;
+using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.Types
 {

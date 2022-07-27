@@ -21,7 +21,7 @@ namespace TripleSix.Core.WebApi
                     {
                         errors.Add(new()
                         {
-                            PropertyName = error.PropertyName.ToCamelCase(),
+                            FieldKey = error.PropertyName.ToCamelCase(),
                             ErrorCode = error.ErrorCode.ToSnakeCase(),
                             ErrorMessage = error.ErrorMessage
                         });
@@ -35,7 +35,7 @@ namespace TripleSix.Core.WebApi
 
         private class ErrorItem
         {
-            public string PropertyName { get; set; }
+            public string FieldKey { get; set; }
 
             public string ErrorCode { get; set; }
 

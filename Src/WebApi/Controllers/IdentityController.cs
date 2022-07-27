@@ -2,14 +2,24 @@
 {
     public class IdentityController : BaseController
     {
-        public IAccountService AccountService { get; set; }
+        public IIdentityService IdentityService { get; set; }
+
+        public IdentityContext IdentityContext { get; set; }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProfile()
+        {
+            var result = await IdentityService.GetProfileByAccountId(IdentityContext.UserId!.Value);
+            return DataResult(result);
+        }
 
         [HttpPost]
         [ValidateInput]
+        [Transactional]
         public async Task<IActionResult> Login([FromBody] IdentityLoginDto input)
         {
-            var account = await AccountService.GetByUsernamePassword<Account>("admin", input.Password);
-            return SuccessResult();
+            var result = await IdentityService.LoginByUsernamePassword(input.Username, input.Password);
+            return DataResult(result);
         }
     }
 }

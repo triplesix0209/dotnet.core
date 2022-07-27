@@ -6,7 +6,7 @@
         public Guid AccountId { get; set; }
 
         [DisplayName("tên gọi")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [DisplayName("tên đăng nhập")]
         public string? Username { get; set; }

@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace TripleSix.Core.Services
 {
@@ -12,12 +13,17 @@ namespace TripleSix.Core.Services
         : IService
     {
         /// <summary>
-        /// Automapper.
+        /// <see cref="IConfiguration"/>.
+        /// </summary>
+        public IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        /// <see cref="IMapper"/>.
         /// </summary>
         public IMapper Mapper { get; set; }
 
         /// <summary>
-        /// Http context accessor.
+        /// <see cref="IHttpContextAccessor"/>.
         /// </summary>
         public IHttpContextAccessor? HttpContextAccessor { get; set; }
 

@@ -1,5 +1,4 @@
 ﻿using TripleSix.Core.Entities;
-using TripleSix.Core.Services;
 
 namespace Sample.Application.Common
 {

@@ -7,7 +7,7 @@ using Sample.Infrastructure;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
 using TripleSix.Core.Persistences;
-using TripleSix.Core.Validators;
+using TripleSix.Core.Validation;
 
 namespace Sample.WebApi
 {

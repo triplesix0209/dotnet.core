@@ -107,10 +107,7 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             if (query == null) query = Db.Set<TEntity>();
-
-            return typeof(TResult) == typeof(TEntity) ?
-                await query.FirstOrDefaultAsync(cancellationToken) as TResult :
-                await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+            return await query.FirstOrDefaultAsync<TResult>(Mapper, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -142,12 +139,7 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             if (query == null) query = Db.Set<TEntity>();
-
-            var data = typeof(TResult) == typeof(TEntity) ?
-                (await query.ToListAsync(cancellationToken)).Cast<TResult>().ToList() :
-                await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).ToListAsync(cancellationToken);
-
-            return data;
+            return await query.ToListAsync<TResult>(Mapper, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -169,22 +161,10 @@ namespace TripleSix.Core.Services
             if (query == null) query = Db.Set<TEntity>();
 
             result.Total = await query.LongCountAsync(cancellationToken);
-            if (typeof(TResult) == typeof(TEntity))
-            {
-                var data = await query
-                    .Skip((page - 1) * size)
-                    .Take(size)
-                    .ToListAsync(cancellationToken);
-                result.Items = data.Cast<TResult>().ToList();
-            }
-            else
-            {
-                result.Items = await query.ProjectTo<TResult>(Mapper.ConfigurationProvider)
-                    .Skip((page - 1) * size)
-                    .Take(size)
-                    .ToListAsync(cancellationToken);
-            }
-
+            result.Items = await query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync<TResult>(Mapper, cancellationToken);            
             return result;
         }
 

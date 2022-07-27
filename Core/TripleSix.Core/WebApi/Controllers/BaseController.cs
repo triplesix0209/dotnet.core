@@ -33,7 +33,7 @@ namespace TripleSix.Core.WebApi
         /// </summary>
         /// <typeparam name="TItem">Loại dữ liệu.</typeparam>
         /// <param name="data">Kết quả xử lý.</param>
-        /// <param name="total">Tổng số mục</param>
+        /// <param name="total">Tổng số mục.</param>
         /// <param name="page">Vị trí trang.</param>
         /// <param name="size">Kích thước trang.</param>
         /// <returns><see cref="PagingResult"/>.</returns>

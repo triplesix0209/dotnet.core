@@ -17,6 +17,8 @@ namespace Sample.Domain
             base.Load(builder);
             var assembly = Assembly.GetExecutingAssembly();
 
+            builder.RegisterIdentityContext<IdentityContext>();
+            builder.RegisterAllAppsetting(assembly);
             builder.RegisterAllMapper(assembly);
         }
     }
