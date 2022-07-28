@@ -59,8 +59,6 @@ namespace TripleSix.Core.WebApi
                 options.MapType<DateTime?>(() => new OpenApiSchema { Type = "integer", Format = "int64", Nullable = true });
 
                 options.DocumentFilter<BaseDocumentFilter>();
-                //options.OperationFilter<DescribeAutoAdminOperationFilter>();
-                //options.OperationFilter<PermissionOperationFilter>();
 
                 if (setupAction != null) setupAction(options, appsetting);
             });
