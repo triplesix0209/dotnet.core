@@ -2,11 +2,6 @@
 {
     public class PermissionService : StrongService<PermissionGroup>, IPermissionService
     {
-        public PermissionService(IApplicationDbContext db)
-            : base(db)
-        {
-        }
-
         public Task<List<PermissionItemDto>> GetAllPermission()
         {
             return Db.Permission.ToListAsync<PermissionItemDto>(Mapper);

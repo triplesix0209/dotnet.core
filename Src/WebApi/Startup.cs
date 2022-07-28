@@ -44,19 +44,21 @@ namespace Sample.WebApi
 
             #region [swagger]
 
-            var swaggerOption = new SwaggerAppsetting(configuration);
-            if (swaggerOption.Enable)
+            builder.Services.AddSwagger(configuration, (options, appsetting) =>
             {
-                builder.Services.AddSwaggerGen(options =>
-                {
-                    options.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
-                    options.CustomSchemaIds(x => x.FullName);
-                    options.EnableAnnotations();
+                options.SwaggerDoc("common", new OpenApiInfo { Title = "Common API Document", Version = "1.0" });
+                options.SwaggerDoc("admin", new OpenApiInfo { Title = "Admin API Document", Version = "1.0" });
 
-                    options.SwaggerDoc("common", new OpenApiInfo { Title = "Common API Document", Version = "1.0" });
-                    options.SwaggerDoc("admin", new OpenApiInfo { Title = "Admin API Document", Version = "1.0" });
+                options.AddSecurityDefinition("access-token", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "Nhập access token vào field của header để tiến hành xác thực",
                 });
-            }
+
+                options.OperationFilter<DescribeOperationFilter>("access-token");
+            });
 
             #endregion
 

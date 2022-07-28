@@ -6,6 +6,7 @@ namespace TripleSix.Core.WebApi
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [ValidateInput]
     public abstract class BaseController : ControllerBase
     {
         /// <summary>

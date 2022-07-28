@@ -11,18 +11,13 @@ namespace TripleSix.Core.Services
     /// <summary>
     /// Service xử lý strong entity.
     /// </summary>
-    /// <typeparam name="TDbDataContext">Loại db data context xử lý.</typeparam>
     /// <typeparam name="TEntity">Loại entity xử lý.</typeparam>
-    public abstract class StrongService<TDbDataContext, TEntity> : BaseService<TDbDataContext, TEntity>,
-        IStrongService<TEntity>
-        where TDbDataContext : IDbDataContext
+    /// <typeparam name="TDbDataContext">Loại db data context xử lý.</typeparam>
+    public abstract class StrongService<TEntity, TDbDataContext> : BaseService<TEntity, TDbDataContext>,
+        IStrongService<TEntity, TDbDataContext>
         where TEntity : class, IStrongEntity
+        where TDbDataContext : IDbDataContext
     {
-        protected StrongService(TDbDataContext db)
-            : base(db)
-        {
-        }
-
         /// <summary>
         /// Khởi tạo entity kèm code tự phát sinh.
         /// </summary>

@@ -2,12 +2,8 @@
 
 namespace Sample.Application.Common
 {
-    public abstract class StrongService<TEntity> : StrongService<IApplicationDbContext, TEntity>
+    public abstract class StrongService<TEntity> : StrongService<TEntity, IApplicationDbContext>
         where TEntity : class, IStrongEntity
     {
-        protected StrongService(IApplicationDbContext db)
-            : base(db)
-        {
-        }
     }
 }

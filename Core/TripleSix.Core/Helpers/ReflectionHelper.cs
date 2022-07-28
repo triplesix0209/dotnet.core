@@ -125,7 +125,7 @@ namespace TripleSix.Core.Helpers
             if (displayName == null || displayName.DisplayName.IsNullOrWhiteSpace())
                 return propertyInfo.Name;
 
-            return char.ToUpper(displayName.DisplayName[0]) + displayName.DisplayName[1..];
+            return displayName.DisplayName.ToTitleCase();
         }
     }
 }

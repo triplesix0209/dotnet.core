@@ -620,6 +620,16 @@ namespace Sample.Infrastructure.Migrations
                     b.HasIndex("UpdatorId");
 
                     b.ToTable("Setting");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("92b35930-6354-44c8-bc4d-38194e631f98"),
+                            Code = "mã thiết lập",
+                            Description = "mô tả",
+                            IsDeleted = false,
+                            Value = "giá trị"
+                        });
                 });
 
             modelBuilder.Entity("Sample.Domain.Entities.Account", b =>

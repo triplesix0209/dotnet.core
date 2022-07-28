@@ -2,7 +2,6 @@
 {
     public enum AccountLevels
     {
-        [Description("root")]
         Root = 0,
 
         [Description("quản trị")]

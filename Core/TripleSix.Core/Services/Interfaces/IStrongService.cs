@@ -1,4 +1,5 @@
 ﻿using TripleSix.Core.Entities;
+using TripleSix.Core.Persistences;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Services
@@ -7,8 +8,10 @@ namespace TripleSix.Core.Services
     /// Service xử lý strong entity.
     /// </summary>
     /// <typeparam name="TEntity">Loại entity xử lý.</typeparam>
-    public interface IStrongService<TEntity> : IService<TEntity>
+    /// <typeparam name="TDbDataContext"><see cref="IDbDataContext"/>.</typeparam>
+    public interface IStrongService<TEntity, TDbDataContext> : IService<TEntity, TDbDataContext>
         where TEntity : class, IStrongEntity
+        where TDbDataContext : IDbDataContext
     {
         /// <summary>
         /// Hàm phát sinh entity.

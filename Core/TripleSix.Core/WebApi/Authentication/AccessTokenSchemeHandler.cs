@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi

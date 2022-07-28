@@ -2,11 +2,6 @@
 {
     public class AccountService : StrongService<Account>, IAccountService
     {
-        public AccountService(IApplicationDbContext db)
-            : base(db)
-        {
-        }
-
         public static string HashPassword(string password, string hashKey)
         {
             return HashHelper.MD5Hash(password + hashKey);

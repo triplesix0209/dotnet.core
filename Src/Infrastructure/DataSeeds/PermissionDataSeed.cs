@@ -51,7 +51,7 @@
                     var permission = new Permission
                     {
                         Code = item.CategoryCode + "." + permissionItem,
-                        CategoryName = char.ToUpper(item.CategoryName[0]) + item.CategoryName[1..],
+                        CategoryName = item.CategoryName.ToTitleCase(),
                         Name = permissionItem switch
                         {
                             "create" => $"Tạo {item.CategoryName}",

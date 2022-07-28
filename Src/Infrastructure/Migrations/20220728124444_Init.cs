@@ -231,6 +231,11 @@ namespace Sample.Infrastructure.Migrations
                 values: new object[] { new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), "Admin", null, null, 0, false, "Nhóm quyền quản trị", null, null, null });
 
             migrationBuilder.InsertData(
+                table: "Setting",
+                columns: new[] { "Id", "Code", "CreateDateTime", "CreatorId", "Description", "IsDeleted", "UpdateDateTime", "UpdatorId", "Value" },
+                values: new object[] { new Guid("92b35930-6354-44c8-bc4d-38194e631f98"), "mã thiết lập", null, null, "mô tả", false, null, null, "giá trị" });
+
+            migrationBuilder.InsertData(
                 table: "Account",
                 columns: new[] { "Id", "AccessLevel", "AvatarLink", "Code", "CreateDateTime", "CreatorId", "IsDeleted", "Name", "PermissionGroupId", "UpdateDateTime", "UpdatorId" },
                 values: new object[] { new Guid("b81d0c90-3b91-44d4-bb00-95a5925fa5c6"), 1, null, null, null, null, false, "Admin", new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"), null, null });

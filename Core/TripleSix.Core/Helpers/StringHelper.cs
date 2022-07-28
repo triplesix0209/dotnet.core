@@ -67,6 +67,16 @@ namespace TripleSix.Core.Helpers
         {
             return string.Join("-", SplitCase(text)).ToLower();
         }
+
+        /// <summary>
+        /// Chuyển chuỗi sang dạng Title Case.
+        /// </summary>
+        /// <param name="text">Chuỗi cần xử lý.</param>
+        /// <returns>Chuỗi đã xử lý.</returns>
+        public static string ToTitleCase(this string text)
+        {
+            return char.ToUpper(text[0]) + text[1..];
+        }
     }
 
     public static partial class StringHelper
