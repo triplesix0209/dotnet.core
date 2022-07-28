@@ -18,8 +18,8 @@ namespace Sample.WebApi
 
             // setup builder
             var builder = WebApplication.CreateBuilder(args);
-            builder.Host.ConfigureAppConfiguration((host, builder) => builder.AddConfiguration(configuration));
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureAppConfiguration((host, builder) => builder.AddConfiguration(configuration));
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
 
             // build app & run

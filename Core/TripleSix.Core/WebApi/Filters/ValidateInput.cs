@@ -14,18 +14,17 @@ namespace TripleSix.Core.WebApi
             var errors = new List<ErrorItem>();
             foreach (var input in context.ActionArguments)
             {
-                if (input.Value is IDto inputValue)
+                if (input.Value is not IDto inputValue) continue;
+
+                var validationResult = inputValue.Validate(httpContext: context.HttpContext);
+                foreach (var error in validationResult.Errors)
                 {
-                    var validationResult = inputValue.Validate(httpContext: context.HttpContext);
-                    foreach (var error in validationResult.Errors)
+                    errors.Add(new()
                     {
-                        errors.Add(new()
-                        {
-                            FieldKey = error.PropertyName.ToCamelCase(),
-                            ErrorCode = error.ErrorCode.ToSnakeCase(),
-                            ErrorMessage = error.ErrorMessage
-                        });
-                    }
+                        FieldKey = error.PropertyName.ToCamelCase(),
+                        ErrorCode = error.ErrorCode.ToSnakeCase(),
+                        ErrorMessage = error.ErrorMessage
+                    });
                 }
             }
 

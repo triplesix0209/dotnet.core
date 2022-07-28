@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using TripleSix.Core.Appsettings;
+using TripleSix.Core.Helpers;
 
-namespace Sample.Domain.Appsettings
+namespace TripleSix.Core.Appsettings
 {
     public class IdentityAppsetting : BaseAppsetting
     {

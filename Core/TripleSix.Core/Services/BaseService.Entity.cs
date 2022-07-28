@@ -163,7 +163,7 @@ namespace TripleSix.Core.Services
             result.Items = await query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .ToListAsync<TResult>(Mapper, cancellationToken);            
+                .ToListAsync<TResult>(Mapper, cancellationToken);
             return result;
         }
 

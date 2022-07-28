@@ -3,7 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
-using Sample.Infrastructure;
+using Sample.Infrastructure.Startup;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
 using TripleSix.Core.Persistences;
@@ -11,7 +11,7 @@ using TripleSix.Core.Validation;
 
 namespace Sample.WebApi
 {
-    public static class AppConfigure
+    public static class Startup
     {
         public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
@@ -26,9 +26,21 @@ namespace Sample.WebApi
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
+            builder.AddInfrastructure(configuration);
             builder.Services.AddHttpContextAccessor();
             builder.Services.ConfigureMvcService();
-            builder.AddInfrastructure(configuration);
+
+            #region [authentication]
+
+            builder.Services
+                .AddAuthentication(option =>
+                {
+                    option.DefaultAuthenticateScheme = "access-token";
+                    option.DefaultChallengeScheme = "access-token";
+                })
+                .AddScheme<AccessTokenSchemeOption, AccessTokenSchemeHandler>("access-token", option => { });
+
+            #endregion
 
             #region [swagger]
 
@@ -61,6 +73,7 @@ namespace Sample.WebApi
 
             app.UseRouting();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

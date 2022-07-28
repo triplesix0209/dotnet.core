@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Builder;
+using Autofac.Core;
 using Autofac.Extras.DynamicProxy;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
+using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
@@ -23,10 +25,13 @@ namespace TripleSix.Core.AutofacModules
         /// <typeparam name="TIdentityContext">Class Identity Context sử dụng.</typeparam>
         /// <param name="builder">Container builder.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<TIdentityContext,ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterIdentityContext<TIdentityContext>(this ContainerBuilder builder)
+        public static IRegistrationBuilder<TIdentityContext, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterIdentityContext<TIdentityContext>(this ContainerBuilder builder)
             where TIdentityContext : IIdentityContext
         {
             return builder.RegisterType<TIdentityContext>()
+                .WithParameter(new ResolvedParameter(
+                    (p, c) => p.ParameterType == typeof(HttpContext),
+                    (p, c) => c.Resolve<IHttpContextAccessor>().HttpContext!))
                 .InstancePerLifetimeScope()
                 .As<IIdentityContext>()
                 .AsSelf();
@@ -40,7 +45,7 @@ namespace TripleSix.Core.AutofacModules
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllAppsetting(this ContainerBuilder builder, Assembly assembly)
         {
-            return builder.RegisterAssemblyTypes(assembly)
+            return builder.RegisterAssemblyTypes(assembly, Assembly.GetExecutingAssembly())
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<BaseAppsetting>())

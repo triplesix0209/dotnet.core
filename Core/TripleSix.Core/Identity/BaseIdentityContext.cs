@@ -6,7 +6,7 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Identity
 {
-    public abstract class BaseIdentityContext : IIdentityContext
+    public class BaseIdentityContext : IIdentityContext
     {
         internal const string ClaimKeyId = "id";
         internal const string ClaimKeyPermission = "permission";
@@ -15,18 +15,24 @@ namespace TripleSix.Core.Identity
         /// <summary>
         /// Khởi tạo <see cref="BaseIdentityContext"/>.
         /// </summary>
-        /// <param name="httpContextAccessor"><see cref="HttpContextAccessor"/>.</param>
-        public BaseIdentityContext(IHttpContextAccessor httpContextAccessor)
+        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
+        public BaseIdentityContext(HttpContext httpContext)
         {
-            var request = httpContextAccessor.HttpContext?.Request;
-            if (request == null) return;
-            Load(request);
-        }
+            var tokenData = GetAccessTokenData(httpContext);
+            if (tokenData == null) return;
 
-        /// <summary>
-        /// Access Token.
-        /// </summary>
-        public virtual string? AccessToken { get; protected set; }
+            var idClaim = tokenData.Claims.FirstOrDefault(x => x.Type == ClaimKeyId);
+            if (idClaim != null && !idClaim.Value.IsNullOrWhiteSpace())
+                UserId = Guid.Parse(idClaim.Value);
+
+            var accessLevelClaim = tokenData.Claims.FirstOrDefault(x => x.Type == ClaimKeyAccessLevel);
+            if (accessLevelClaim != null && !accessLevelClaim.Value.IsNullOrWhiteSpace())
+                AccessLevel = int.Parse(accessLevelClaim.Value);
+
+            var permissionClaim = tokenData.Claims.FirstOrDefault(x => x.Type == ClaimKeyPermission);
+            if (permissionClaim != null)
+                Permissions = permissionClaim.Value.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        }
 
         /// <summary>
         /// Id tài khoản.
@@ -99,32 +105,22 @@ namespace TripleSix.Core.Identity
             return result;
         }
 
-        protected virtual void Load(HttpRequest request)
+        /// <summary>
+        /// Đọc dữ liệu từ access token.
+        /// </summary>
+        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
+        /// <returns><see cref="JwtSecurityToken"/>.</returns>
+        protected virtual JwtSecurityToken? GetAccessTokenData(HttpContext httpContext)
         {
-            var accessToken = request.Headers.Authorization.ToString();
-            if (accessToken.IsNullOrWhiteSpace()) return;
+            var request = httpContext.Request;
+            if (request == null) return null;
 
-            accessToken = accessToken.Trim();
+            var accessToken = request.Headers.Authorization.ToString().Trim();
             if (accessToken.StartsWith("bearer ", StringComparison.CurrentCultureIgnoreCase))
                 accessToken = accessToken[7..];
-            if (accessToken.IsNullOrWhiteSpace()) return;
+            if (accessToken.IsNullOrWhiteSpace()) return null;
 
-            var tokenData = new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
-            if (tokenData == null) return;
-
-            AccessToken = accessToken;
-
-            var idClaim = tokenData.Claims.FirstOrDefault(x => x.Type == ClaimKeyId);
-            if (idClaim != null && !idClaim.Value.IsNullOrWhiteSpace())
-                UserId = Guid.Parse(idClaim.Value);
-
-            var accessLevelClaim = tokenData.Claims.FirstOrDefault(x => x.Type == ClaimKeyAccessLevel);
-            if (accessLevelClaim != null && !accessLevelClaim.Value.IsNullOrWhiteSpace())
-                AccessLevel = int.Parse(accessLevelClaim.Value);
-
-            var permissionClaim = tokenData.Claims.FirstOrDefault(x => x.Type == ClaimKeyPermission);
-            if (permissionClaim != null)
-                Permissions = permissionClaim.Value.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            return new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
         }
     }
 }

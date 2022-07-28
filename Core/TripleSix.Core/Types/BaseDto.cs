@@ -11,7 +11,7 @@ namespace TripleSix.Core.Types
     /// </summary>
     public abstract class BaseDto : IDto
     {
-        private static IValidator? _defaultValidator;
+        private static readonly Dictionary<Type, IValidator?> _defaultValidators = new();
         private readonly HashSet<string> _propertyTracking = new();
 
         /// <inheritdoc/>
@@ -20,10 +20,7 @@ namespace TripleSix.Core.Types
             if (validator == null) validator = GetDefaultValidator();
             if (validator == null) return new ValidationResult();
 
-            var context = ValidationContext<IDto>.CreateWithOptions(this, options =>
-            {
-                if (throwOnFailures) options.ThrowOnFailures();
-            });
+            var context = ValidationContext<IDto>.CreateWithOptions(this, options => { if (throwOnFailures) options.ThrowOnFailures(); });
             context.RootContextData[nameof(HttpContext)] = httpContext;
 
             return validator.Validate(context);
@@ -51,14 +48,15 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Lấy IValidator mặc định.
         /// </summary>
+        /// <param name="dataType">Kiểu dữ liệu cần kiểm tra.</param>
         /// <returns><see cref="IValidator"/>.</returns>
         internal IValidator? GetDefaultValidator()
         {
-            if (_defaultValidator != null)
-                return _defaultValidator;
-
             var dtoType = GetType();
-            var validatorTypes = GetType().Assembly
+            if (_defaultValidators.ContainsKey(dtoType))
+                return _defaultValidators[dtoType];
+
+            var validatorTypes = dtoType.Assembly
                 .GetExportedTypes()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.GetInterfaces().Any(i =>
@@ -72,8 +70,8 @@ namespace TripleSix.Core.Types
                 ? typeof(BaseValidator<>).MakeGenericType(dtoType)
                 : validatorTypes.First();
 
-            _defaultValidator = Activator.CreateInstance(validatorType) as IValidator;
-            return _defaultValidator;
+            _defaultValidators[dtoType] = Activator.CreateInstance(validatorType) as IValidator;
+            return _defaultValidators[dtoType];
         }
     }
 }
