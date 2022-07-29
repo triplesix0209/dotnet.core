@@ -27,10 +27,7 @@ namespace TripleSix.Core.Mappers
                 foreach (var dtoType in matchedDtoTypes)
                 {
                     var configFromEntity = dtoType.GetCustomAttribute<MapFromEntityAttribute>();
-                    if (configFromEntity != null)
-                    {
-                        CreateMap(entityType, dtoType, MemberList.None);
-                    }
+                    if (configFromEntity != null) CreateMap(entityType, dtoType, MemberList.None);
 
                     var configToEntity = dtoType.GetCustomAttribute<MapToEntityAttribute>();
                     if (configToEntity != null)
