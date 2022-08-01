@@ -51,7 +51,10 @@ namespace TripleSix.Core.OpenTelemetry
 
                         var httpMethod = activity.GetTagItem(SemanticConventions.AttributeHttpMethod) as string;
                         if (!httpMethod.IsNullOrWhiteSpace())
+                        {
+                            if (!activity.DisplayName.StartsWith("/")) activity.DisplayName = "/" + activity.DisplayName;
                             activity.DisplayName = $"[{httpMethod}] " + activity.DisplayName;
+                        }
                     }
                 };
 
