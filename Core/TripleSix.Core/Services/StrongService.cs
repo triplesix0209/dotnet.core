@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Identity;
 using TripleSix.Core.Persistences;
 using TripleSix.Core.Types;
 
@@ -46,6 +47,14 @@ namespace TripleSix.Core.Services
                     entity.Code = null;
             }
 
+            // ghi nhận người tạo (nếu có)
+            var identity = new BaseIdentityContext(HttpContextAccessor?.HttpContext);
+            if (identity != null && identity.UserId.HasValue)
+            {
+                entity.CreatorId = identity.UserId;
+                entity.UpdatorId = identity.UserId;
+            }
+
             return await base.Create(entity, cancellationToken);
         }
 
@@ -54,6 +63,21 @@ namespace TripleSix.Core.Services
         {
             var entity = await GetById(id, includeDeleted, cancellationToken);
             await Update(entity, updateMethod, cancellationToken);
+        }
+
+        public override Task Update(TEntity entity, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
+        {
+            return base.Update(
+                entity,
+                e =>
+                {
+                    var identity = new BaseIdentityContext(HttpContextAccessor?.HttpContext);
+                    if (identity != null && identity.UserId.HasValue)
+                        entity.UpdatorId = identity.UserId;
+
+                    updateMethod(e);
+                },
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -74,10 +98,13 @@ namespace TripleSix.Core.Services
         public virtual async Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
         {
             using var activity = StartTraceMethodActivity();
+            var identity = new BaseIdentityContext(HttpContextAccessor?.HttpContext);
 
             entity.IsDeleted = true;
-            Db.Set<TEntity>().Update(entity);
+            if (identity != null && identity.UserId.HasValue)
+                entity.UpdatorId = identity.UserId;
 
+            Db.Set<TEntity>().Update(entity);
             await Db.SaveChangesAsync(cancellationToken);
         }
 
@@ -92,10 +119,13 @@ namespace TripleSix.Core.Services
         public virtual async Task Restore(TEntity entity, CancellationToken cancellationToken = default)
         {
             using var activity = StartTraceMethodActivity();
+            var identity = new BaseIdentityContext(HttpContextAccessor?.HttpContext);
 
             entity.IsDeleted = false;
-            Db.Set<TEntity>().Update(entity);
+            if (identity != null && identity.UserId.HasValue)
+                entity.UpdatorId = identity.UserId;
 
+            Db.Set<TEntity>().Update(entity);
             await Db.SaveChangesAsync(cancellationToken);
         }
 

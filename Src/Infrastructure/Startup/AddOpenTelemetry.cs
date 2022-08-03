@@ -23,7 +23,8 @@ namespace Sample.Infrastructure.Startup
                     .AddSourceTripleSixCore()
                     .AddAspNetCoreInstrumentationEx()
                     .AddEntityFrameworkInstrumentationEx()
-                    .AddHttpClientInstrumentationEx();
+                    .AddHttpClientInstrumentationEx()
+                    .AddQuartzInstrumentationEx();
 
                 if (appsetting.EnableConsoleExporter)
                     builder.AddConsoleExporter();

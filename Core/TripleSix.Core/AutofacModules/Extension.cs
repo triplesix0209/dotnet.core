@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Collections.Specialized;
+using System.Reflection;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
 using Autofac.Extras.DynamicProxy;
+using Autofac.Extras.Quartz;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
+using TripleSix.Core.Quartz;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
 using TripleSix.Core.WebApi;
@@ -132,6 +135,53 @@ namespace TripleSix.Core.AutofacModules
                 .AsImplementedInterfaces()
                 .EnableInterfaceInterceptors()
                 .InterceptedBy(typeof(ServiceInterceptor));
+        }
+
+        /// <summary>
+        /// Đăng ký tất cả các Quartz Job.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các service để scan.</param>
+        /// <param name="config">Danh sách config dạng key/value.</param>
+        public static void RegisterAllQuartzJob(
+            this ContainerBuilder builder,
+            Assembly assembly,
+            NameValueCollection? config = default)
+        {
+            builder.RegisterType<JobScheduler>()
+               .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+               .AsSelf();
+
+            builder.Register(_ => new ScopedDependency("global"))
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            if (config == null)
+            {
+                config = new NameValueCollection
+                {
+                    { "quartz.threadPool.threadCount", "3" },
+                    { "quartz.scheduler.threadName", "Scheduler" },
+                };
+            }
+
+            builder.RegisterModule(new QuartzAutofacFactoryModule
+            {
+                ConfigurationProvider = _ => config,
+                JobScopeConfigurator = (builder, tag) =>
+                {
+                    builder.Register(_ => new ScopedDependency("job-" + DateTime.UtcNow.ToLongTimeString()))
+                        .AsImplementedInterfaces()
+                        .InstancePerMatchingLifetimeScope(tag);
+                },
+            });
+
+            var jobTypes = assembly.GetTypes()
+                .Where(t => t.IsPublic)
+                .Where(t => !t.IsAbstract)
+                .Where(t => t.IsAssignableTo<BaseJob>());
+            foreach (var jobType in jobTypes)
+                builder.RegisterModule(new QuartzAutofacJobsModule(jobType.Assembly) { AutoWireProperties = true });
         }
 
         /// <summary>

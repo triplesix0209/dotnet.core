@@ -5,7 +5,7 @@ namespace Sample.Domain.Identity
 {
     public class IdentityContext : BaseIdentityContext
     {
-        public IdentityContext(HttpContext httpContext)
+        public IdentityContext(HttpContext? httpContext)
             : base(httpContext)
         {
             var tokenData = GetAccessTokenData(httpContext);

@@ -28,7 +28,6 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             await Db.Set<TEntity>().AddAsync(entity, cancellationToken);
-
             await Db.SaveChangesAsync(cancellationToken);
             return entity;
         }

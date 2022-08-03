@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.Http;
+using OpenTelemetry.Instrumentation.Quartz;
 using OpenTelemetry.Trace;
+using Quartz.Impl;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.OpenTelemetry.Shared;
 
@@ -102,6 +104,30 @@ namespace TripleSix.Core.OpenTelemetry
                         host = host[4..];
 
                     activity.DisplayName = host.IsNullOrWhiteSpace() ? "<HTTP REQUEST>" : $"<HTTP> {host}";
+                };
+
+                configureOptions?.Invoke(options);
+            });
+        }
+
+        /// <summary>
+        /// Kích hoạt Instrumentation cho <see cref="Quartz"/> (mở rộng).
+        /// </summary>
+        /// <param name="builder"><see cref="TracerProviderBuilder"/> sẽ được cấu hình.</param>
+        /// <param name="configureOptions">Hàm cấu hình với <see cref="QuartzInstrumentationOptions"/>.</param>
+        /// <returns><see cref="TracerProviderBuilder"/> sau khi được cấu hình.</returns>
+        public static TracerProviderBuilder AddQuartzInstrumentationEx(
+            this TracerProviderBuilder builder,
+            Action<QuartzInstrumentationOptions>? configureOptions = default)
+        {
+            return builder.AddQuartzInstrumentation(options =>
+            {
+                options.Enrich = (activity, eventName, rawObject) =>
+                {
+                    if (!eventName.Equals("OnStopActivity")) return;
+                    if (rawObject is not JobDetailImpl job) return;
+
+                    activity.DisplayName = $"[Quartz] {job.Name}";
                 };
 
                 configureOptions?.Invoke(options);

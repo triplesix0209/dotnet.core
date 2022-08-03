@@ -22,6 +22,7 @@ namespace Sample.WebApi
             builder.RegisterModule(new Infrastructure.AutofacModule(configuration));
 
             builder.RegisterAllController(assembly);
+            builder.RegisterAllQuartzJob(assembly);
         }
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
@@ -119,12 +120,18 @@ namespace Sample.WebApi
 
             using (var scope = app.Services.CreateScope())
             {
+                var serviceProvider = scope.ServiceProvider;
+
+                // apply migrations
                 var migrationAppsetting = new MigrationAppsetting(configuration);
                 if (migrationAppsetting.ApplyOnStartup)
                 {
-                    var db = scope.ServiceProvider.GetRequiredService<IDbMigrationContext>();
+                    var db = serviceProvider.GetRequiredService<IDbMigrationContext>();
                     await db.MigrateAsync();
                 }
+
+                // start quartz jobs
+                serviceProvider.GetRequiredService<JobScheduler>().Start();
             }
 
             #endregion

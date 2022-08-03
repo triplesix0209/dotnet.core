@@ -16,7 +16,7 @@ namespace TripleSix.Core.Identity
         /// Khởi tạo <see cref="BaseIdentityContext"/>.
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
-        public BaseIdentityContext(HttpContext httpContext)
+        public BaseIdentityContext(HttpContext? httpContext)
         {
             var tokenData = GetAccessTokenData(httpContext);
             if (tokenData == null) return;
@@ -110,9 +110,9 @@ namespace TripleSix.Core.Identity
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         /// <returns><see cref="JwtSecurityToken"/>.</returns>
-        protected virtual JwtSecurityToken? GetAccessTokenData(HttpContext httpContext)
+        protected virtual JwtSecurityToken? GetAccessTokenData(HttpContext? httpContext)
         {
-            var request = httpContext.Request;
+            var request = httpContext?.Request;
             if (request == null) return null;
 
             var accessToken = request.Headers.Authorization.ToString().Trim();
