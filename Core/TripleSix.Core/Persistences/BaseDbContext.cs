@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using Autofac;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Identity;
 
 namespace TripleSix.Core.Persistences
 {
@@ -27,6 +29,11 @@ namespace TripleSix.Core.Persistences
             _seedAssembly = seedAssembly;
         }
 
+        /// <summary>
+        /// <see cref="IHttpContextAccessor"/>.
+        /// </summary>
+        public IHttpContextAccessor? HttpContextAccessor { get; set; }
+
         /// <inheritdoc/>
         public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
@@ -40,22 +47,38 @@ namespace TripleSix.Core.Persistences
         }
 
         /// <inheritdoc/>
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public new virtual Task<int> SaveChangesAsync(bool autoAudit = true, CancellationToken cancellationToken = default)
         {
+            if (!autoAudit) return SaveChangesAsync(cancellationToken);
+
             var now = DateTime.UtcNow;
+            var identity = new BaseIdentityContext(HttpContextAccessor?.HttpContext);
 
             var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
             foreach (var entity in addedEntities)
             {
                 var createDateTime = entity.Properties
                     .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreateDateTime));
-                if (createDateTime != null && createDateTime.CurrentValue == null)
+                if (createDateTime != null)
                     createDateTime.CurrentValue = now;
 
                 var updateDateTime = entity.Properties
                     .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateDateTime));
-                if (updateDateTime != null && updateDateTime.CurrentValue == null)
+                if (updateDateTime != null)
                     updateDateTime.CurrentValue = now;
+
+                if (identity != null && identity.UserId.HasValue)
+                {
+                    var creatorId = entity.Properties
+                        .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreatorId));
+                    if (creatorId != null)
+                        creatorId.CurrentValue = identity.UserId;
+
+                    var updatorId = entity.Properties
+                        .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
+                    if (updatorId != null)
+                        updatorId.CurrentValue = identity.UserId;
+                }
             }
 
             var modifiedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
@@ -63,11 +86,19 @@ namespace TripleSix.Core.Persistences
             {
                 var updateDateTime = entity.Properties
                     .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateDateTime));
-                if (updateDateTime != null && updateDateTime.CurrentValue == null)
+                if (updateDateTime != null)
                     updateDateTime.CurrentValue = now;
+
+                if (identity != null && identity.UserId.HasValue)
+                {
+                    var updatorId = entity.Properties
+                        .FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
+                    if (updatorId != null)
+                        updatorId.CurrentValue = identity.UserId;
+                }
             }
 
-            return base.SaveChangesAsync(cancellationToken);
+            return SaveChangesAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -28,7 +28,7 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             await Db.Set<TEntity>().AddAsync(entity, cancellationToken);
-            await Db.SaveChangesAsync(cancellationToken);
+            await Db.SaveChangesAsync(true, cancellationToken);
             return entity;
         }
 
@@ -49,7 +49,7 @@ namespace TripleSix.Core.Services
             updateMethod(entity);
             Db.Set<TEntity>().Update(entity);
 
-            await Db.SaveChangesAsync(cancellationToken);
+            await Db.SaveChangesAsync(true, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -70,7 +70,7 @@ namespace TripleSix.Core.Services
 
             Db.Set<TEntity>().Remove(entity);
 
-            await Db.SaveChangesAsync(cancellationToken);
+            await Db.SaveChangesAsync(true, cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -17,6 +17,7 @@ namespace Sample.Infrastructure
             base.Load(builder);
 
             builder.Register(c => new ApplicationDbContext(Configuration))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces();
         }
