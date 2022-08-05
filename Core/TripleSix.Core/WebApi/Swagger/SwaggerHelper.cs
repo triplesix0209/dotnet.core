@@ -108,7 +108,8 @@ namespace TripleSix.Core.WebApi
 
             var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName.ToTitleCase();
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();
-            result.Description = new[] { displayName, description }.Where(x => !x.IsNullOrWhiteSpace()).ToString("<br/>");
+            result.Description = new[] { displayName, description }.Where(x => !x.IsNullOrWhiteSpace()).ToString("<br/>")
+                + result.Description;
 
             result.MinLength = propertyInfo.GetCustomAttribute<MinLengthAttribute>()?.Length;
             result.MaxLength = propertyInfo.GetCustomAttribute<MaxLengthAttribute>()?.Length;
