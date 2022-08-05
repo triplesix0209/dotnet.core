@@ -31,9 +31,8 @@ namespace TripleSix.Core.Validation.Validators
                 var httpContext = context.RootContextData.ContainsKey(nameof(HttpContext))
                     ? context.RootContextData[nameof(HttpContext)] as HttpContext
                     : null;
-
-                if (!dto.IsPropertyChanged(context.PropertyName) && httpContext?.Request.Method != HttpMethods.Put)
-                    return false;
+                return httpContext?.Request.Method == HttpMethods.Put
+                    || dto.IsPropertyChanged(context.PropertyName);
             }
 
             return true;

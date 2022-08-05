@@ -67,12 +67,12 @@ namespace TripleSix.Core.WebApi
         private async Task SendResponse(HttpContext httpContext, ErrorResult error)
         {
             var json = _webApiAppsetting.ShowErrorDetail ?
-                JsonHelper.SerializeObject(error) :
-                JsonHelper.SerializeObject(error, nameof(ErrorResult.Detail));
+                error.ToJson() :
+                error.ToJson(nameof(ErrorResult.Detail));
 
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = error.HttpStatusCode;
-            await httpContext.Response.WriteAsync(json);
+            await httpContext.Response.WriteAsync(json!);
             await httpContext.Response.CompleteAsync();
         }
     }

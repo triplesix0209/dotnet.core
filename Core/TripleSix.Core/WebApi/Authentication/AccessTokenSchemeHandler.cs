@@ -78,7 +78,7 @@ namespace TripleSix.Core.WebApi
             Context.Response.ContentType = "application/json";
             Context.Response.StatusCode = 401;
             await Context.Response.WriteAsync(
-                JsonHelper.SerializeObject(new ErrorResult(401, "unauthorized", "lỗi xác thực, xin vui lòng đăng nhập để tiếp tục")),
+                new ErrorResult(401, "unauthorized", "lỗi xác thực, xin vui lòng đăng nhập để tiếp tục").ToJson() !,
                 Encoding.UTF8);
         }
 
@@ -87,7 +87,7 @@ namespace TripleSix.Core.WebApi
             Context.Response.ContentType = "application/json";
             Context.Response.StatusCode = 403;
             await Context.Response.WriteAsync(
-                JsonHelper.SerializeObject(new ErrorResult(403, "forbidden", "bạn không được cấp phép để tiếp tục")),
+                new ErrorResult(403, "forbidden", "bạn không được cấp phép để tiếp tục").ToJson() !,
                 Encoding.UTF8);
         }
     }

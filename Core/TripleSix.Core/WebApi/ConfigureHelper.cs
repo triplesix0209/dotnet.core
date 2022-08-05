@@ -24,14 +24,13 @@ namespace TripleSix.Core.WebApi
                 .AddMvc(options =>
                 {
                     options.AllowEmptyInputInBodyModelBinding = true;
-                    foreach (var modelBinderProviders in JsonHelper.ModelBinderProviders)
-                        options.ModelBinderProviders.Insert(0, modelBinderProviders);
+                    options.ModelBinderProviders.Insert(0, new DtoModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
                 })
                 .AddControllersAsServices()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new BaseContractResolver();
-                    options.SerializerSettings.Converters.Add(new DtoConverter());
                     foreach (var converter in JsonHelper.Converters)
                         options.SerializerSettings.Converters.Add(converter);
                 });
