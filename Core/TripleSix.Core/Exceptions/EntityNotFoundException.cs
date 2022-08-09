@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="entityType">Loại entity.</param>
         public EntityNotFoundException(Type entityType)
-            : base($"{entityType.Name} not found")
+            : base($"Không tìm thấy {entityType.Name}")
         {
             EntityType = entityType;
         }

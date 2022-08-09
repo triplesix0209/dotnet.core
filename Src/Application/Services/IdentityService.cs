@@ -3,6 +3,21 @@ using System.Text;
 
 namespace Sample.Application.Services
 {
+    public interface IIdentityService : IService
+    {
+        Task<IdentityRegisterResultDto> Register(IdentityRegisterInputDto input);
+
+        Task<IdentityTokenDto> LoginByUsernamePassword(string username, string password);
+
+        Task<IdentityProfileDto> GetProfileByAccountId(Guid accountId);
+
+        Task<IdentityTokenDto> RefreshToken(string sessionCode);
+
+        Task ClearSession(Guid accountId);
+
+        Task ClearAllExpiredSession();
+    }
+
     public class IdentityService : BaseService, IIdentityService
     {
         public IApplicationDbContext Db { get; set; }
@@ -15,9 +30,47 @@ namespace Sample.Application.Services
 
         public IPermissionService PermissionService { get; set; }
 
+        public ISettingService SettingService { get; set; }
+
+        public async Task<IdentityRegisterResultDto> Register(IdentityRegisterInputDto input)
+        {
+            input.Username = input.Username.Trim();
+
+            var usernameExisted = await AccountService.AnyByUsername(input.Username, true);
+            if (usernameExisted)
+                throw new ValueExistedException(nameof(input.Username));
+
+            var autoAccept = await SettingService.GetValue<bool>(x => x.AccountRegisterAutoAccept);
+            var account = new Account
+            {
+                Name = input.Name,
+                AccessLevel = AccountLevels.Common,
+                IsDeleted = !autoAccept,
+                Auths = new List<AccountAuth>(),
+            };
+
+            var hashPasswordKey = RandomHelper.RandomString(10);
+            var auth = new AccountAuth
+            {
+                Username = input.Username,
+                HashPasswordKey = hashPasswordKey,
+                HashedPassword = PasswordHelper.HashPassword(input.Password, hashPasswordKey),
+            };
+            account.Auths.Add(auth);
+
+            account = await AccountService.Create(account);
+
+            var result = new IdentityRegisterResultDto();
+            result.IsAccountActivated = !account.IsDeleted;
+            result.Message = result.IsAccountActivated
+                ? "Tài khoản đã tạo thành công, hãy bắt đầu đăng nhập"
+                : "Tài khoản đã tạo nhưng tạm khóa, xin vui lòng liên hệ quản trị để kích hoạt";
+            return result;
+        }
+
         public async Task<IdentityTokenDto> LoginByUsernamePassword(string username, string password)
         {
-            var account = await AccountService.GetByUsernamePassword<Account>(username, password);
+            var account = await AccountService.GetByUsernamePassword<Account>(username, password, false);
             if (account == null || account.IsDeleted)
                 throw new AccountNotFoundException("Không tìm thấy tài khoản, xin vui lòng kiểm tra lại thông tin đăng nhập");
 

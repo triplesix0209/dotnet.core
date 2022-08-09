@@ -14,7 +14,7 @@
   </ItemGroup>
       
   <ItemGroup>
-    <Content Include="Config\**" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Appsettings\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

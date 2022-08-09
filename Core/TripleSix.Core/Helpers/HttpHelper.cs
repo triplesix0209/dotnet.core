@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -60,6 +61,17 @@ namespace TripleSix.Core.Helpers
             }
 
             return curls.ToString(" ");
+        }
+
+        /// <summary>
+        /// Lấy claim từ danh sách theo name.
+        /// </summary>
+        /// <param name="claims">Danh sách claim.</param>
+        /// <param name="name">Name của claim cần lấy.</param>
+        /// <returns><see cref="Claim"/>.</returns>
+        public static Claim? GetClaim(this IEnumerable<Claim> claims, string name)
+        {
+            return claims.FirstOrDefault(x => x.Type.ToLower() == nameof(name).ToLower());
         }
     }
 }

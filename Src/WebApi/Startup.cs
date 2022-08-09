@@ -3,9 +3,11 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
-using Sample.Infrastructure.Startup;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.AutofacModules;
+using TripleSix.Core.OpenTelemetry;
 using TripleSix.Core.Persistences;
 using TripleSix.Core.Validation;
 
@@ -27,9 +29,39 @@ namespace Sample.WebApi
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
-            builder.AddInfrastructure(configuration);
             builder.Services.AddHttpContextAccessor();
             builder.Services.ConfigureMvcService();
+
+            #region [opentelemetry]
+
+            var openTelemetryAppsetting = new OpenTelemetryAppsetting(configuration);
+            builder.Services.AddOpenTelemetryTracing(builder =>
+            {
+                builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(
+                        serviceName: openTelemetryAppsetting.ServiceName,
+                        serviceVersion: openTelemetryAppsetting.ServiceVersion))
+                    .AddSource(openTelemetryAppsetting.ServiceName)
+                    .AddSourceTripleSixCore()
+                    .AddAspNetCoreInstrumentationEx()
+                    .AddEntityFrameworkInstrumentationEx()
+                    .AddHttpClientInstrumentationEx();
+                    //.AddQuartzInstrumentationEx();
+
+                if (openTelemetryAppsetting.EnableConsoleExporter)
+                    builder.AddConsoleExporter();
+
+                if (openTelemetryAppsetting.EnableJaegerExporter)
+                {
+                    builder.AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = openTelemetryAppsetting.JaegerHost;
+                        options.AgentPort = openTelemetryAppsetting.JaegerPort;
+                    });
+                }
+            });
+
+            #endregion
 
             #region [authentication]
 

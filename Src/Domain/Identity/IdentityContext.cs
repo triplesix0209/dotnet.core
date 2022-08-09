@@ -11,11 +11,11 @@ namespace Sample.Domain.Identity
             var tokenData = GetAccessTokenData(httpContext);
             if (tokenData == null) return;
 
-            var nameClaim = tokenData.Claims.FirstOrDefault(x => x.Type == nameof(IdentityProfileDto.Name).ToCamelCase());
+            var nameClaim = tokenData.Claims.GetClaim(nameof(IdentityProfileDto.Name));
             if (nameClaim != null)
                 Name = nameClaim.Value;
 
-            var usernameClaim = tokenData.Claims.FirstOrDefault(x => x.Type == nameof(IdentityProfileDto.Username).ToCamelCase());
+            var usernameClaim = tokenData.Claims.GetClaim(nameof(IdentityProfileDto.Username));
             if (usernameClaim != null)
                 Username = usernameClaim.Value;
         }

@@ -1,5 +1,12 @@
 ﻿namespace Sample.Application.Services
 {
+    public interface IPermissionService : IStrongService<PermissionGroup>
+    {
+        Task<List<PermissionItemDto>> GetAllPermission();
+
+        Task<List<PermissionValueDto>> GetListPermissionValue(Guid id, bool grantedOnly);
+    }
+
     public class PermissionService : StrongService<PermissionGroup>, IPermissionService
     {
         public Task<List<PermissionItemDto>> GetAllPermission()

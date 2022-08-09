@@ -1,4 +1,4 @@
-﻿namespace Sample.Domain.Enum
+﻿namespace Sample.Domain.Enums
 {
     public enum AccountLevels
     {

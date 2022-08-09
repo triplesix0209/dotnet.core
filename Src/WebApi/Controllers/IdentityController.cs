@@ -8,21 +8,31 @@
 
         public IdentityContext IdentityContext { get; set; }
 
-        [HttpGet]
-        [SwaggerApi("Lấy thông tin tài khoản", typeof(DataResult<IdentityTokenDto>))]
-        public async Task<IActionResult> GetProfile()
+        [HttpPost("Register")]
+        [Transactional]
+        [AllowAnonymous]
+        [SwaggerApi("Đăng ký", typeof(DataResult<IdentityRegisterResultDto>))]
+        public async Task<IActionResult> Register([FromBody] IdentityRegisterInputDto input)
         {
-            var result = await IdentityService.GetProfileByAccountId(IdentityContext.UserId!.Value);
+            var result = await IdentityService.Register(input);
             return DataResult(result);
         }
 
-        [HttpPost]
+        [HttpPost("Login")]
         [Transactional]
         [AllowAnonymous]
         [SwaggerApi("Đăng nhập", typeof(DataResult<IdentityTokenDto>))]
         public async Task<IActionResult> Login([FromBody] IdentityLoginDto input)
         {
             var result = await IdentityService.LoginByUsernamePassword(input.Username, input.Password);
+            return DataResult(result);
+        }
+
+        [HttpGet]
+        [SwaggerApi("Lấy thông tin tài khoản", typeof(DataResult<IdentityTokenDto>))]
+        public async Task<IActionResult> GetProfile()
+        {
+            var result = await IdentityService.GetProfileByAccountId(IdentityContext.UserId!.Value);
             return DataResult(result);
         }
 

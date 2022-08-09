@@ -3,6 +3,7 @@
     public class Account : StrongEntity<Account>
     {
         [Required]
+        [MaxLength(100)]
         public string Name { get; set; }
 
         public string? AvatarLink { get; set; }

@@ -1,10 +1,10 @@
 ﻿namespace Sample.Domain.Entities
 {
-    public class Setting : StrongEntity<Setting>
+    public class Setting : BaseEntity<Setting>
     {
-        [Required]
+        [Key]
         [MaxLength(100)]
-        public override string? Code { get; set; }
+        public string Code { get; set; }
 
         public string? Value { get; set; }
 
@@ -14,7 +14,7 @@
         {
             base.Configure(builder);
 
-            builder.HasIndex(x => x.Description);
+            builder.HasIndex(x => x.Code).IsUnique();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Sample.Application.Services;
+﻿using Sample.Application.Common;
 
 namespace Sample.Infrastructure.Seeds
 {
@@ -10,46 +10,64 @@ namespace Sample.Infrastructure.Seeds
             {
                 new
                 {
-                    Id = Guid.Parse("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
-                    Name = "Root",
-                    Username = "root",
-                    Password = "root",
-                    HashPasswordKey = "8sBXJjPl1BaK1ppd0PNMB366NHhmAx",
-                    AccessLevel = AccountLevels.Root,
-                    PermissionGroupId = (Guid?)null,
-                    IsDeleted = true,
-                },
-                new
-                {
-                    Id = Guid.Parse("B81D0C90-3B91-44D4-BB00-95A5925FA5C6"),
-                    Name = "Admin",
-                    Username = "admin",
-                    Password = "admin",
-                    HashPasswordKey = "xE8czZlAixQOJDQ0oR7PqlYJUcywj6",
-                    AccessLevel = AccountLevels.Admin,
-                    PermissionGroupId = (Guid?)PermissionDataSeed.DefaultPermissionGroupId,
-                    IsDeleted = false,
+                    SiteId = Guid.Parse("5de826db-9f83-428a-9c26-06d53a7fefb1"),
+                    SiteName = "Điện Máy Chợ Lớn",
+                    Accounts = new[]
+                    {
+                        new
+                        {
+                            Id = Guid.Parse("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
+                            Name = "Root",
+                            Username = "root",
+                            Password = "root",
+                            HashPasswordKey = "8sBXJjPl1BaK1ppd0PNMB366NHhmAx",
+                            AccessLevel = AccountLevels.Root,
+                            PermissionGroupId = (Guid?)null,
+                            IsDeleted = true,
+                        },
+                        new
+                        {
+                            Id = Guid.Parse("B81D0C90-3B91-44D4-BB00-95A5925FA5C6"),
+                            Name = "Admin",
+                            Username = "admin",
+                            Password = "admin",
+                            HashPasswordKey = "xE8czZlAixQOJDQ0oR7PqlYJUcywj6",
+                            AccessLevel = AccountLevels.Admin,
+                            PermissionGroupId = (Guid?)PermissionDataSeed.DefaultPermissionGroupId,
+                            IsDeleted = false,
+                        },
+                    },
                 },
             };
 
-            var accounts = data.Select(x => new Account
-            {
-                Id = x.Id,
-                Name = x.Name,
-                AccessLevel = x.AccessLevel,
-                PermissionGroupId = x.PermissionGroupId,
-                IsDeleted = x.IsDeleted,
-            });
-            builder.Entity<Account>().HasData(accounts);
+            var accounts = new List<Account>();
+            var auths = new List<AccountAuth>();
 
-            var auths = data.Select(x => new AccountAuth
+            foreach (var site in data)
             {
-                Id = x.Id,
-                Username = x.Username,
-                HashPasswordKey = x.HashPasswordKey,
-                HashedPassword = AccountService.HashPassword(x.Password, x.HashPasswordKey),
-                AccountId = x.Id,
-            });
+                foreach (var account in site.Accounts)
+                {
+                    accounts.Add(new Account
+                    {
+                        Id = account.Id,
+                        Name = account.Name,
+                        AccessLevel = account.AccessLevel,
+                        PermissionGroupId = account.PermissionGroupId,
+                        IsDeleted = account.IsDeleted,
+                    });
+
+                    auths.Add(new AccountAuth
+                    {
+                        Id = account.Id,
+                        Username = account.Username,
+                        HashPasswordKey = account.HashPasswordKey,
+                        HashedPassword = PasswordHelper.HashPassword(account.Password, account.HashPasswordKey),
+                        AccountId = account.Id,
+                    });
+                }
+            }
+
+            builder.Entity<Account>().HasData(accounts);
             builder.Entity<AccountAuth>().HasData(auths);
         }
     }
