@@ -3,6 +3,9 @@ using TripleSix.Core.Types;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Base controller.
+    /// </summary>
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]

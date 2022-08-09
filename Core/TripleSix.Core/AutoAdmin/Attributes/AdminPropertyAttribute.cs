@@ -1,7 +1,7 @@
 ﻿namespace TripleSix.Core.AutoAdmin
 {
     /// <summary>
-    /// Cài đặt thông tin Admin cho property.
+    /// Cài đặt Admin cho property.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class AdminPropertyAttribute : Attribute

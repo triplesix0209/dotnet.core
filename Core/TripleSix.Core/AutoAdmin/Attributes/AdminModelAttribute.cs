@@ -1,5 +1,8 @@
 ﻿namespace TripleSix.Core.AutoAdmin
 {
+    /// <summary>
+    /// Cài đặt Admin model.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class AdminModelAttribute : Attribute
     {

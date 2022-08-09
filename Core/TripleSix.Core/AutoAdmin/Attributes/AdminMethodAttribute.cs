@@ -1,7 +1,7 @@
 ﻿namespace TripleSix.Core.AutoAdmin
 {
     /// <summary>
-    /// Cài đặt thông tin Admin cho method.
+    /// Cài đặt Admin cho method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class AdminMethodAttribute : Attribute

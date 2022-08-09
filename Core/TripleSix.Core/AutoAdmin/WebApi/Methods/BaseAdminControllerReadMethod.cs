@@ -1,34 +1,37 @@
-﻿using TripleSix.Core.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using TripleSix.Core.Entities;
+using TripleSix.Core.Persistences;
+using TripleSix.Core.Services;
 using TripleSix.Core.Types;
+using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.AutoAdmin
 {
     public abstract class BaseAdminControllerReadMethod<TAdminDto, TEntity, TFilterDto, TItemDto, TDetailDto>
         : BaseAdminController
-        where TAdminDto : IAdminDto
+        where TAdminDto : IAdminModel
         where TEntity : IStrongEntity
         where TFilterDto : IDto
         where TItemDto : IDto
         where TDetailDto : IDto
     {
+        //public IStrongService<TEntity, TDbDataContext> Service { get; set; }
         //public ICommonService<TEntity> Service { get; set; }
 
         //[HttpGet]
-        //[SwaggerApi("lấy danh sách [controller]")]
+        //[SwaggerOperation("lấy danh sách [controller]")]
         //[AdminMethod(Type = AdminMethodTypes.List)]
-        //[PermissionRequirement(AutoGroup = true, ListCode = new[] { "read" })]
-        //public virtual async Task<IActionResult> GetPage(TFilterDto input)
+        //public virtual async Task<PagingResult<TItemDto>> GetPage(TFilterDto input)
         //{
-        //    var identity = GenerateIdentity();
+        //    //IPaging<TItemDto> result;
+        //    //var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TItemDto));
+        //    //if (Service.GetType().IsAssignableTo(readInterface))
+        //    //    data = await Service.GetPageByFilterWithModel<TItemDto>(identity, input);
+        //    //else
+        //    //    data = await Service.GetPageByFilter<TItemDto>(identity, input);
 
-        //    IPaging<TItemDto> data;
-        //    var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TItemDto));
-        //    if (Service.GetType().IsAssignableTo(readInterface))
-        //        data = await Service.GetPageByFilterWithModel<TItemDto>(identity, input);
-        //    else
-        //        data = await Service.GetPageByFilter<TItemDto>(identity, input);
-
-        //    return PagingResult(data);
+        //    //return PagingResult(result);
         //}
 
         //[HttpGet("{id}")]
