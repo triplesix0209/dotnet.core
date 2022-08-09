@@ -20,7 +20,7 @@ namespace TripleSix.Core.Services
         internal readonly IDbDataContext _db;
 
         /// <summary>
-        /// Khởi tạo <see cref="BaseService{TEntity, TDbDataContext}"/>.
+        /// Khởi tạo <see cref="BaseService{TEntity}"/>.
         /// </summary>
         /// <param name="db"><see cref="IDbDataContext"/>.</param>
         public BaseService(IDbDataContext db)

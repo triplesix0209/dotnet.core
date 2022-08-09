@@ -16,6 +16,10 @@ namespace TripleSix.Core.Services
         IStrongService<TEntity>
         where TEntity : class, IStrongEntity
     {
+        /// <summary>
+        /// Khởi tạo <see cref="StrongService{TEntity}"/>.
+        /// </summary>
+        /// <param name="db"><see cref="IDbDataContext"/>.</param>
         protected StrongService(IDbDataContext db)
             : base(db)
         {
