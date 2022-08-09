@@ -1,4 +1,4 @@
-﻿using Sample.Application.Common;
+﻿using Sample.Application.Services;
 
 namespace Sample.Infrastructure.Seeds
 {
@@ -61,7 +61,7 @@ namespace Sample.Infrastructure.Seeds
                         Id = account.Id,
                         Username = account.Username,
                         HashPasswordKey = account.HashPasswordKey,
-                        HashedPassword = PasswordHelper.HashPassword(account.Password, account.HashPasswordKey),
+                        HashedPassword = AccountService.HashPasswordWithKey(account.Password, account.HashPasswordKey),
                         AccountId = account.Id,
                     });
                 }

@@ -7,9 +7,7 @@ namespace TripleSix.Core.Types
     /// Model cho phép chuyển thành <see cref="IQueryable"/>.
     /// </summary>
     /// <typeparam name="TEntity">Loại entity.</typeparam>
-    /// <typeparam name="TDbContext"><see cref="IDbDataContext"/>.</typeparam>
-    public interface IQueryModel<TEntity, TDbContext>
-        where TDbContext : IDbDataContext
+    public interface IQueryableModel<TEntity>
         where TEntity : IEntity
     {
         /// <summary>
@@ -17,6 +15,6 @@ namespace TripleSix.Core.Types
         /// </summary>
         /// <param name="db"><see cref="IDbDataContext"/>.</param>
         /// <returns><see cref="IQueryable"/>.</returns>
-        IQueryable<TEntity> ToQueryable(TDbContext db);
+        IQueryable<TEntity> ToQueryable(IDbDataContext db);
     }
 }

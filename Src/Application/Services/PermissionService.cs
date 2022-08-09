@@ -1,4 +1,6 @@
-﻿namespace Sample.Application.Services
+﻿using TripleSix.Core.Persistences;
+
+namespace Sample.Application.Services
 {
     public interface IPermissionService : IStrongService<PermissionGroup>
     {
@@ -9,6 +11,13 @@
 
     public class PermissionService : StrongService<PermissionGroup>, IPermissionService
     {
+        public PermissionService(IDbDataContext db)
+            : base(db)
+        {
+        }
+
+        public IApplicationDbContext Db { get; set; }
+
         public Task<List<PermissionItemDto>> GetAllPermission()
         {
             return Db.Permission.ToListAsync<PermissionItemDto>(Mapper);

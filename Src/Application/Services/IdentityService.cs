@@ -54,7 +54,7 @@ namespace Sample.Application.Services
             {
                 Username = input.Username,
                 HashPasswordKey = hashPasswordKey,
-                HashedPassword = PasswordHelper.HashPassword(input.Password, hashPasswordKey),
+                HashedPassword = AccountService.HashPassword(input.Password, hashPasswordKey),
             };
             account.Auths.Add(auth);
 

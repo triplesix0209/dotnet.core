@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-using TripleSix.Core.Entities;
-using TripleSix.Core.Persistences;
-using TripleSix.Core.Services;
+﻿using TripleSix.Core.Entities;
 using TripleSix.Core.Types;
-using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.AutoAdmin
 {

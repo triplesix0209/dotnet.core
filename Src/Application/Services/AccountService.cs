@@ -1,7 +1,11 @@
-﻿namespace Sample.Application.Services
+﻿using TripleSix.Core.Persistences;
+
+namespace Sample.Application.Services
 {
     public interface IAccountService : IStrongService<Account>
     {
+        string HashPassword(string password, string hashKey);
+
         Task<bool> AnyByUsername(string username, bool includeDeleted);
 
         Task<TResult?> GetByUsername<TResult>(string username, bool includeDeleted)
@@ -13,6 +17,23 @@
 
     public class AccountService : StrongService<Account>, IAccountService
     {
+        public AccountService(IDbDataContext db)
+            : base(db)
+        {
+        }
+
+        public IApplicationDbContext Db { get; set; }
+
+        public static string HashPasswordWithKey(string password, string hashKey)
+        {
+            return HashHelper.MD5Hash(password + hashKey);
+        }
+
+        public string HashPassword(string password, string hashKey)
+        {
+            return HashPasswordWithKey(password, hashKey);
+        }
+
         public Task<bool> AnyByUsername(string username, bool includeDeleted)
         {
             var query = Db.Account
@@ -42,7 +63,7 @@
                 .FirstOrDefault();
             if (auth == null || auth.HashPasswordKey == null)
                 return null;
-            if (auth.HashedPassword != PasswordHelper.HashPassword(password, auth.HashPasswordKey))
+            if (auth.HashedPassword != HashPassword(password, auth.HashPasswordKey))
                 return null;
 
             return Mapper.MapData<TResult>(account);

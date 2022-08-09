@@ -12,12 +12,15 @@ namespace TripleSix.Core.Services
     /// Service xử lý strong entity.
     /// </summary>
     /// <typeparam name="TEntity">Loại entity xử lý.</typeparam>
-    /// <typeparam name="TDbDataContext">Loại db data context xử lý.</typeparam>
-    public abstract class StrongService<TEntity, TDbDataContext> : BaseService<TEntity, TDbDataContext>,
-        IStrongService<TEntity, TDbDataContext>
+    public abstract class StrongService<TEntity> : BaseService<TEntity>,
+        IStrongService<TEntity>
         where TEntity : class, IStrongEntity
-        where TDbDataContext : IDbDataContext
     {
+        protected StrongService(IDbDataContext db)
+            : base(db)
+        {
+        }
+
         /// <summary>
         /// Khởi tạo entity kèm code tự phát sinh.
         /// </summary>
@@ -77,8 +80,8 @@ namespace TripleSix.Core.Services
 
             entity.IsDeleted = true;
 
-            Db.Set<TEntity>().Update(entity);
-            await Db.SaveChangesAsync(true, cancellationToken);
+            _db.Set<TEntity>().Update(entity);
+            await _db.SaveChangesAsync(true, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -95,8 +98,8 @@ namespace TripleSix.Core.Services
 
             entity.IsDeleted = false;
 
-            Db.Set<TEntity>().Update(entity);
-            await Db.SaveChangesAsync(true, cancellationToken);
+            _db.Set<TEntity>().Update(entity);
+            await _db.SaveChangesAsync(true, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -109,7 +112,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = Db.Set<TEntity>()
+            var query = _db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
 
             return Any(query, cancellationToken);
@@ -118,7 +121,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = Db.Set<TEntity>()
+            var query = _db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
 
             return Count(query, cancellationToken);
@@ -130,7 +133,7 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            var query = Db.Set<TEntity>()
+            var query = _db.Set<TEntity>()
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using TripleSix.Core.Persistences;
 
 namespace Sample.Application.Services
 {
@@ -11,6 +12,13 @@ namespace Sample.Application.Services
 
     public class SettingService : BaseService<Setting>, ISettingService
     {
+        public SettingService(IDbDataContext db)
+            : base(db)
+        {
+        }
+
+        public IApplicationDbContext Db { get; set; }
+
         public async Task<string?> GetValue(Expression<Func<DbSettings, DbSettingItem>> selector)
         {
             var code = (selector?.Body as MemberExpression)?.Member.Name;

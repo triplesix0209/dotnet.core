@@ -1,5 +1,4 @@
 ﻿using TripleSix.Core.Entities;
-using TripleSix.Core.Persistences;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Services
@@ -8,10 +7,8 @@ namespace TripleSix.Core.Services
     /// Service cơ bản xử lý entity.
     /// </summary>
     /// <typeparam name="TEntity">Loại entity xử lý.</typeparam>
-    /// <typeparam name="TDbDataContext"><see cref="IDbDataContext"/>.</typeparam>
-    public interface IService<TEntity, TDbDataContext> : IService
+    public interface IService<TEntity> : IService
         where TEntity : class, IEntity
-        where TDbDataContext : IDbDataContext
     {
         /// <summary>
         /// Khởi tạo entity.
@@ -71,7 +68,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param
         /// <returns><c>True</c> nếu có bất kỳ entity nào tồn tại, ngược lại là <c>False</c>.</returns>
-        Task<bool> AnyByModel(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default);
+        Task<bool> AnyByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Đếm số lượng tất cả các entity.
@@ -87,7 +84,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param
         /// <returns>Số lượng entity.</returns>
-        Task<long> CountByModel(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default);
+        Task<long> CountByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper, không có sẽ trả về null.
@@ -114,7 +111,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Dữ liệu của entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TResult?> GetFirstOrDefaultByModel<TResult>(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default)
+        Task<TResult?> GetFirstOrDefaultByModel<TResult>(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class;
 
         /// <summary>
@@ -123,7 +120,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TEntity?> GetFirstOrDefaultByModel(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default);
+        Task<TEntity?> GetFirstOrDefaultByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper.
@@ -150,7 +147,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Dữ liệu của entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TResult> GetFirstByModel<TResult>(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default)
+        Task<TResult> GetFirstByModel<TResult>(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class;
 
         /// <summary>
@@ -159,7 +156,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TEntity> GetFirstByModel(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default);
+        Task<TEntity> GetFirstByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Lấy danh sách các entity và convert với Mapper.
@@ -186,7 +183,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Danh sách dữ liệu của entity.</returns>
-        Task<List<TResult>> GetListByModel<TResult>(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default)
+        Task<List<TResult>> GetListByModel<TResult>(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class;
 
         /// <summary>
@@ -195,7 +192,7 @@ namespace TripleSix.Core.Services
         /// <param name="model">Model để tạo câu query.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Danh sách entity.</returns>
-        Task<List<TEntity>> GetListByModel(IQueryModel<TEntity, TDbDataContext> model, CancellationToken cancellationToken = default);
+        Task<List<TEntity>> GetListByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Lấy phân trang các entity và convert với Mapper.
@@ -228,7 +225,7 @@ namespace TripleSix.Core.Services
         /// <param name="size">Kích thước trang.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Dữ liệu phân trang của entity.</returns>
-        Task<IPaging<TResult>> GetPageByModel<TResult>(IQueryModel<TEntity, TDbDataContext> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        Task<IPaging<TResult>> GetPageByModel<TResult>(IQueryableModel<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
             where TResult : class;
 
         /// <summary>
@@ -239,6 +236,6 @@ namespace TripleSix.Core.Services
         /// <param name="size">Kích thước trang.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param>
         /// <returns>Dữ liệu phân trang entity.</returns>
-        Task<IPaging<TEntity>> GetPageByModel(IQueryModel<TEntity, TDbDataContext> model, int page = 1, int size = 10, CancellationToken cancellationToken = default);
+        Task<IPaging<TEntity>> GetPageByModel(IQueryableModel<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default);
     }
 }
