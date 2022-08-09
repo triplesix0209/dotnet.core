@@ -11,8 +11,8 @@
         [HttpPost("Register")]
         [Transactional]
         [AllowAnonymous]
-        [SwaggerApi("Đăng ký", typeof(DataResult<IdentityRegisterResultDto>))]
-        public async Task<IActionResult> Register([FromBody] IdentityRegisterInputDto input)
+        [SwaggerOperation("Đăng ký")]
+        public async Task<DataResult<IdentityRegisterResultDto>> Register([FromBody] IdentityRegisterInputDto input)
         {
             var result = await IdentityService.Register(input);
             return DataResult(result);
@@ -21,16 +21,16 @@
         [HttpPost("Login")]
         [Transactional]
         [AllowAnonymous]
-        [SwaggerApi("Đăng nhập", typeof(DataResult<IdentityTokenDto>))]
-        public async Task<IActionResult> Login([FromBody] IdentityLoginDto input)
+        [SwaggerOperation("Đăng nhập")]
+        public async Task<DataResult<IdentityTokenDto>> Login([FromBody] IdentityLoginDto input)
         {
             var result = await IdentityService.LoginByUsernamePassword(input.Username, input.Password);
             return DataResult(result);
         }
 
         [HttpGet]
-        [SwaggerApi("Lấy thông tin tài khoản", typeof(DataResult<IdentityTokenDto>))]
-        public async Task<IActionResult> GetProfile()
+        [SwaggerOperation("Lấy thông tin tài khoản")]
+        public async Task<DataResult<IdentityProfileDto>> GetProfile()
         {
             var result = await IdentityService.GetProfileByAccountId(IdentityContext.UserId!.Value);
             return DataResult(result);
@@ -39,8 +39,8 @@
         [HttpPut("RefreshToken")]
         [Transactional]
         [AllowAnonymous]
-        [SwaggerApi("Gia hạn phiên đăng nhập", typeof(DataResult<IdentityTokenDto>))]
-        public async Task<IActionResult> RefreshToken([FromBody] IdentityRefreshDto input)
+        [SwaggerOperation("Gia hạn phiên đăng nhập")]
+        public async Task<DataResult<IdentityTokenDto>> RefreshToken([FromBody] IdentityRefreshDto input)
         {
             var result = await IdentityService.RefreshToken(input.RefreshToken);
             return DataResult(result);
@@ -48,8 +48,8 @@
 
         [HttpDelete]
         [Transactional]
-        [SwaggerApi("Đăng xuất")]
-        public async Task<IActionResult> LogoutAsync()
+        [SwaggerOperation("Đăng xuất")]
+        public async Task<SuccessResult> LogoutAsync()
         {
             await IdentityService.ClearSession(IdentityContext.UserId!.Value);
             return SuccessResult();

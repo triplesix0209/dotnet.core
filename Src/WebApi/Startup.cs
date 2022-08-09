@@ -90,7 +90,7 @@ namespace Sample.WebApi
                     Description = "Nhập access token vào field của header để tiến hành xác thực",
                 });
 
-                options.OperationFilter<DescribeOperationFilter>("access-token");
+                options.OperationFilter<AuthenticationOperationFilter>("access-token");
             });
 
             #endregion

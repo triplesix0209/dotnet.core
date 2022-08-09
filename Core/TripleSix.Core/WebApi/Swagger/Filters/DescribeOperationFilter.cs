@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -11,20 +10,11 @@ namespace TripleSix.Core.WebApi
 {
     public class DescribeOperationFilter : IOperationFilter
     {
-        private string _defaultSecurityScheme;
-
-        public DescribeOperationFilter(string defaultSecurityScheme)
-        {
-            _defaultSecurityScheme = defaultSecurityScheme;
-        }
-
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor controllerInfo) return;
             var methodInfo = controllerInfo.MethodInfo;
             if (methodInfo == null) return;
-            var apiInfo = methodInfo.GetCustomAttribute<SwaggerApiAttribute>(true);
-            if (apiInfo == null) apiInfo = new SwaggerApiAttribute(typeof(SuccessResult));
 
             #region [parameter]
 
@@ -98,8 +88,13 @@ namespace TripleSix.Core.WebApi
 
             #region [response]
 
+            var returnType = methodInfo.ReturnType;
+            returnType = returnType != null && returnType.IsSubclassOfRawGeneric(typeof(Task<>))
+                ? returnType.GetGenericArguments()[0]
+                : typeof(SuccessResult);
+
             var responseType = new OpenApiMediaType();
-            responseType.Schema = apiInfo.ResponseType.GenerateSwaggerSchema(
+            responseType.Schema = returnType.GenerateSwaggerSchema(
                 context.SchemaGenerator,
                 context.SchemaRepository,
                 generateDefault: false);
@@ -107,38 +102,6 @@ namespace TripleSix.Core.WebApi
             var successResponse = new OpenApiResponse { Description = "Success" };
             successResponse.Content.Add("application/json", responseType);
             operation.Responses["200"] = successResponse;
-            operation.Summary = apiInfo?.Summary;
-            operation.Description = apiInfo?.Description;
-
-            #endregion
-
-            #region [authentication]
-
-            if (controllerInfo.EndpointMetadata.FirstOrDefault(x => x.GetType() == typeof(AuthorizeAttribute)) is AuthorizeAttribute authorize)
-            {
-                var securityScheme = authorize.AuthenticationSchemes.IsNullOrWhiteSpace()
-                    ? _defaultSecurityScheme
-                    : authorize.AuthenticationSchemes;
-
-                var options = new List<string>();
-                if (controllerInfo.EndpointMetadata.FirstOrDefault(x => x.GetType() == typeof(AllowAnonymousAttribute)) is AllowAnonymousAttribute allowAnonymous)
-                    options.Add("không bắt buộc");
-
-                operation.Security.Add(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = securityScheme,
-                            },
-                        },
-                        options
-                    },
-                });
-            }
 
             #endregion
 

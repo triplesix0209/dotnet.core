@@ -8,7 +8,7 @@ namespace TripleSix.Core.WebApi
     public class AccessTokenSchemeOption : AuthenticationSchemeOptions
     {
         /// <summary>
-        /// Key của field header chứa access token.
+        /// Key của header chứa access token.
         /// </summary>
         public string AccessTokenHeaderKey { get; set; } = "Authorization";
     }
