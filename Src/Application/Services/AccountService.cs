@@ -22,8 +22,6 @@ namespace Sample.Application.Services
         {
         }
 
-        public IApplicationDbContext Db { get; set; }
-
         public static string HashPasswordWithKey(string password, string hashKey)
         {
             return HashHelper.MD5Hash(password + hashKey);
@@ -36,7 +34,7 @@ namespace Sample.Application.Services
 
         public Task<bool> AnyByUsername(string username, bool includeDeleted)
         {
-            var query = Db.Account
+            var query = Query
                 .WhereIf(!includeDeleted, x => x.IsDeleted == false)
                 .Where(x => x.Auths.Any(auth => auth.Username == username));
             return Any(query);
@@ -45,7 +43,7 @@ namespace Sample.Application.Services
         public Task<TResult?> GetByUsername<TResult>(string username, bool includeDeleted)
             where TResult : class
         {
-            var query = Db.Account
+            var query = Query
                 .WhereIf(!includeDeleted, x => x.IsDeleted == false)
                 .Where(x => x.Auths.Any(auth => auth.Username == username));
             return GetFirstOrDefault<TResult>(query);

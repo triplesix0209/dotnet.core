@@ -28,6 +28,11 @@ namespace TripleSix.Core.Services
             _db = db;
         }
 
+        /// <summary>
+        /// Câu query cơ bản.
+        /// </summary>
+        public IQueryable<TEntity> Query => _db.Set<TEntity>();
+
         /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
         {
@@ -84,15 +89,14 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            if (query == null) query = _db.Set<TEntity>();
-
+            if (query == null) query = Query;
             return await query.AnyAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<bool> AnyByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<bool> AnyByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return Any(model.ToQueryable(_db), cancellationToken);
+            return Any(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -100,15 +104,14 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            if (query == null) query = _db.Set<TEntity>();
-
+            if (query == null) query = Query;
             return await query.LongCountAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<long> CountByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<long> CountByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return Count(model.ToQueryable(_db), cancellationToken);
+            return Count(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -117,7 +120,7 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            if (query == null) query = _db.Set<TEntity>();
+            if (query == null) query = Query;
             return await query.FirstOrDefaultAsync<TResult>(Mapper, cancellationToken);
         }
 
@@ -128,16 +131,16 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TResult?> GetFirstOrDefaultByModel<TResult>(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TResult?> GetFirstOrDefaultByModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetFirstOrDefault<TResult>(model.ToQueryable(_db), cancellationToken);
+            return GetFirstOrDefault<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TEntity?> GetFirstOrDefaultByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TEntity?> GetFirstOrDefaultByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return GetFirstOrDefault(model.ToQueryable(_db), cancellationToken);
+            return GetFirstOrDefault(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -157,16 +160,16 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TResult> GetFirstByModel<TResult>(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TResult> GetFirstByModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetFirst<TResult>(model.ToQueryable(_db), cancellationToken);
+            return GetFirst<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TEntity> GetFirstByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TEntity> GetFirstByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return GetFirst(model.ToQueryable(_db), cancellationToken);
+            return GetFirst(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -175,7 +178,7 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            if (query == null) query = _db.Set<TEntity>();
+            if (query == null) query = Query;
             return await query.ToListAsync<TResult>(Mapper, cancellationToken);
         }
 
@@ -186,16 +189,16 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<List<TResult>> GetListByModel<TResult>(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<List<TResult>> GetListByModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetList<TResult>(model.ToQueryable(_db), cancellationToken);
+            return GetList<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<List<TEntity>> GetListByModel(IQueryableModel<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<List<TEntity>> GetListByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return GetList(model.ToQueryable(_db), cancellationToken);
+            return GetList(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -208,7 +211,7 @@ namespace TripleSix.Core.Services
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
 
             var result = new Paging<TResult>(page, size);
-            if (query == null) query = _db.Set<TEntity>();
+            if (query == null) query = Query;
 
             result.Total = await query.LongCountAsync(cancellationToken);
             result.Items = await query
@@ -225,16 +228,16 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TResult>> GetPageByModel<TResult>(IQueryableModel<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public Task<IPaging<TResult>> GetPageByModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetPage<TResult>(model.ToQueryable(_db), page, size, cancellationToken);
+            return GetPage<TResult>(model.ToQueryable(Query), page, size, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TEntity>> GetPageByModel(IQueryableModel<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public Task<IPaging<TEntity>> GetPageByModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
         {
-            return GetPage(model.ToQueryable(_db), page, size, cancellationToken);
+            return GetPage(model.ToQueryable(Query), page, size, cancellationToken);
         }
     }
 }

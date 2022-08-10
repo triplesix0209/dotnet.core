@@ -1,5 +1,4 @@
 ﻿using TripleSix.Core.Entities;
-using TripleSix.Core.Persistences;
 
 namespace TripleSix.Core.Types
 {
@@ -8,10 +7,10 @@ namespace TripleSix.Core.Types
     /// </summary>
     /// <typeparam name="TEntity">Loại entity.</typeparam>
     public abstract class BaseQueryDto<TEntity> : BaseDto,
-        IQueryableModel<TEntity>
+        IQueryableDto<TEntity>
         where TEntity : IEntity
     {
         /// <inheritdoc/>
-        public abstract IQueryable<TEntity> ToQueryable(IDbDataContext db);
+        public abstract IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query);
     }
 }

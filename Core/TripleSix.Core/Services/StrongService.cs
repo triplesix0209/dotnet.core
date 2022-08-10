@@ -116,7 +116,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = _db.Set<TEntity>()
+            var query = Query
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
 
             return Any(query, cancellationToken);
@@ -125,7 +125,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            var query = _db.Set<TEntity>()
+            var query = Query
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
 
             return Count(query, cancellationToken);
@@ -137,7 +137,7 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            var query = _db.Set<TEntity>()
+            var query = Query
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
 
