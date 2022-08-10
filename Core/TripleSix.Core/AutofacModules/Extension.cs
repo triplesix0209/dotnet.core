@@ -150,13 +150,14 @@ namespace TripleSix.Core.AutofacModules
         /// <summary>
         /// Đăng ký các DbContext dưới dạng InstancePerLifetimeScope.
         /// </summary>
+        /// <typeparam name="TDbContext">Kiểu DbContext.</typeparam>
         /// <param name="builder">Container builder.</param>
-        /// <param name="delegate">Hàm khởi tạo.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<BaseDbContext, SimpleActivatorData, SingleRegistrationStyle> RegisterDbContext(
-            this ContainerBuilder builder, Func<IComponentContext, BaseDbContext> @delegate)
+        public static IRegistrationBuilder<TDbContext, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterDbContext<TDbContext>(
+            this ContainerBuilder builder)
+            where TDbContext : notnull, BaseDbContext
         {
-            return builder.Register(c => @delegate(c))
+            return builder.RegisterType<TDbContext>()
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces();

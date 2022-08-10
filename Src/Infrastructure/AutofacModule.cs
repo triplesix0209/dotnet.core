@@ -16,7 +16,8 @@ namespace Sample.Infrastructure
         {
             base.Load(builder);
 
-            builder.RegisterDbContext(c => new ApplicationDbContext(Configuration));
+            builder.RegisterDbContext<ApplicationDbContext>()
+                .WithParameter("configuration", Configuration);
         }
     }
 }

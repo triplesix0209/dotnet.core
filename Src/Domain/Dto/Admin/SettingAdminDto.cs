@@ -3,16 +3,15 @@
     [AdminModel(EntityType = typeof(Setting))]
     public class SettingAdminDto : BaseAdminDto
     {
-        public class Filter : PagingInputDto, IQueryableDto<Setting>
+        public class Filter : BaseAdminFilterDto<Setting>
         {
-            public IQueryable<Setting> ToQueryable(IQueryable<Setting> query)
-            {
-                return query;
-            }
         }
 
-        public class Item : BaseDto
+        public class Item : BaseAdminItemDto
         {
+            [DisplayName("Mã số")]
+            public string Code { get; set; }
+
             [DisplayName("giá trị")]
             public string Value { get; set; }
 
