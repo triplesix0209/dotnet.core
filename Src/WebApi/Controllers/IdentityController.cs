@@ -1,4 +1,4 @@
-﻿namespace Sample.WebApi.Controllers.Commons
+﻿namespace Sample.WebApi.Controllers
 {
     [Authorize]
     [SwaggerTag("xác thực")]
