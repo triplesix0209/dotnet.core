@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Jsons;
 
@@ -68,6 +69,7 @@ namespace TripleSix.Core.WebApi
 
                 options.DocumentFilter<BaseDocumentFilter>();
                 options.OperationFilter<DescribeOperationFilter>();
+                options.OperationFilter<DescribeAutoAdminOperationFilter>();
 
                 if (setupAction != null) setupAction(options, appsetting);
             });

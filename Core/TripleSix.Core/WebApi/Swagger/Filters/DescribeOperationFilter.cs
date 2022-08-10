@@ -70,11 +70,17 @@ namespace TripleSix.Core.WebApi
                     }
 
                     var propertyInfo = parameterDescription.PropertyInfo();
+
+                    PropertyInfo? parentPropertyInfo = null;
+                    if (parameterDescription.Name.Contains('.'))
+                        parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType.GetProperty(parameterDescription.Name.Split(".")[0]);
+
                     parameter.Schema = parameterDescription.Type.GenerateSwaggerSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,
                         parameterDescription,
-                        propertyInfo: propertyInfo);
+                        propertyInfo: propertyInfo,
+                        parentPropertyInfo: parentPropertyInfo);
 
                     parameter.Name = parameterDescription.Name.Split(".").Select(x => x.ToCamelCase()).ToString(".");
                     parameter.Required = parameter.In == ParameterLocation.Path ||

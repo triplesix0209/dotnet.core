@@ -4,6 +4,8 @@
     {
         public class Filter : BaseAdminFilterDto<Setting>
         {
+            [DisplayName("Lọc theo mã số")]
+            public FilterParameterString Code { get; set; }
         }
 
         public class Item : BaseAdminItemDto

@@ -26,6 +26,14 @@ namespace TripleSix.Core.Validation
 
         private void RuleForProperty(PropertyInfo property)
         {
+            if (property.PropertyType.GetUnderlyingType().IsEnum)
+            {
+                RuleFor(x => property.GetValue(x))
+                    .SetValidator(new EnumValidator<T, object?>(property.PropertyType.GetUnderlyingType()))
+                    .OverridePropertyName(property.Name)
+                    .WithName(property.GetDisplayName());
+            }
+
             if (property.GetCustomAttribute<RequiredAttribute>() != null)
             {
                 RuleFor(x => property.GetValue(x))

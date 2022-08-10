@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Types;
 using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.WebApi
@@ -22,6 +23,7 @@ namespace TripleSix.Core.WebApi
             ApiParameterDescription? parameterDescription = null,
             object? defaultValue = null,
             PropertyInfo? propertyInfo = null,
+            PropertyInfo? parentPropertyInfo = null,
             OpenApiSchema? baseSchema = null,
             bool generateDefault = true)
         {
@@ -29,9 +31,15 @@ namespace TripleSix.Core.WebApi
 
             if (generateDefault && baseSchema == null)
             {
-                defaultValue = parameterDescription != null
-                    ? parameterDescription.DefaultValue
-                    : Activator.CreateInstance(objectType);
+                if (propertyInfo == null)
+                {
+                    defaultValue = Activator.CreateInstance(objectType);
+                }
+                else if (parameterDescription != null && parameterDescription.ModelMetadata.ContainerType != null)
+                {
+                    var instance = Activator.CreateInstance(parameterDescription.ModelMetadata.ContainerType);
+                    defaultValue = propertyInfo.GetValue(instance);
+                }
             }
 
             var propertyType = objectType.GetUnderlyingType();
@@ -54,7 +62,7 @@ namespace TripleSix.Core.WebApi
                         schemaRepository,
                         defaultValue: defaultValue,
                         baseSchema: result,
-                        generateDefault: generateDefault);
+                        generateDefault: false);
             }
             else if (result.Type is null)
             {
@@ -76,7 +84,7 @@ namespace TripleSix.Core.WebApi
                             defaultValue: defaultValue == null ? null : property.GetValue(defaultValue),
                             propertyInfo: property,
                             baseSchema: result,
-                            generateDefault: generateDefault));
+                            generateDefault: false));
                 }
             }
 
@@ -115,6 +123,21 @@ namespace TripleSix.Core.WebApi
             result.MaxLength = propertyInfo.GetCustomAttribute<MaxLengthAttribute>()?.Length;
             result.Minimum = propertyInfo.GetCustomAttribute<MinValueAttribute>()?.Value;
             result.Maximum = propertyInfo.GetCustomAttribute<MaxValueAttribute>()?.Value;
+
+            if (parentPropertyInfo != null && parentPropertyInfo.PropertyType.IsAssignableTo<IFilterParameter>())
+            {
+                var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+                var parameterName = parameterDisplayName != null && parameterDisplayName.StartsWith("lọc theo ", StringComparison.CurrentCultureIgnoreCase)
+                    ? parameterDisplayName[9..]
+                    : parameterDisplayName;
+
+                result.Description = result.Description.Replace(
+                    $"[{nameof(parameterDisplayName).ToKebabCase()}]",
+                    parameterDisplayName);
+                result.Description = result.Description.Replace(
+                    $"[{nameof(parameterName).ToKebabCase()}]",
+                    parameterName);
+            }
 
             return result;
         }
