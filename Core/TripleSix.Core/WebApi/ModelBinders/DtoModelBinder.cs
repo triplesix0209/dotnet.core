@@ -47,9 +47,20 @@ namespace TripleSix.Core.WebApi
                 var jObject = new JObject();
                 foreach (var property in modelType.GetProperties())
                 {
-                    var values = bindingContext.ValueProvider.GetValue(property.Name);
-                    if (!values.Any()) continue;
-                    jObject.Add(property.Name, values.FirstValue);
+                    var propertyType = property.PropertyType.GetUnderlyingType();
+                    if (propertyType == null) continue;
+
+                    if (propertyType == typeof(string) || !propertyType.IsClass)
+                    {
+                        var values = bindingContext.ValueProvider.GetValue(property.Name);
+                        if (!values.Any()) continue;
+                        jObject.Add(property.Name, values.FirstValue);
+                        continue;
+                    }
+
+                    JObject? propertyValue;
+                    if (ReadObjectProperty(property.Name, propertyType, bindingContext.ValueProvider, out propertyValue))
+                        jObject.Add(property.Name, propertyValue);
                 }
 
                 var model = jObject.ToObject(modelType) as IDto;
@@ -58,6 +69,12 @@ namespace TripleSix.Core.WebApi
 
                 bindingContext.Result = ModelBindingResult.Success(model);
             }
+        }
+
+        private bool ReadObjectProperty(string propertyName, Type propertyType, IValueProvider valueProvider, out JObject? result)
+        {
+            result = null;
+            //return false;
         }
     }
 

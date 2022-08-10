@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
 {
@@ -43,5 +44,11 @@ namespace TripleSix.Core.Types
 
         [DisplayName("loại lọc của [parameter-name]")]
         public FilterParameterNumberOperators Operator { get; set; } = FilterParameterNumberOperators.Equal;
+
+        public IQueryable<TEntity> ToQueryable<TEntity>(IQueryable<TEntity> query)
+            where TEntity : class, IEntity
+        {
+            return query;
+        }
     }
 }
