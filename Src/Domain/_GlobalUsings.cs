@@ -6,6 +6,7 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Sample.Domain.Dto;
 global using Sample.Domain.Entities;
 global using Sample.Domain.Enums;
+global using TripleSix.Core.AutoAdmin;
 global using TripleSix.Core.Entities;
 global using TripleSix.Core.Exceptions;
 global using TripleSix.Core.Helpers;

@@ -95,7 +95,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<bool> AnyByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
             return Any(model.ToQueryable(Query), cancellationToken);
         }
@@ -110,7 +110,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<long> CountByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<long> CountByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
             return Count(model.ToQueryable(Query), cancellationToken);
         }
@@ -138,14 +138,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TResult?> GetFirstOrDefaultByModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
             return GetFirstOrDefault<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TEntity?> GetFirstOrDefaultByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
             return GetFirstOrDefault(model.ToQueryable(Query), cancellationToken);
         }
@@ -167,14 +167,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TResult> GetFirstByModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
             return GetFirst<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TEntity> GetFirstByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
             return GetFirst(model.ToQueryable(Query), cancellationToken);
         }
@@ -200,14 +200,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<List<TResult>> GetListByModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
             return GetList<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<List<TEntity>> GetListByModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
             return GetList(model.ToQueryable(Query), cancellationToken);
         }
@@ -251,14 +251,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TResult>> GetPageByModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
             where TResult : class
         {
             return GetPage<TResult>(model.ToQueryable(Query), page, size, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TEntity>> GetPageByModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
         {
             return GetPage(model.ToQueryable(Query), page, size, cancellationToken);
         }

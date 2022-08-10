@@ -1,10 +1,9 @@
 ﻿namespace Sample.Domain.Entities
 {
-    public class Setting : BaseEntity<Setting>
+    public class Setting : StrongEntity<Setting>
     {
-        [Key]
-        [MaxLength(100)]
-        public string Code { get; set; }
+        [Required]
+        public override string? Code { get; set; }
 
         public string? Value { get; set; }
 

@@ -13,6 +13,7 @@ namespace Sample.Infrastructure.Seeds
                     var item = property.GetValue(instance) as DbSettingItem;
                     return new
                     {
+                        Id = item!.Id,
                         Code = property.Name,
                         Value = item!.DefaultValue,
                         Description = item!.Description,
@@ -21,6 +22,7 @@ namespace Sample.Infrastructure.Seeds
 
             var settings = data.Select(x => new Setting
             {
+                Id = x.Id,
                 Code = x.Code,
                 Value = x.Value,
                 Description = x.Description,

@@ -9,7 +9,7 @@
         [SwaggerOperation("Lấy danh sách thiết lập")]
         public async Task<DataResult<List<SettingDataDto>>> GetAll(SettingFilterDto input)
         {
-            var result = await SettingService.GetListByModel<SettingDataDto>(input);
+            var result = await SettingService.GetListByQueryModel<SettingDataDto>(input);
             return DataResult(result);
         }
     }

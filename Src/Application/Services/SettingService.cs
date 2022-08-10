@@ -2,14 +2,14 @@
 
 namespace Sample.Application.Services
 {
-    public interface ISettingService : IService<Setting>
+    public interface ISettingService : IStrongService<Setting>
     {
         Task<string?> GetValue(Expression<Func<DbSettings, DbSettingItem>> selector);
 
         Task<TValue?> GetValue<TValue>(Expression<Func<DbSettings, DbSettingItem>> selector);
     }
 
-    public class SettingService : BaseService<Setting>, ISettingService
+    public class SettingService : StrongService<Setting>, ISettingService
     {
         public SettingService(IDbDataContext db)
             : base(db)

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
+using TripleSix.Core.Persistences;
 using TripleSix.Core.Quartz;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
@@ -144,6 +145,21 @@ namespace TripleSix.Core.AutofacModules
                 .AsImplementedInterfaces()
                 .EnableInterfaceInterceptors()
                 .InterceptedBy(typeof(ServiceInterceptor));
+        }
+
+        /// <summary>
+        /// Đăng ký các DbContext dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="delegate">Hàm khởi tạo.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<BaseDbContext, SimpleActivatorData, SingleRegistrationStyle> RegisterDbContext(
+            this ContainerBuilder builder, Func<IComponentContext, BaseDbContext> @delegate)
+        {
+            return builder.Register(c => @delegate(c))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .AsImplementedInterfaces();
         }
 
         /// <summary>

@@ -6,7 +6,6 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.AutofacModules;
 using TripleSix.Core.OpenTelemetry;
 using TripleSix.Core.Persistences;
 using TripleSix.Core.Validation;
@@ -17,20 +16,17 @@ namespace Sample.WebApi
     {
         public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
             builder.RegisterModule(new Domain.AutofacModule(configuration));
             builder.RegisterModule(new Application.AutofacModule(configuration));
             builder.RegisterModule(new Infrastructure.AutofacModule(configuration));
-
-            builder.RegisterAllController(assembly);
-            builder.RegisterAllQuartzJob(assembly);
+            builder.RegisterModule(new WebApi.AutofacModule(configuration));
         }
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
+            var assembly = Assembly.GetExecutingAssembly();
             builder.Services.AddHttpContextAccessor();
-            builder.Services.ConfigureMvcService();
+            builder.Services.ConfigureMvcService(assembly);
 
             #region [opentelemetry]
 

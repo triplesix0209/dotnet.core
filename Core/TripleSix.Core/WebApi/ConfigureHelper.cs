@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Jsons;
 
@@ -17,8 +19,9 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình MVC Controller.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="assembly">Assembly chứa các controller.</param>
         /// <returns><see cref="IMvcBuilder"/>.</returns>
-        public static IMvcBuilder ConfigureMvcService(this IServiceCollection services)
+        public static IMvcBuilder ConfigureMvcService(this IServiceCollection services, Assembly assembly)
         {
             return services
                 .AddMvc(options =>
@@ -26,8 +29,14 @@ namespace TripleSix.Core.WebApi
                     options.AllowEmptyInputInBodyModelBinding = true;
                     options.ModelBinderProviders.Insert(0, new DtoModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
+
+                    options.Conventions.Add(new AdminControllerRouteConvention(assembly));
                 })
                 .AddControllersAsServices()
+                .ConfigureApplicationPartManager(options =>
+                {
+                    options.FeatureProviders.Add(new AdminControllerFeatureProvider(assembly));
+                })
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new BaseContractResolver();

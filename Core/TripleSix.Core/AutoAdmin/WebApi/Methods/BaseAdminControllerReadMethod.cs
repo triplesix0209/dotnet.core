@@ -22,26 +22,17 @@ namespace TripleSix.Core.AutoAdmin
         [AdminMethod(Type = AdminMethodTypes.List)]
         public virtual async Task<PagingResult<TItemDto>> GetPage(TFilterDto input)
         {
-            var result = await Service.GetPageByModel<TItemDto>(input, input.Page, input.Size);
+            var result = await Service.GetPageByQueryModel<TItemDto>(input, input.Page, input.Size);
             return PagingResult(result);
         }
 
-        //[HttpGet("{id}")]
-        //[SwaggerApi("lấy chi tiết [controller]")]
-        //[AdminMethod(Type = AdminMethodTypes.Detail)]
-        //[PermissionRequirement(AutoGroup = true, ListCode = new[] { "read" })]
-        //public virtual async Task<IActionResult> GetDetail(RouteId route)
-        //{
-        //    var identity = GenerateIdentity();
-
-        //    TDetailDto data;
-        //    var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TDetailDto));
-        //    if (Service.GetType().IsAssignableTo(readInterface))
-        //        data = await Service.GetFirstByIdWithModel<TDetailDto>(identity, route.Id, true);
-        //    else
-        //        data = await Service.GetFirstById<TDetailDto>(identity, route.Id, true);
-
-        //    return DataResult(data);
-        //}
+        [HttpGet("{id}")]
+        [SwaggerOperation("lấy chi tiết [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.Detail)]
+        public virtual async Task<DataResult<TDetailDto>> GetDetail(RouteId route)
+        {
+            var result = await Service.GetById<TDetailDto>(route.Id, true);
+            return DataResult(result);
+        }
     }
 }
