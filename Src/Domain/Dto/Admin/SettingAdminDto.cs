@@ -1,7 +1,6 @@
 ﻿namespace Sample.Domain.Dto
 {
-    [AdminModel(EntityType = typeof(Setting))]
-    public class SettingAdminDto : BaseAdminDto
+    public class SettingAdminDto : AdminModel<Setting>
     {
         public class Filter : BaseAdminFilterDto<Setting>
         {

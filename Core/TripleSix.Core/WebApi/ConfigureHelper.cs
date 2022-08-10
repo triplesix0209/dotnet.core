@@ -1,10 +1,10 @@
-﻿using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Jsons;
 
@@ -19,9 +19,13 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình MVC Controller.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
-        /// <param name="assembly">Assembly chứa các controller.</param>
+        /// <param name="configureMvc">Hàm tùy chỉnh mvc.</param>
+        /// <param name="configureApplicationPartManager">Hàm tùy chỉnh application part.</param>
         /// <returns><see cref="IMvcBuilder"/>.</returns>
-        public static IMvcBuilder ConfigureMvcService(this IServiceCollection services, Assembly assembly)
+        public static IMvcBuilder ConfigureMvcService(
+            this IServiceCollection services,
+            Action<MvcOptions> configureMvc,
+            Action<ApplicationPartManager> configureApplicationPartManager)
         {
             return services
                 .AddMvc(options =>
@@ -29,14 +33,10 @@ namespace TripleSix.Core.WebApi
                     options.AllowEmptyInputInBodyModelBinding = true;
                     options.ModelBinderProviders.Insert(0, new DtoModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
-
-                    options.Conventions.Add(new AdminControllerRouteConvention(assembly));
+                    configureMvc(options);
                 })
                 .AddControllersAsServices()
-                .ConfigureApplicationPartManager(options =>
-                {
-                    options.FeatureProviders.Add(new AdminControllerFeatureProvider(assembly));
-                })
+                .ConfigureApplicationPartManager(options => configureApplicationPartManager(options))
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new BaseContractResolver();

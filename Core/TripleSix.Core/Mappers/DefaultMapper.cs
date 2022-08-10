@@ -23,7 +23,7 @@ namespace TripleSix.Core.Mappers
                 .Where(x => x.IsAssignableTo<IDto>());
             var adminTypes = assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
-                .Where(x => x.IsAssignableTo<IAdminModel>());
+                .Where(x => x.IsSubclassOfRawGeneric(typeof(AdminModel<>)));
 
             foreach (var entityType in entityTypes)
             {
@@ -48,7 +48,7 @@ namespace TripleSix.Core.Mappers
                 }
 
                 var matchedAdminTypes = adminTypes
-                    .Where(x => x.GetCustomAttribute<AdminModelAttribute>()?.EntityType == entityType);
+                    .Where(x => AdminModel.GetEntityType(x) == entityType);
                 foreach (var adminType in matchedAdminTypes)
                 {
                     var itemDto = adminType.GetNestedType("Item");

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.AutoAdmin

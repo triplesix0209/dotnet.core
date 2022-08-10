@@ -5,16 +5,16 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public class AdminControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
+    public class AutoAdminControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
     {
         private readonly Assembly _assembly;
 
-        public AdminControllerFeatureProvider(Assembly assembly)
+        public AutoAdminControllerFeatureProvider(Assembly assembly)
         {
             _assembly = assembly;
         }
 
-        public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
+        public virtual void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             var exportedTypes = _assembly.GetExportedTypes().Where(x => !x.IsAbstract);
             var candidates = exportedTypes.Where(t =>
@@ -30,7 +30,8 @@ namespace TripleSix.Core.AutoAdmin
                 if (info == null) continue;
 
                 var adminModelType = info.ModelType;
-                var entityType = adminModelType.GetCustomAttribute<AdminModelAttribute>()?.EntityType;
+                if (!adminModelType.IsSubclassOfRawGeneric(typeof(AdminModel<>))) continue;
+                var entityType = AdminModel.GetEntityType(adminModelType);
                 if (entityType == null) continue;
 
                 var filterType = adminModelType.GetNestedType("Filter");
@@ -45,8 +46,8 @@ namespace TripleSix.Core.AutoAdmin
                     if (type is not null)
                     {
                         feature.Controllers.Add(type.MakeGenericType(
-                            adminModelType,
                             entityType,
+                            adminModelType,
                             filterType,
                             itemType,
                             detailType)

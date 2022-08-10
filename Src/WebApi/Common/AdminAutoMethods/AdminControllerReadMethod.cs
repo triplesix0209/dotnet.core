@@ -6,10 +6,10 @@ namespace Sample.WebApi.Common.AdminAutoMethods
     [Route("Admin/[controller]")]
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize]
-    public class AdminControllerReadMethod<TAdminDto, TEntity, TFilterDto, TItemDto, TDetailDto>
-        : BaseAdminControllerReadMethod<TAdminDto, TEntity, TFilterDto, TItemDto, TDetailDto>
-        where TAdminDto : IAdminModel
+    public class AdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
+        : BaseAdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
         where TEntity : class, IStrongEntity
+        where TAdminModel : AdminModel<TEntity>
         where TFilterDto : PagingInputDto, IQueryableDto<TEntity>
         where TItemDto : class, IDto
         where TDetailDto : class, IDto

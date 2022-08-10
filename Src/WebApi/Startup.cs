@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -14,19 +15,31 @@ namespace Sample.WebApi
 {
     public static class Startup
     {
+        private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+
         public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
             builder.RegisterModule(new Domain.AutofacModule(configuration));
             builder.RegisterModule(new Application.AutofacModule(configuration));
             builder.RegisterModule(new Infrastructure.AutofacModule(configuration));
-            builder.RegisterModule(new WebApi.AutofacModule(configuration));
+            builder.RegisterModule(new AutofacModule(configuration));
+        }
+
+        public static void ConfigureMvc(MvcOptions options)
+        {
+            options.Conventions.Add(new AutoAdminControllerRouteConvention(_assembly));
+        }
+
+        public static void ConfigureApplicationPartManager(ApplicationPartManager options)
+        {
+            options.FeatureProviders.Add(new AutoAdminControllerFeatureProvider(_assembly));
         }
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
             var assembly = Assembly.GetExecutingAssembly();
             builder.Services.AddHttpContextAccessor();
-            builder.Services.ConfigureMvcService(assembly);
+            builder.Services.ConfigureMvcService(ConfigureMvc, ConfigureApplicationPartManager);
 
             #region [opentelemetry]
 

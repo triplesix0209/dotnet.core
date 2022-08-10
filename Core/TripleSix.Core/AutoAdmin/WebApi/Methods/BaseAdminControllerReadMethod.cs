@@ -7,10 +7,10 @@ using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public abstract class BaseAdminControllerReadMethod<TAdminDto, TEntity, TFilterDto, TItemDto, TDetailDto>
+    public abstract class BaseAdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
         : BaseAdminController
-        where TAdminDto : IAdminModel
         where TEntity : class, IStrongEntity
+        where TAdminModel : AdminModel<TEntity>
         where TFilterDto : PagingInputDto, IQueryableDto<TEntity>
         where TItemDto : class, IDto
         where TDetailDto : class, IDto

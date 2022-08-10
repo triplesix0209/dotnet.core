@@ -1,24 +1,24 @@
 ﻿using System.Reflection;
-using Autofac;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public class AdminControllerRouteConvention : IControllerModelConvention
+    public class AutoAdminControllerRouteConvention : IControllerModelConvention
     {
         private readonly Assembly _assembly;
 
-        public AdminControllerRouteConvention(Assembly executingAssembly)
+        public AutoAdminControllerRouteConvention(Assembly assembly)
         {
-            _assembly = executingAssembly;
+            _assembly = assembly;
         }
 
-        public void Apply(ControllerModel controller)
+        public virtual void Apply(ControllerModel controller)
         {
             if (!controller.ControllerType.IsGenericType) return;
 
-            var adminModelType = controller.ControllerType.GetGenericArguments()[0];
-            if (!adminModelType.IsAssignableTo<IAdminModel>()) return;
+            var adminModelType = controller.ControllerType.GetGenericArguments()[1];
+            if (!adminModelType.IsSubclassOfRawGeneric(typeof(AdminModel<>))) return;
 
             var controllerBase = _assembly.GetExportedTypes()
                .FirstOrDefault(t => t.GetCustomAttribute<AdminControllerAttribute>()?.ModelType == adminModelType);
