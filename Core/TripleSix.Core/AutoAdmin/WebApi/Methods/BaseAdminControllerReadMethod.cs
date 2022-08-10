@@ -11,7 +11,7 @@ namespace TripleSix.Core.AutoAdmin
         : BaseAdminController
         where TEntity : class, IStrongEntity
         where TAdminModel : AdminModel<TEntity>
-        where TFilterDto : PagingInputDto, IQueryableDto<TEntity>
+        where TFilterDto : BaseAdminFilterDto<TEntity>
         where TItemDto : class, IDto
         where TDetailDto : class, IDto
     {
