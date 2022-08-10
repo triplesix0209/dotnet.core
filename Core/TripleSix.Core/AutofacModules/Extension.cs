@@ -28,7 +28,8 @@ namespace TripleSix.Core.AutofacModules
         /// <typeparam name="TIdentityContext">Class Identity Context sử dụng.</typeparam>
         /// <param name="builder">Container builder.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<TIdentityContext, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterIdentityContext<TIdentityContext>(this ContainerBuilder builder)
+        public static IRegistrationBuilder<TIdentityContext, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterIdentityContext<TIdentityContext>(
+            this ContainerBuilder builder)
             where TIdentityContext : IIdentityContext
         {
             return builder.RegisterType<TIdentityContext>()
@@ -46,7 +47,9 @@ namespace TripleSix.Core.AutofacModules
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các appsetting để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllAppsetting(this ContainerBuilder builder, Assembly assembly)
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllAppsetting(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             return builder.RegisterAssemblyTypes(assembly, Assembly.GetExecutingAssembly())
                 .PublicOnly()
@@ -62,7 +65,9 @@ namespace TripleSix.Core.AutofacModules
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các mapper để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAllMapper(this ContainerBuilder builder, Assembly assembly)
+        public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAllMapper(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -103,7 +108,9 @@ namespace TripleSix.Core.AutofacModules
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các repository để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllRepository(this ContainerBuilder builder, Assembly assembly)
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllRepository(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -121,7 +128,9 @@ namespace TripleSix.Core.AutofacModules
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các service để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllService(this ContainerBuilder builder, Assembly assembly)
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllService(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             builder.Register(c => new ServiceInterceptor())
                 .SingleInstance();
@@ -190,7 +199,9 @@ namespace TripleSix.Core.AutofacModules
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các controller để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllController(this ContainerBuilder builder, Assembly assembly)
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllController(
+            this ContainerBuilder builder,
+            Assembly assembly)
         {
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()

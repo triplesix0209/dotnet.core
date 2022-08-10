@@ -1,6 +1,4 @@
-﻿using TripleSix.Core.Persistences;
-
-namespace Sample.Application.Services
+﻿namespace Sample.Application.Services
 {
     public interface IAccountService : IStrongService<Account>
     {

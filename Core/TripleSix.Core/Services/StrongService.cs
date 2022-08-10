@@ -141,9 +141,14 @@ namespace TripleSix.Core.Services
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted)
                 .Where(x => x.Id == id);
 
-            return typeof(TResult) == typeof(TEntity) ?
-                await query.SingleOrDefaultAsync(cancellationToken) as TResult :
-                await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).SingleOrDefaultAsync(cancellationToken);
+            if (typeof(TResult) == typeof(TEntity))
+                return await query.SingleOrDefaultAsync(cancellationToken) as TResult;
+            if (!CanConvertEntityToModel<TResult>())
+                return await query.ProjectTo<TResult>(Mapper.ConfigurationProvider).SingleOrDefaultAsync(cancellationToken);
+
+            var data = await query.SingleOrDefaultAsync(cancellationToken);
+            if (data == null) return null;
+            return await ConvertEntityToModel<TResult>(data, cancellationToken);
         }
 
         /// <inheritdoc/>

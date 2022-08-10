@@ -9,4 +9,5 @@ global using Sample.Domain.Persistences;
 global using TripleSix.Core.Appsettings;
 global using TripleSix.Core.Exceptions;
 global using TripleSix.Core.Helpers;
+global using TripleSix.Core.Persistences;
 global using TripleSix.Core.Services;

@@ -1,5 +1,6 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
+using Autofac;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
@@ -88,8 +89,8 @@ namespace TripleSix.Core.Services
         public async Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
             using var activity = StartTraceMethodActivity();
-
             if (query == null) query = Query;
+
             return await query.AnyAsync(cancellationToken);
         }
 
@@ -103,8 +104,8 @@ namespace TripleSix.Core.Services
         public async Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
             using var activity = StartTraceMethodActivity();
-
             if (query == null) query = Query;
+
             return await query.LongCountAsync(cancellationToken);
         }
 
@@ -119,9 +120,15 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             using var activity = StartTraceMethodActivity();
-
             if (query == null) query = Query;
-            return await query.FirstOrDefaultAsync<TResult>(Mapper, cancellationToken);
+
+            if (!CanConvertEntityToModel<TResult>())
+                return await query.FirstOrDefaultAsync<TResult>(Mapper, cancellationToken);
+
+            var data = await query.FirstOrDefaultAsync(cancellationToken);
+            if (data == null) return null;
+
+            return await ConvertEntityToModel<TResult>(data, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -177,9 +184,13 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             using var activity = StartTraceMethodActivity();
-
             if (query == null) query = Query;
-            return await query.ToListAsync<TResult>(Mapper, cancellationToken);
+
+            if (!CanConvertEntityToModel<TResult>())
+                return await query.ToListAsync<TResult>(Mapper, cancellationToken);
+
+            var data = await query.ToListAsync(cancellationToken);
+            return await ConvertEntityToModel<TResult>(data, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -214,10 +225,22 @@ namespace TripleSix.Core.Services
             if (query == null) query = Query;
 
             result.Total = await query.LongCountAsync(cancellationToken);
-            result.Items = await query
-                .Skip((page - 1) * size)
-                .Take(size)
-                .ToListAsync<TResult>(Mapper, cancellationToken);
+            if (!CanConvertEntityToModel<TResult>())
+            {
+                result.Items = await query
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToListAsync<TResult>(Mapper, cancellationToken);
+            }
+            else
+            {
+                var data = await query
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToListAsync(cancellationToken);
+                result.Items = await ConvertEntityToModel<TResult>(data, cancellationToken);
+            }
+
             return result;
         }
 
@@ -238,6 +261,65 @@ namespace TripleSix.Core.Services
         public Task<IPaging<TEntity>> GetPageByModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
         {
             return GetPage(model.ToQueryable(Query), page, size, cancellationToken);
+        }
+
+        /// <summary>
+        /// Kiểm tra có thể chuyển đổi dữ liệu entity sang kiểu chỉ định không.
+        /// </summary>
+        /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
+        /// <returns><c>True</c> nếu có thể, ngược lại là <c>False</c>.</returns>
+        protected bool CanConvertEntityToModel<TModel>()
+        {
+            if (!typeof(TModel).IsAssignableTo<IDto>()) return false;
+
+            var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
+            return GetType().IsAssignableTo(readInterface);
+        }
+
+        /// <summary>
+        /// Chuyển đổi danh sách dữ liệu entity sang kiểu chỉ định.
+        /// </summary>
+        /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
+        /// <param name="entities">Danh sách entity sẽ chuyển đổi.</param>
+        /// <param name="cancellationToken">Token để cancel task.</param>
+        /// <returns>Danh sách dữ liệu sau khi chuyển đổi.</returns>
+        protected async Task<List<TModel>> ConvertEntityToModel<TModel>(List<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
+            var method = readInterface.GetMethod(nameof(IReadableWithModel<IEntity, IDto>.ConvertEntityToModel));
+            if (method == null)
+                throw new Exception($"{GetType().Name} need implement {nameof(IReadableWithModel<IEntity, IDto>)}<{typeof(TEntity).Name}, {typeof(TModel).Name}>");
+
+            var result = new List<TModel>();
+            foreach (var entity in entities)
+            {
+                if (method.Invoke(this, new object[] { entity, cancellationToken }) is not Task<TModel> task)
+                    throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).Name}");
+                await task.WaitAsync(cancellationToken);
+                result.Add(task.Result);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Chuyển đổi dữ liệu entity sang kiểu chỉ định.
+        /// </summary>
+        /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
+        /// <param name="entity">entity sẽ chuyển đổi.</param>
+        /// <param name="cancellationToken">Token để cancel task.</param>
+        /// <returns>Dữ liệu sau khi chuyển đổi.</returns>
+        protected async Task<TModel> ConvertEntityToModel<TModel>(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
+            var method = readInterface.GetMethod(nameof(IReadableWithModel<IEntity, IDto>.ConvertEntityToModel));
+            if (method == null)
+                throw new Exception($"{GetType().Name} need implement {nameof(IReadableWithModel<IEntity, IDto>)}<{typeof(TEntity).Name}, {typeof(TModel).Name}>");
+
+            if (method.Invoke(this, new object[] { entity, cancellationToken }) is not Task<TModel> task)
+                throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).Name}");
+            await task.WaitAsync(cancellationToken);
+            return task.Result;
         }
     }
 }

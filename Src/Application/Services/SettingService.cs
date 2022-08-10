@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using TripleSix.Core.Persistences;
 
 namespace Sample.Application.Services
 {
