@@ -6,6 +6,7 @@ namespace Sample.WebApi.Common.AdminAutoMethods
     [Route("Admin/[controller]")]
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize]
+    [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
     public class AdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
         : BaseAdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
         where TEntity : class, IStrongEntity
