@@ -10,7 +10,7 @@ using TripleSix.Core.Types;
 namespace TripleSix.Core.WebApi
 {
     /// <summary>
-    /// Ghi nhận các property của Dto.
+    /// Model binding dto.
     /// </summary>
     public class DtoModelBinding : ActionFilterAttribute
     {

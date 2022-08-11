@@ -4,6 +4,9 @@ using TripleSix.Core.Identity;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Kiểm tra cấp độ tài khoản.
+    /// </summary>
     public class AccessLevelRequirement : Attribute, IAuthorizationFilter
     {
         /// <summary>
