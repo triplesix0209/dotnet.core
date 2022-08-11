@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Exceptions;
@@ -35,6 +36,17 @@ namespace TripleSix.Core.WebApi
             {
                 ErrorResult error;
                 if (e.InnerExceptions.Count == 1 && e.InnerException is BaseException exception)
+                    error = exception.ToErrorResult(httpContext);
+                else
+                    error = ConvertExceptionToErrorResult(httpContext, e);
+
+                await SendResponse(httpContext, error);
+                throw;
+            }
+            catch (TargetInvocationException e)
+            {
+                ErrorResult error;
+                if (e.InnerException is BaseException exception)
                     error = exception.ToErrorResult(httpContext);
                 else
                     error = ConvertExceptionToErrorResult(httpContext, e);

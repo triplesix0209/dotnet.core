@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using System.Reflection;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.AutoAdmin

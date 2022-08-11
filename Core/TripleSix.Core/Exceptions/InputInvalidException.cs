@@ -1,4 +1,7 @@
-﻿namespace TripleSix.Core.Exceptions
+﻿using Microsoft.AspNetCore.Http;
+using TripleSix.Core.WebApi;
+
+namespace TripleSix.Core.Exceptions
 {
     /// <summary>
     /// Lỗi nhập liệu.
@@ -10,7 +13,7 @@
         /// </summary>
         /// <param name="fieldName">Tên trường dữ liệu.</param>
         public InputInvalidException(string fieldName)
-            : base($"{fieldName} bị sai dữ liệu đầu vào")
+            : base($"Dữ liệu {fieldName} bị sai")
         {
             FieldName = fieldName;
         }
@@ -21,7 +24,7 @@
         /// <param name="fieldName">Tên trường dữ liệu.</param>
         /// <param name="message"><inheritdoc/></param>
         public InputInvalidException(string fieldName, string message)
-            : base($"{fieldName}: {message}")
+            : base($"{message}")
         {
             FieldName = fieldName;
         }
@@ -33,5 +36,11 @@
 
         /// <inheritdoc/>
         public override int HttpCodeStatus => 400;
+
+        /// <inheritdoc/>
+        public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
+        {
+            return new ErrorResult(HttpCodeStatus, Code, Message, new { FieldName });
+        }
     }
 }

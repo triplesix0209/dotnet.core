@@ -35,9 +35,9 @@ namespace TripleSix.Core.Persistences
         public IHttpContextAccessor? HttpContextAccessor { get; set; }
 
         /// <inheritdoc/>
-        public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
-            return Database.BeginTransactionAsync(cancellationToken);
+            return await Database.BeginTransactionAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -7,7 +7,7 @@ namespace TripleSix.Core.WebApi
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            var values = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
+            var values = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
             if (values.Length == 0 || values.FirstValue == null) return Task.CompletedTask;
 
             var result = long.Parse(values.FirstValue).ToDateTime();

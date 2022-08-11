@@ -4,7 +4,7 @@ namespace TripleSix.Core.Types
 {
     public interface IFilterParameter
     {
-        IQueryable<TEntity> ToQueryable<TEntity>(IQueryable<TEntity> query)
+        IQueryable<TEntity> ToQueryable<TEntity>(IQueryable<TEntity> query, string propertyName)
             where TEntity : class, IEntity;
     }
 }

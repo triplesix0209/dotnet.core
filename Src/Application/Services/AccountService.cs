@@ -30,21 +30,21 @@
             return HashPasswordWithKey(password, hashKey);
         }
 
-        public Task<bool> AnyByUsername(string username, bool includeDeleted)
+        public async Task<bool> AnyByUsername(string username, bool includeDeleted)
         {
             var query = Query
                 .WhereIf(!includeDeleted, x => x.IsDeleted == false)
                 .Where(x => x.Auths.Any(auth => auth.Username == username));
-            return Any(query);
+            return await Any(query);
         }
 
-        public Task<TResult?> GetByUsername<TResult>(string username, bool includeDeleted)
+        public async Task<TResult?> GetByUsername<TResult>(string username, bool includeDeleted)
             where TResult : class
         {
             var query = Query
                 .WhereIf(!includeDeleted, x => x.IsDeleted == false)
                 .Where(x => x.Auths.Any(auth => auth.Username == username));
-            return GetFirstOrDefault<TResult>(query);
+            return await GetFirstOrDefault<TResult>(query);
         }
 
         public async Task<TResult?> GetByUsernamePassword<TResult>(string username, string password, bool includeDeleted)

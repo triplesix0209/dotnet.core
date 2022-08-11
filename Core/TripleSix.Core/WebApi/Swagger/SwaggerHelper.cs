@@ -83,6 +83,7 @@ namespace TripleSix.Core.WebApi
                             schemaRepository,
                             defaultValue: defaultValue == null ? null : property.GetValue(defaultValue),
                             propertyInfo: property,
+                            parentPropertyInfo: propertyInfo,
                             baseSchema: result,
                             generateDefault: false));
                 }

@@ -114,21 +114,21 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default)
         {
             var query = Query
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
 
-            return Any(query, cancellationToken);
+            return await Any(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default)
         {
             var query = Query
                 .WhereIf(includeDeleted == false, x => !x.IsDeleted);
 
-            return Count(query, cancellationToken);
+            return await Count(query, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -152,9 +152,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TEntity?> GetOrDefaultById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> GetOrDefaultById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            return GetOrDefaultById<TEntity>(id, includeDeleted, cancellationToken);
+            return await GetOrDefaultById<TEntity>(id, includeDeleted, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -168,9 +168,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TEntity> GetById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
+        public async Task<TEntity> GetById(Guid id, bool includeDeleted, CancellationToken cancellationToken = default)
         {
-            return GetById<TEntity>(id, includeDeleted, cancellationToken);
+            return await GetById<TEntity>(id, includeDeleted, cancellationToken);
         }
     }
 }

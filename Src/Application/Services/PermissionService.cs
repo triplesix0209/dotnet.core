@@ -16,9 +16,9 @@
 
         public IApplicationDbContext Db { get; set; }
 
-        public Task<List<PermissionItemDto>> GetAllPermission()
+        public async Task<List<PermissionItemDto>> GetAllPermission()
         {
-            return Db.Permission.ToListAsync<PermissionItemDto>(Mapper);
+            return await Db.Permission.ToListAsync<PermissionItemDto>(Mapper);
         }
 
         public async Task<List<PermissionValueDto>> GetListPermissionValue(Guid id, bool grantedOnly)

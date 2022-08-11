@@ -11,7 +11,7 @@ namespace TripleSix.Core.Validation.Validators
         {
             _values = new List<int>();
             foreach (var value in Enum.GetValues(enumType))
-                _values.Add(((int)value));
+                _values.Add((int)value);
         }
 
         public override string Name => "EnumValidator";

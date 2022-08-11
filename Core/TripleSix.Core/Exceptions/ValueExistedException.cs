@@ -1,4 +1,7 @@
-﻿namespace TripleSix.Core.Exceptions
+﻿using Microsoft.AspNetCore.Http;
+using TripleSix.Core.WebApi;
+
+namespace TripleSix.Core.Exceptions
 {
     /// <summary>
     /// Lỗi dữ liệu đã tồn tại.
@@ -33,5 +36,11 @@
 
         /// <inheritdoc/>
         public override int HttpCodeStatus => 500;
+
+        /// <inheritdoc/>
+        public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
+        {
+            return new ErrorResult(HttpCodeStatus, Code, Message, new { ValueName });
+        }
     }
 }

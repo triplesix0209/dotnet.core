@@ -6,6 +6,12 @@
         {
             [DisplayName("Lọc theo mã số")]
             public FilterParameterString Code { get; set; }
+
+            [DisplayName("Lọc theo giá trị")]
+            public FilterParameterString Value { get; set; }
+
+            [DisplayName("Lọc theo mô tả")]
+            public FilterParameterString Description { get; set; }
         }
 
         public class Item : BaseAdminItemDto

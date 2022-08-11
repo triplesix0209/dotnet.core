@@ -21,6 +21,7 @@ namespace TripleSix.Core.WebApi
             var request = context.HttpContext.Request;
             foreach (var parameter in context.ActionDescriptor.Parameters)
             {
+                if (!context.ActionArguments.ContainsKey(parameter.Name)) continue;
                 var data = context.ActionArguments[parameter.Name];
                 if (data == null || data is not IDto dto) continue;
 
@@ -83,7 +84,7 @@ namespace TripleSix.Core.WebApi
                 var bodyProperties = bodyData.Properties();
                 foreach (var property in parameterProperties)
                 {
-                    if (!bodyProperties.Any(x => x.Name.Equals(property.Name, _stringComparison)))
+                    if (bodyProperties.Any(x => x.Name.Equals(property.Name, _stringComparison)))
                         value.SetPropertyChanged(property.Name, true);
                 }
             }

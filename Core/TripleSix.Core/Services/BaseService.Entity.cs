@@ -95,9 +95,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return Any(model.ToQueryable(Query), cancellationToken);
+            return await Any(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -110,9 +110,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<long> CountByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<long> CountByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return Count(model.ToQueryable(Query), cancellationToken);
+            return await Count(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -132,22 +132,22 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            return GetFirstOrDefault<TEntity>(query, cancellationToken);
+            return await GetFirstOrDefault<TEntity>(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetFirstOrDefault<TResult>(model.ToQueryable(Query), cancellationToken);
+            return await GetFirstOrDefault<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return GetFirstOrDefault(model.ToQueryable(Query), cancellationToken);
+            return await GetFirstOrDefault(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -161,22 +161,22 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TEntity> GetFirst(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            return GetFirst<TEntity>(query, cancellationToken);
+            return await GetFirst<TEntity>(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetFirst<TResult>(model.ToQueryable(Query), cancellationToken);
+            return await GetFirst<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return GetFirst(model.ToQueryable(Query), cancellationToken);
+            return await GetFirst(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -194,22 +194,22 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
         {
-            return GetList<TEntity>(query, cancellationToken);
+            return await GetList<TEntity>(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetList<TResult>(model.ToQueryable(Query), cancellationToken);
+            return await GetList<TResult>(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
         {
-            return GetList(model.ToQueryable(Query), cancellationToken);
+            return await GetList(model.ToQueryable(Query), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -245,22 +245,22 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
         {
-            return GetPage<TEntity>(query, page, size, cancellationToken);
+            return await GetPage<TEntity>(query, page, size, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            return GetPage<TResult>(model.ToQueryable(Query), page, size, cancellationToken);
+            return await GetPage<TResult>(model.ToQueryable(Query), page, size, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
         {
-            return GetPage(model.ToQueryable(Query), page, size, cancellationToken);
+            return await GetPage(model.ToQueryable(Query), page, size, cancellationToken);
         }
 
         /// <summary>
