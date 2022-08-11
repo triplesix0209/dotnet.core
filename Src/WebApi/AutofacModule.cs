@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Sample.WebApi.Common.AdminAutoMethods;
 using TripleSix.Core.AutofacModules;
 
 namespace Sample.WebApi

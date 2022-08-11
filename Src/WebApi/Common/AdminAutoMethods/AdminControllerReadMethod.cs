@@ -1,7 +1,7 @@
 ﻿using TripleSix.Core.Entities;
 using TripleSix.Core.Types;
 
-namespace Sample.WebApi.Common.AdminAutoMethods
+namespace Sample.WebApi.Common
 {
     [Route("Admin/[controller]")]
     [ApiExplorerSettings(GroupName = "admin")]
