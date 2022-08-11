@@ -53,6 +53,7 @@ namespace TripleSix.Core.Helpers
                 detectEncodingFromByteOrderMarks: false,
                 leaveOpen: true))
             {
+                request.Body.Position = 0;
                 var bodyText = await reader.ReadToEndAsync();
                 request.Body.Position = 0;
 

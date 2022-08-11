@@ -1,6 +1,4 @@
-﻿#pragma warning disable SA1402 // File may only contain a single type
-
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi

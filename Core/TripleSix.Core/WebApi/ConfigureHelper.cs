@@ -32,8 +32,8 @@ namespace TripleSix.Core.WebApi
                 .AddMvc(options =>
                 {
                     options.AllowEmptyInputInBodyModelBinding = true;
-                    options.ModelBinderProviders.Insert(0, new DtoModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
+                    options.Filters.Add(typeof(DtoModelBinding), 0);
                     configureMvc(options);
                 })
                 .AddControllersAsServices()

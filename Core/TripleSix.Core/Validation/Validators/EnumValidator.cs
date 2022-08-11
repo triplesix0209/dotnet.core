@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Validators;
-using Microsoft.AspNetCore.Http;
-using TripleSix.Core.Helpers;
-using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Validation.Validators
 {
