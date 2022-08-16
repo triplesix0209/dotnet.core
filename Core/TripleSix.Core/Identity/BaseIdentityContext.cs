@@ -80,7 +80,7 @@ namespace TripleSix.Core.Identity
             if (customGenerator == null)
             {
                 var properties = typeof(T).GetProperties()
-                .Where(x => x.Name != propertyIdName);
+                    .Where(x => x.Name != propertyIdName);
                 foreach (var property in properties)
                 {
                     var propertyValue = property.GetValue(data);
@@ -120,7 +120,7 @@ namespace TripleSix.Core.Identity
                 accessToken = accessToken[7..];
             if (accessToken.IsNullOrWhiteSpace()) return null;
 
-            return new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
+            return JwtHelper.ReadJwtToken(accessToken);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using TripleSix.Core.Appsettings;
 
 namespace TripleSix.Core.Helpers
 {
@@ -15,17 +16,16 @@ namespace TripleSix.Core.Helpers
         /// Tạo JWT token từ danh sách claim.
         /// </summary>
         /// <param name="claims">Danh sách claim dùng để xử lý.</param>
-        /// <param name="secretKey">Secret key.</param>
-        /// <param name="issuer">Issuer.</param>
+        /// <param name="appsetting"><see cref="IdentityAppsetting"/>.</param>
         /// <returns>JWT Token.</returns>
-        public static string GenerateJwtToken(IEnumerable<Claim> claims, string secretKey, string? issuer = null)
+        public static string GenerateJwtToken(IEnumerable<Claim> claims, IdentityAppsetting appsetting)
         {
             return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(300),
-                issuer: issuer,
+                expires: DateTime.UtcNow.AddMinutes(appsetting.AccessTokenLifetime),
+                issuer: appsetting.Issuer,
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey + "a")),
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SecretKey)),
                     SecurityAlgorithms.HmacSha256)));
         }
 
@@ -33,18 +33,17 @@ namespace TripleSix.Core.Helpers
         /// Validate JWT token.
         /// </summary>
         /// <param name="token">Token cần kiểm tra.</param>
-        /// <param name="secretKey">Secret key.</param>
-        /// <param name="issuer">Issuer.</param>
+        /// <param name="appsetting"><see cref="IdentityAppsetting"/>.</param>
         /// <returns><see cref="TokenValidationResult"/>.</returns>
-        public static TokenValidationResult ValidateJwtToken(string token, string secretKey, string? issuer = null)
+        public static TokenValidationResult ValidateJwtToken(string token, IdentityAppsetting appsetting)
         {
             return new JsonWebTokenHandler().ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SecretKey)),
 
-                ValidateIssuer = !issuer.IsNullOrWhiteSpace(),
-                ValidIssuer = issuer,
+                ValidateIssuer = true,
+                ValidIssuer = appsetting.Issuer,
 
                 ValidateAudience = false,
 

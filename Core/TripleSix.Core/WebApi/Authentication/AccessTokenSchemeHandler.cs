@@ -42,17 +42,9 @@ namespace TripleSix.Core.WebApi
                 if (accessToken.IsNullOrWhiteSpace())
                     throw new Exception("access token not found");
 
-                IEnumerable<Claim>? claims;
-                if (Options.ValidateAccessToken)
-                {
-                    var validationResult = JwtHelper.ValidateJwtToken(accessToken, _appsetting.SecretKey, _appsetting.Issuer);
-                    if (!validationResult.IsValid) throw validationResult.Exception;
-                    claims = validationResult.ClaimsIdentity.Claims;
-                }
-                else
-                {
-                    claims = JwtHelper.ReadJwtToken(accessToken)?.Claims;
-                }
+                var validationResult = JwtHelper.ValidateJwtToken(accessToken, _appsetting);
+                if (!validationResult.IsValid) throw validationResult.Exception;
+                var claims = validationResult.ClaimsIdentity.Claims;
 
                 var ticket = new AuthenticationTicket(
                     new ClaimsPrincipal(new ClaimsIdentity(claims, nameof(AccessTokenSchemeHandler))),
