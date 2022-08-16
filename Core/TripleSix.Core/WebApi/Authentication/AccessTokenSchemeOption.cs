@@ -11,5 +11,10 @@ namespace TripleSix.Core.WebApi
         /// Key của header chứa access token.
         /// </summary>
         public string AccessTokenHeaderKey { get; set; } = "Authorization";
+
+        /// <summary>
+        /// Có kiểm tra access token hay không.
+        /// </summary>
+        public bool ValidateAccessToken { get; set; } = true;
     }
 }

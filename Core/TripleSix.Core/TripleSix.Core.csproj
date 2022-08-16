@@ -4,7 +4,7 @@
     <RootNamespace>TripleSix.Core</RootNamespace>
     <AssemblyName>TripleSix.Core</AssemblyName>
     <PackageId>TripleSix.Core</PackageId>
-    <Version>6.0.10-beta</Version>
+    <Version>6.0.11-beta</Version>
     <Authors>triplesix0209@gmail.com</Authors>
     
     <TargetFramework>net6.0</TargetFramework>
