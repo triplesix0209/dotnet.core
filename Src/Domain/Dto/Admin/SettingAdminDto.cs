@@ -20,14 +20,34 @@
             public string Code { get; set; }
 
             [DisplayName("giá trị")]
-            public string Value { get; set; }
+            public string? Value { get; set; }
 
             [DisplayName("mô tả")]
-            public string Description { get; set; }
+            public string? Description { get; set; }
         }
 
         public class Detail : Item
         {
+        }
+
+        public class Create : BaseDto
+        {
+            [Required]
+            public int Number { get; set; }
+
+            [Required]
+            public int? NumberNullable { get; set; }
+
+            [DisplayName("Mã số")]
+            [Required]
+            public string Code { get; set; }
+
+            [DisplayName("giá trị")]
+            [Required]
+            public string? Value { get; set; }
+
+            [DisplayName("mô tả")]
+            public string? Description { get; set; }
         }
     }
 }

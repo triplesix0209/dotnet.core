@@ -9,6 +9,7 @@ namespace TripleSix.Core.AutoAdmin
         where TEntity : class, IStrongEntity
     {
         [DisplayName("Lọc theo Id")]
+        [AdminProperty(Render = false)]
         public FilterParameter<Guid> Id { get; set; }
 
         [DisplayName("Lọc theo trạng thái đã xóa")]
@@ -21,9 +22,11 @@ namespace TripleSix.Core.AutoAdmin
         public FilterParameter<DateTime> UpdateDateTime { get; set; }
 
         [DisplayName("Lọc theo người tạo")]
+        [AdminProperty(Render = false)]
         public FilterParameter<Guid> CreatorId { get; set; }
 
         [DisplayName("Lọc theo người sửa")]
+        [AdminProperty(Render = false)]
         public FilterParameter<Guid> UpdatorId { get; set; }
 
         public IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query)

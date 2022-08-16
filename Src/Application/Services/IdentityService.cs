@@ -141,7 +141,7 @@
                 : null;
 
             var claims = IdentityContext.GenerateClaim(profile, (int)account.AccessLevel, x => x.AccountId, permissions);
-            var accessToken = JwtHelper.GenerateJwtToken(claims, IdentityAppsetting.SecretKey, IdentityAppsetting.Issuer);
+            var accessToken = JwtHelper.GenerateJwtToken(claims, IdentityAppsetting);
             return new IdentityTokenDto
             {
                 AccessToken = accessToken,

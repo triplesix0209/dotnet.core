@@ -26,21 +26,7 @@ namespace TripleSix.Core.WebApi
                 if (parameterDescription.Type == null) continue;
 
                 var parameterLocation = parameterDescription.Source.DisplayName;
-                if (parameterLocation == "ModelBinding")
-                {
-                    switch (context.ApiDescription.HttpMethod)
-                    {
-                        case "GET":
-                        case "DELETE":
-                            parameterLocation = "Query";
-                            break;
-
-                        case "POST":
-                        case "PUT":
-                            parameterLocation = "Body";
-                            break;
-                    }
-                }
+                if (parameterLocation == "ModelBinding") parameterLocation = "Query";
 
                 if (parameterLocation == "Body")
                 {

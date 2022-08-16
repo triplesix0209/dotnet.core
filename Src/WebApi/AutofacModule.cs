@@ -18,9 +18,7 @@ namespace Sample.WebApi
 
             builder.RegisterAllQuartzJob(assembly);
             builder.RegisterAllController(assembly);
-
-            builder.RegisterGeneric(typeof(AdminControllerReadMethod<,,,,>))
-                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+            builder.RegisterAllAdminMethod(assembly);
         }
     }
 }

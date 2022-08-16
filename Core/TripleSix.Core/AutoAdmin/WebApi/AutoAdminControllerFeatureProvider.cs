@@ -29,38 +29,36 @@ namespace TripleSix.Core.AutoAdmin
                 var info = candidate.GetCustomAttribute<AdminControllerAttribute>();
                 if (info == null) continue;
 
-                var adminModelType = info.ModelType;
-                if (!adminModelType.IsSubclassOfRawGeneric(typeof(AdminModel<>))) continue;
-                var entityType = AdminModel.GetEntityType(adminModelType);
+                var adminType = info.ModelType;
+                if (!adminType.IsSubclassOfRawGeneric(typeof(AdminModel<>))) continue;
+                var entityType = AdminModel.GetEntityType(adminType);
                 if (entityType == null) continue;
 
-                var filterType = adminModelType.GetNestedType("Filter");
-                var itemType = adminModelType.GetNestedType("Item");
-                var detailType = adminModelType.GetNestedType("Detail");
-                var createType = adminModelType.GetNestedType("Create");
-                var updateType = adminModelType.GetNestedType("Update");
+                var filterType = adminType.GetNestedType("Filter");
+                var itemType = adminType.GetNestedType("Item");
+                var detailType = adminType.GetNestedType("Detail");
+                var createType = adminType.GetNestedType("Create");
+                var updateType = adminType.GetNestedType("Update");
 
                 if (info.EnableRead && filterType is not null && itemType is not null && detailType is not null)
                 {
                     var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerReadMethod<,,,,>)));
                     if (type is not null)
                     {
-                        feature.Controllers.Add(type.MakeGenericType(
-                            entityType,
-                            adminModelType,
-                            filterType,
-                            itemType,
-                            detailType)
+                        feature.Controllers.Add(type.MakeGenericType(entityType, adminType, filterType, itemType, detailType)
                             .GetTypeInfo());
                     }
                 }
 
-                //if (info.EnableCreate && createType is not null)
-                //{
-                //    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerCreateMethod<,,>)));
-                //    if (type is not null)
-                //        feature.Controllers.Add(type.MakeGenericType(adminType, entityType, createType).GetTypeInfo());
-                //}
+                if (info.EnableCreate && createType is not null)
+                {
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerCreateMethod<,,>)));
+                    if (type is not null)
+                    {
+                        feature.Controllers.Add(type.MakeGenericType(entityType, adminType, createType)
+                            .GetTypeInfo());
+                    }
+                }
 
                 //if (info.EnableUpdate && updateType is not null)
                 //{
