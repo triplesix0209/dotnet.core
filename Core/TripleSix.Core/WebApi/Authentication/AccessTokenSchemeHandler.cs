@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -58,11 +59,12 @@ namespace TripleSix.Core.WebApi
                     ClockSkew = TimeSpan.Zero,
                 });
 
-                if (!validationResult.IsValid)
-                    throw new Exception("access token is invalid");
+                //if (!validationResult.IsValid)
+                //    throw new Exception("access token is invalid");
+                var claim = new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
 
                 var ticket = new AuthenticationTicket(
-                    new ClaimsPrincipal(new ClaimsIdentity(validationResult.ClaimsIdentity.Claims, nameof(AccessTokenSchemeHandler))),
+                    new ClaimsPrincipal(new ClaimsIdentity(claim!.Claims, nameof(AccessTokenSchemeHandler))),
                     Scheme.Name);
 
                 return Task.FromResult(AuthenticateResult.Success(ticket));

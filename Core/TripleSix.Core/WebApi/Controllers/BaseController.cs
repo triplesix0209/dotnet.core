@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.WebApi
@@ -12,6 +13,8 @@ namespace TripleSix.Core.WebApi
     [ValidateInput]
     public abstract class BaseController : ControllerBase
     {
+        public IMapper Mapper { get; set; }
+
         /// <summary>
         /// Tạo <see cref="SuccessResult"/>.
         /// </summary>
