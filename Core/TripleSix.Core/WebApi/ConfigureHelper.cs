@@ -25,8 +25,8 @@ namespace TripleSix.Core.WebApi
         /// <returns><see cref="IMvcBuilder"/>.</returns>
         public static IMvcBuilder ConfigureMvcService(
             this IServiceCollection services,
-            Action<MvcOptions> configureMvc,
-            Action<ApplicationPartManager> configureApplicationPartManager)
+            Action<MvcOptions>? configureMvc = null,
+            Action<ApplicationPartManager>? configureApplicationPartManager = null)
         {
             return services
                 .AddMvc(options =>
@@ -34,10 +34,10 @@ namespace TripleSix.Core.WebApi
                     options.AllowEmptyInputInBodyModelBinding = true;
                     options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
                     options.Filters.Add(typeof(DtoModelBinding), 0);
-                    configureMvc(options);
+                    configureMvc?.Invoke(options);
                 })
                 .AddControllersAsServices()
-                .ConfigureApplicationPartManager(options => configureApplicationPartManager(options))
+                .ConfigureApplicationPartManager(options => configureApplicationPartManager?.Invoke(options))
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new BaseContractResolver();
