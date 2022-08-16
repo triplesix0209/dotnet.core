@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -7,8 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 
@@ -45,26 +42,11 @@ namespace TripleSix.Core.WebApi
                 if (accessToken.IsNullOrWhiteSpace())
                     throw new Exception("access token not found");
 
-                var validationResult = new JsonWebTokenHandler().ValidateToken(accessToken, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appsetting.SecretKey)),
-
-                    ValidateIssuer = true,
-                    ValidIssuer = _appsetting.Issuer,
-
-                    ValidateAudience = false,
-
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                });
-
-                //if (!validationResult.IsValid)
-                //    throw new Exception("access token is invalid");
-                var claim = new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
+                var validationResult = JwtHelper.ValidateJwtToken(accessToken, _appsetting.SecretKey, _appsetting.Issuer);
+                if (!validationResult.IsValid) throw validationResult.Exception;
 
                 var ticket = new AuthenticationTicket(
-                    new ClaimsPrincipal(new ClaimsIdentity(claim!.Claims, nameof(AccessTokenSchemeHandler))),
+                    new ClaimsPrincipal(new ClaimsIdentity(validationResult.ClaimsIdentity.Claims, nameof(AccessTokenSchemeHandler))),
                     Scheme.Name);
 
                 return Task.FromResult(AuthenticateResult.Success(ticket));

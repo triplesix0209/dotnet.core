@@ -1,7 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-
-namespace Sample.Application.Services
+﻿namespace Sample.Application.Services
 {
     public interface IIdentityService : IService
     {
@@ -143,14 +140,8 @@ namespace Sample.Application.Services
                 ? (await PermissionService.GetListPermissionValue(account.PermissionGroupId.Value, true)).Select(x => x.Code)
                 : null;
 
-            var accessToken = new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
-                IdentityAppsetting.Issuer,
-                claims: IdentityContext.GenerateClaim(profile, (int)account.AccessLevel, x => x.AccountId, permissions),
-                expires: DateTime.UtcNow.AddSeconds(IdentityAppsetting.AccessTokenLifetime),
-                signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(
-                    new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(IdentityAppsetting.SecretKey)),
-                    Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256)));
-
+            var claims = IdentityContext.GenerateClaim(profile, (int)account.AccessLevel, x => x.AccountId, permissions);
+            var accessToken = JwtHelper.GenerateJwtToken(claims, IdentityAppsetting.SecretKey, IdentityAppsetting.Issuer);
             return new IdentityTokenDto
             {
                 AccessToken = accessToken,
