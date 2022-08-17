@@ -4,6 +4,7 @@ using Autofac;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json.Linq;
+using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
@@ -29,6 +30,27 @@ namespace TripleSix.Core.WebApi
                 if (bindingSource.IsNullOrWhiteSpace()) bindingSource = "Query";
 
                 context.ActionArguments[parameter.Name] = await NormalizeParameter(request, bindingSource, dto);
+            }
+
+            if (context.ActionArguments.Count == 0 && !context.ModelState.IsValid)
+            {
+                var errors = new List<InputInvalidItem>();
+                foreach (var key in context.ModelState.Keys)
+                {
+                    var data = context.ModelState[key];
+                    if (data == null) continue;
+                    foreach (var error in data.Errors)
+                    {
+                        errors.Add(new()
+                        {
+                            FieldName = key,
+                            ErrorCode = "model_validator",
+                            ErrorMessage = error.ErrorMessage,
+                        });
+                    }
+                }
+
+                throw new InputInvalidException(errors);
             }
 
             await base.OnActionExecutionAsync(context, next);

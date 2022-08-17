@@ -11,18 +11,17 @@ namespace TripleSix.Core.Validation.Validators
 
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
+            if (value == null)
+                return true;
+
             switch (value)
             {
-                case null:
                 case string str when str.IsNullOrWhiteSpace():
                 case ICollection { Count: 0 }:
                 case Array { Length: 0 }:
                 case IEnumerable e when !e.GetEnumerator().MoveNext():
                     return false;
             }
-
-            if (Equals(value, default(TProperty)))
-                return false;
 
             return true;
         }

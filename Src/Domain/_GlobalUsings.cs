@@ -12,3 +12,4 @@ global using TripleSix.Core.Exceptions;
 global using TripleSix.Core.Helpers;
 global using TripleSix.Core.Mappers;
 global using TripleSix.Core.Types;
+global using TripleSix.Core.Validation;

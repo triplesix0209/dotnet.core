@@ -60,31 +60,31 @@ namespace TripleSix.Core.Types
             {
                 case FilterParameterStringOperators.Equal:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<string>(x, propertyName) == Value[0]);
                     break;
 
                 case FilterParameterStringOperators.Contain:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Functions.Like(EF.Property<string>(x, propertyName), $"%{Value[0]}%"));
                     break;
 
                 case FilterParameterStringOperators.StartWith:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Functions.Like(EF.Property<string>(x, propertyName), $"{Value[0]}%"));
                     break;
 
                 case FilterParameterStringOperators.EndWith:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Functions.Like(EF.Property<string>(x, propertyName), $"%{Value[0]}"));
                     break;
 
                 case FilterParameterStringOperators.In:
                     if (Value.IsNullOrEmpty())
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => Value.Contains(EF.Property<string>(x, propertyName)));
                     break;
 
@@ -94,31 +94,31 @@ namespace TripleSix.Core.Types
 
                 case FilterParameterStringOperators.NotEqual:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<string>(x, propertyName) != Value[0]);
                     break;
 
                 case FilterParameterStringOperators.NotContain:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => !EF.Functions.Like(EF.Property<string>(x, propertyName), $"%{Value[0]}%"));
                     break;
 
                 case FilterParameterStringOperators.NotStartWith:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => !EF.Functions.Like(EF.Property<string>(x, propertyName), $"%{Value[0]}"));
                     break;
 
                 case FilterParameterStringOperators.NotEndWith:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => !EF.Functions.Like(EF.Property<string>(x, propertyName), $"{Value[0]}%"));
                     break;
 
                 case FilterParameterStringOperators.NotIn:
                     if (Value.IsNullOrEmpty())
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => !Value.Contains(EF.Property<string>(x, propertyName)));
                     break;
 

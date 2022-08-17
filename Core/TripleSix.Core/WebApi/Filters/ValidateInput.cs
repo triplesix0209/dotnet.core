@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
@@ -11,7 +12,7 @@ namespace TripleSix.Core.WebApi
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var errors = new List<ErrorItem>();
+            var errors = new List<InputInvalidItem>();
             foreach (var input in context.ActionArguments)
             {
                 if (input.Value is not IDto inputValue) continue;
@@ -21,24 +22,15 @@ namespace TripleSix.Core.WebApi
                 {
                     errors.Add(new()
                     {
-                        FieldKey = error.PropertyName.ToCamelCase(),
+                        FieldName = error.PropertyName.ToCamelCase(),
                         ErrorCode = error.ErrorCode.ToSnakeCase(),
-                        ErrorMessage = error.ErrorMessage
+                        ErrorMessage = error.ErrorMessage,
                     });
                 }
             }
 
             if (!errors.Any()) return;
-            context.Result = new ErrorResult(400, "request_input_invalid", "Thông tin đầu vào bị thiếu hoặc sai", errors);
-        }
-
-        private class ErrorItem
-        {
-            public string FieldKey { get; set; }
-
-            public string ErrorCode { get; set; }
-
-            public string ErrorMessage { get; set; }
+            context.Result = new InputInvalidException(errors).ToErrorResult();
         }
     }
 }

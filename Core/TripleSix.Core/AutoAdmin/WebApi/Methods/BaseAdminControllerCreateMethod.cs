@@ -20,8 +20,10 @@ namespace TripleSix.Core.AutoAdmin
         [AdminMethod(Type = AdminMethodTypes.Create)]
         public virtual async Task<DataResult<Guid>> Create([FromBody] TCreateDto input)
         {
-            var result = await Service.CreateWithMapper<TEntity>(input);
-            return DataResult(result.Id);
+            return DataResult(Guid.NewGuid());
+
+            //var result = await Service.CreateWithMapper<TEntity>(input);
+            //return DataResult(result.Id);
         }
     }
 }

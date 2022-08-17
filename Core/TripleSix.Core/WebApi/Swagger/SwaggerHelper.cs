@@ -21,28 +21,14 @@ namespace TripleSix.Core.WebApi
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
             ApiParameterDescription? parameterDescription = null,
-            object? defaultValue = null,
             PropertyInfo? propertyInfo = null,
             PropertyInfo? parentPropertyInfo = null,
-            OpenApiSchema? baseSchema = null,
-            bool generateDefault = true)
+            object? defaultValue = null,
+            OpenApiSchema? baseSchema = null)
         {
             var result = schemaGenerator.GenerateSchema(objectType, schemaRepository);
-
-            if (generateDefault && baseSchema == null)
-            {
-                if (propertyInfo == null)
-                {
-                    defaultValue = Activator.CreateInstance(objectType);
-                }
-                else if (parameterDescription != null && parameterDescription.ModelMetadata.ContainerType != null)
-                {
-                    var instance = Activator.CreateInstance(parameterDescription.ModelMetadata.ContainerType);
-                    defaultValue = propertyInfo.GetValue(instance);
-                }
-            }
-
             var propertyType = objectType.GetUnderlyingType();
+
             if (propertyType.IsEnum)
             {
                 result.Type = "integer";
@@ -61,8 +47,7 @@ namespace TripleSix.Core.WebApi
                         schemaGenerator,
                         schemaRepository,
                         defaultValue: defaultValue,
-                        baseSchema: result,
-                        generateDefault: false);
+                        baseSchema: result);
             }
             else if (result.Type is null)
             {
@@ -81,19 +66,16 @@ namespace TripleSix.Core.WebApi
                         property.PropertyType.GenerateSwaggerSchema(
                             schemaGenerator,
                             schemaRepository,
-                            defaultValue: defaultValue == null ? null : property.GetValue(defaultValue),
                             propertyInfo: property,
                             parentPropertyInfo: propertyInfo,
-                            baseSchema: result,
-                            generateDefault: false));
+                            defaultValue: defaultValue == null ? null : property.GetValue(defaultValue),
+                            baseSchema: result));
                 }
             }
 
-            result.Nullable = objectType.IsNullableType();
             result.Reference = null;
-
-            if (generateDefault && result.Type != "object")
-                result.Default = objectType.SwaggerValue(defaultValue);
+            result.Nullable = objectType.IsNullableType();
+            if (result.Type != "object") result.Default = objectType.SwaggerValue(defaultValue);
 
             if (propertyType.IsEnum)
             {
@@ -109,11 +91,11 @@ namespace TripleSix.Core.WebApi
             }
 
             if (propertyInfo == null) return result;
-
-            if (propertyInfo.GetCustomAttribute<RequiredAttribute>() is not null
-                && result.Default is OpenApiNull
-                && baseSchema is not null)
+            if (propertyInfo.GetCustomAttribute<RequiredAttribute>() is not null && baseSchema is not null)
+            {
                 baseSchema.Required.Add(propertyInfo.Name.ToCamelCase());
+                result.Default = null;
+            }
 
             var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName.ToTitleCase();
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();
@@ -138,6 +120,19 @@ namespace TripleSix.Core.WebApi
                 result.Description = result.Description.Replace(
                     $"[{nameof(parameterName).ToKebabCase()}]",
                     parameterName);
+            }
+
+            if (result.Nullable && propertyInfo.GetCustomAttributes().Any(x => x.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute"))
+                result.Nullable = false;
+            
+            var requireAttr = propertyInfo.GetCustomAttribute<RequiredAttribute>();
+            var notEmptyAttr = propertyInfo.GetCustomAttribute<NotEmptyAttribute>();
+            if ((requireAttr != null && !requireAttr.AllowEmptyStrings) || notEmptyAttr != null)
+            {
+                result.Description = "<span class=\"sc-fbIWvP JIFSj\">Allow empty: </span>"
+                    + "<span class=\"sc-fbIWvP sc-hmbstg JIFSj eqivia\">false</span>"
+                    + "<br/>"
+                    + result.Description;
             }
 
             return result;

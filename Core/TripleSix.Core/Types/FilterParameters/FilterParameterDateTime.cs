@@ -48,25 +48,25 @@ namespace TripleSix.Core.Types
             {
                 case FilterParameterDatetimeOperators.Equal:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<DateTime>(x, propertyName) == Value[0]);
                     break;
 
                 case FilterParameterDatetimeOperators.Begin:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<DateTime>(x, propertyName) >= Value[0]);
                     break;
 
                 case FilterParameterDatetimeOperators.End:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<DateTime>(x, propertyName) <= Value[0]);
                     break;
 
                 case FilterParameterDatetimeOperators.Between:
                     if (Value.IsNullOrEmpty() || Value.Length < 2 || Value[0] == null || Value[1] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<DateTime>(x, propertyName) >= Value[0]
                         && EF.Property<DateTime>(x, propertyName) <= Value[1]);
                     break;
@@ -77,13 +77,13 @@ namespace TripleSix.Core.Types
 
                 case FilterParameterDatetimeOperators.NotEqual:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<DateTime>(x, propertyName) != Value[0]);
                     break;
 
                 case FilterParameterDatetimeOperators.NotBetween:
                     if (Value.IsNullOrEmpty() || Value.Length < 2 || Value[0] == null || Value[1] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<DateTime>(x, propertyName) < Value[0]
                         || EF.Property<DateTime>(x, propertyName) > Value[1]);
                     break;

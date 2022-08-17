@@ -43,13 +43,13 @@ namespace TripleSix.Core.Types
             {
                 case FilterParameterOperators.Equal:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => EF.Property<TType>(x, propertyName).Equals(Value[0]));
                     break;
 
                 case FilterParameterOperators.In:
                     if (Value.IsNullOrEmpty())
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => Value.Contains(EF.Property<TType>(x, propertyName)));
                     break;
 
@@ -59,13 +59,13 @@ namespace TripleSix.Core.Types
 
                 case FilterParameterOperators.NotEqual:
                     if (Value.IsNullOrEmpty() || Value[0] == null)
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => !EF.Property<TType>(x, propertyName).Equals(Value[0]));
                     break;
 
                 case FilterParameterOperators.NotIn:
                     if (Value.IsNullOrEmpty())
-                        throw new InputInvalidException(propertyName, "thiếu dữ liệu để lọc");
+                        throw new InputInvalidException(propertyName, "Thiếu dữ liệu để lọc");
                     query = query.Where(x => !Value.Contains(EF.Property<TType>(x, propertyName)));
                     break;
 

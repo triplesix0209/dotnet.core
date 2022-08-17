@@ -34,10 +34,12 @@ namespace TripleSix.Core.WebApi
                         operation.RequestBody.Content.Add("application/json", new OpenApiMediaType());
                     var bodyContent = operation.RequestBody.Content["application/json"];
 
+                    var instance = Activator.CreateInstance(parameterDescription.Type);
                     bodyContent.Schema = parameterDescription.Type.GenerateSwaggerSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,
-                        parameterDescription);
+                        parameterDescription,
+                        defaultValue: instance);
                 }
                 else
                 {
@@ -61,12 +63,16 @@ namespace TripleSix.Core.WebApi
                     if (parameterDescription.Name.Contains('.'))
                         parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType.GetProperty(parameterDescription.Name.Split(".")[0]);
 
+                    var modelType = parameterDescription.ModelMetadata.ContainerType;
+                    if (modelType == null) continue;
+                    var instance = Activator.CreateInstance(modelType);
                     parameter.Schema = parameterDescription.Type.GenerateSwaggerSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,
                         parameterDescription,
                         propertyInfo: propertyInfo,
-                        parentPropertyInfo: parentPropertyInfo);
+                        parentPropertyInfo: parentPropertyInfo,
+                        defaultValue: propertyInfo.GetValue(instance));
 
                     parameter.Name = parameterDescription.Name.Split(".").Select(x => x.ToCamelCase()).ToString(".");
                     parameter.Required = parameter.In == ParameterLocation.Path ||
@@ -88,8 +94,7 @@ namespace TripleSix.Core.WebApi
             var responseType = new OpenApiMediaType();
             responseType.Schema = returnType.GenerateSwaggerSchema(
                 context.SchemaGenerator,
-                context.SchemaRepository,
-                generateDefault: false);
+                context.SchemaRepository);
 
             var successResponse = new OpenApiResponse { Description = "Success" };
             successResponse.Content.Add("application/json", responseType);
