@@ -11,8 +11,9 @@ namespace TripleSix.Core.Services
         /// Chuyển đổi dữ liệu entity sang kiểu chỉ định.
         /// </summary>
         /// <param name="entity">entity sẽ chuyển đổi.</param>
+        /// <param name="result">kết quả chuyển đổi.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
-        /// <returns>Dữ liệu sau khi chuyển đổi.</returns>
-        Task<TModel> ConvertEntityToModel(TEntity entity, CancellationToken cancellationToken = default);
+        /// <returns><see cref="Task"/>.</returns>
+        Task ConvertEntityToModel(TEntity entity, out TModel result, CancellationToken cancellationToken = default);
     }
 }

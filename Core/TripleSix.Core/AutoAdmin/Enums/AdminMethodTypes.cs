@@ -21,33 +21,38 @@
         Create = 3,
 
         /// <summary>
-        /// Sửa.
+        /// Chi tiết sửa.
         /// </summary>
-        Update = 4,
+        UpdateView = 4,
 
         /// <summary>
-        /// Xóa.
+        /// Sửa.
         /// </summary>
-        Delete = 5,
+        Update = 5,
+
+        /// <summary>
+        /// Tạm xóa.
+        /// </summary>
+        SoftDelete = 6,
 
         /// <summary>
         /// Phục hồi.
         /// </summary>
-        Restore = 6,
+        Restore = 7,
 
         /// <summary>
         /// Danh sách lịch sử thay đổi.
         /// </summary>
-        ListChangeLog = 7,
+        ListChangeLog = 8,
 
         /// <summary>
-        /// Chi tiết thay đổi
+        /// Chi tiết thay đổi.
         /// </summary>
-        DetailChangeLog = 8,
+        DetailChangeLog = 9,
 
         /// <summary>
         /// Xuất dữ liệu.
         /// </summary>
-        Export = 9,
+        Export = 10,
     }
 }

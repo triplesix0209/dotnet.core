@@ -124,7 +124,7 @@ namespace TripleSix.Core.WebApi
 
             if (result.Nullable && propertyInfo.GetCustomAttributes().Any(x => x.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute"))
                 result.Nullable = false;
-            
+
             var requireAttr = propertyInfo.GetCustomAttribute<RequiredAttribute>();
             var notEmptyAttr = propertyInfo.GetCustomAttribute<NotEmptyAttribute>();
             if ((requireAttr != null && !requireAttr.AllowEmptyStrings) || notEmptyAttr != null)

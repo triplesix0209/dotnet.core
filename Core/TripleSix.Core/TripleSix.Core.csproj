@@ -27,6 +27,7 @@
     <PackageReference Include="Autofac.Extras.Quartz" Version="8.0.0" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="5.1.0" />
+    <PackageReference Include="ClosedXML" Version="0.96.0" />
     <PackageReference Include="FluentValidation" Version="11.1.0" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="6.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />

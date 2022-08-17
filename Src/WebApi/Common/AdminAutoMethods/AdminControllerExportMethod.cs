@@ -6,12 +6,11 @@ namespace Sample.WebApi.Common
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
-        : BaseAdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
+    public class AdminControllerExportMethod<TEntity, TAdminModel, TFilterDto, TDetailDto>
+        : BaseAdminControllerExportMethod<TEntity, TAdminModel, TFilterDto, TDetailDto>
         where TEntity : class, IStrongEntity
         where TAdminModel : AdminModel<TEntity>
         where TFilterDto : BaseAdminFilterDto<TEntity>
-        where TItemDto : BaseAdminItemDto
         where TDetailDto : BaseAdminItemDto
     {
     }

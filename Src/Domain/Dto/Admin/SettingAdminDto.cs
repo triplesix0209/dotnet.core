@@ -44,5 +44,16 @@
             [NotEmpty]
             public string? Description { get; set; }
         }
+
+        public class Update : BaseDto
+        {
+            [DisplayName("giá trị")]
+            [Required(AllowEmptyStrings = true)]
+            public string? Value { get; set; }
+
+            [DisplayName("mô tả")]
+            [NotEmpty]
+            public string? Description { get; set; }
+        }
     }
 }

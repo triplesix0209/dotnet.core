@@ -11,6 +11,7 @@ using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
 using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Persistences;
@@ -88,6 +89,7 @@ namespace TripleSix.Core.AutofacModules
                     .Where(x => x.IsAssignableTo<BaseMapper>());
 
                 config.AddProfile(new DefaultMapper(assembly));
+                config.AddProfile(new AutoAdminMapper(assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));
             }))
                 .SingleInstance()

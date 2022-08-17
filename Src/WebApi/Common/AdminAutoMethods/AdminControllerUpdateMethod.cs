@@ -1,4 +1,5 @@
 ﻿using TripleSix.Core.Entities;
+using TripleSix.Core.Types;
 
 namespace Sample.WebApi.Common
 {
@@ -6,13 +7,11 @@ namespace Sample.WebApi.Common
     [ApiExplorerSettings(GroupName = "admin")]
     [Authorize]
     [AccessLevelRequirement(MinimumAccountLevel = (int)AccountLevels.Admin)]
-    public class AdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
-        : BaseAdminControllerReadMethod<TEntity, TAdminModel, TFilterDto, TItemDto, TDetailDto>
+    public class AdminControllerUpdateMethod<TEntity, TAdminModel, TUpdateDto>
+        : BaseAdminControllerUpdateMethod<TEntity, TAdminModel, TUpdateDto>
         where TEntity : class, IStrongEntity
         where TAdminModel : AdminModel<TEntity>
-        where TFilterDto : BaseAdminFilterDto<TEntity>
-        where TItemDto : BaseAdminItemDto
-        where TDetailDto : BaseAdminItemDto
+        where TUpdateDto : class, IDto
     {
     }
 }

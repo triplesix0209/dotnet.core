@@ -12,8 +12,8 @@ namespace TripleSix.Core.AutoAdmin
         where TEntity : class, IStrongEntity
         where TAdminModel : AdminModel<TEntity>
         where TFilterDto : BaseAdminFilterDto<TEntity>
-        where TItemDto : class, IDto
-        where TDetailDto : class, IDto
+        where TItemDto : BaseAdminItemDto
+        where TDetailDto : BaseAdminItemDto
     {
         public IStrongService<TEntity> Service { get; set; }
 

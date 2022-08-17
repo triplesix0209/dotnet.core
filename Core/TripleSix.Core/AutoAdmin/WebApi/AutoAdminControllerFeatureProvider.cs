@@ -60,32 +60,41 @@ namespace TripleSix.Core.AutoAdmin
                     }
                 }
 
-                //if (info.EnableUpdate && updateType is not null)
-                //{
-                //    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerUpdateMethod<,,>)));
-                //    if (type is not null)
-                //        feature.Controllers.Add(type.MakeGenericType(adminType, entityType, updateType).GetTypeInfo());
-                //}
+                if (info.EnableDelete && updateType is not null)
+                {
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerUpdateMethod<,,>)));
+                    if (type is not null)
+                    {
+                        feature.Controllers.Add(type.MakeGenericType(entityType, adminType, updateType)
+                            .GetTypeInfo());
+                    }
+                }
 
-                //if (info.EnableDelete)
-                //{
-                //    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerDeleteMethod<,>)));
-                //    if (type is not null)
-                //        feature.Controllers.Add(type.MakeGenericType(adminType, entityType).GetTypeInfo());
-                //}
+                if (info.EnableDelete)
+                {
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerDeleteMethod<,>)));
+                    if (type is not null)
+                    {
+                        feature.Controllers.Add(type.MakeGenericType(entityType, adminType)
+                            .GetTypeInfo());
+                    }
+                }
+
+                if (info.EnableExport && filterType is not null && detailType is not null)
+                {
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerExportMethod<,,,>)));
+                    if (type is not null)
+                    {
+                        feature.Controllers.Add(type.MakeGenericType(entityType, adminType, filterType, detailType)
+                            .GetTypeInfo());
+                    }
+                }
 
                 //if (info.EnableChangeLog)
                 //{
                 //    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerChangeLogMethod<,>)));
                 //    if (type is not null)
                 //        feature.Controllers.Add(type.MakeGenericType(adminType, entityType).GetTypeInfo());
-                //}
-
-                //if (info.EnableExport && filterType is not null && detailType is not null)
-                //{
-                //    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerExportMethod<,,,>)));
-                //    if (type is not null)
-                //        feature.Controllers.Add(type.MakeGenericType(adminType, entityType, filterType, detailType).GetTypeInfo());
                 //}
             }
         }

@@ -293,10 +293,14 @@ namespace TripleSix.Core.Services
             var result = new List<TModel>();
             foreach (var entity in entities)
             {
-                if (method.Invoke(this, new object[] { entity, cancellationToken }) is not Task<TModel> task)
-                    throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).Name}");
+                var input = new object?[] { entity, null, cancellationToken };
+                if (method.Invoke(this, input) is not Task task)
+                    throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
                 await task.WaitAsync(cancellationToken);
-                result.Add(task.Result);
+
+                if (input[1] == null)
+                    throw new Exception($"Error to convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
+                result.Add((TModel)input[1]!);
             }
 
             return result;
@@ -316,10 +320,14 @@ namespace TripleSix.Core.Services
             if (method == null)
                 throw new Exception($"{GetType().Name} need implement {nameof(IReadableWithModel<IEntity, IDto>)}<{typeof(TEntity).Name}, {typeof(TModel).Name}>");
 
-            if (method.Invoke(this, new object[] { entity, cancellationToken }) is not Task<TModel> task)
+            var input = new object?[] { entity, null, cancellationToken };
+            if (method.Invoke(this, input) is not Task task)
                 throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).Name}");
             await task.WaitAsync(cancellationToken);
-            return task.Result;
+
+            if (input[1] == null)
+                throw new Exception($"Error to convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
+            return (TModel)input[1]!;
         }
     }
 }
