@@ -13,9 +13,22 @@ namespace TripleSix.Core.Validation.Validators
 
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
-            if (context.InstanceToValidate is not IDto dto) return true;
-            if (!dto.IsPropertyChanged(context.PropertyName)) return false;
-            var property = dto.GetType().GetProperty(context.PropertyName);
+            var instance = context.InstanceToValidate as object;
+            var propertyName = context.PropertyName;
+            if (propertyName.Contains('.'))
+            {
+                var paths = propertyName.Split('.');
+                propertyName = paths.Last();
+                paths = paths[..^1];
+
+                foreach (var path in paths)
+                    instance = instance?.GetType().GetProperty(path)?.GetValue(instance);
+            }
+
+            if (instance is not IDto dto) return true;
+            if (!dto.IsPropertyChanged(propertyName)) return false;
+
+            var property = dto.GetType().GetProperty(propertyName);
             if (property == null) return true;
 
             if (property.PropertyType.IsNullableType()

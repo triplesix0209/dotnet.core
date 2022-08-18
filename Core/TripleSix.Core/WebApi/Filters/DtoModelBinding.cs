@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Reflection;
 using System.Text;
 using Autofac;
 using Microsoft.AspNetCore.Http;
@@ -56,14 +57,12 @@ namespace TripleSix.Core.WebApi
             await base.OnActionExecutionAsync(context, next);
         }
 
-        private async Task<IDto> NormalizeParameter(HttpRequest request, string bindingSource, IDto value)
+        private static async Task<IDto> NormalizeParameter(HttpRequest request, string bindingSource, IDto value)
         {
-            var parameterProperties = value.GetType().GetProperties();
-
             bool propertyHaveInput;
             if (bindingSource == "Query")
             {
-                foreach (var property in parameterProperties)
+                foreach (var property in value.GetType().GetProperties())
                 {
                     if (property.PropertyType.IsArray || property.PropertyType.IsAssignableTo<IEnumerable>())
                     {
@@ -103,15 +102,27 @@ namespace TripleSix.Core.WebApi
                 }
 
                 if (bodyData == null) return value;
-                var bodyProperties = bodyData.Properties();
-                foreach (var property in parameterProperties)
-                {
-                    if (bodyProperties.Any(x => x.Name.Equals(property.Name, _stringComparison)))
-                        value.SetPropertyChanged(property.Name, true);
-                }
+                SetBodyPropertyChanged(value, bodyData);
             }
 
             return value;
+        }
+
+        private static void SetBodyPropertyChanged(IDto result, JObject bodyData)
+        {
+            var resultProperties = result.GetType().GetProperties();
+            var bodyProperties = bodyData.Properties();
+            foreach (var resultProperty in resultProperties)
+            {
+                var bodyProperty = bodyProperties.FirstOrDefault(x => x.Name.Equals(resultProperty.Name, _stringComparison));
+                if (bodyProperty == null) continue;
+
+                result.SetPropertyChanged(resultProperty.Name, true);
+
+                if (resultProperty.GetValue(result) is IDto childResult
+                    && bodyProperty.Value is JObject childBodyProperty)
+                    SetBodyPropertyChanged(childResult, childBodyProperty);
+            }
         }
     }
 }

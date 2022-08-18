@@ -3,8 +3,12 @@
     /// <summary>
     /// Entity độc lập.
     /// </summary>
-    public interface IStrongEntity
-        : IIdentifiableEntity, ISoftDeletableEntity, IAuditableEntity, IHasCodeEntity
+    public interface IStrongEntity :
+        IIdentifiableEntity,
+        ISoftDeletableEntity,
+        ICreateAuditableEntity,
+        IUpdateAuditableEntity,
+        IHasCodeEntity
     {
     }
 }

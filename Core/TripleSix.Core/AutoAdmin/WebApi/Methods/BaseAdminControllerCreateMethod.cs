@@ -18,9 +18,9 @@ namespace TripleSix.Core.AutoAdmin
         [HttpPost]
         [SwaggerOperation("tạo [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Create)]
-        public virtual async Task<DataResult<Guid>> Create([FromBody] TCreateDto input)
+        public virtual async Task<DataResult<Guid>> Create([FromBody] AdminSubmitDto<TCreateDto> input)
         {
-            var result = await Service.CreateWithMapper<TEntity>(input);
+            var result = await Service.CreateWithMapper<TEntity>(input.Data);
             return DataResult(result.Id);
         }
     }

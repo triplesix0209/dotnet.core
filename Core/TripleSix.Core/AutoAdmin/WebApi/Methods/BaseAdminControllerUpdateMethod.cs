@@ -27,9 +27,9 @@ namespace TripleSix.Core.AutoAdmin
         [HttpPut("{id}")]
         [SwaggerOperation("cập nhật [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Update)]
-        public virtual async Task<SuccessResult> Update(RouteId route, [FromBody] TUpdateDto input)
+        public virtual async Task<SuccessResult> Update(RouteId route, [FromBody] AdminSubmitDto<TUpdateDto> input)
         {
-            await Service.UpdateWithMapper(route.Id, true, input);
+            await Service.UpdateWithMapper(route.Id, true, input.Data);
             return SuccessResult();
         }
     }

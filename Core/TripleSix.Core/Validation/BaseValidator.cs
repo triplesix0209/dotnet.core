@@ -21,77 +21,92 @@ namespace TripleSix.Core.Validation
         {
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)
-                RuleForProperty(property);
+                RuleForProperty(property, x => property.GetValue(x));
         }
 
-        private void RuleForProperty(PropertyInfo property)
+        private void RuleForProperty(PropertyInfo property, Func<T, object?> valueGetter, string prefixName = "")
         {
-            if (property.PropertyType.GetUnderlyingType().IsEnum)
+            var propertyType = property.PropertyType.GetUnderlyingType();
+            var propertyName = prefixName + property.Name;
+            var propertyDisplayName = property.GetDisplayName();
+
+            if (propertyType.IsEnum)
             {
-                RuleFor(x => property.GetValue(x))
-                    .SetValidator(new EnumValidator<T, object?>(property.PropertyType.GetUnderlyingType()))
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new EnumValidator<T, object?>(propertyType))
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             if (property.GetCustomAttribute<RequiredAttribute>() != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new RequiredValidator<T, object?>())
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             if (property.GetCustomAttribute<NotNullAttribute>() != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new NotNullValidator<T, object?>())
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             if (property.GetCustomAttribute<NotEmptyAttribute>() != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new NotEmptyValidator<T, object?>())
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             var minValueAttr = property.GetCustomAttribute<MinValueAttribute>();
             if (minValueAttr != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new MinValueValidator<T, object?>(minValueAttr.Value))
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             var maxValueAttr = property.GetCustomAttribute<MaxValueAttribute>();
             if (maxValueAttr != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new MaxValueValidator<T, object?>(maxValueAttr.Value))
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             var minLengthAttr = property.GetCustomAttribute<MinLengthAttribute>();
             if (minLengthAttr != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new MinLengthValidator<T, object?>(minLengthAttr.Length))
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
             }
 
             var maxLengthAttr = property.GetCustomAttribute<MaxLengthAttribute>();
             if (maxLengthAttr != null)
             {
-                RuleFor(x => property.GetValue(x))
+                RuleFor(x => valueGetter(x))
                     .SetValidator(new MaxLengthValidator<T, object?>(maxLengthAttr.Length))
-                    .OverridePropertyName(property.Name)
-                    .WithName(property.GetDisplayName());
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
+            if (propertyType.IsAssignableTo<IDto>())
+            {
+                foreach (var childProperty in propertyType.GetProperties())
+                {
+                    RuleForProperty(
+                        childProperty,
+                        x => valueGetter(x) == null ? null : childProperty.GetValue(valueGetter(x)),
+                        $"{property.Name}.");
+                }
             }
         }
     }

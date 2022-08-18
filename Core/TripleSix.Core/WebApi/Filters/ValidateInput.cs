@@ -20,9 +20,12 @@ namespace TripleSix.Core.WebApi
                 var validationResult = inputValue.Validate(httpContext: context.HttpContext);
                 foreach (var error in validationResult.Errors)
                 {
+                    var propertyName = error.PropertyName.Split('.')
+                        .Select(x => x.ToCamelCase())
+                        .ToString(".");
                     errors.Add(new()
                     {
-                        FieldName = error.PropertyName.ToCamelCase(),
+                        FieldName = propertyName,
                         ErrorCode = error.ErrorCode.ToSnakeCase(),
                         ErrorMessage = error.ErrorMessage,
                     });
