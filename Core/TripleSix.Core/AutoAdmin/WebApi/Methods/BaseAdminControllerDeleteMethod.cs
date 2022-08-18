@@ -14,21 +14,58 @@ namespace TripleSix.Core.AutoAdmin
     {
         public IStrongService<TEntity> Service { get; set; }
 
+        public IObjectLogService ObjectLogService { get; set; }
+
         [HttpDelete("{id}")]
         [SwaggerOperation("tạm xóa [controller]")]
         [AdminMethod(Type = AdminMethodTypes.SoftDelete)]
-        public virtual async Task<SuccessResult> SoftDelete(RouteId route)
+        [Transactional]
+        public virtual async Task<SuccessResult> SoftDelete(RouteId route, AdminSubmitDto input)
         {
-            await Service.SoftDelete(route.Id);
+            if (ObjectLogService == null)
+            {
+                await Service.SoftDelete(route.Id);
+            }
+            else
+            {
+                await ObjectLogService.LogAction(
+                    route.Id,
+                    await Service.GetById(route.Id, true),
+                    async () =>
+                    {
+                        await Service.SoftDelete(route.Id);
+                        TEntity result = await Service.GetById(route.Id, true);
+                        return result;
+                    },
+                    note: input.Note);
+            }
+
             return SuccessResult();
         }
 
         [HttpPut("{id}/Restore")]
         [SwaggerOperation("khôi phục [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Restore)]
-        public virtual async Task<SuccessResult> Restore(RouteId route)
+        public virtual async Task<SuccessResult> Restore(RouteId route, [FromBody] AdminSubmitDto input)
         {
-            await Service.Restore(route.Id);
+            if (ObjectLogService == null)
+            {
+                await Service.Restore(route.Id);
+            }
+            else
+            {
+                await ObjectLogService.LogAction(
+                    route.Id,
+                    await Service.GetById(route.Id, true),
+                    async () =>
+                    {
+                        await Service.Restore(route.Id);
+                        TEntity result = await Service.GetById(route.Id, true);
+                        return result;
+                    },
+                    note: input.Note);
+            }
+
             return SuccessResult();
         }
     }

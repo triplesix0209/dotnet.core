@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Extras.DynamicProxy;
+using TripleSix.Core.AutofacModules;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -9,7 +11,7 @@ namespace TripleSix.Core.AutoAdmin
         /// Đăng ký tất cả các admin method.
         /// </summary>
         /// <param name="builder">Container builder.</param>
-        /// <param name="assembly">Assembly chứa các appsetting để scan.</param>
+        /// <param name="assembly">Assembly chứa các IAdminMethod.</param>
         public static void RegisterAllAdminMethod(
             this ContainerBuilder builder,
             Assembly assembly)
@@ -22,6 +24,23 @@ namespace TripleSix.Core.AutoAdmin
                 builder.RegisterGeneric(autoAdminType)
                     .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
             }
+        }
+
+        /// <summary>
+        /// Đăng ký các thành phần phục vụ chức năng Object Log.
+        /// </summary>
+        /// <typeparam name="TObjectLogService">Service impelemnt <see cref="IObjectLogService"/>.</typeparam>
+        /// <param name="builder">Container builder.</param>
+        public static void RegisterObjectLog<TObjectLogService>(
+            this ContainerBuilder builder)
+            where TObjectLogService : IObjectLogService, new()
+        {
+            builder.Register(c => new TObjectLogService())
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .EnableInterfaceInterceptors()
+                .InterceptedBy(typeof(ServiceInterceptor))
+                .As<IObjectLogService>();
         }
     }
 }

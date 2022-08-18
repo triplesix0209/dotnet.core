@@ -631,6 +631,66 @@ namespace Sample.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("CreateDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("ObjectId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ObjectType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ObjectLog");
+                });
+
+            modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLogField", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime?>("CreateDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("LogId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("NewValue")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LogId");
+
+                    b.ToTable("ObjectLogField");
+                });
+
             modelBuilder.Entity("Sample.Domain.Entities.Account", b =>
                 {
                     b.HasOne("Sample.Domain.Entities.PermissionGroup", "PermissionGroup")
@@ -690,6 +750,17 @@ namespace Sample.Infrastructure.Migrations
                     b.Navigation("PermissionGroup");
                 });
 
+            modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLogField", b =>
+                {
+                    b.HasOne("TripleSix.Core.AutoAdmin.ObjectLog", "Log")
+                        .WithMany("Fields")
+                        .HasForeignKey("LogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Log");
+                });
+
             modelBuilder.Entity("Sample.Domain.Entities.Account", b =>
                 {
                     b.Navigation("Auths");
@@ -709,6 +780,11 @@ namespace Sample.Infrastructure.Migrations
                     b.Navigation("Childs");
 
                     b.Navigation("PermissionValues");
+                });
+
+            modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLog", b =>
+                {
+                    b.Navigation("Fields");
                 });
 #pragma warning restore 612, 618
         }

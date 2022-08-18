@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.AutofacModules;
 
 namespace Sample.Application
@@ -19,6 +20,7 @@ namespace Sample.Application
 
             builder.RegisterAllRepository(assembly);
             builder.RegisterAllService(assembly);
+            builder.RegisterObjectLog<BaseObjectLogService>();
         }
     }
 }

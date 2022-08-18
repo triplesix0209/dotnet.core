@@ -15,12 +15,17 @@ namespace TripleSix.Core.AutoAdmin
     {
         public IStrongService<TEntity> Service { get; set; }
 
+        public IObjectLogService ObjectLogService { get; set; }
+
         [HttpPost]
         [SwaggerOperation("tạo [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Create)]
+        [Transactional]
         public virtual async Task<DataResult<Guid>> Create([FromBody] AdminSubmitDto<TCreateDto> input)
         {
             var result = await Service.CreateWithMapper<TEntity>(input.Data);
+            if (ObjectLogService != null)
+                await ObjectLogService.WriteLog(result.Id, result, note: input.Note);
             return DataResult(result.Id);
         }
     }

@@ -5,15 +5,18 @@ using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public class AdminSubmitDto<T> : BaseDto
+    public class AdminSubmitDto : BaseDto
+    {
+        [DisplayName("Ghi chú")]
+        [NotEmpty]
+        public string? Note { get; set; }
+    }
+
+    public class AdminSubmitDto<T> : AdminSubmitDto
         where T : IDto
     {
         [DisplayName("Dữ liệu")]
         [Required]
         public T Data { get; set; }
-
-        [DisplayName("Ghi chú")]
-        [NotEmpty]
-        public string? Note { get; set; }
     }
 }

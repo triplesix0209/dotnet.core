@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -9,6 +10,25 @@ namespace Sample.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ObjectLog",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CreateDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    ObjectType = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ObjectId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Note = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ObjectLog", x => x.Id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -76,6 +96,33 @@ namespace Sample.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Setting", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ObjectLogField",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CreateDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    FieldName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OldValue = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NewValue = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LogId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ObjectLogField", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ObjectLogField_ObjectLog_LogId",
+                        column: x => x.LogId,
+                        principalTable: "ObjectLog",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -401,6 +448,11 @@ namespace Sample.Infrastructure.Migrations
                 column: "UpdatorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ObjectLogField_LogId",
+                table: "ObjectLogField",
+                column: "LogId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permission_CategoryName",
                 table: "Permission",
                 column: "CategoryName");
@@ -501,6 +553,9 @@ namespace Sample.Infrastructure.Migrations
                 name: "AccountSession");
 
             migrationBuilder.DropTable(
+                name: "ObjectLogField");
+
+            migrationBuilder.DropTable(
                 name: "PermissionValue");
 
             migrationBuilder.DropTable(
@@ -508,6 +563,9 @@ namespace Sample.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Account");
+
+            migrationBuilder.DropTable(
+                name: "ObjectLog");
 
             migrationBuilder.DropTable(
                 name: "Permission");

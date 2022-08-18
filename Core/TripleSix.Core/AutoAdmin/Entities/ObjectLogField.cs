@@ -5,7 +5,7 @@ using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.AutoAdmin
 {
-    public class ObjectLog : BaseEntity<ObjectLog>,
+    public class ObjectLogField : BaseEntity<ObjectLogField>,
         IIdentifiableEntity,
         ICreateAuditableEntity
     {
@@ -20,31 +20,23 @@ namespace TripleSix.Core.AutoAdmin
         /// <inheritdoc/>
         public virtual Guid? CreatorId { get; set; }
 
-        /// <summary>
-        /// Loại đối tượng.
-        /// </summary>
-        public virtual string ObjectType { get; set; }
+        public virtual string FieldName { get; set; }
 
-        /// <summary>
-        /// Id đối tượng.
-        /// </summary>
-        public virtual Guid ObjectId { get; set; }
+        public virtual string? OldValue { get; set; }
 
-        /// <summary>
-        /// Ghi chú.
-        /// </summary>
-        public virtual string? Note { get; set; }
+        public virtual string NewValue { get; set; }
 
-        public virtual List<ObjectLogField> Fields { get; set; }
+        public virtual Guid LogId { get; set; }
 
-        public override void Configure(EntityTypeBuilder<ObjectLog> builder)
+        [ForeignKey(nameof(LogId))]
+        public virtual ObjectLog Log { get; set; }
+
+        public override void Configure(EntityTypeBuilder<ObjectLogField> builder)
         {
             base.Configure(builder);
 
             builder.HasIndex(x => x.CreateDateTime);
             builder.HasIndex(x => x.CreatorId);
-            builder.HasIndex(x => x.ObjectType);
-            builder.HasIndex(x => x.ObjectId);
         }
     }
 }
