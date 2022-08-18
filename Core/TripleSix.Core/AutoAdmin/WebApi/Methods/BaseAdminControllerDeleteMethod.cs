@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Services;
 using TripleSix.Core.Types;
 using TripleSix.Core.WebApi;
@@ -17,7 +18,7 @@ namespace TripleSix.Core.AutoAdmin
         public IObjectLogService ObjectLogService { get; set; }
 
         [HttpDelete("{id}")]
-        [SwaggerOperation("tạm xóa [controller]")]
+        [SwaggerOperation("xóa [controller]")]
         [AdminMethod(Type = AdminMethodTypes.SoftDelete)]
         [Transactional]
         public virtual async Task<SuccessResult> SoftDelete(RouteId route, AdminSubmitDto input)
@@ -28,6 +29,8 @@ namespace TripleSix.Core.AutoAdmin
             }
             else
             {
+                if (input.Note.IsNullOrEmpty()) input.Note = "Xóa";
+
                 await ObjectLogService.LogAction(
                     route.Id,
                     await Service.GetById(route.Id, true),
@@ -46,6 +49,7 @@ namespace TripleSix.Core.AutoAdmin
         [HttpPut("{id}/Restore")]
         [SwaggerOperation("khôi phục [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Restore)]
+        [Transactional]
         public virtual async Task<SuccessResult> Restore(RouteId route, [FromBody] AdminSubmitDto input)
         {
             if (ObjectLogService == null)
@@ -54,6 +58,8 @@ namespace TripleSix.Core.AutoAdmin
             }
             else
             {
+                if (input.Note.IsNullOrEmpty()) input.Note = "Khôi phục";
+
                 await ObjectLogService.LogAction(
                     route.Id,
                     await Service.GetById(route.Id, true),

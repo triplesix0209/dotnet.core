@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Services;
 using TripleSix.Core.Types;
 using TripleSix.Core.WebApi;
@@ -24,8 +25,13 @@ namespace TripleSix.Core.AutoAdmin
         public virtual async Task<DataResult<Guid>> Create([FromBody] AdminSubmitDto<TCreateDto> input)
         {
             var result = await Service.CreateWithMapper<TEntity>(input.Data);
+
             if (ObjectLogService != null)
+            {
+                if (input.Note.IsNullOrEmpty()) input.Note = "Khởi tạo";
                 await ObjectLogService.WriteLog(result.Id, result, note: input.Note);
+            }
+
             return DataResult(result.Id);
         }
     }
