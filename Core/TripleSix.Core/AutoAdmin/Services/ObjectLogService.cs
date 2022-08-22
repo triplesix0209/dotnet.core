@@ -156,9 +156,9 @@ namespace TripleSix.Core.AutoAdmin
             var query = Db.ObjectLog
                 .Where(x => x.ObjectType == objectType)
                 .OrderByDescending(x => x.CreateDateTime);
+
             var total = await query.LongCountAsync();
             var data = await query.ToListAsync<ChangeLogItemDto>(Mapper, cancellationToken);
-
             return new Paging<ChangeLogItemDto>(data, total, page, size);
         }
     }
