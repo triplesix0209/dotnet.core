@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
@@ -44,6 +43,7 @@ namespace TripleSix.Core.AutoAdmin
 
                 await ObjectLogService.LogAction(
                     route.Id,
+                    typeof(TEntity).Name,
                     await Service.GetById(route.Id, true),
                     async () =>
                     {

@@ -1,8 +1,10 @@
 ﻿#pragma warning disable SA1649 // File name should match first type name
 
+using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Services;
+using TripleSix.Core.Types;
 
 namespace TripleSix.Core.AutoAdmin
 {
@@ -13,17 +15,17 @@ namespace TripleSix.Core.AutoAdmin
         /// </summary>
         /// <typeparam name="TObject">Loại dữ liệu.</typeparam>
         /// <param name="objectId">Id định danh, mặc định sẽ thử lấy field Id của đối tượng.</param>
+        /// <param name="objectType">Loại object.</param>
         /// <param name="newValue">Giá trị ghi nhận.</param>
-        /// <param name="oldValue">Giá trị mới.</param>
-        /// <param name="objectType">Loại object, mặc định sẽ lấy theo tên của đối tượng.</param>
+        /// <param name="oldValue">Giá trị mới.</param>\
         /// <param name="note">Ghi chú.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Entity đã được tạo.</returns>
         Task WriteLog<TObject>(
             Guid objectId,
+            string objectType,
             TObject newValue,
             TObject? oldValue = null,
-            string? objectType = null,
             string? note = null,
             CancellationToken cancellationToken = default)
             where TObject : class;
@@ -33,20 +35,34 @@ namespace TripleSix.Core.AutoAdmin
         /// </summary>
         /// <typeparam name="TObject">Loại dữ liệu.</typeparam>
         /// <param name="objectId">Id định danh, mặc định sẽ thử lấy field Id của đối tượng.</param>
+        /// <param name="objectType">Loại object.</param>
         /// <param name="oldValue">Giá trị cũ.</param>
         /// <param name="action">Tham tác xử lý làm thay đổi dữ liệu.</param>
-        /// <param name="objectType">Loại object, mặc định sẽ lấy theo tên của đối tượng.</param>
         /// <param name="note">Ghi chú.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Entity đã được tạo.</returns>
         Task LogAction<TObject>(
             Guid objectId,
+            string? objectType,
             TObject? oldValue,
             Func<Task<TObject>> action,
-            string? objectType = null,
             string? note = null,
             CancellationToken cancellationToken = default)
             where TObject : class;
+
+        /// <summary>
+        /// Lấy danh sách thay đổi.
+        /// </summary>
+        /// <param name="objectType">Loại object.</param>
+        /// <param name="page">Số trang.</param>
+        /// <param name="size">Kích thước trang.</param>
+        /// <param name="cancellationToken">Token để cancel task.</param>
+        /// <returns>Danh sách phân trang <see cref="ChangeLogItemDto"/>.</returns>
+        Task<IPaging<ChangeLogItemDto>> GetPageObjectLog(
+            string objectType,
+            int page = 1,
+            int size = 10,
+            CancellationToken cancellationToken = default);
     }
 
     public class BaseObjectLogService : BaseService, IObjectLogService
@@ -65,9 +81,9 @@ namespace TripleSix.Core.AutoAdmin
         /// <inheritdoc/>
         public virtual async Task WriteLog<TObject>(
             Guid objectId,
+            string? objectType,
             TObject newValue,
             TObject? oldValue = null,
-            string? objectType = null,
             string? note = null,
             CancellationToken cancellationToken = default)
             where TObject : class
@@ -107,9 +123,9 @@ namespace TripleSix.Core.AutoAdmin
 
         public virtual async Task LogAction<TObject>(
             Guid objectId,
+            string? objectType,
             TObject? oldValue,
             Func<Task<TObject>> action,
-            string? objectType = null,
             string? note = null,
             CancellationToken cancellationToken = default)
             where TObject : class
@@ -124,11 +140,26 @@ namespace TripleSix.Core.AutoAdmin
             if (oldValue == null || newValue == null) return;
             try
             {
-                await WriteLog(objectId, newValue, oldValue, objectType, note, cancellationToken);
+                await WriteLog(objectId, objectType, newValue, oldValue, note, cancellationToken);
             }
             catch
             {
             }
+        }
+
+        public async Task<IPaging<ChangeLogItemDto>> GetPageObjectLog(
+            string objectType,
+            int page = 1,
+            int size = 10,
+            CancellationToken cancellationToken = default)
+        {
+            var query = Db.ObjectLog
+                .Where(x => x.ObjectType == objectType)
+                .OrderByDescending(x => x.CreateDateTime);
+            var total = await query.LongCountAsync();
+            var data = await query.ToListAsync<ChangeLogItemDto>(Mapper, cancellationToken);
+
+            return new Paging<ChangeLogItemDto>(data, total, page, size);
         }
     }
 }

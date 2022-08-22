@@ -90,12 +90,15 @@ namespace TripleSix.Core.AutoAdmin
                     }
                 }
 
-                //if (info.EnableChangeLog)
-                //{
-                //    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerChangeLogMethod<,>)));
-                //    if (type is not null)
-                //        feature.Controllers.Add(type.MakeGenericType(adminType, entityType).GetTypeInfo());
-                //}
+                if (info.EnableChangeLog)
+                {
+                    var type = exportedTypes.FirstOrDefault(t => t.IsSubclassOfRawGeneric(typeof(BaseAdminControllerChangeLogMethod<,>)));
+                    if (type is not null)
+                    {
+                        feature.Controllers.Add(type.MakeGenericType(entityType, adminType)
+                            .GetTypeInfo());
+                    }
+                }
             }
         }
     }

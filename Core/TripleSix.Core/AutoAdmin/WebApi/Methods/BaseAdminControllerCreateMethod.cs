@@ -29,7 +29,7 @@ namespace TripleSix.Core.AutoAdmin
             if (ObjectLogService != null)
             {
                 if (input.Note.IsNullOrEmpty()) input.Note = "Khởi tạo";
-                await ObjectLogService.WriteLog(result.Id, result, note: input.Note);
+                await ObjectLogService.WriteLog(result.Id, typeof(TEntity).Name, result, note: input.Note);
             }
 
             return DataResult(result.Id);

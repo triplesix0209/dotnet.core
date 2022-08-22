@@ -38,7 +38,7 @@ namespace TripleSix.Core.WebApi
                 if (e.InnerExceptions.Count == 1 && e.InnerException is BaseException exception)
                     error = exception.ToErrorResult(httpContext);
                 else
-                    error = ConvertExceptionToErrorResult(httpContext, e);
+                    error = ConvertExceptionToErrorResult(e);
 
                 await SendResponse(httpContext, error);
                 throw;
@@ -49,22 +49,22 @@ namespace TripleSix.Core.WebApi
                 if (e.InnerException is BaseException exception)
                     error = exception.ToErrorResult(httpContext);
                 else
-                    error = ConvertExceptionToErrorResult(httpContext, e);
+                    error = ConvertExceptionToErrorResult(e);
 
                 await SendResponse(httpContext, error);
                 throw;
             }
             catch (Exception e)
             {
-                var error = ConvertExceptionToErrorResult(httpContext, e);
+                var error = ConvertExceptionToErrorResult(e);
                 await SendResponse(httpContext, error);
                 throw;
             }
         }
 
-        private ErrorResult ConvertExceptionToErrorResult(HttpContext httpContext, Exception exception)
+        private ErrorResult ConvertExceptionToErrorResult(Exception exception)
         {
-            var error = new ErrorResult(httpContext.Response.StatusCode, "exception", exception.Message);
+            var error = new ErrorResult(500, "exception", exception.Message);
 
             var innerException = exception.InnerException;
             while (innerException != null)

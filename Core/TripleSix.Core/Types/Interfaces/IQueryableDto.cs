@@ -1,5 +1,4 @@
 ﻿using TripleSix.Core.Entities;
-using TripleSix.Core.Persistences;
 
 namespace TripleSix.Core.Types
 {
@@ -13,7 +12,7 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Chuyển hóa thành <see cref="IQueryable"/>.
         /// </summary>
-        /// <param name="db"><see cref="IDbDataContext"/>.</param>
+        /// <param name="query">Câu query gốc.</param>
         /// <returns><see cref="IQueryable"/>.</returns>
         IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query);
     }

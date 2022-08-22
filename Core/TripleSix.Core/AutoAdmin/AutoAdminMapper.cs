@@ -66,6 +66,8 @@ namespace TripleSix.Core.AutoAdmin
                     }
                 }
             }
+
+            CreateMap<ObjectLog, ChangeLogItemDto>(MemberList.Destination);
         }
     }
 }

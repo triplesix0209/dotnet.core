@@ -20,9 +20,9 @@ namespace TripleSix.Core.AutoAdmin
         [HttpGet]
         [SwaggerOperation("lấy danh sách [controller]")]
         [AdminMethod(Type = AdminMethodTypes.List)]
-        public virtual async Task<PagingResult<TItemDto>> GetPage(TFilterDto input)
+        public virtual async Task<PagingResult<TItemDto>> GetPage(TFilterDto filter)
         {
-            var result = await Service.GetPageByQueryModel<TItemDto>(input, input.Page, input.Size);
+            var result = await Service.GetPageByQueryModel<TItemDto>(filter, filter.Page, filter.Size);
             return PagingResult(result);
         }
 

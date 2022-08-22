@@ -33,6 +33,7 @@ namespace TripleSix.Core.AutoAdmin
 
                 await ObjectLogService.LogAction(
                     route.Id,
+                    typeof(TEntity).Name,
                     await Service.GetById(route.Id, true),
                     async () =>
                     {
@@ -62,6 +63,7 @@ namespace TripleSix.Core.AutoAdmin
 
                 await ObjectLogService.LogAction(
                     route.Id,
+                    typeof(TEntity).Name,
                     await Service.GetById(route.Id, true),
                     async () =>
                     {
