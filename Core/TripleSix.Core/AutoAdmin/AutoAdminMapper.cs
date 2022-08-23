@@ -68,6 +68,9 @@ namespace TripleSix.Core.AutoAdmin
             }
 
             CreateMap<ObjectLog, ChangeLogItemDto>(MemberList.Destination);
+
+            CreateMap<ObjectLog, ChangeLogDetailDto>(MemberList.Destination)
+                .IncludeBase<ObjectLog, ChangeLogItemDto>();
         }
     }
 }

@@ -7,5 +7,11 @@ namespace TripleSix.Core.AutoAdmin
     {
         [DisplayName("Id định danh")]
         public Guid Id { get; set; }
+
+        [DisplayName("Thời gian thao tác")]
+        public DateTime? CreateDateTime { get; set; }
+
+        [DisplayName("Ghi chú")]
+        public string? Note { get; set; }
     }
 }

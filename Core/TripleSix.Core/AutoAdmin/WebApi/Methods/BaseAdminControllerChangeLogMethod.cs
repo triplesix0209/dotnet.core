@@ -21,5 +21,14 @@ namespace TripleSix.Core.AutoAdmin
             var result = await ObjectLogService.GetPageObjectLog(typeof(TEntity).Name, filter.Page, filter.Size);
             return PagingResult(result);
         }
+
+        [HttpGet("ChangeLog/{id}")]
+        [SwaggerOperation("lấy chi tiết thay đổi [controller]")]
+        [AdminMethod(Type = AdminMethodTypes.DetailChangeLog)]
+        public virtual async Task<DataResult<ChangeLogDetailDto>> GetDetailChangeLog(RouteId route)
+        {
+            var result = await ObjectLogService.GetDetailObjectLog(typeof(TEntity).Name, route.Id);
+            return DataResult(result);
+        }
     }
 }

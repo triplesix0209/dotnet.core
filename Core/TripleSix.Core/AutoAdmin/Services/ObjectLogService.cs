@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Services;
 using TripleSix.Core.Types;
@@ -62,6 +63,18 @@ namespace TripleSix.Core.AutoAdmin
             string objectType,
             int page = 1,
             int size = 10,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Lấy chi tiết thay đổi.
+        /// </summary>
+        /// <param name="objectType">Loại object.</param>
+        /// <param name="objectId">Id đối tượng.</param>
+        /// <param name="cancellationToken">Token để cancel task.</param>
+        /// <returns>Danh sách phân trang <see cref="ChangeLogItemDto"/>.</returns>
+        Task<ChangeLogDetailDto> GetDetailObjectLog(
+            string objectType,
+            Guid objectId,
             CancellationToken cancellationToken = default);
     }
 
@@ -160,6 +173,19 @@ namespace TripleSix.Core.AutoAdmin
             var total = await query.LongCountAsync();
             var data = await query.ToListAsync<ChangeLogItemDto>(Mapper, cancellationToken);
             return new Paging<ChangeLogItemDto>(data, total, page, size);
+        }
+
+        public async Task<ChangeLogDetailDto> GetDetailObjectLog(string objectType, Guid objectId, CancellationToken cancellationToken = default)
+        {
+            var query = Db.ObjectLog
+                .Where(x => x.ObjectType == objectType)
+                .Where(x => x.ObjectId == objectId);
+
+            var data = await query.FirstOrDefaultAsync<ChangeLogDetailDto>(Mapper, cancellationToken);
+            if (data == null)
+                throw new EntityNotFoundException(typeof(ObjectLog));
+
+            return data;
         }
     }
 }
