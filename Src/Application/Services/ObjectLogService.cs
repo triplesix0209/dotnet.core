@@ -14,7 +14,12 @@ namespace Sample.Application.Services
             if (account == null)
                 return new ActorDto { Id = actorId };
 
-            return new ActorDto { Id = actorId, Name = account.Name };
+            return new ActorDto
+            {
+                Id = account.Id,
+                Name = account.Name,
+                AvatarLink = null,
+            };
         }
     }
 }

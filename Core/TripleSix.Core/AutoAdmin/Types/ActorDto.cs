@@ -13,5 +13,8 @@ namespace TripleSix.Core.AutoAdmin
 
         [DisplayName("Tên người thao tác")]
         public string? Name { get; set; }
+
+        [DisplayName("Ảnh đại diện người thao tác")]
+        public string? AvatarLink { get; set; }
     }
 }
