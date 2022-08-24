@@ -18,7 +18,7 @@ namespace TripleSix.Core.AutoAdmin
         public IObjectLogService ObjectLogService { get; set; }
 
         [HttpDelete("{id}")]
-        [SwaggerOperation("xóa [controller]")]
+        [SwaggerOperation("Xóa [controller]")]
         [AdminMethod(Type = AdminMethodTypes.SoftDelete)]
         [Transactional]
         public virtual async Task<SuccessResult> SoftDelete(RouteId route, AdminSubmitDto input)
@@ -48,7 +48,7 @@ namespace TripleSix.Core.AutoAdmin
         }
 
         [HttpPut("{id}/Restore")]
-        [SwaggerOperation("khôi phục [controller]")]
+        [SwaggerOperation("Khôi phục [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Restore)]
         [Transactional]
         public virtual async Task<SuccessResult> Restore(RouteId route, [FromBody] AdminSubmitDto input)

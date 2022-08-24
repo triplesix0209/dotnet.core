@@ -18,7 +18,7 @@ namespace TripleSix.Core.AutoAdmin
         public IStrongService<TEntity> Service { get; set; }
 
         [HttpGet]
-        [SwaggerOperation("lấy danh sách [controller]")]
+        [SwaggerOperation("Lấy danh sách [controller]")]
         [AdminMethod(Type = AdminMethodTypes.List)]
         public virtual async Task<PagingResult<TItemDto>> GetPage(TFilterDto filter)
         {
@@ -27,7 +27,7 @@ namespace TripleSix.Core.AutoAdmin
         }
 
         [HttpGet("{id}")]
-        [SwaggerOperation("lấy chi tiết [controller]")]
+        [SwaggerOperation("Lấy chi tiết [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Detail)]
         public virtual async Task<DataResult<TDetailDto>> GetDetail(RouteId route)
         {

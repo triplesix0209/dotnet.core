@@ -19,7 +19,7 @@ namespace TripleSix.Core.AutoAdmin
         public IObjectLogService ObjectLogService { get; set; }
 
         [HttpPost]
-        [SwaggerOperation("tạo [controller]")]
+        [SwaggerOperation("Tạo [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Create)]
         [Transactional]
         public virtual async Task<DataResult<Guid>> Create([FromBody] AdminSubmitDto<TCreateDto> input)

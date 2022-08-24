@@ -14,7 +14,7 @@ namespace TripleSix.Core.AutoAdmin
         public IObjectLogService ObjectLogService { get; set; }
 
         [HttpGet("{id}/ChangeLog")]
-        [SwaggerOperation("lấy danh sách thay đổi [controller]")]
+        [SwaggerOperation("Lấy danh sách thay đổi [controller]")]
         [AdminMethod(Type = AdminMethodTypes.ListChangeLog)]
         public virtual async Task<PagingResult<ChangeLogItemDto>> GetPageChangeLog(RouteId route, PagingInputDto filter)
         {
@@ -23,7 +23,7 @@ namespace TripleSix.Core.AutoAdmin
         }
 
         [HttpGet("{id}/ChangeLog/{logId}")]
-        [SwaggerOperation("lấy chi tiết thay đổi [controller]")]
+        [SwaggerOperation("Lấy chi tiết thay đổi [controller]")]
         [AdminMethod(Type = AdminMethodTypes.DetailChangeLog)]
         public virtual async Task<DataResult<ChangeLogDetailDto>> GetDetailChangeLog(RouteId route, RouteLog routeLog)
         {

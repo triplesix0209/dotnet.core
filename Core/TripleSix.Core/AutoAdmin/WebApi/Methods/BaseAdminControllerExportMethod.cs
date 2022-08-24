@@ -23,7 +23,7 @@ namespace TripleSix.Core.AutoAdmin
         public IStrongService<TEntity> Service { get; set; }
 
         [HttpGet("Export")]
-        [SwaggerOperation("xuất dữ liệu [controller]")]
+        [SwaggerOperation("Xuất dữ liệu [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Export)]
         public virtual async Task<FileContentResult> Export(TFilterDto filter, ExportConfigDto config)
         {

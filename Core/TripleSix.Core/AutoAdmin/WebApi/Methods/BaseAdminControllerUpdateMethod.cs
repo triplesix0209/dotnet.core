@@ -19,7 +19,7 @@ namespace TripleSix.Core.AutoAdmin
         public IObjectLogService ObjectLogService { get; set; }
 
         [HttpGet("{id}/Update")]
-        [SwaggerOperation("lấy các thông tin có thể sửa của [controller]")]
+        [SwaggerOperation("Lấy các thông tin có thể sửa của [controller]")]
         [AdminMethod(Type = AdminMethodTypes.UpdateView)]
         public virtual async Task<DataResult<TUpdateDto>> GetUpdate(RouteId route)
         {
@@ -28,7 +28,7 @@ namespace TripleSix.Core.AutoAdmin
         }
 
         [HttpPut("{id}")]
-        [SwaggerOperation("sửa [controller]")]
+        [SwaggerOperation("Sửa [controller]")]
         [AdminMethod(Type = AdminMethodTypes.Update)]
         [Transactional]
         public virtual async Task<SuccessResult> Update(RouteId route, [FromBody] AdminSubmitDto<TUpdateDto> input)
