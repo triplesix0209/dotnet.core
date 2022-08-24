@@ -38,8 +38,8 @@ namespace TripleSix.Core.WebApi
                     bodyContent.Schema = parameterDescription.Type.GenerateSwaggerSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,
-                        parameterDescription,
-                        defaultValue: instance);
+                        defaultValue: instance,
+                        generateDefaultValue: true);
                 }
                 else
                 {
@@ -69,10 +69,10 @@ namespace TripleSix.Core.WebApi
                     parameter.Schema = parameterDescription.Type.GenerateSwaggerSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,
-                        parameterDescription,
                         propertyInfo: propertyInfo,
                         parentPropertyInfo: parentPropertyInfo,
-                        defaultValue: propertyInfo.GetValue(instance));
+                        defaultValue: propertyInfo.GetValue(instance),
+                        generateDefaultValue: true);
 
                     parameter.Name = parameterDescription.Name.Split(".").Select(x => x.ToCamelCase()).ToString(".");
                     parameter.Required = parameter.In == ParameterLocation.Path ||
@@ -94,7 +94,8 @@ namespace TripleSix.Core.WebApi
             var responseType = new OpenApiMediaType();
             responseType.Schema = returnType.GenerateSwaggerSchema(
                 context.SchemaGenerator,
-                context.SchemaRepository);
+                context.SchemaRepository,
+                generateDefaultValue: false);
 
             var successResponse = new OpenApiResponse { Description = "Success" };
             successResponse.Content.Add("application/json", responseType);

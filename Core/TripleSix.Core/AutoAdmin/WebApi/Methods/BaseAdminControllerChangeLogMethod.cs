@@ -13,21 +13,21 @@ namespace TripleSix.Core.AutoAdmin
     {
         public IObjectLogService ObjectLogService { get; set; }
 
-        [HttpGet("ChangeLog")]
+        [HttpGet("{id}/ChangeLog")]
         [SwaggerOperation("lấy danh sách thay đổi [controller]")]
         [AdminMethod(Type = AdminMethodTypes.ListChangeLog)]
-        public virtual async Task<PagingResult<ChangeLogItemDto>> GetPageChangeLog(PagingInputDto filter)
+        public virtual async Task<PagingResult<ChangeLogItemDto>> GetPageChangeLog(RouteId route, PagingInputDto filter)
         {
-            var result = await ObjectLogService.GetPageObjectLog(typeof(TEntity).Name, filter.Page, filter.Size);
+            var result = await ObjectLogService.GetPageObjectLog(typeof(TEntity).Name, route.Id, filter.Page, filter.Size);
             return PagingResult(result);
         }
 
-        [HttpGet("ChangeLog/{id}")]
+        [HttpGet("{id}/ChangeLog/{logId}")]
         [SwaggerOperation("lấy chi tiết thay đổi [controller]")]
         [AdminMethod(Type = AdminMethodTypes.DetailChangeLog)]
-        public virtual async Task<DataResult<ChangeLogDetailDto>> GetDetailChangeLog(RouteId route)
+        public virtual async Task<DataResult<ChangeLogDetailDto>> GetDetailChangeLog(RouteId route, RouteLog routeLog)
         {
-            var result = await ObjectLogService.GetDetailObjectLog(typeof(TEntity).Name, route.Id);
+            var result = await ObjectLogService.GetDetailObjectLog(typeof(TEntity).Name, route.Id, routeLog.LogId);
             return DataResult(result);
         }
     }

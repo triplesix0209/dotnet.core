@@ -11,7 +11,7 @@ using Sample.Infrastructure.Persistences;
 namespace Sample.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220818103208_Init")]
+    [Migration("20220824100900_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

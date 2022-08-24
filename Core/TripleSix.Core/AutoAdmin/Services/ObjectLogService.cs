@@ -25,7 +25,7 @@ namespace TripleSix.Core.AutoAdmin
         Task WriteLog<TObject>(
             Guid objectId,
             string objectType,
-            TObject newValue,
+            TObject? newValue,
             TObject? oldValue = null,
             string? note = null,
             CancellationToken cancellationToken = default)
@@ -55,12 +55,14 @@ namespace TripleSix.Core.AutoAdmin
         /// Lấy danh sách thay đổi.
         /// </summary>
         /// <param name="objectType">Loại object.</param>
+        /// <param name="objectId">Id object.</param>
         /// <param name="page">Số trang.</param>
         /// <param name="size">Kích thước trang.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Danh sách phân trang <see cref="ChangeLogItemDto"/>.</returns>
         Task<IPaging<ChangeLogItemDto>> GetPageObjectLog(
             string objectType,
+            Guid objectId,
             int page = 1,
             int size = 10,
             CancellationToken cancellationToken = default);
@@ -69,18 +71,20 @@ namespace TripleSix.Core.AutoAdmin
         /// Lấy chi tiết thay đổi.
         /// </summary>
         /// <param name="objectType">Loại object.</param>
-        /// <param name="objectId">Id đối tượng.</param>
+        /// <param name="objectId">Id object.</param>
+        /// <param name="logId">Id log.</param>
         /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Danh sách phân trang <see cref="ChangeLogItemDto"/>.</returns>
         Task<ChangeLogDetailDto> GetDetailObjectLog(
             string objectType,
             Guid objectId,
+            Guid logId,
             CancellationToken cancellationToken = default);
     }
 
-    public class BaseObjectLogService : BaseService, IObjectLogService
+    public abstract class BaseObjectLogService : BaseService, IObjectLogService
     {
-        private static string[] _skipProperties = new[]
+        private static readonly string[] _skipProperties = new[]
         {
             nameof(IIdentifiableEntity.Id),
             nameof(ICreateAuditableEntity.CreateDateTime),
@@ -89,13 +93,13 @@ namespace TripleSix.Core.AutoAdmin
             nameof(IUpdateAuditableEntity.UpdatorId),
         };
 
-        public IObjectLogDbContext Db { get; set; }
+        public IObjectLogDbContext LogDb { get; set; }
 
         /// <inheritdoc/>
         public virtual async Task WriteLog<TObject>(
             Guid objectId,
             string? objectType,
-            TObject newValue,
+            TObject? newValue,
             TObject? oldValue = null,
             string? note = null,
             CancellationToken cancellationToken = default)
@@ -116,24 +120,39 @@ namespace TripleSix.Core.AutoAdmin
             {
                 if (_skipProperties.Contains(property.Name)) continue;
                 var newPropertyValue = property.GetValue(newValue).ToJson();
-                if (newPropertyValue == null) continue;
-                var oldPropertyValue = oldValue == null ? null : property.GetValue(oldValue).ToJson();
-                if (oldPropertyValue != null && oldPropertyValue == newPropertyValue) continue;
+                if (newPropertyValue == null) newPropertyValue = "null";
 
-                log.Fields.Add(new ObjectLogField
+                if (oldValue == null)
                 {
-                    FieldName = property.Name,
-                    NewValue = newPropertyValue,
-                    OldValue = oldPropertyValue,
-                });
+                    log.Fields.Add(new ObjectLogField
+                    {
+                        FieldName = property.Name,
+                        NewValue = newPropertyValue,
+                        OldValue = null,
+                    });
+                }
+                else
+                {
+                    var oldPropertyValue = property.GetValue(oldValue).ToJson();
+                    if (oldPropertyValue == null) oldPropertyValue = "null";
+                    if (oldPropertyValue == newPropertyValue) continue;
+
+                    log.Fields.Add(new ObjectLogField
+                    {
+                        FieldName = property.Name,
+                        NewValue = newPropertyValue,
+                        OldValue = oldPropertyValue,
+                    });
+                }
             }
 
             if (log.Fields.Count == 0) return;
 
-            Db.ObjectLog.Add(log);
-            await Db.SaveChangesAsync(true, cancellationToken);
+            LogDb.ObjectLog.Add(log);
+            await LogDb.SaveChangesAsync(true, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public virtual async Task LogAction<TObject>(
             Guid objectId,
             string? objectType,
@@ -160,32 +179,60 @@ namespace TripleSix.Core.AutoAdmin
             }
         }
 
+        /// <inheritdoc/>
         public async Task<IPaging<ChangeLogItemDto>> GetPageObjectLog(
             string objectType,
+            Guid objectId,
             int page = 1,
             int size = 10,
             CancellationToken cancellationToken = default)
         {
-            var query = Db.ObjectLog
+            var query = LogDb.ObjectLog
                 .Where(x => x.ObjectType == objectType)
+                .Where(x => x.ObjectId == objectId)
                 .OrderByDescending(x => x.CreateDateTime);
 
             var total = await query.LongCountAsync();
             var data = await query.ToListAsync<ChangeLogItemDto>(Mapper, cancellationToken);
+            foreach (var item in data)
+            {
+                if (item.Actor == null) continue;
+                item.Actor = await GetActor(item.Actor.Id, cancellationToken);
+            }
+
             return new Paging<ChangeLogItemDto>(data, total, page, size);
         }
 
-        public async Task<ChangeLogDetailDto> GetDetailObjectLog(string objectType, Guid objectId, CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public async Task<ChangeLogDetailDto> GetDetailObjectLog(
+            string objectType,
+            Guid objectId,
+            Guid logId,
+            CancellationToken cancellationToken = default)
         {
-            var query = Db.ObjectLog
+            var query = LogDb.ObjectLog
                 .Where(x => x.ObjectType == objectType)
-                .Where(x => x.ObjectId == objectId);
+                .Where(x => x.ObjectId == objectId)
+                .Where(x => x.Id == logId);
 
             var data = await query.FirstOrDefaultAsync<ChangeLogDetailDto>(Mapper, cancellationToken);
             if (data == null)
                 throw new EntityNotFoundException(typeof(ObjectLog));
 
+            if (data.Actor != null)
+                data.Actor = await GetActor(data.Actor.Id, cancellationToken);
+
             return data;
         }
+
+        /// <summary>
+        /// Lấy thông tin người thao tác.
+        /// </summary>
+        /// <param name="actorId">Id người thao tác.</param>
+        /// <param name="cancellationToken">Token để cancel task.</param>
+        /// <returns><see cref="ActorDto"/>.</returns>
+        protected abstract Task<ActorDto> GetActor(
+            Guid actorId,
+            CancellationToken cancellationToken = default);
     }
 }

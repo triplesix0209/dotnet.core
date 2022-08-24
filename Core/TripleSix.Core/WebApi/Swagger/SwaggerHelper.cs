@@ -20,11 +20,11 @@ namespace TripleSix.Core.WebApi
             this Type objectType,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
-            ApiParameterDescription? parameterDescription = null,
             PropertyInfo? propertyInfo = null,
             PropertyInfo? parentPropertyInfo = null,
             object? defaultValue = null,
-            OpenApiSchema? baseSchema = null)
+            OpenApiSchema? baseSchema = null,
+            bool generateDefaultValue = true)
         {
             var result = schemaGenerator.GenerateSchema(objectType, schemaRepository);
             var propertyType = objectType.GetUnderlyingType();
@@ -47,7 +47,8 @@ namespace TripleSix.Core.WebApi
                         schemaGenerator,
                         schemaRepository,
                         defaultValue: defaultValue,
-                        baseSchema: result);
+                        baseSchema: result,
+                        generateDefaultValue: generateDefaultValue);
             }
             else if (result.Type is null)
             {
@@ -69,13 +70,15 @@ namespace TripleSix.Core.WebApi
                             propertyInfo: property,
                             parentPropertyInfo: propertyInfo,
                             defaultValue: defaultValue == null ? null : property.GetValue(defaultValue),
-                            baseSchema: result));
+                            baseSchema: result,
+                            generateDefaultValue: generateDefaultValue));
                 }
             }
 
             result.Reference = null;
             result.Nullable = objectType.IsNullableType();
-            if (result.Type != "object") result.Default = objectType.SwaggerValue(defaultValue);
+            if (result.Type != "object" && generateDefaultValue)
+                result.Default = objectType.SwaggerValue(defaultValue);
 
             if (propertyType.IsEnum)
             {

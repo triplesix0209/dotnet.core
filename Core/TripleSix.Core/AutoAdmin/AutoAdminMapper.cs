@@ -67,10 +67,17 @@ namespace TripleSix.Core.AutoAdmin
                 }
             }
 
-            CreateMap<ObjectLog, ChangeLogItemDto>(MemberList.Destination);
+            CreateMap<ObjectLog, ChangeLogItemDto>(MemberList.Destination)
+                .ForMember(d => d.Actor, o => o.MapFrom(s => s.CreatorId.HasValue ? new ActorDto { Id = s.CreatorId.Value } : null));
 
             CreateMap<ObjectLog, ChangeLogDetailDto>(MemberList.Destination)
-                .IncludeBase<ObjectLog, ChangeLogItemDto>();
+                .IncludeBase<ObjectLog, ChangeLogItemDto>()
+                .ForMember(d => d.ListField, o => o.MapFrom(s => s.Fields.Select(x => new ChangeLogField
+                {
+                    FieldName = x.FieldName,
+                    OldValue = x.OldValue,
+                    NewValue = x.NewValue,
+                }).ToArray()));
         }
     }
 }
