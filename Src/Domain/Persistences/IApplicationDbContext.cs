@@ -10,12 +10,6 @@ namespace Sample.Domain.Persistences
 
         DbSet<AccountSession> AccountSession { get; set; }
 
-        DbSet<Permission> Permission { get; set; }
-
-        DbSet<PermissionGroup> PermissionGroup { get; set; }
-
-        DbSet<PermissionValue> PermissionValue { get; set; }
-
         DbSet<Setting> Setting { get; set; }
     }
 }

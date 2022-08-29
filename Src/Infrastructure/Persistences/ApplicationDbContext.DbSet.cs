@@ -17,12 +17,6 @@ namespace Sample.Infrastructure.Persistences
 
         public DbSet<ObjectLogField> ObjectLogField { get; set; }
 
-        public DbSet<Permission> Permission { get; set; }
-
-        public DbSet<PermissionGroup> PermissionGroup { get; set; }
-
-        public DbSet<PermissionValue> PermissionValue { get; set; }
-
         public DbSet<Setting> Setting { get; set; }
     }
 }

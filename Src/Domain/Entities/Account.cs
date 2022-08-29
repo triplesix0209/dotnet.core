@@ -12,9 +12,6 @@
 
         public Guid? PermissionGroupId { get; set; }
 
-        [ForeignKey(nameof(PermissionGroupId))]
-        public virtual PermissionGroup? PermissionGroup { get; set; }
-
         public virtual List<AccountAuth> Auths { get; set; }
 
         public virtual List<AccountSession> Sessions { get; set; }

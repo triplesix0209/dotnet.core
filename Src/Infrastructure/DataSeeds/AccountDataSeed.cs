@@ -33,7 +33,7 @@ namespace Sample.Infrastructure.Seeds
                             Password = "admin",
                             HashPasswordKey = "xE8czZlAixQOJDQ0oR7PqlYJUcywj6",
                             AccessLevel = AccountLevels.Admin,
-                            PermissionGroupId = (Guid?)PermissionDataSeed.DefaultPermissionGroupId,
+                            PermissionGroupId = (Guid?)null,
                             IsDeleted = false,
                         },
                     },

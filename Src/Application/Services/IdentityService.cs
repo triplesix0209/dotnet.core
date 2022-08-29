@@ -25,8 +25,6 @@
 
         public IAccountService AccountService { get; set; }
 
-        public IPermissionService PermissionService { get; set; }
-
         public ISettingService SettingService { get; set; }
 
         public async Task<IdentityRegisterResultDto> Register(IdentityRegisterInputDto input)
@@ -136,11 +134,7 @@
             var profile = await GetProfileByAccount(account);
             if (session == null) session = await GenerateSession(account);
 
-            var permissions = account.AccessLevel != AccountLevels.Root && account.PermissionGroupId.HasValue
-                ? (await PermissionService.GetListPermissionValue(account.PermissionGroupId.Value, true)).Select(x => x.Code)
-                : null;
-
-            var claims = IdentityContext.GenerateClaim(profile, (int)account.AccessLevel, x => x.AccountId, permissions);
+            var claims = IdentityContext.GenerateClaim(profile, (int)account.AccessLevel, x => x.AccountId);
             var accessToken = JwtHelper.GenerateJwtToken(claims, IdentityAppsetting);
             return new IdentityTokenDto
             {
