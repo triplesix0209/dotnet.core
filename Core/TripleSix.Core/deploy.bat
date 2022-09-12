@@ -1,1 +1,1 @@
-dotnet nuget push .\dist\TripleSix.Core.6.0.12-beta.nupkg --source https://api.nuget.org/v3/index.json --api-key oy2ilyorryhglnpfpkwasw3fpc3znsrelbmg4svzb5zzw4
+dotnet nuget push .\dist\TripleSix.Core.6.0.13-beta.nupkg --source https://api.nuget.org/v3/index.json --api-key oy2ilyorryhglnpfpkwasw3fpc3znsrelbmg4svzb5zzw4

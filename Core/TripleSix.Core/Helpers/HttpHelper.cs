@@ -58,7 +58,59 @@ namespace TripleSix.Core.Helpers
                 request.Body.Position = 0;
 
                 if (!bodyText.IsNullOrWhiteSpace())
-                    curls.Add($"--data '{JObject.Parse(bodyText).ToString(Formatting.None, JsonHelper.Converters)}'");
+                {
+                    try
+                    {
+                        curls.Add($"--data '{JObject.Parse(bodyText).ToString(Formatting.None, JsonHelper.Converters)}'");
+                    }
+                    catch
+                    {
+                        curls.Add($"--data '{bodyText}'");
+                    }
+                }
+            }
+
+            return curls.ToString(" ");
+        }
+
+        /// <summary>
+        /// Chuyển đổi <see cref="HttpRequestMessage"/> sang curl.
+        /// </summary>
+        /// <param name="requestMessage"><see cref="HttpRequestMessage"/> cần xử lý.</param>
+        /// <param name="excludeHeaderKeys">Danh sách header keys loại bỏ.</param>
+        /// <returns>Chuỗi Curl tương ứng.</returns>
+        public static async Task<string> ToCurl(this HttpRequestMessage requestMessage, string[]? excludeHeaderKeys = null)
+        {
+            if (requestMessage.RequestUri == null) return string.Empty;
+            if (excludeHeaderKeys == null) excludeHeaderKeys = _excludeHeaderKeys;
+
+            var curls = new List<string>
+            {
+                "curl",
+                $"-X {requestMessage.Method}",
+                $"'{requestMessage.RequestUri.Scheme}://{requestMessage.RequestUri.PathAndQuery}'",
+            };
+
+            foreach (var header in requestMessage.Headers)
+            {
+                if (excludeHeaderKeys.Any(x => x == header.Key)) continue;
+                curls.Add($"-H '{header.Key}: {header.Value}'");
+            }
+
+            if (requestMessage.Content != null)
+            {
+                var bodyText = await requestMessage.Content.ReadAsStringAsync();
+                if (!bodyText.IsNullOrWhiteSpace())
+                {
+                    try
+                    {
+                        curls.Add($"--data '{JObject.Parse(bodyText).ToString(Formatting.None, JsonHelper.Converters)}'");
+                    }
+                    catch
+                    {
+                        curls.Add($"--data '{bodyText}'");
+                    }
+                }
             }
 
             return curls.ToString(" ");

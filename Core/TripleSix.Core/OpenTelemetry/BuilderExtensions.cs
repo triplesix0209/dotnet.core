@@ -94,16 +94,25 @@ namespace TripleSix.Core.OpenTelemetry
             {
                 options.SetHttpFlavor = true;
                 options.RecordException = true;
-                options.Enrich = (activity, eventName, rawObject) =>
+                options.Enrich = async (activity, eventName, rawObject) =>
                 {
-                    if (!eventName.Equals("OnStopActivity")) return;
-                    if (rawObject is not HttpResponseMessage httpResponseMessage) return;
+                    if (eventName.Equals("OnStartActivity"))
+                    {
+                        if (rawObject is not HttpRequestMessage httpRequestMessage) return;
 
-                    var host = httpResponseMessage.RequestMessage?.RequestUri?.Host;
-                    if (!host.IsNullOrWhiteSpace() && host.StartsWith("www."))
-                        host = host[4..];
+                        activity.SetTag("http.request_curl", await httpRequestMessage.ToCurl());
+                    }
+                    else if (eventName.Equals("OnStopActivity"))
+                    {
+                        if (rawObject is not HttpResponseMessage httpResponseMessage) return;
 
-                    activity.DisplayName = host.IsNullOrWhiteSpace() ? "<HTTP REQUEST>" : $"<HTTP> {host}";
+                        var host = httpResponseMessage.RequestMessage?.RequestUri?.Host;
+                        if (!host.IsNullOrWhiteSpace() && host.StartsWith("www."))
+                            host = host[4..];
+
+                        activity.DisplayName = host.IsNullOrWhiteSpace() ? "<HTTP REQUEST>" : $"<HTTP> {host}";
+                        activity.SetTag("http.response", await httpResponseMessage.Content.ReadAsStringAsync());
+                    }
                 };
 
                 configureOptions?.Invoke(options);

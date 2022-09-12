@@ -54,6 +54,11 @@ namespace TripleSix.Core.OpenTelemetry
                     {
                         activity = ActivityHelper.ActivitySource.StartActivity(ActivityName, ActivityKind.Client);
                         if (activity == null) return;
+                        if (activity.Parent == null)
+                        {
+                            activity.Dispose();
+                            return;
+                        }
 
                         var command = commandFetcher.Fetch(payload);
                         if (command == null)
