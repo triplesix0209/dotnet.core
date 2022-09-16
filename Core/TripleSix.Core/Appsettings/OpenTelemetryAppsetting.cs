@@ -21,11 +21,6 @@ namespace TripleSix.Core.Appsettings
         public string ServiceVersion { get; set; } = "1.0.0";
 
         /// <summary>
-        /// Bật/tắt hiển thị trace trên console.
-        /// </summary>
-        public bool EnableConsoleExporter { get; set; } = false;
-
-        /// <summary>
         /// Bật/tắt gửi trace lên jarger.
         /// </summary>
         public bool EnableJaegerExporter { get; set; } = false;

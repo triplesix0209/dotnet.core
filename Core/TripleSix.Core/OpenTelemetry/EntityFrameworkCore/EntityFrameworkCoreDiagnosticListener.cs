@@ -44,7 +44,7 @@ namespace TripleSix.Core.OpenTelemetry
             this.options = options ?? new EntityFrameworkCoreInstrumentationOptions();
         }
 
-        public override bool SupportsNullActivity => true;
+        public override bool SupportsNullActivity => false;
 
         public override void OnCustom(string eventName, Activity? activity, object? payload)
         {
@@ -52,13 +52,9 @@ namespace TripleSix.Core.OpenTelemetry
             {
                 case EntityFrameworkCoreCommandCreated:
                     {
+                        if (Activity.Current == null) return;
                         activity = ActivityHelper.ActivitySource.StartActivity(ActivityName, ActivityKind.Client);
                         if (activity == null) return;
-                        if (activity.Parent == null)
-                        {
-                            activity.Dispose();
-                            return;
-                        }
 
                         var command = commandFetcher.Fetch(payload);
                         if (command == null)

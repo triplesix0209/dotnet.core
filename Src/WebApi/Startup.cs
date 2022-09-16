@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using TripleSix.Core.Appsettings;
@@ -57,17 +59,8 @@ namespace Sample.WebApi
                     .AddHttpClientInstrumentationEx();
                     //.AddQuartzInstrumentationEx();
 
-                if (openTelemetryAppsetting.EnableConsoleExporter)
-                    builder.AddConsoleExporter();
-
                 if (openTelemetryAppsetting.EnableJaegerExporter)
-                {
-                    builder.AddJaegerExporter(options =>
-                    {
-                        options.AgentHost = openTelemetryAppsetting.JaegerHost;
-                        options.AgentPort = openTelemetryAppsetting.JaegerPort;
-                    });
-                }
+                    builder.AddJaegerExporter(openTelemetryAppsetting);
             });
 
             #endregion

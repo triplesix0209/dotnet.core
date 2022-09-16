@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Instrumentation.Quartz;
 using OpenTelemetry.Trace;
 using Quartz.Impl;
+using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.OpenTelemetry.Shared;
 
@@ -48,6 +52,11 @@ namespace TripleSix.Core.OpenTelemetry
                     else if (eventName.Equals("OnStopActivity"))
                     {
                         if (rawObject is not HttpResponse httpResponse) return;
+                        if (httpResponse.StatusCode == 307)
+                        {
+                            activity.SetNoExport();
+                            return;
+                        }
 
                         activity.SetTag(SemanticConventions.AttributeHttpResponseContentLength, httpResponse.ContentLength);
 
@@ -141,6 +150,41 @@ namespace TripleSix.Core.OpenTelemetry
 
                 configureOptions?.Invoke(options);
             });
+        }
+
+        /// <summary>
+        /// Cài đặt Jaeger Exporter theo cấu hình Appsetting.
+        /// </summary>
+        /// <param name="builder"><see cref="TracerProviderBuilder"/> sẽ được cấu hình.</param>
+        /// <param name="appsetting"><see cref="OpenTelemetryAppsetting"/>.</param>
+        /// <param name="filter">Hàm lọc các activity.</param>
+        /// <returns><see cref="TracerProviderBuilder"/> sau khi được cấu hình.</returns>
+        public static TracerProviderBuilder AddJaegerExporter(this TracerProviderBuilder builder, OpenTelemetryAppsetting appsetting, Func<Activity, bool>? filter = default)
+        {
+            if (builder is null) throw new ArgumentNullException(nameof(builder));
+
+            var activityFilter = (Activity activity) =>
+            {
+                if (activity.IsNoExport()) return false;
+                return filter == null || filter(activity);
+            };
+
+            var configure = (JaegerExporterOptions options) =>
+            {
+                options.AgentHost = appsetting.JaegerHost;
+                options.AgentPort = appsetting.JaegerPort;
+            };
+
+            if (builder is IDeferredTracerProviderBuilder deferredTracerProviderBuilder)
+            {
+                return deferredTracerProviderBuilder.Configure((IServiceProvider sp, TracerProviderBuilder builder) =>
+                {
+                    var options = (IOptions<JaegerExporterOptions>?)sp.GetService(typeof(IOptions<JaegerExporterOptions>));
+                    TracerProviderBuilderHelper.AddJaegerExporter(builder, options?.Value ?? new JaegerExporterOptions(), configure, sp, activityFilter);
+                });
+            }
+
+            return TracerProviderBuilderHelper.AddJaegerExporter(builder, new JaegerExporterOptions(), configure, null, activityFilter);
         }
     }
 }
