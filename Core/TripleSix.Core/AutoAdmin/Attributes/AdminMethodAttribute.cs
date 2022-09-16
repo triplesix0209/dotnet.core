@@ -29,7 +29,7 @@
         /// <summary>
         /// Tên gọi.
         /// </summary>
-        public string Name { get; set; } = null;
+        public string? Name { get; set; } = null;
 
         /// <summary>
         /// Icon nhóm (mdi-icon).
