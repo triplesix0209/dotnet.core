@@ -31,5 +31,7 @@ namespace Sample.Data.DataContexts
         public DbSet<SettingEntity> Setting { get; set; }
 
         public DbSet<ObjectLogEntity> ObjectLog { get; set; }
+
+        public DbSet<TestEntity> Test { get; set; }
     }
 }

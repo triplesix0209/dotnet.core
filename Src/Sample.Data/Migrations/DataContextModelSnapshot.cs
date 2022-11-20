@@ -524,6 +524,42 @@ namespace Sample.Data.Migrations
                             Code = "setting.export",
                             CategoryName = "thiết lập",
                             Name = "xuất dữ liệu thiết lập"
+                        },
+                        new
+                        {
+                            Code = "test.create",
+                            CategoryName = "test",
+                            Name = "tạo test"
+                        },
+                        new
+                        {
+                            Code = "test.read",
+                            CategoryName = "test",
+                            Name = "xem test"
+                        },
+                        new
+                        {
+                            Code = "test.update",
+                            CategoryName = "test",
+                            Name = "sửa test"
+                        },
+                        new
+                        {
+                            Code = "test.delete",
+                            CategoryName = "test",
+                            Name = "xóa test"
+                        },
+                        new
+                        {
+                            Code = "test.changelog",
+                            CategoryName = "test",
+                            Name = "lịch sử thay đổi của test"
+                        },
+                        new
+                        {
+                            Code = "test.export",
+                            CategoryName = "test",
+                            Name = "xuất dữ liệu test"
                         });
                 });
 
@@ -755,6 +791,48 @@ namespace Sample.Data.Migrations
                             PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
                             ActualValue = true,
                             Value = 1
+                        },
+                        new
+                        {
+                            PermissionCode = "test.create",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            PermissionCode = "test.read",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            PermissionCode = "test.update",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            PermissionCode = "test.delete",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            PermissionCode = "test.changelog",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
+                        },
+                        new
+                        {
+                            PermissionCode = "test.export",
+                            PermissionGroupId = new Guid("41097c99-a6c7-4056-9ef5-be1de1fdfe77"),
+                            ActualValue = true,
+                            Value = 1
                         });
                 });
 
@@ -947,6 +1025,51 @@ namespace Sample.Data.Migrations
                             IsDeleted = false,
                             Value = "https://identity.okayla.vn/resetPassword/{0}"
                         });
+                });
+
+            modelBuilder.Entity("Sample.Data.Entities.TestEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime?>("CreateDatetime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("create_datetime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("creator_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdateDatetime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("update_datetime");
+
+                    b.Property<Guid?>("UpdaterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updater_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_test");
+
+                    b.ToTable("test");
                 });
 
             modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLogEntity", b =>

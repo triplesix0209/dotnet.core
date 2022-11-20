@@ -18,5 +18,10 @@
     "categoryCode": "setting",
     "categoryName": "thiết lập",
     "permissions": [ "read", "update", "changelog", "export" ]
+  },
+  {
+    "categoryCode": "test",
+    "categoryName": "test",
+    "permissions": [ "create", "read", "update", "delete", "changelog", "export" ]
   }
 ]
