@@ -8,9 +8,7 @@ namespace Sample.WebApi.Controllers.Admins
     [SwaggerTag("test")]
     [AdminController(
         AdminType = typeof(TestAdminDto),
-        GroupName = "hệ thống",
-        EnableCreate = false,
-        EnableDelete = false)]
+        GroupName = "hệ thống")]
     public class TestController : AdminController
     {
     }

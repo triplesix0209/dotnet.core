@@ -10,7 +10,7 @@ using Sample.Data.DataContexts;
 namespace Sample.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221120142616_Init")]
+    [Migration("20221120143319_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1037,7 +1037,6 @@ namespace Sample.Data.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("code");

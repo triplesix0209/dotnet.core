@@ -8,10 +8,6 @@ namespace Sample.Data.Entities
     {
         [Required]
         [MaxLength(100)]
-        public override string Code { get; set; }
-
-        [Required]
-        [MaxLength(100)]
         public string Name { get; set; }
 
         protected override void ModelConfigure(EntityTypeBuilder<SettingEntity> builder)

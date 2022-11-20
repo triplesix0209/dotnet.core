@@ -87,8 +87,8 @@ namespace Sample.Data.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     create_datetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     update_datetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
