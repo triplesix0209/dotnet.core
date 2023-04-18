@@ -1,0 +1,13 @@
+﻿global using System.ComponentModel;
+global using System.ComponentModel.DataAnnotations;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Sample.Domain.Entities;
+global using Sample.Domain.Types;
+global using TripleSix.Core.AutoAdmin;
+global using TripleSix.Core.DataContext;
+global using TripleSix.Core.Entities;
+global using TripleSix.Core.Helpers;
+global using TripleSix.Core.Mappers;
+global using TripleSix.Core.Types;
+global using TripleSix.Core.Validation;
