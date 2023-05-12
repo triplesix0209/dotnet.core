@@ -12,6 +12,8 @@ namespace TripleSix.Core.Mappers
 {
     public abstract class GlobalMapper : BaseMapper
     {
+        protected string[] excludeAssemblyNames = Array.Empty<string>();
+
         protected GlobalMapper()
         {
             CreateProfile();
@@ -22,6 +24,7 @@ namespace TripleSix.Core.Mappers
         protected virtual IEnumerable<Type> SelectEntityType()
         {
             return AppDomain.CurrentDomain.GetAssemblies()
+                .Where(assembly => !excludeAssemblyNames.Contains(assembly.GetName().Name))
                 .SelectMany(assembly => assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => t.IsAssignableTo<IEntity>())
@@ -44,6 +47,7 @@ namespace TripleSix.Core.Mappers
             }
 
             var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(assembly => !excludeAssemblyNames.Contains(assembly.GetName().Name))
                     .SelectMany(assembly => assembly.GetTypes()
                     .Where(t => t.IsPublic))
                     .Where(t => !t.IsAbstract)
