@@ -52,7 +52,7 @@ namespace TripleSix.Core.Mappers
                 .Where(t => t.IsAssignableTo<IAdminDto>());
             foreach (var adminDto in adminDtos)
             {
-                var entityType = adminDto.GetEntityType();
+                var entityType = adminDto.GetEntityType(excludeAssemblyNames);
                 if (entityType is null) continue;
                 CreateMapAdmin(entityType, adminDto);
             }

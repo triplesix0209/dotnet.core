@@ -8,7 +8,7 @@ namespace TripleSix.Core.AutoAdmin
 {
     public static class AdminHelper
     {
-        public static Type GetEntityType(this Type adminType)
+        public static Type GetEntityType(this Type adminType, string[] excludeAssemblyNames = null)
         {
             if (adminType is null || !adminType.IsAssignableTo<IAdminDto>())
                 return null;
@@ -29,6 +29,7 @@ namespace TripleSix.Core.AutoAdmin
 
             if (entityName.IsNullOrWhiteSpace()) return null;
             return AppDomain.CurrentDomain.GetAssemblies()
+                .Where(assembly => excludeAssemblyNames == null || !excludeAssemblyNames.Contains(assembly.GetName().Name))
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
