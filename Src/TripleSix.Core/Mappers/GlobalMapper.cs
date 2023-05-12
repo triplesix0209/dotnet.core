@@ -12,19 +12,17 @@ namespace TripleSix.Core.Mappers
 {
     public abstract class GlobalMapper : BaseMapper
     {
-        protected string[] excludeAssemblyNames = Array.Empty<string>();
-
-        protected GlobalMapper()
+        protected GlobalMapper(string[] excludeAssemblyNames = null)
         {
-            CreateProfile();
             CreateMap<string, Phone>().ConvertUsing(s => new Phone(s));
             CreateMap<Phone, string>().ConvertUsing(s => s == null ? null : s.ToString());
+            CreateProfile(excludeAssemblyNames);
         }
 
-        protected virtual IEnumerable<Type> SelectEntityType()
+        protected virtual IEnumerable<Type> SelectEntityType(string[] excludeAssemblyNames = null)
         {
             return AppDomain.CurrentDomain.GetAssemblies()
-                .Where(assembly => !excludeAssemblyNames.Contains(assembly.GetName().Name))
+                .Where(assembly => excludeAssemblyNames == null || !excludeAssemblyNames.Contains(assembly.GetName().Name))
                 .SelectMany(assembly => assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => t.IsAssignableTo<IEntity>())
@@ -33,7 +31,7 @@ namespace TripleSix.Core.Mappers
 
         protected abstract IEnumerable<Type> SelectDtoType(string objectName);
 
-        private void CreateProfile()
+        protected virtual void CreateProfile(string[] excludeAssemblyNames = null)
         {
             foreach (var entityType in SelectEntityType())
             {
@@ -47,11 +45,11 @@ namespace TripleSix.Core.Mappers
             }
 
             var adminDtos = AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(assembly => !excludeAssemblyNames.Contains(assembly.GetName().Name))
-                    .SelectMany(assembly => assembly.GetTypes()
-                    .Where(t => t.IsPublic))
-                    .Where(t => !t.IsAbstract)
-                    .Where(t => t.IsAssignableTo<IAdminDto>());
+                .Where(assembly => excludeAssemblyNames == null || !excludeAssemblyNames.Contains(assembly.GetName().Name))
+                .SelectMany(assembly => assembly.GetTypes()
+                .Where(t => t.IsPublic))
+                .Where(t => !t.IsAbstract)
+                .Where(t => t.IsAssignableTo<IAdminDto>());
             foreach (var adminDto in adminDtos)
             {
                 var entityType = adminDto.GetEntityType();
