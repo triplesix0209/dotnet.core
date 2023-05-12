@@ -16,9 +16,10 @@ namespace TripleSix.Core.Quartz
 
         public IComponentContext Container { get; set; }
 
-        public void Start()
+        public void Start(string[] excludeAssemblyNames = null)
         {
             var jobTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(assembly => excludeAssemblyNames == null || !excludeAssemblyNames.Contains(assembly.GetName().Name))
                 .SelectMany(assembly => assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
