@@ -21,8 +21,7 @@ namespace Sample.Application.Services
             var code = (selector?.Body as MemberExpression)?.Member.Name;
             if (code.IsNullOrEmpty()) throw new EntityNotFoundException(typeof(Setting));
 
-            var query = Query
-                .Where(x => x.Code == code);
+            var query = Query.Where(x => x.Code == code);
             var setting = await GetFirst(query);
 
             return setting.Value;

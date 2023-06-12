@@ -3,11 +3,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Autofac;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Mappers;
 using TripleSix.Core.Types;
 using TripleSix.Core.Validation;
 
@@ -15,6 +17,8 @@ namespace TripleSix.Core.WebApi
 {
     public static class SwaggerHelper
     {
+        private const string FilterDtoPostfix = "FilterDto";
+
         public static OpenApiSchema GenerateSwaggerSchema(
             this Type objectType,
             ISchemaGenerator schemaGenerator,
@@ -100,6 +104,24 @@ namespace TripleSix.Core.WebApi
             }
 
             var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName.ToTitleCase();
+            var autoDisplayName = displayName == null;
+            if (autoDisplayName)
+            {
+                displayName ??= propertyInfo.DeclaringType?
+                    .GetCustomAttribute<MapFromEntityAttribute>()?
+                    .EntityType.GetProperty(propertyInfo.Name)?
+                    .GetCustomAttribute<CommentAttribute>()?.Comment;
+                displayName ??= propertyInfo.DeclaringType?
+                    .GetRawGeneric(typeof(BaseQueryDto<>))?
+                    .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
+                    .GetCustomAttribute<CommentAttribute>()?.Comment;
+
+                if (!displayName.IsNullOrWhiteSpace())
+                {
+                    if (propertyInfo.DeclaringType?.Name.EndsWith(FilterDtoPostfix) == true) displayName = "Lọc theo " + displayName;
+                }
+            }
+
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();
             result.Description = new[] { displayName, description }.Where(x => !x.IsNullOrWhiteSpace()).ToString("<br/>")
                 + result.Description;

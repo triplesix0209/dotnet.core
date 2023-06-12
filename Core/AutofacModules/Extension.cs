@@ -11,7 +11,6 @@ using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
 using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.AutoAdmin;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
@@ -65,11 +64,13 @@ namespace TripleSix.Core.AutofacModules
         /// Đăng ký các mapper dưới dạng InstancePerLifetimeScope với IMapper.
         /// </summary>
         /// <param name="builder">Container builder.</param>
-        /// <param name="assembly">Assembly chứa các mapper để scan.</param>
+        /// <param name="assembly">Assembly chứa các mapper và dto để scan.</param>
+        /// <param name="entityAssembly">Assembly chứa các entity để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
         public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAllMapper(
             this ContainerBuilder builder,
-            Assembly assembly)
+            Assembly assembly,
+            Assembly entityAssembly)
         {
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -88,8 +89,7 @@ namespace TripleSix.Core.AutofacModules
                     .Where(x => !x.IsAbstract)
                     .Where(x => x.IsAssignableTo<BaseMapper>());
 
-                config.AddProfile(new DefaultMapper(assembly));
-                config.AddProfile(new AutoAdminMapper(assembly));
+                config.AddProfile(new DefaultMapper(entityAssembly, assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));
             }))
                 .SingleInstance()

@@ -19,13 +19,13 @@ namespace Sample.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, comment: "Tên gọi")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DeleteAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian khởi tạo"),
+                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người tạo", collation: "ascii_general_ci"),
+                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
+                    UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người chỉnh sửa", collation: "ascii_general_ci"),
+                    DeleteAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian xóa")
                 },
                 constraints: table =>
                 {
@@ -38,17 +38,17 @@ namespace Sample.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Code = table.Column<string>(type: "varchar(255)", nullable: false)
+                    Code = table.Column<string>(type: "varchar(255)", nullable: false, comment: "Mã")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Value = table.Column<string>(type: "longtext", nullable: true)
+                    Value = table.Column<string>(type: "longtext", nullable: true, comment: "Giá trị")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: true)
+                    Description = table.Column<string>(type: "longtext", nullable: true, comment: "Mô tả")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DeleteAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian khởi tạo"),
+                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người tạo", collation: "ascii_general_ci"),
+                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
+                    UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người chỉnh sửa", collation: "ascii_general_ci"),
+                    DeleteAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian xóa")
                 },
                 constraints: table =>
                 {

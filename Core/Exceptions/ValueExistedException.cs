@@ -34,10 +34,8 @@ namespace TripleSix.Core.Exceptions
         /// </summary>
         public virtual string ValueName { get; }
 
-        /// <inheritdoc/>
         public override int HttpCodeStatus => 500;
 
-        /// <inheritdoc/>
         public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
         {
             return new ErrorResult(HttpCodeStatus, Code, Message, new { ValueName });

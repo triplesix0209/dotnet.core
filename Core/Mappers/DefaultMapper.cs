@@ -12,12 +12,12 @@ namespace TripleSix.Core.Mappers
     /// </summary>
     internal class DefaultMapper : BaseMapper
     {
-        public DefaultMapper(Assembly assembly)
+        public DefaultMapper(Assembly entityAssembly, Assembly dtoAssembly)
         {
-            var entityTypes = assembly.GetExportedTypes()
+            var entityTypes = entityAssembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IEntity>());
-            var dtoTypes = assembly.GetExportedTypes()
+            var dtoTypes = dtoAssembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IDto>());
 

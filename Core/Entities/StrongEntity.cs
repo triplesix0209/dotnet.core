@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TripleSix.Core.Entities
@@ -12,34 +13,32 @@ namespace TripleSix.Core.Entities
         IStrongEntity
         where TEntity : class, IStrongEntity
     {
-        /// <inheritdoc/>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Id { get; set; }
 
-        /// <inheritdoc/>
-        public virtual DateTime? DeleteAt { get; set; }
-
-        /// <inheritdoc/>
+        [Comment("Thời gian khởi tạo")]
         public virtual DateTime? CreateAt { get; set; }
 
-        /// <inheritdoc/>
+        [Comment("Id người tạo")]
         public virtual Guid? CreatorId { get; set; }
 
-        /// <inheritdoc/>
+        [Comment("Thời gian chỉnh sửa cuối")]
         public virtual DateTime? UpdateAt { get; set; }
 
-        /// <inheritdoc/>
+        [Comment("Id người chỉnh sửa")]
         public virtual Guid? UpdatorId { get; set; }
 
-        /// <inheritdoc/>
+        [Comment("Thời gian xóa")]
+        public virtual DateTime? DeleteAt { get; set; }
+
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.HasIndex(x => x.DeleteAt);
             builder.HasIndex(x => x.CreateAt);
             builder.HasIndex(x => x.CreatorId);
             builder.HasIndex(x => x.UpdateAt);
             builder.HasIndex(x => x.UpdatorId);
+            builder.HasIndex(x => x.DeleteAt);
         }
     }
 }

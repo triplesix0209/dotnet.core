@@ -29,24 +29,30 @@ namespace Sample.Infrastructure.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("CreateAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Thời gian khởi tạo");
 
                     b.Property<Guid?>("CreatorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasComment("Id người tạo");
 
                     b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Thời gian xóa");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(100)")
+                        .HasComment("Tên gọi");
 
                     b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Thời gian chỉnh sửa cuối");
 
                     b.Property<Guid?>("UpdatorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasComment("Id người chỉnh sửa");
 
                     b.HasKey("Id");
 
@@ -80,28 +86,36 @@ namespace Sample.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasComment("Mã");
 
                     b.Property<DateTime?>("CreateAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Thời gian khởi tạo");
 
                     b.Property<Guid?>("CreatorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasComment("Id người tạo");
 
                     b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Thời gian xóa");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasComment("Mô tả");
 
                     b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasComment("Thời gian chỉnh sửa cuối");
 
                     b.Property<Guid?>("UpdatorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasComment("Id người chỉnh sửa");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasComment("Giá trị");
 
                     b.HasKey("Id");
 

@@ -57,7 +57,7 @@ namespace TripleSix.Core.Services
         /// <summary>
         /// Kiểm tra có bất kỳ entity.
         /// </summary>
-        /// <param name="query">Query sử dụng để truy vấn, mặc định sẽ query toàn bộ bảng.</param>
+        /// <param name="query">Query sử dụng để truy vấn.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param
         /// <returns><c>True</c> nếu có bất kỳ entity nào tồn tại, ngược lại là <c>False</c>.</returns>
         Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default);
@@ -73,7 +73,7 @@ namespace TripleSix.Core.Services
         /// <summary>
         /// Đếm số lượng tất cả các entity.
         /// </summary>
-        /// <param name="query">Query sử dụng để truy vấn, mặc định sẽ query toàn bộ bảng.</param>
+        /// <param name="query">Query sử dụng để truy vấn.</param>
         /// <param name="cancellationToken">Token để cancel tiến trình.</param
         /// <returns>Số lượng entity.</returns>
         Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default);

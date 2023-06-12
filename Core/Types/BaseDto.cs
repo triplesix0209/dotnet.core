@@ -14,10 +14,9 @@ namespace TripleSix.Core.Types
         private static readonly Dictionary<Type, IValidator?> _defaultValidators = new();
         private readonly HashSet<string> _propertyTracking = new();
 
-        /// <inheritdoc/>
         public ValidationResult Validate(IValidator? validator = default, HttpContext? httpContext = default, bool throwOnFailures = false)
         {
-            if (validator == null) validator = GetDefaultValidator();
+            validator ??= GetDefaultValidator();
             if (validator == null) return new ValidationResult();
 
             var context = ValidationContext<IDto>.CreateWithOptions(this, options => { if (throwOnFailures) options.ThrowOnFailures(); });
@@ -26,19 +25,16 @@ namespace TripleSix.Core.Types
             return validator.Validate(context);
         }
 
-        /// <inheritdoc/>
         public virtual bool IsAnyPropertyChanged()
         {
             return _propertyTracking.Any();
         }
 
-        /// <inheritdoc/>
         public virtual bool IsPropertyChanged(string name)
         {
             return _propertyTracking.Any(x => x == name);
         }
 
-        /// <inheritdoc/>
         public virtual void SetPropertyChanged(string name, bool value)
         {
             if (value) _propertyTracking.Add(name);

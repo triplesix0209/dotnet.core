@@ -20,7 +20,6 @@ namespace Sample.Domain
 
             builder.RegisterIdentityContext<IdentityContext>();
             builder.RegisterAllAppsetting(assembly);
-            builder.RegisterAllMapper(assembly);
         }
     }
 }

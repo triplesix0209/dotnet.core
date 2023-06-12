@@ -8,12 +8,12 @@
         where TEntity : IStrongEntity
     {
         /// <summary>
-        /// Id cha.
+        /// Id mục cha.
         /// </summary>
         public Guid? ParentId { get; set; }
 
         /// <summary>
-        /// Cấp con.
+        /// Số thứ tự cấp.
         /// </summary>
         int HierarchyLevel { get; set; }
 

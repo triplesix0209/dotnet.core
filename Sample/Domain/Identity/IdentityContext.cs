@@ -8,8 +8,6 @@ namespace Sample.Domain.Identity
         public IdentityContext(HttpContext? httpContext)
             : base(httpContext)
         {
-            var tokenData = GetAccessTokenData(httpContext);
-            if (tokenData == null) return;
         }
     }
 }

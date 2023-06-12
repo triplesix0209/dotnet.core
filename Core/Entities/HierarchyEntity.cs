@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TripleSix.Core.Entities
 {
@@ -6,19 +7,17 @@ namespace TripleSix.Core.Entities
         IHierarchyEntity<TEntity>
         where TEntity : class, IHierarchyEntity<TEntity>
     {
-        /// <inheritdoc/>
+        [Comment("Id mục cha")]
         public virtual Guid? ParentId { get; set; }
 
-        /// <inheritdoc/>
+        [Comment("Số thứ tự cấp")]
         public virtual int HierarchyLevel { get; set; }
 
-        /// <inheritdoc/>
+        [Comment("Mục cha")]
         public virtual TEntity? Parent { get; set; }
 
-        /// <inheritdoc/>
         public virtual List<TEntity>? Childs { get; set; }
 
-        /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
             base.Configure(builder);

@@ -18,7 +18,6 @@ namespace Sample.WebApi
 
             builder.RegisterAllQuartzJob(assembly);
             builder.RegisterAllController(assembly);
-            builder.RegisterAllAdminMethod(assembly);
         }
     }
 }

@@ -10,7 +10,6 @@ namespace TripleSix.Core.Types
         IQueryableDto<TEntity>
         where TEntity : IEntity
     {
-        /// <inheritdoc/>
         public abstract IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query);
     }
 }

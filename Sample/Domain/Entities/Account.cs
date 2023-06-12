@@ -2,7 +2,7 @@
 {
     public class Account : StrongEntity<Account>
     {
-        [Required]
+        [Comment("Tên gọi")]
         [MaxLength(100)]
         public string Name { get; set; }
 

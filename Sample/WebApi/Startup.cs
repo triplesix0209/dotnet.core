@@ -25,12 +25,10 @@ namespace Sample.WebApi
 
         public static void ConfigureMvc(MvcOptions options)
         {
-            options.Conventions.Add(new AutoAdminControllerRouteConvention(_assembly));
         }
 
         public static void ConfigureApplicationPartManager(ApplicationPartManager options)
         {
-            options.FeatureProviders.Add(new AutoAdminControllerFeatureProvider(_assembly));
         }
 
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
@@ -38,18 +36,6 @@ namespace Sample.WebApi
             var assembly = Assembly.GetExecutingAssembly();
             builder.Services.AddHttpContextAccessor();
             builder.Services.ConfigureMvcService(ConfigureMvc, ConfigureApplicationPartManager);
-
-            #region [authentication]
-
-            builder.Services
-                .AddAuthentication(option =>
-                {
-                    option.DefaultAuthenticateScheme = "access-token";
-                    option.DefaultChallengeScheme = "access-token";
-                })
-                .AddScheme<AccessTokenSchemeOption, AccessTokenSchemeHandler>("access-token", option => { });
-
-            #endregion
 
             #region [swagger]
 
@@ -65,8 +51,6 @@ namespace Sample.WebApi
                     Name = "Authorization",
                     Description = "Nhập access token vào field của header để tiến hành xác thực",
                 });
-
-                options.OperationFilter<AuthenticationOperationFilter>("access-token");
             });
 
             #endregion

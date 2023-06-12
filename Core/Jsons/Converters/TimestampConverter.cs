@@ -8,9 +8,7 @@ namespace TripleSix.Core.Jsons
     {
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.Value == null)
-                return null;
-
+            if (reader.Value == null) return null;
             return ((long)reader.Value).ToDateTime();
         }
 

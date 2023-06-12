@@ -59,6 +59,30 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
+        /// Lấy raw generic type.
+        /// </summary>
+        /// <param name="type">Type cần kiểm tra.</param>
+        /// <param name="genericType">Raw generic type làm đối chiếu.</param>
+        /// <returns>Raw generic type.</returns>
+        public static Type? GetRawGeneric(this Type type, Type genericType)
+        {
+            if (!genericType.IsGenericType)
+                throw new ArgumentException("must be generic type", nameof(genericType));
+
+            while (type != null && type != typeof(object))
+            {
+                var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                if (genericType == cur)
+                    return type;
+
+                if (type.BaseType == null) break;
+                type = type.BaseType;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Lấy chính xác type, nếu type có thể null thì trả về type gốc.
         /// </summary>
         /// <param name="type">Type cần xử lý.</param>
