@@ -18,32 +18,30 @@ namespace TripleSix.Core.Entities
         public virtual Guid Id { get; set; }
 
         /// <inheritdoc/>
-        public virtual bool IsDeleted { get; set; }
+        public virtual DateTime? DeleteAt { get; set; }
 
         /// <inheritdoc/>
-        public virtual DateTime? CreateDateTime { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual DateTime? CreateAt { get; set; }
 
         /// <inheritdoc/>
         public virtual Guid? CreatorId { get; set; }
 
         /// <inheritdoc/>
-        public virtual DateTime? UpdateDateTime { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public virtual DateTime? UpdateAt { get; set; }
 
         /// <inheritdoc/>
         public virtual Guid? UpdatorId { get; set; }
 
         /// <inheritdoc/>
-        public virtual string? Code { get; set; }
-
-        /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.HasIndex(x => x.IsDeleted);
-            builder.HasIndex(x => x.CreateDateTime);
+            builder.HasIndex(x => x.DeleteAt);
+            builder.HasIndex(x => x.CreateAt);
             builder.HasIndex(x => x.CreatorId);
-            builder.HasIndex(x => x.UpdateDateTime);
+            builder.HasIndex(x => x.UpdateAt);
             builder.HasIndex(x => x.UpdatorId);
-            builder.HasIndex(x => x.Code);
         }
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// Thời gian chỉnh sửa cuối.
         /// </summary>
-        DateTime? UpdateDateTime { get; set; }
+        DateTime? UpdateAt { get; set; }
 
         /// <summary>
         /// Id người chỉnh sửa cuối.

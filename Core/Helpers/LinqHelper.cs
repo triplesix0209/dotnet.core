@@ -24,7 +24,7 @@ namespace TripleSix.Core.Helpers
             this IQueryable<TEntity> query)
             where TEntity : IStrongEntity
         {
-            return query.Where(x => !x.IsDeleted);
+            return query.Where(x => x.DeleteAt == null);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace TripleSix.Core.Helpers
             where TResult : class
         {
             if (typeof(TResult).IsAssignableTo<IEntity>())
-                    return (await query.ToArrayAsync(cancellationToken)).Cast<TResult>().ToList();
+                return (await query.ToArrayAsync(cancellationToken)).Cast<TResult>().ToList();
 
             return await query
                 .ProjectTo<TResult>(mapper.ConfigurationProvider)

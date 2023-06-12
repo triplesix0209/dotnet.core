@@ -5,7 +5,7 @@
         public DbSettingItem SessionLifetime => new(Guid.Parse("22ccd8c5-6656-48f5-a73e-8d75895c9adc"))
         {
             Description = "Thời gian sống của session (phút)",
-            DefaultValue = "120",
+            DefaultValue = "240",
         };
     }
 }

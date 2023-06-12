@@ -9,14 +9,14 @@ namespace TripleSix.Core.AutoAdmin
         [AdminProperty(Render = false)]
         public virtual Guid Id { get; set; }
 
-        [DisplayName("Mục bị xóa?")]
+        [DisplayName("Thời gian xóa")]
         [AdminProperty(Render = false)]
-        public virtual bool IsDeleted { get; set; }
+        public virtual DateTime? DeleteAt { get; set; }
 
         [DisplayName("Thời gian tạo")]
-        public virtual DateTime? CreateDateTime { get; set; }
+        public virtual DateTime? CreateAt { get; set; }
 
         [DisplayName("Thời gian sửa")]
-        public virtual DateTime? UpdateDateTime { get; set; }
+        public virtual DateTime? UpdateAt { get; set; }
     }
 }

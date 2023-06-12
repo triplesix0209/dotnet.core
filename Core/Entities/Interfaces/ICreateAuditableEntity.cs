@@ -8,7 +8,7 @@
         /// <summary>
         /// Thời gian tạo.
         /// </summary>
-        DateTime? CreateDateTime { get; set; }
+        DateTime? CreateAt { get; set; }
 
         /// <summary>
         /// Id người tạo.

@@ -12,7 +12,7 @@ namespace TripleSix.Core.AutoAdmin
         public string? Note { get; set; }
 
         [DisplayName("Thời gian thao tác")]
-        public DateTime? CreateDateTime { get; set; }
+        public DateTime? CreateAt { get; set; }
 
         [DisplayName("Thông tin người thao tác")]
         public ActorDto? Actor { get; set; }

@@ -7,8 +7,7 @@
         IIdentifiableEntity,
         ISoftDeletableEntity,
         ICreateAuditableEntity,
-        IUpdateAuditableEntity,
-        IHasCodeEntity
+        IUpdateAuditableEntity
     {
     }
 }

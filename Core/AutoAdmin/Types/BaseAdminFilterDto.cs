@@ -12,14 +12,14 @@ namespace TripleSix.Core.AutoAdmin
         [AdminProperty(Render = false)]
         public FilterParameter<Guid> Id { get; set; }
 
-        [DisplayName("Lọc theo trạng thái đã xóa")]
-        public FilterParameter<bool> IsDeleted { get; set; }
+        [DisplayName("Lọc theo thời gian xóa")]
+        public FilterParameter<DateTime> DeleteAt { get; set; }
 
         [DisplayName("Lọc theo thời gian tạo")]
-        public FilterParameter<DateTime> CreateDateTime { get; set; }
+        public FilterParameter<DateTime> CreateAt { get; set; }
 
         [DisplayName("Lọc theo thời gian sửa")]
-        public FilterParameter<DateTime> UpdateDateTime { get; set; }
+        public FilterParameter<DateTime> UpdateAt { get; set; }
 
         [DisplayName("Lọc theo người tạo")]
         [AdminProperty(Render = false)]

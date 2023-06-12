@@ -87,9 +87,9 @@ namespace TripleSix.Core.AutoAdmin
         private static readonly string[] _skipProperties = new[]
         {
             nameof(IIdentifiableEntity.Id),
-            nameof(ICreateAuditableEntity.CreateDateTime),
+            nameof(ICreateAuditableEntity.CreateAt),
             nameof(ICreateAuditableEntity.CreatorId),
-            nameof(IUpdateAuditableEntity.UpdateDateTime),
+            nameof(IUpdateAuditableEntity.UpdateAt),
             nameof(IUpdateAuditableEntity.UpdatorId),
         };
 
@@ -190,7 +190,7 @@ namespace TripleSix.Core.AutoAdmin
             var query = LogDb.ObjectLog
                 .Where(x => x.ObjectType == objectType)
                 .Where(x => x.ObjectId == objectId)
-                .OrderByDescending(x => x.CreateDateTime);
+                .OrderByDescending(x => x.CreateAt);
 
             var total = await query.LongCountAsync();
             var data = await query.ToListAsync<ChangeLogItemDto>(Mapper, cancellationToken);

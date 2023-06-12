@@ -15,7 +15,7 @@ namespace TripleSix.Core.AutoAdmin
         public virtual Guid Id { get; set; }
 
         /// <inheritdoc/>
-        public virtual DateTime? CreateDateTime { get; set; }
+        public virtual DateTime? CreateAt { get; set; }
 
         /// <inheritdoc/>
         public virtual Guid? CreatorId { get; set; }
@@ -35,7 +35,7 @@ namespace TripleSix.Core.AutoAdmin
         {
             base.Configure(builder);
 
-            builder.HasIndex(x => x.CreateDateTime);
+            builder.HasIndex(x => x.CreateAt);
             builder.HasIndex(x => x.CreatorId);
         }
     }

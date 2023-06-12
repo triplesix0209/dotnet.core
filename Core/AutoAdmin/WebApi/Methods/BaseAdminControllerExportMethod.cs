@@ -16,8 +16,8 @@ namespace TripleSix.Core.AutoAdmin
     {
         private static readonly string[] _excludeProperties = new[]
         {
-            nameof(BaseAdminItemDto.IsDeleted),
-            nameof(BaseAdminItemDto.UpdateDateTime),
+            nameof(BaseAdminItemDto.DeleteAt),
+            nameof(BaseAdminItemDto.UpdateAt),
         };
 
         public IStrongService<TEntity> Service { get; set; }

@@ -2,7 +2,6 @@
 {
     public class Setting : StrongEntity<Setting>
     {
-        [Required]
         public string Code { get; set; }
 
         public string? Value { get; set; }

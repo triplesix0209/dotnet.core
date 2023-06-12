@@ -25,37 +25,6 @@ namespace TripleSix.Core.Services
         {
         }
 
-        /// <summary>
-        /// Khởi tạo entity kèm code tự phát sinh.
-        /// </summary>
-        /// <param name="entity"><inheritdoc/></param>
-        /// <param name="cancellationToken"><inheritdoc/></param>
-        /// <returns><inheritdoc/></returns>
-        public override sealed Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
-        {
-            return Create(entity, true, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public virtual Task<string?> GenerateCode(TEntity? entity = default, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult<string?>(null);
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default)
-        {
-            // tự phát sinh mã nếu không được nhập
-            if (generateCode && entity.Code.IsNullOrWhiteSpace())
-            {
-                entity.Code = await GenerateCode(entity);
-                if (entity.Code.IsNullOrWhiteSpace())
-                    entity.Code = null;
-            }
-
-            return await base.Create(entity, cancellationToken);
-        }
-
         /// <inheritdoc/>
         public async Task Update(Guid id, bool includeDeleted, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
         {
@@ -82,7 +51,7 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            entity.IsDeleted = true;
+            entity.DeleteAt = DateTime.UtcNow;
 
             _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true, cancellationToken);
@@ -100,7 +69,7 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            entity.IsDeleted = false;
+            entity.DeleteAt = null;
 
             _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true, cancellationToken);
@@ -117,7 +86,7 @@ namespace TripleSix.Core.Services
         public async Task<bool> Any(bool includeDeleted, CancellationToken cancellationToken = default)
         {
             var query = Query
-                .WhereIf(includeDeleted == false, x => !x.IsDeleted);
+                .WhereIf(includeDeleted == false, x => x.DeleteAt == null);
 
             return await Any(query, cancellationToken);
         }
@@ -126,7 +95,7 @@ namespace TripleSix.Core.Services
         public async Task<long> Count(bool includeDeleted, CancellationToken cancellationToken = default)
         {
             var query = Query
-                .WhereIf(includeDeleted == false, x => !x.IsDeleted);
+                .WhereIf(includeDeleted == false, x => x.DeleteAt == null);
 
             return await Count(query, cancellationToken);
         }
@@ -138,7 +107,7 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             var query = Query
-                .WhereIf(includeDeleted == false, x => !x.IsDeleted)
+                .WhereIf(includeDeleted == false, x => x.DeleteAt == null)
                 .Where(x => x.Id == id);
 
             if (typeof(TResult) == typeof(TEntity))

@@ -11,23 +11,6 @@ namespace TripleSix.Core.Services
         where TEntity : class, IStrongEntity
     {
         /// <summary>
-        /// Hàm phát sinh entity.
-        /// </summary>
-        /// <param name="entity">Entity đính kèm trong quá trình phát sinh mã.</param>
-        /// <param name="cancellationToken">Token để cancel task.</param>
-        /// <returns>Mã số được phát sinh.</returns>
-        Task<string?> GenerateCode(TEntity? entity = default, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Khởi tạo entity.
-        /// </summary>
-        /// <param name="entity">Entity sử dụng để ghi nhận.</param>
-        /// <param name="generateCode">Có phát sinh code hay không? Nếu entity đã có code thì sẽ không phát sinh.</param>
-        /// <param name="cancellationToken">Token để cancel task.</param>
-        /// <returns>Entity đã được tạo.</returns>
-        Task<TEntity> Create(TEntity entity, bool generateCode, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Cập nhật entity.
         /// </summary>
         /// <param name="id">Id của entity sẽ được cập nhật.</param>

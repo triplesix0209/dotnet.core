@@ -6,8 +6,8 @@
     public interface ISoftDeletableEntity : IEntity
     {
         /// <summary>
-        /// Đã bị đã xóa.
+        /// Thời gian xóa.
         /// </summary>
-        bool IsDeleted { get; set; }
+        DateTime? DeleteAt { get; set; }
     }
 }
