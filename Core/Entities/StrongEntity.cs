@@ -21,14 +21,12 @@ namespace TripleSix.Core.Entities
         public virtual DateTime? DeleteAt { get; set; }
 
         /// <inheritdoc/>
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual DateTime? CreateAt { get; set; }
 
         /// <inheritdoc/>
         public virtual Guid? CreatorId { get; set; }
 
         /// <inheritdoc/>
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public virtual DateTime? UpdateAt { get; set; }
 
         /// <inheritdoc/>

@@ -2,6 +2,7 @@
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.DataContext
 {
@@ -48,13 +49,55 @@ namespace TripleSix.Core.DataContext
 
         public new virtual int SaveChanges(bool autoAudit = true)
         {
-            if (!autoAudit) return base.SaveChanges();
+            if (autoAudit)
+            {
+                var now = DateTime.UtcNow;
+
+                var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+                foreach (var entity in addedEntities)
+                {
+                    var createAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreateAt));
+                    if (createAt != null && createAt.CurrentValue == null) createAt.CurrentValue = now;
+
+                    var updateAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateAt));
+                    if (updateAt != null && updateAt.CurrentValue == null) updateAt.CurrentValue = now;
+                }
+
+                var modifiedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
+                foreach (var entity in modifiedEntities)
+                {
+                    var updateAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateAt));
+                    if (updateAt != null) updateAt.CurrentValue = now;
+                }
+            }
+
             return base.SaveChanges();
         }
 
         public new virtual Task<int> SaveChangesAsync(bool autoAudit = true, CancellationToken cancellationToken = default)
         {
-            if (!autoAudit) return SaveChangesAsync(cancellationToken);
+            if (autoAudit)
+            {
+                var now = DateTime.UtcNow;
+
+                var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+                foreach (var entity in addedEntities)
+                {
+                    var createAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreateAt));
+                    if (createAt != null && createAt.CurrentValue == null) createAt.CurrentValue = now;
+
+                    var updateAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateAt));
+                    if (updateAt != null && updateAt.CurrentValue == null) updateAt.CurrentValue = now;
+                }
+
+                var modifiedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
+                foreach (var entity in modifiedEntities)
+                {
+                    var updateAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateAt));
+                    if (updateAt != null) updateAt.CurrentValue = now;
+                }
+            }
+
             return SaveChangesAsync(cancellationToken);
         }
 

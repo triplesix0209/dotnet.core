@@ -40,7 +40,7 @@ namespace TripleSix.Core.AutoAdmin
 
                     if (createDto != null)
                     {
-                        var map = CreateMap(createDto, entityType, MemberList.Destination);
+                        var map = CreateMap(createDto, entityType, MemberList.Source);
                         var configToEntity = createDto.GetCustomAttribute<MapToEntityAttribute>();
                         if (configToEntity != null && configToEntity.IgnoreUnmapedProperties)
                         {
@@ -54,7 +54,7 @@ namespace TripleSix.Core.AutoAdmin
                     if (updateDto != null)
                     {
                         CreateMap(entityType, updateDto, MemberList.None);
-                        var map = CreateMap(updateDto, entityType, MemberList.Destination);
+                        var map = CreateMap(updateDto, entityType, MemberList.Source);
                         var configToEntity = updateDto.GetCustomAttribute<MapToEntityAttribute>();
                         if (configToEntity != null && configToEntity.IgnoreUnmapedProperties)
                         {
