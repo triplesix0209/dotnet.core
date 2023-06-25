@@ -135,7 +135,7 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var data = await GetFirstOrDefault<TResult>(query);
-            if (data == null) throw new EntityNotFoundException(typeof(TEntity));
+            if (data == null) throw new NotFoundException(typeof(TEntity));
             return data;
         }
 

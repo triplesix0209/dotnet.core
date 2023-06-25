@@ -61,7 +61,7 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
-        /// Lấy mục đầu tiên kèm Automapper, nếu không có sẽ báo lỗi <see cref="EntityNotFoundException"/>.
+        /// Lấy mục đầu tiên kèm Automapper, nếu không có sẽ báo lỗi <see cref="NotFoundException"/>.
         /// </summary>
         /// <typeparam name="TResult">Loại dữ liệu sẽ chuyển đổi.</typeparam>
         /// <param name="query">Câu query cần xử lý.</param>
@@ -81,7 +81,7 @@ namespace TripleSix.Core.Helpers
                 var entityType = query.GetType().GetInterfaces()
                     .First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IQueryable<>))
                     .GetGenericArguments()[0];
-                throw new EntityNotFoundException(entityType);
+                throw new NotFoundException(entityType);
             }
 
             return item;

@@ -3,24 +3,24 @@
     /// <summary>
     /// Lỗi không tìm thấy entity.
     /// </summary>
-    public class EntityNotFoundException : BaseException
+    public class NotFoundException : BaseException
     {
         /// <summary>
-        /// Khởi tạo <see cref="EntityNotFoundException"/>.
+        /// Khởi tạo <see cref="NotFoundException"/>.
         /// </summary>
         /// <param name="entityType">Loại entity.</param>
-        public EntityNotFoundException(Type entityType)
+        public NotFoundException(Type entityType)
             : base($"Không tìm thấy {entityType.Name}")
         {
             EntityType = entityType;
         }
 
         /// <summary>
-        /// Khởi tạo <see cref="EntityNotFoundException"/>.
+        /// Khởi tạo <see cref="NotFoundException"/>.
         /// </summary>
         /// <param name="entityType">Loại entity.</param>
         /// <param name="message"><inheritdoc/></param>
-        public EntityNotFoundException(Type entityType, string message)
+        public NotFoundException(Type entityType, string message)
             : base(message)
         {
             EntityType = entityType;
@@ -31,7 +31,6 @@
         /// </summary>
         public virtual Type EntityType { get; }
 
-        /// <inheritdoc/>
         public override int HttpCodeStatus => 404;
     }
 }

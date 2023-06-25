@@ -19,7 +19,7 @@ namespace Sample.Application.Services
         public async Task<string?> GetValue(Expression<Func<DbSettings, DbSettingItem>> selector)
         {
             var code = (selector?.Body as MemberExpression)?.Member.Name;
-            if (code.IsNullOrEmpty()) throw new EntityNotFoundException(typeof(Setting));
+            if (code.IsNullOrEmpty()) throw new NotFoundException(typeof(Setting));
 
             var query = Query.Where(x => x.Code == code);
             var setting = await GetFirst(query);

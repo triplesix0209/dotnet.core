@@ -1,4 +1,5 @@
-﻿global using System.ComponentModel.DataAnnotations;
+﻿global using System.ComponentModel;
+global using System.ComponentModel.DataAnnotations;
 global using Microsoft.EntityFrameworkCore;
 global using Sample.Application.Dto.Apps;
 global using Sample.Application.Dto.Commons;
