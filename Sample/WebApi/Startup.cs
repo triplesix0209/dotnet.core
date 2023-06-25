@@ -41,7 +41,7 @@ namespace Sample.WebApi
 
             builder.Services.AddSwagger(configuration, (options, appsetting) =>
             {
-                options.SwaggerDoc("common", new OpenApiInfo { Title = "Common API Document", Version = "1.0" });
+                options.SwaggerDoc("app", new OpenApiInfo { Title = "App API Document", Version = "1.0" });
                 options.SwaggerDoc("admin", new OpenApiInfo { Title = "Admin API Document", Version = "1.0" });
 
                 options.AddSecurityDefinition("access-token", new OpenApiSecurityScheme
@@ -71,6 +71,12 @@ namespace Sample.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
+
+            app.Use(next => context =>
+            {
+                context.Request.EnableBuffering();
+                return next(context);
+            });
             app.MapControllers();
 
             #endregion

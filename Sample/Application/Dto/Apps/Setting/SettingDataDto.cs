@@ -1,4 +1,4 @@
-﻿namespace Sample.Application.Dto
+﻿namespace Sample.Application.Dto.Apps
 {
     [MapFromEntity(typeof(Setting))]
     public class SettingDataDto : BaseDto

@@ -34,160 +34,157 @@ namespace TripleSix.Core.Services
         /// </summary>
         protected IQueryable<TEntity> Query => _db.Set<TEntity>();
 
-        public virtual async Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> Create(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
             _db.Set<TEntity>().Add(entity);
-            await _db.SaveChangesAsync(true, cancellationToken);
+            await _db.SaveChangesAsync(true);
             return entity;
         }
 
-        public async Task<TResult> CreateWithMapper<TResult>(IDto input, CancellationToken cancellationToken = default)
+        public async Task<TResult> CreateWithMapper<TResult>(IDto input)
             where TResult : class
         {
             var entity = Mapper.MapData<IDto, TEntity>(input);
-            var result = await Create(entity, cancellationToken);
+            var result = await Create(entity);
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
-        public virtual async Task Update(TEntity entity, Action<TEntity> updateMethod, CancellationToken cancellationToken = default)
+        public virtual async Task Update(TEntity entity, Action<TEntity> updateMethod)
         {
             using var activity = StartTraceMethodActivity();
 
             updateMethod(entity);
             _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true, cancellationToken);
+            await _db.SaveChangesAsync(true);
         }
 
-        public async Task UpdateWithMapper(TEntity entity, IDto input, CancellationToken cancellationToken = default)
+        public async Task UpdateWithMapper(TEntity entity, IDto input)
         {
             if (!input.IsAnyPropertyChanged()) return;
 
-            await Update(
-                entity,
-                e => Mapper.MapUpdate(input, e),
-                cancellationToken);
+            await Update(entity, e => Mapper.MapUpdate(input, e));
         }
 
-        public virtual async Task HardDelete(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task HardDelete(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
             _db.Set<TEntity>().Remove(entity);
-            await _db.SaveChangesAsync(true, cancellationToken);
+            await _db.SaveChangesAsync(true);
         }
 
-        public async Task<bool> Any(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<bool> Any(IQueryable<TEntity>? query = default)
         {
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            return await query.AnyAsync(cancellationToken);
+            return await query.AnyAsync();
         }
 
-        public async Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model)
         {
-            return await Any(model.ToQueryable(Query), cancellationToken);
+            return await Any(model.ToQueryable(Query));
         }
 
-        public async Task<long> Count(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<long> Count(IQueryable<TEntity>? query = default)
         {
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            return await query.LongCountAsync(cancellationToken);
+            return await query.LongCountAsync();
         }
 
-        public async Task<long> CountByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<long> CountByQueryModel(IQueryableDto<TEntity> model)
         {
-            return await Count(model.ToQueryable(Query), cancellationToken);
+            return await Count(model.ToQueryable(Query));
         }
 
-        public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
             if (!CanConvertEntityToModel<TResult>())
-                return await query.FirstOrDefaultAsync<TResult>(Mapper, cancellationToken);
+                return await query.FirstOrDefaultAsync<TResult>(Mapper);
 
-            var data = await query.FirstOrDefaultAsync(cancellationToken);
+            var data = await query.FirstOrDefaultAsync();
             if (data == null) return null;
-            return await ConvertEntityToModel<TResult>(data, cancellationToken);
+            return await ConvertEntityToModel<TResult>(data);
         }
 
-        public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default)
         {
-            return await GetFirstOrDefault<TEntity>(query, cancellationToken);
+            return await GetFirstOrDefault<TEntity>(query);
         }
 
-        public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model)
             where TResult : class
         {
-            return await GetFirstOrDefault<TResult>(model.ToQueryable(Query), cancellationToken);
+            return await GetFirstOrDefault<TResult>(model.ToQueryable(Query));
         }
 
-        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model)
         {
-            return await GetFirstOrDefault(model.ToQueryable(Query), cancellationToken);
+            return await GetFirstOrDefault(model.ToQueryable(Query));
         }
 
-        public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
-            var data = await GetFirstOrDefault<TResult>(query, cancellationToken);
+            var data = await GetFirstOrDefault<TResult>(query);
             if (data == null) throw new EntityNotFoundException(typeof(TEntity));
             return data;
         }
 
-        public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default)
         {
-            return await GetFirst<TEntity>(query, cancellationToken);
+            return await GetFirst<TEntity>(query);
         }
 
-        public async Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model)
             where TResult : class
         {
-            return await GetFirst<TResult>(model.ToQueryable(Query), cancellationToken);
+            return await GetFirst<TResult>(model.ToQueryable(Query));
         }
 
-        public async Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model)
         {
-            return await GetFirst(model.ToQueryable(Query), cancellationToken);
+            return await GetFirst(model.ToQueryable(Query));
         }
 
-        public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
             if (!CanConvertEntityToModel<TResult>())
-                return await query.ToListAsync<TResult>(Mapper, cancellationToken);
+                return await query.ToListAsync<TResult>(Mapper);
 
-            var data = await query.ToListAsync(cancellationToken);
-            return await ConvertEntityToModel<TResult>(data, cancellationToken);
+            var data = await query.ToListAsync();
+            return await ConvertEntityToModel<TResult>(data);
         }
 
-        public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default, CancellationToken cancellationToken = default)
+        public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default)
         {
-            return await GetList<TEntity>(query, cancellationToken);
+            return await GetList<TEntity>(query);
         }
 
-        public async Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model)
             where TResult : class
         {
-            return await GetList<TResult>(model.ToQueryable(Query), cancellationToken);
+            return await GetList<TResult>(model.ToQueryable(Query));
         }
 
-        public async Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model, CancellationToken cancellationToken = default)
+        public async Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model)
         {
-            return await GetList(model.ToQueryable(Query), cancellationToken);
+            return await GetList(model.ToQueryable(Query));
         }
 
-        public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
             where TResult : class
         {
             using var activity = StartTraceMethodActivity();
@@ -198,7 +195,7 @@ namespace TripleSix.Core.Services
             query ??= Query;
             var result = new Paging<TResult>(page, size)
             {
-                Total = await query.LongCountAsync(cancellationToken),
+                Total = await query.LongCountAsync(),
             };
 
             if (!CanConvertEntityToModel<TResult>())
@@ -206,34 +203,34 @@ namespace TripleSix.Core.Services
                 result.Items = await query
                     .Skip((page - 1) * size)
                     .Take(size)
-                    .ToListAsync<TResult>(Mapper, cancellationToken);
+                    .ToListAsync<TResult>(Mapper);
             }
             else
             {
                 var data = await query
                     .Skip((page - 1) * size)
                     .Take(size)
-                    .ToListAsync(cancellationToken);
-                result.Items = await ConvertEntityToModel<TResult>(data, cancellationToken);
+                    .ToListAsync();
+                result.Items = await ConvertEntityToModel<TResult>(data);
             }
 
             return result;
         }
 
-        public async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
         {
-            return await GetPage<TEntity>(query, page, size, cancellationToken);
+            return await GetPage<TEntity>(query, page, size);
         }
 
-        public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10)
             where TResult : class
         {
-            return await GetPage<TResult>(model.ToQueryable(Query), page, size, cancellationToken);
+            return await GetPage<TResult>(model.ToQueryable(Query), page, size);
         }
 
-        public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10, CancellationToken cancellationToken = default)
+        public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
-            return await GetPage(model.ToQueryable(Query), page, size, cancellationToken);
+            return await GetPage(model.ToQueryable(Query), page, size);
         }
 
         /// <summary>
@@ -253,9 +250,8 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
         /// <param name="entities">Danh sách entity sẽ chuyển đổi.</param>
-        /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Danh sách dữ liệu sau khi chuyển đổi.</returns>
-        protected async Task<List<TModel>> ConvertEntityToModel<TModel>(List<TEntity> entities, CancellationToken cancellationToken = default)
+        protected async Task<List<TModel>> ConvertEntityToModel<TModel>(List<TEntity> entities)
         {
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
             var method = readInterface.GetMethod(nameof(IReadableWithModel<IEntity, IDto>.ConvertEntityToModel))
@@ -264,10 +260,10 @@ namespace TripleSix.Core.Services
             var result = new List<TModel>();
             foreach (var entity in entities)
             {
-                var input = new object?[] { entity, null, cancellationToken };
+                var input = new object?[] { entity, null };
                 if (method.Invoke(this, input) is not Task task)
                     throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
-                await task.WaitAsync(cancellationToken);
+                await task.WaitAsync(CancellationToken.None);
 
                 if (input[1] == null)
                     throw new Exception($"Error to convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
@@ -282,18 +278,17 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
         /// <param name="entity">entity sẽ chuyển đổi.</param>
-        /// <param name="cancellationToken">Token để cancel task.</param>
         /// <returns>Dữ liệu sau khi chuyển đổi.</returns>
-        protected async Task<TModel> ConvertEntityToModel<TModel>(TEntity entity, CancellationToken cancellationToken = default)
+        protected async Task<TModel> ConvertEntityToModel<TModel>(TEntity entity)
         {
             var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
             var method = readInterface.GetMethod(nameof(IReadableWithModel<IEntity, IDto>.ConvertEntityToModel))
                 ?? throw new Exception($"{GetType().Name} need implement {nameof(IReadableWithModel<IEntity, IDto>)}<{typeof(TEntity).Name}, {typeof(TModel).Name}>");
 
-            var input = new object?[] { entity, null, cancellationToken };
+            var input = new object?[] { entity, null };
             if (method.Invoke(this, input) is not Task task)
                 throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).Name}");
-            await task.WaitAsync(cancellationToken);
+            await task.WaitAsync(CancellationToken.None);
 
             if (input[1] == null)
                 throw new Exception($"Error to convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");

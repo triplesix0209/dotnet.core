@@ -88,7 +88,6 @@ namespace TripleSix.Core.WebApi
             else if (bindingSource == "Body")
             {
                 JObject? bodyData;
-                request.EnableBuffering();
                 using (var reader = new StreamReader(
                     request.Body,
                     Encoding.UTF8,

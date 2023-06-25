@@ -112,6 +112,10 @@ namespace TripleSix.Core.WebApi
                     .EntityType.GetProperty(propertyInfo.Name)?
                     .GetCustomAttribute<CommentAttribute>()?.Comment;
                 displayName ??= propertyInfo.DeclaringType?
+                    .GetCustomAttribute<MapToEntityAttribute>()?
+                    .EntityType.GetProperty(propertyInfo.Name)?
+                    .GetCustomAttribute<CommentAttribute>()?.Comment;
+                displayName ??= propertyInfo.DeclaringType?
                     .GetRawGeneric(typeof(BaseQueryDto<>))?
                     .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
                     .GetCustomAttribute<CommentAttribute>()?.Comment;

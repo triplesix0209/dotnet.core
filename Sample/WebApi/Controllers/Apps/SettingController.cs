@@ -1,7 +1,7 @@
-﻿namespace Sample.WebApi.Controllers.Commons
+﻿namespace Sample.WebApi.Controllers.Apps
 {
     [SwaggerTag("thiết lập")]
-    public class SettingController : CommonController
+    public class SettingController : AppController
     {
         public ISettingService SettingService { get; set; }
 

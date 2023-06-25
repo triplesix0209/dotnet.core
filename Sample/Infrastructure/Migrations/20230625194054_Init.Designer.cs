@@ -11,7 +11,7 @@ using Sample.Infrastructure.DataContext;
 namespace Sample.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230612202711_Init")]
+    [Migration("20230625194054_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace Sample.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.8")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -30,6 +30,12 @@ namespace Sample.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasComment("Mã số");
 
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime(6)")
@@ -59,6 +65,9 @@ namespace Sample.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.HasIndex("CreateAt");
 
                     b.HasIndex("CreatorId");
@@ -77,6 +86,7 @@ namespace Sample.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
+                            Code = "root",
                             Name = "Root"
                         });
                 });

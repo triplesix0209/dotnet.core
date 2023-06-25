@@ -20,22 +20,48 @@ namespace TripleSix.Core.Services
         {
         }
 
-        public async Task SoftDelete(TEntity entity, CancellationToken cancellationToken = default)
+        public async Task<TResult?> GetFirstOrDefaultById<TResult>(Guid id)
+            where TResult : class
+        {
+            var query = Query.Where(x => x.Id == id);
+            return await GetFirstOrDefault<TResult>(query);
+        }
+
+        public async Task<TEntity?> GetFirstOrDefaultById(Guid id)
+        {
+            var query = Query.Where(x => x.Id == id);
+            return await GetFirstOrDefault(query);
+        }
+
+        public async Task<TResult> GetFirstById<TResult>(Guid id)
+            where TResult : class
+        {
+            var query = Query.Where(x => x.Id == id);
+            return await GetFirst<TResult>(query);
+        }
+
+        public async Task<TEntity> GetFirstById(Guid id)
+        {
+            var query = Query.Where(x => x.Id == id);
+            return await GetFirst(query);
+        }
+
+        public async Task SoftDelete(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
             entity.DeleteAt = DateTime.UtcNow;
             _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true, cancellationToken);
+            await _db.SaveChangesAsync(true);
         }
 
-        public async Task Restore(TEntity entity, CancellationToken cancellationToken = default)
+        public async Task Restore(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
             entity.DeleteAt = null;
             _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true, cancellationToken);
+            await _db.SaveChangesAsync(true);
         }
     }
 }

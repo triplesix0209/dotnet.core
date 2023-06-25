@@ -4,7 +4,7 @@
     <RootNamespace>TripleSix.Core</RootNamespace>
     <AssemblyName>TripleSix.Core</AssemblyName>
     <PackageId>TripleSix.Core</PackageId>
-    <Version>7.0.0</Version>
+    <Version>7.0.2</Version>
     <Authors>triplesix0209@gmail.com</Authors>
 
     <TargetFramework>net7.0</TargetFramework>
@@ -23,20 +23,17 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="7.0.1" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.1" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.0.0" />
     <PackageReference Include="Autofac.Extras.Quartz" Version="9.0.0" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="6.0.4" />
-    <PackageReference Include="ClosedXML" Version="0.101.0" />
+    <PackageReference Include="ClosedXML" Version="0.102.0" />
     <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
@@ -44,7 +41,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.5.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.29.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
   </ItemGroup>
 
 </Project>
