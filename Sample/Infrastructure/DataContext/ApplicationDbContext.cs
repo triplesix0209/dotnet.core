@@ -19,8 +19,10 @@ namespace Sample.Infrastructure.DataContext
         {
             base.OnConfiguring(builder);
 
-            var serverVersion = new MySqlServerVersion(new Version(8, 0));
-            builder.UseMySql(_configuration.GetConnectionString("Default"), serverVersion);
+            //var serverVersion = new MySqlServerVersion(new Version(8, 0));
+            //builder.UseMySql(_configuration.GetConnectionString("Default"), serverVersion);
+
+            builder.UseSqlServer(_configuration.GetConnectionString("Default"));
 
 #if DEBUG
             builder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
