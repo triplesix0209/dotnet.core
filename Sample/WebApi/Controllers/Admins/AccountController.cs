@@ -1,4 +1,6 @@
-﻿namespace Sample.WebApi.Controllers.Admins
+﻿using TripleSix.Core.Exceptions;
+
+namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("tài khoản")]
     public class AccountController : AdminController
@@ -15,6 +17,7 @@
 
         [HttpPost]
         [SwaggerOperation("Tạo tài khoản")]
+        [Transactional]
         public async Task<DataResult<AccountDataAdminDto>> Create([FromBody] AccountCreateAdminDto input)
         {
             var result = await AccountService.CreateWithMapper<AccountDataAdminDto>(input);
@@ -23,6 +26,7 @@
 
         [HttpPut("{id}")]
         [SwaggerOperation("Sửa tài khoản")]
+        [Transactional]
         public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountUpdateAdminDto input)
         {
             var entity = await AccountService.GetFirstById(route.Id);
@@ -32,6 +36,7 @@
 
         [HttpDelete("{id}")]
         [SwaggerOperation("Tắt tài khoản")]
+        [Transactional]
         public async Task<SuccessResult> Delete(RouteId route)
         {
             var entity = await AccountService.GetFirstById(route.Id);
@@ -41,6 +46,7 @@
 
         [HttpPut("{id}/Restore")]
         [SwaggerOperation("Khôi phục tài khoản")]
+        [Transactional]
         public async Task<SuccessResult> Restore(RouteId route)
         {
             var entity = await AccountService.GetFirstById(route.Id);
