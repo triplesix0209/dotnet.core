@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Config\**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>

@@ -11,52 +11,42 @@ namespace Sample.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateTable(
                 name: "Account",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Code = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, comment: "Mã số")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, comment: "Tên gọi")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian khởi tạo"),
-                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người tạo", collation: "ascii_general_ci"),
-                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
-                    UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người chỉnh sửa", collation: "ascii_general_ci"),
-                    DeleteAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian xóa")
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Mã số"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Tên gọi"),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian khởi tạo"),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người tạo"),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
+                    UpdatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người chỉnh sửa"),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian xóa")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Account", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Setting",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Code = table.Column<string>(type: "varchar(255)", nullable: false, comment: "Mã")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Value = table.Column<string>(type: "longtext", nullable: true, comment: "Giá trị")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: true, comment: "Mô tả")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian khởi tạo"),
-                    CreatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người tạo", collation: "ascii_general_ci"),
-                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
-                    UpdatorId = table.Column<Guid>(type: "char(36)", nullable: true, comment: "Id người chỉnh sửa", collation: "ascii_general_ci"),
-                    DeleteAt = table.Column<DateTime>(type: "datetime(6)", nullable: true, comment: "Thời gian xóa")
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false, comment: "Mã"),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true, comment: "Giá trị"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true, comment: "Mô tả"),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian khởi tạo"),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người tạo"),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
+                    UpdatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người chỉnh sửa"),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian xóa")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Setting", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.InsertData(
                 table: "Account",

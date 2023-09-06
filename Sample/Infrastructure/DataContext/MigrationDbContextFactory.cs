@@ -8,7 +8,7 @@ namespace Sample.Infrastructure.DataContext
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()
-               .AddJsonFile(Path.Combine("Config", "appsettings.json"), true)
+               .AddJsonFile(Path.Combine("Appsettings", "appsettings.json"), true)
                .Build();
 
             return new ApplicationDbContext(configuration);

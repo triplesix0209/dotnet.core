@@ -7,7 +7,6 @@ using Microsoft.OpenApi.Models;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Quartz;
-using TripleSix.Core.Validation;
 
 namespace Sample.WebApi
 {
