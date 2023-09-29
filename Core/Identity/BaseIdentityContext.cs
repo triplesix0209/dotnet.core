@@ -30,9 +30,6 @@ namespace TripleSix.Core.Identity
 
         public Guid Id { get; set; }
 
-        protected virtual void LoadDataFromToken(JwtSecurityToken token)
-        {
-            Id = Guid.Parse(token.Id);
-        }
+        protected abstract void LoadDataFromToken(JwtSecurityToken token);
     }
 }
