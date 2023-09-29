@@ -11,12 +11,16 @@ namespace TripleSix.Core.Identity
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         protected BaseIdentityContext(HttpContext? httpContext)
         {
+            if (httpContext == null)
+            {
+                IsVaild = false;
+                return;
+            }
+
             try
             {
-                var accessToken = httpContext!.Request.Headers.Authorization.First();
-
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(accessToken);
+                var accessToken = httpContext.Request.Headers.Authorization.First();
+                var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
                 LoadDataFromToken(jwtToken);
                 IsVaild = true;
             }
@@ -26,8 +30,10 @@ namespace TripleSix.Core.Identity
             }
         }
 
+        // Phiên xác thực hợp lệ
         public bool IsVaild { get; }
 
+        // Id tài khoản
         public Guid Id { get; set; }
 
         protected abstract void LoadDataFromToken(JwtSecurityToken token);
