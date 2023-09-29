@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
 
 namespace TripleSix.Core.Identity
 {
@@ -10,6 +11,28 @@ namespace TripleSix.Core.Identity
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         protected BaseIdentityContext(HttpContext? httpContext)
         {
+            try
+            {
+                var accessToken = httpContext!.Request.Headers.Authorization.First();
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(accessToken);
+                LoadDataFromToken(jwtToken);
+                IsVaild = true;
+            }
+            catch
+            {
+                IsVaild = false;
+            }
+        }
+
+        public bool IsVaild { get; }
+
+        public Guid Id { get; set; }
+
+        protected virtual void LoadDataFromToken(JwtSecurityToken token)
+        {
+            Id = Guid.Parse(token.Id);
         }
     }
 }
