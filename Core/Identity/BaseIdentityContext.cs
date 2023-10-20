@@ -19,9 +19,8 @@ namespace TripleSix.Core.Identity
 
             try
             {
-                var accessToken = httpContext.Request.Headers.Authorization.First();
-                var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
-                LoadDataFromToken(jwtToken);
+                var token = GetToken(httpContext);
+                ParseData(token);
                 IsVaild = true;
             }
             catch
@@ -36,6 +35,15 @@ namespace TripleSix.Core.Identity
         // Id tài khoản
         public Guid Id { get; set; }
 
-        protected abstract void LoadDataFromToken(JwtSecurityToken token);
+        protected virtual JwtSecurityToken GetToken(HttpContext httpContext)
+        {
+            var accessToken = httpContext.Request.Headers.Authorization.First();
+            if (accessToken == null) throw new NullReferenceException(nameof(accessToken));
+            if (accessToken.Split(" ").Length > 1) accessToken = accessToken.Split(" ")[1];
+
+            return new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+        }
+
+        protected abstract void ParseData(JwtSecurityToken token);
     }
 }
