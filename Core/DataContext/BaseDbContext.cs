@@ -63,13 +63,13 @@ namespace TripleSix.Core.DataContext
                     if (createAt != null && createAt.CurrentValue == null) createAt.CurrentValue = now;
 
                     var creatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreatorId));
-                    if (creatorId != null && creatorId.CurrentValue == null) creatorId.CurrentValue = Identity.Id;
+                    if (creatorId != null && creatorId.CurrentValue == null && Identity.IsVaild) creatorId.CurrentValue = Identity.Id;
 
                     var updateAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateAt));
                     if (updateAt != null && updateAt.CurrentValue == null) updateAt.CurrentValue = now;
 
                     var updatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
-                    if (updatorId != null && updatorId.CurrentValue == null) updatorId.CurrentValue = Identity.Id;
+                    if (updatorId != null && updatorId.CurrentValue == null && Identity.IsVaild) updatorId.CurrentValue = Identity.Id;
                 }
 
                 var modifiedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
@@ -79,7 +79,7 @@ namespace TripleSix.Core.DataContext
                     if (updateAt != null) updateAt.CurrentValue = now;
 
                     var updatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
-                    if (updatorId != null && updatorId.CurrentValue == null) updatorId.CurrentValue = Identity.Id;
+                    if (updatorId != null && updatorId.CurrentValue == null && Identity.IsVaild) updatorId.CurrentValue = Identity.Id;
                 }
             }
 
@@ -99,13 +99,13 @@ namespace TripleSix.Core.DataContext
                     if (createAt != null && createAt.CurrentValue == null) createAt.CurrentValue = now;
 
                     var creatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreatorId));
-                    if (creatorId != null && creatorId.CurrentValue == null) creatorId.CurrentValue = Identity.Id;
+                    if (creatorId != null && creatorId.CurrentValue == null && Identity.IsVaild) creatorId.CurrentValue = Identity.Id;
 
                     var updateAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdateAt));
                     if (updateAt != null && updateAt.CurrentValue == null) updateAt.CurrentValue = now;
 
                     var updatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
-                    if (updatorId != null && updatorId.CurrentValue == null) updatorId.CurrentValue = Identity.Id;
+                    if (updatorId != null && updatorId.CurrentValue == null && Identity.IsVaild) updatorId.CurrentValue = Identity.Id;
                 }
 
                 var modifiedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
@@ -115,7 +115,7 @@ namespace TripleSix.Core.DataContext
                     if (updateAt != null) updateAt.CurrentValue = now;
 
                     var updatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
-                    if (updatorId != null && updatorId.CurrentValue == null) updatorId.CurrentValue = Identity.Id;
+                    if (updatorId != null && updatorId.CurrentValue == null && Identity.IsVaild) updatorId.CurrentValue = Identity.Id;
                 }
             }
 
