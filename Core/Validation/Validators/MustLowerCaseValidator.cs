@@ -26,6 +26,6 @@ namespace TripleSix.Core.Validation.Validators
         }
 
         protected override string GetDefaultMessageTemplate(string errorCode)
-            => "'{PropertyName}' không chỉ được phép sử dụng ký tự thường";
+            => "'{PropertyName}' chỉ được phép sử dụng ký tự thường";
     }
 }
