@@ -91,18 +91,14 @@ namespace TripleSix.Core.AutofacModules
 
                 config.AddProfile(new DefaultMapper(entityAssembly, assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));
-            }))
-                .SingleInstance()
-                .AsSelf();
+            })).SingleInstance().AsSelf();
 
             return builder.Register(c =>
             {
                 var context = c.Resolve<IComponentContext>();
                 var config = context.Resolve<MapperConfiguration>();
                 return config.CreateMapper(context.Resolve);
-            })
-                .InstancePerLifetimeScope()
-                .As<IMapper>();
+            }).InstancePerLifetimeScope().As<IMapper>();
         }
 
         /// <summary>

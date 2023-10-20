@@ -2,7 +2,7 @@
 {
     public class AccountDataSeed : BaseDataSeed
     {
-        public override void OnDataSeeding(ModelBuilder builder)
+        public override void OnDataSeeding(ModelBuilder builder, DatabaseFacade database)
         {
             var accounts = new List<Account>()
             {

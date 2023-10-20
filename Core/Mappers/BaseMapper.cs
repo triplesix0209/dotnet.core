@@ -87,9 +87,6 @@ namespace TripleSix.Core.Mappers
                 .GetProperties()
                 .Where(x =>
                 {
-                    if (x.GetMethod != null && x.GetMethod.IsVirtual)
-                        return true;
-
                     var propertyType = x.PropertyType.GetUnderlyingType();
                     return propertyType.IsAssignableTo<IEntity>()
                         || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>));

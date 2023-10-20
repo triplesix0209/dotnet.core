@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace TripleSix.Core.DataContext
 {
@@ -7,6 +8,6 @@ namespace TripleSix.Core.DataContext
     /// </summary>
     public abstract class BaseDataSeed : IDbDataSeed
     {
-        public abstract void OnDataSeeding(ModelBuilder builder);
+        public abstract void OnDataSeeding(ModelBuilder builder, DatabaseFacade database);
     }
 }

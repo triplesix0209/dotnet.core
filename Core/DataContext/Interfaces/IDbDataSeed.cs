@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace TripleSix.Core.DataContext
 {
@@ -11,6 +12,7 @@ namespace TripleSix.Core.DataContext
         /// Hàm phát sinh dữ liệu.
         /// </summary>
         /// <param name="builder"><see cref="ModelBuilder"/>.</param>
-        void OnDataSeeding(ModelBuilder builder);
+        /// <param name="database"><see cref="DatabaseFacade"/>.</param>
+        void OnDataSeeding(ModelBuilder builder, DatabaseFacade database);
     }
 }

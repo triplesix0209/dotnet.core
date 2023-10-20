@@ -9,3 +9,4 @@ obj/
 *.DotSettings.user
 *.csproj.user
 *.log
+/Core/deploy.bat

@@ -12,8 +12,6 @@ namespace Sample.WebApi
 {
     public static class Startup
     {
-        private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
-
         public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
             builder.RegisterModule(new Domain.AutofacModule(configuration));

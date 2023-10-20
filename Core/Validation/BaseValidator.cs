@@ -98,6 +98,33 @@ namespace TripleSix.Core.Validation
                     .WithName(propertyDisplayName);
             }
 
+            var noSpaceAttr = property.GetCustomAttribute<NoSpaceAttribute>();
+            if (noSpaceAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new NoSpaceValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
+            var mustLowerCaseAttr = property.GetCustomAttribute<MustLowerCaseAttribute>();
+            if (mustLowerCaseAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustLowerCaseValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
+            var mustUpperCaseAttr = property.GetCustomAttribute<MustUpperCaseAttribute>();
+            if (mustUpperCaseAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustUpperCaseValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
             if (propertyType.IsAssignableTo<IDto>())
             {
                 foreach (var childProperty in propertyType.GetProperties())

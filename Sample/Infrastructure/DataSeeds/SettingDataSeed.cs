@@ -2,7 +2,7 @@
 {
     public class SettingDataSeed : BaseDataSeed
     {
-        public override void OnDataSeeding(ModelBuilder builder)
+        public override void OnDataSeeding(ModelBuilder builder, DatabaseFacade database)
         {
             var instance = new DbSettings();
             var settings = typeof(DbSettings).GetProperties()

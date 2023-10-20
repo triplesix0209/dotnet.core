@@ -4,7 +4,7 @@
     <RootNamespace>TripleSix.Core</RootNamespace>
     <AssemblyName>TripleSix.Core</AssemblyName>
     <PackageId>TripleSix.Core</PackageId>
-    <Version>7.1.2</Version>
+    <Version>7.0.7</Version>
     <Authors>triplesix0209@gmail.com</Authors>
 
     <TargetFramework>net7.0</TargetFramework>
@@ -21,13 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="7.1.0" />
+    <PackageReference Include="Autofac" Version="7.0.1" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.0.0" />
     <PackageReference Include="Autofac.Extras.Quartz" Version="9.0.0" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="6.0.4" />
-    <PackageReference Include="FluentValidation" Version="11.7.1" />
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
@@ -40,7 +40,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.5.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.1" />
   </ItemGroup>
 
 </Project>
