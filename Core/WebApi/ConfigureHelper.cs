@@ -76,36 +76,31 @@ namespace TripleSix.Core.WebApi
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnAuthenticationFailed = context =>
-                    {
-                        context.Response.StatusCode = 401;
-                        return Task.CompletedTask;
-                    },
-                    OnForbidden = context =>
-                    {
-                        context.Response.StatusCode = 403;
-                        return Task.CompletedTask;
-                    },
                     OnChallenge = context =>
                     {
                         context.HandleResponse();
 
                         // ensure error info
+                        if (context.Error.IsNullOrWhiteSpace())
+                            context.Error = "invalid_token";
                         if (context.ErrorDescription.IsNullOrWhiteSpace())
                             context.ErrorDescription = "This request requires a valid access token to be provided";
-                        if (context.Error.IsNullOrWhiteSpace())
-                        {
-                            context.Response.StatusCode = 401;
-                            context.Error = "invalid_token";
-                        }
 
                         // expired tokens case
                         if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() == typeof(SecurityTokenExpiredException))
                             context.ErrorDescription = $"The access token has expired";
 
                         // write response
-                        var errorResult = new ErrorResult(context.Response.StatusCode, context.Error, context.ErrorDescription).ToJson();
+                        context.Response.StatusCode = 401;
                         context.Response.ContentType = "application/json";
+                        var errorResult = new ErrorResult(context.Response.StatusCode, context.Error, context.ErrorDescription).ToJson();
+                        return context.Response.WriteAsync(errorResult!);
+                    },
+                    OnForbidden = context =>
+                    {
+                        context.Response.StatusCode = 403;
+                        context.Response.ContentType = "application/json";
+                        var errorResult = new ErrorResult(context.Response.StatusCode, "access_denied", "Your access is denied").ToJson();
                         return context.Response.WriteAsync(errorResult!);
                     },
                 };

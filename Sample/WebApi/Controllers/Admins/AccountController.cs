@@ -1,6 +1,4 @@
-﻿using TripleSix.Core.Exceptions;
-
-namespace Sample.WebApi.Controllers.Admins
+﻿namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("tài khoản")]
     public class AccountController : AdminController
