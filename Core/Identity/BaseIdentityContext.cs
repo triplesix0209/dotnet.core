@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Identity
 {
@@ -68,6 +69,10 @@ namespace TripleSix.Core.Identity
         /// Đọc và nhận thông tin của Token.
         /// </summary>
         /// <param name="claims">Danh sách các <see cref="Claim"/>.</param>
-        protected abstract void ParseData(ClaimsPrincipal claims);
+        protected virtual void ParseData(ClaimsPrincipal claims)
+        {
+            Id = Guid.Parse(claims.FindFirstValue(nameof(Id).ToCamelCase())!);
+            Scope = claims.FindFirstValue(nameof(Scope).ToCamelCase())!.Split(' ');
+        }
     }
 }
