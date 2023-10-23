@@ -46,14 +46,14 @@ namespace TripleSix.Core.Identity
             if (accessToken.Split(" ").Length > 1) accessToken = accessToken.Split(" ")[1];
 
             var appsetting = new IdentityAppsetting(configuration);
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appsetting.SigningKey));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SigningKey));
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = signingKey,
                 ValidateIssuer = appsetting.ValidateIssuer,
-                ValidIssuer = appsetting.ValidIssuer,
+                ValidIssuer = appsetting.Issuer,
             };
 
             var claimPrincipal = new JwtSecurityTokenHandler()
