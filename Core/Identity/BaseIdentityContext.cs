@@ -33,8 +33,9 @@ namespace TripleSix.Core.Identity
             }
         }
 
-        // Id tài khoản
         public Guid? Id { get; set; }
+
+        public IEnumerable<string> Scope { get; set; }
 
         public virtual string? GetAccessToken(HttpContext httpContext)
         {

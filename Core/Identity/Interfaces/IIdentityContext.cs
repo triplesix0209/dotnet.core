@@ -12,6 +12,11 @@ namespace TripleSix.Core.Identity
         public Guid? Id { get; set; }
 
         /// <summary>
+        /// Danh sách quyền hạn.
+        /// </summary>
+        public IEnumerable<string> Scope { get; set; }
+
+        /// <summary>
         /// Lấy Access Token.
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
