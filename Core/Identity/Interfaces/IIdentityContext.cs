@@ -28,7 +28,7 @@ namespace TripleSix.Core.Identity
         /// </summary>
         /// <param name="accessToken">Access Token.</param>
         /// <param name="configuration"><see cref="IConfiguration"/>.</param>
-        /// <returns>Danh sách các <see cref="Claim"/>.</returns>
-        IEnumerable<Claim> ValidateAccessToken(string accessToken, IConfiguration configuration);
+        /// <returns><see cref="ClaimsPrincipal"/>.</returns>
+        ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration);
     }
 }

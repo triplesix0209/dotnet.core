@@ -46,7 +46,7 @@ namespace TripleSix.Core.Identity
             return accessToken;
         }
 
-        public virtual IEnumerable<Claim> ValidateAccessToken(string accessToken, IConfiguration configuration)
+        public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration)
         {
             var appsetting = new IdentityAppsetting(configuration);
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SigningKey));
@@ -61,15 +61,13 @@ namespace TripleSix.Core.Identity
                 ValidAudience = appsetting.Audience,
             };
 
-            return new JwtSecurityTokenHandler()
-                .ValidateToken(accessToken, tokenValidationParameters, out _)
-                .Claims;
+            return new JwtSecurityTokenHandler().ValidateToken(accessToken, tokenValidationParameters, out _);
         }
 
         /// <summary>
         /// Đọc và nhận thông tin của Token.
         /// </summary>
         /// <param name="claims">Danh sách các <see cref="Claim"/>.</param>
-        protected abstract void ParseData(IEnumerable<Claim> claims);
+        protected abstract void ParseData(ClaimsPrincipal claims);
     }
 }
