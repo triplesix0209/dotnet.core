@@ -33,6 +33,7 @@ namespace Sample.WebApi
             var assembly = Assembly.GetExecutingAssembly();
             builder.Services.AddHttpContextAccessor();
             builder.Services.ConfigureMvcService(ConfigureMvc, ConfigureApplicationPartManager);
+            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
 
             #region [swagger]
 
@@ -67,6 +68,7 @@ namespace Sample.WebApi
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.Use404JsonError();
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.Use(next => context =>

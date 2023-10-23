@@ -4,7 +4,7 @@
     <RootNamespace>TripleSix.Core</RootNamespace>
     <AssemblyName>TripleSix.Core</AssemblyName>
     <PackageId>TripleSix.Core</PackageId>
-    <Version>7.1.11</Version>
+    <Version>7.1.12</Version>
     <Authors>triplesix0209@gmail.com</Authors>
 
     <TargetFramework>net7.0</TargetFramework>
@@ -29,6 +29,7 @@
     <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="6.0.4" />
     <PackageReference Include="FluentValidation" Version="11.8.0" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.12" />

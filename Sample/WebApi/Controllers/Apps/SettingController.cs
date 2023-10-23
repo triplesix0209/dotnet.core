@@ -1,6 +1,9 @@
-﻿namespace Sample.WebApi.Controllers.Apps
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Sample.WebApi.Controllers.Apps
 {
     [SwaggerTag("thiết lập")]
+    [Authorize]
     public class SettingController : AppController
     {
         public ISettingService SettingService { get; set; }
