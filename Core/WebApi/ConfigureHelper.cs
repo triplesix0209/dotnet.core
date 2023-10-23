@@ -89,13 +89,21 @@ namespace TripleSix.Core.WebApi
                     OnChallenge = context =>
                     {
                         context.HandleResponse();
-                        if (context.Error.IsNullOrWhiteSpace()) context.Error = "invalid_token";
-                        if (context.ErrorDescription.IsNullOrWhiteSpace()) context.ErrorDescription = "This request requires a valid access token to be provided";
+
+                        // ensure error info
+                        if (context.ErrorDescription.IsNullOrWhiteSpace())
+                            context.ErrorDescription = "This request requires a valid access token to be provided";
+                        if (context.Error.IsNullOrWhiteSpace())
+                        {
+                            context.Response.StatusCode = 401;
+                            context.Error = "invalid_token";
+                        }
 
                         // expired tokens case
                         if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() == typeof(SecurityTokenExpiredException))
                             context.ErrorDescription = $"The access token has expired";
 
+                        // write response
                         var errorResult = new ErrorResult(context.Response.StatusCode, context.Error, context.ErrorDescription).ToJson();
                         context.Response.ContentType = "application/json";
                         return context.Response.WriteAsync(errorResult!);
