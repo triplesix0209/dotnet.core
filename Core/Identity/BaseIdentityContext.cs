@@ -18,18 +18,29 @@ namespace TripleSix.Core.Identity
         protected BaseIdentityContext(HttpContext? httpContext, IConfiguration configuration)
         {
             if (httpContext == null) return;
+
             var accessToken = GetAccessToken(httpContext);
-            var claims = ValidateAccessToken(accessToken, configuration);
-            ParseData(claims);
+            if (accessToken == null) return;
+
+            try
+            {
+                var claims = ValidateAccessToken(accessToken, configuration);
+                ParseData(claims);
+            }
+            catch
+            {
+                Id = null;
+            }
         }
 
         // Id tài khoản
         public Guid? Id { get; set; }
 
-        public virtual string GetAccessToken(HttpContext httpContext)
+        public virtual string? GetAccessToken(HttpContext httpContext)
         {
-            var accessToken = httpContext.Request.Headers.Authorization.First();
-            if (accessToken == null) throw new NullReferenceException(nameof(accessToken));
+            var accessToken = httpContext.Request.Headers.Authorization.FirstOrDefault();
+            if (accessToken == null) return null;
+
             if (accessToken.Split(" ").Length > 1) accessToken = accessToken.Split(" ")[1];
             return accessToken;
         }
@@ -49,9 +60,9 @@ namespace TripleSix.Core.Identity
                 ValidAudience = appsetting.Audience,
             };
 
-            var claimPrincipal = new JwtSecurityTokenHandler()
-                .ValidateToken(accessToken, tokenValidationParameters, out _);
-            return claimPrincipal.Claims;
+            return new JwtSecurityTokenHandler()
+                .ValidateToken(accessToken, tokenValidationParameters, out _)
+                .Claims;
         }
 
         /// <summary>

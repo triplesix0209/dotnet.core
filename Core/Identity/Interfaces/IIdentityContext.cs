@@ -16,7 +16,7 @@ namespace TripleSix.Core.Identity
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         /// <returns>Access Token.</returns>
-        string GetAccessToken(HttpContext httpContext);
+        string? GetAccessToken(HttpContext httpContext);
 
         /// <summary>
         /// Lấy Access Token.
