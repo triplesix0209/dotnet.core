@@ -18,33 +18,24 @@ namespace TripleSix.Core.Identity
         protected BaseIdentityContext(HttpContext? httpContext, IConfiguration configuration)
         {
             if (httpContext == null) return;
-
-            try
-            {
-                var claims = ReadToken(httpContext, configuration);
-                ParseData(claims);
-            }
-            catch
-            {
-                Id = null;
-            }
+            var accessToken = GetAccessToken(httpContext);
+            var claims = ValidateAccessToken(accessToken, configuration);
+            ParseData(claims);
         }
 
         // Id tài khoản
         public Guid? Id { get; set; }
 
-        /// <summary>
-        /// Đọc và kiểm tra Token.
-        /// </summary>
-        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
-        /// <returns>Danh sách các <see cref="Claim"/>.</returns>
-        protected virtual IEnumerable<Claim> ReadToken(HttpContext httpContext, IConfiguration configuration)
+        public virtual string GetAccessToken(HttpContext httpContext)
         {
             var accessToken = httpContext.Request.Headers.Authorization.First();
             if (accessToken == null) throw new NullReferenceException(nameof(accessToken));
             if (accessToken.Split(" ").Length > 1) accessToken = accessToken.Split(" ")[1];
+            return accessToken;
+        }
 
+        public virtual IEnumerable<Claim> ValidateAccessToken(string accessToken, IConfiguration configuration)
+        {
             var appsetting = new IdentityAppsetting(configuration);
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SigningKey));
             var tokenValidationParameters = new TokenValidationParameters
@@ -54,6 +45,8 @@ namespace TripleSix.Core.Identity
                 IssuerSigningKey = signingKey,
                 ValidateIssuer = appsetting.ValidateIssuer,
                 ValidIssuer = appsetting.Issuer,
+                ValidateAudience = appsetting.ValidateAudience,
+                ValidAudience = appsetting.Audience,
             };
 
             var claimPrincipal = new JwtSecurityTokenHandler()

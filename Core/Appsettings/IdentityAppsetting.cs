@@ -20,8 +20,18 @@ namespace TripleSix.Core.Appsettings
         public string Issuer { get; set; } = "Identity";
 
         /// <summary>
+        /// Audience hợp lệ.
+        /// </summary>
+        public string Audience { get; set; } = "Identity";
+
+        /// <summary>
         /// Bật/tắt kiểm tra Issuer.
         /// </summary>
         public bool ValidateIssuer { get; set; } = true;
+
+        /// <summary>
+        /// Bật/tắt kiểm tra Audience.
+        /// </summary>
+        public bool ValidateAudience { get; set; } = false;
     }
 }
