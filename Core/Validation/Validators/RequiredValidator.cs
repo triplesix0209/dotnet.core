@@ -14,7 +14,7 @@ namespace TripleSix.Core.Validation.Validators
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
             var instance = context.InstanceToValidate as object;
-            var propertyName = context.PropertyName;
+            var propertyName = context.PropertyPath;
             if (propertyName.Contains('.'))
             {
                 var paths = propertyName.Split('.');
