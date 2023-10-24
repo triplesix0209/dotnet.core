@@ -30,6 +30,8 @@ namespace TripleSix.Core.DataContext
 
         public IIdentityContext Identity { get; set; }
 
+        public IDbContextTransaction? CurrentTransaction => Database.CurrentTransaction;
+
         public IDbContextTransaction BeginTransaction()
         {
             return Database.BeginTransaction();
