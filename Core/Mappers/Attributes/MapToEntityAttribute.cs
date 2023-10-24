@@ -12,14 +12,14 @@ namespace TripleSix.Core.Mappers
         /// Map đối tượng với entity chỉ định.
         /// </summary>
         /// <param name="entityType">Loại entity map.</param>
-        /// <param name="ignoreUnmapedProperties">Bỏ qua các property không có trên DTO khi map.</param>
-        public MapToEntityAttribute(Type entityType, bool ignoreUnmapedProperties = false)
+        /// <param name="unmapedProperties">Bỏ qua các property không có trên DTO khi map.</param>
+        public MapToEntityAttribute(Type entityType, params string[] unmapedProperties)
         {
             if (!typeof(IEntity).IsAssignableFrom(entityType))
                 throw new Exception($"{entityType.Name} not implements {nameof(IEntity)}");
 
             EntityType = entityType;
-            IgnoreUnmapedProperties = ignoreUnmapedProperties;
+            UnmapedProperties = unmapedProperties;
         }
 
         /// <summary>
@@ -30,6 +30,6 @@ namespace TripleSix.Core.Mappers
         /// <summary>
         /// Bỏ qua các property không có trên DTO khi map.
         /// </summary>
-        public bool IgnoreUnmapedProperties { get; }
+        public string[] UnmapedProperties { get; }
     }
 }
