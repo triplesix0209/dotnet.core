@@ -25,6 +25,10 @@ namespace TripleSix.Core.Types
             return validator.Validate(context);
         }
 
+        public virtual void Normalize()
+        {
+        }
+
         public virtual bool IsAnyPropertyChanged()
         {
             return _propertyTracking.Any();

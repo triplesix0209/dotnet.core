@@ -19,6 +19,11 @@ namespace TripleSix.Core.Types
         ValidationResult Validate(IValidator? validator = default, HttpContext? httpContext = default, bool throwOnFailures = false);
 
         /// <summary>
+        /// Chuẩn hóa dữ liệu.
+        /// </summary>
+        void Normalize();
+
+        /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.
         /// </summary>
         /// <returns><c>True</c> nếu có ít nhất một property bị thay đổi, ngược lại là <c>False</c>.</returns>
