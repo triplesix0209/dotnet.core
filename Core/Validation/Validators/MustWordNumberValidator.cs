@@ -19,7 +19,7 @@ namespace TripleSix.Core.Validation.Validators
 
             switch (value)
             {
-                case string str when Regex.IsMatch(str, @"^[a-zA-Z1-9]+$"):
+                case string str when !Regex.IsMatch(str, @"^[a-zA-Z1-9]+$"):
                     return false;
             }
 

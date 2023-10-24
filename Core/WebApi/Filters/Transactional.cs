@@ -29,8 +29,12 @@ namespace TripleSix.Core.WebApi
             {
                 await using var transaction = await _dbContext.BeginTransactionAsync();
                 var result = await next();
-                if (result.Exception == null) await transaction.CommitAsync();
-                else await transaction.RollbackAsync();
+
+                if (transaction.TransactionId == _dbContext.CurrentTransaction?.TransactionId)
+                {
+                    if (result.Exception == null) await transaction.CommitAsync();
+                    else await transaction.RollbackAsync();
+                }
             }
         }
     }
