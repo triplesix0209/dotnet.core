@@ -1,9 +1,11 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapToEntity(typeof(Account))]
-    public class AccountCreateAdminDto : BaseDto
+    [MapToEntity(typeof(Site))]
+    public class SiteAdminCreateDto : BaseDto
     {
         [Required]
+        [MustWordNumber]
+        [MustUpperCase]
         public string Code { get; set; }
 
         [Required]

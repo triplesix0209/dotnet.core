@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace Sample.WebApi.Common
+﻿namespace Sample.WebApi.Common
 {
     [Route("Admin/[controller]")]
     [ApiExplorerSettings(GroupName = "admin")]

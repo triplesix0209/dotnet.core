@@ -1,7 +1,7 @@
 ﻿namespace Sample.Domain.Entities
 {
-    [Comment("Tài khoản")]
-    public class Account : StrongEntity<Account>
+    [Comment("Chi nhánh")]
+    public class Site : StrongEntity<Site>
     {
         [Comment("Mã số")]
         [MaxLength(100)]
@@ -11,13 +11,9 @@
         [MaxLength(200)]
         public string Name { get; set; }
 
-        [Comment("Id chi nhánh")]
-        public Guid SiteId { get; set; }
+        public virtual IList<Account> Accounts { get; set; }
 
-        [ForeignKey(nameof(SiteId))]
-        public virtual Site Site { get; set; }
-
-        public override void Configure(EntityTypeBuilder<Account> builder)
+        public override void Configure(EntityTypeBuilder<Site> builder)
         {
             base.Configure(builder);
 

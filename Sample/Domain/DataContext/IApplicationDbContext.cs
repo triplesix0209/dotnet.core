@@ -4,6 +4,6 @@
     {
         DbSet<Account> Account { get; set; }
 
-        DbSet<Setting> Setting { get; set; }
+        DbSet<Site> Site { get; set; }
     }
 }

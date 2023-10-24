@@ -1,34 +1,33 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("tài khoản")]
-    public class AccountController : AdminController
+    public class AccountController : CommonController
     {
         public IAccountService AccountService { get; set; }
 
         [HttpGet]
         [SwaggerOperation("Lấy danh sách tài khoản")]
-        public async Task<DataResult<List<AccountDataAdminDto>>> GetAll(AccountFilterAdminDto input)
+        public async Task<DataResult<List<AccountAdminDataDto>>> GetAll(AccountAdminFilterDto input)
         {
-            var result = await AccountService.GetListByQueryModel<AccountDataAdminDto>(input);
+            var result = await AccountService.GetListByQueryModel<AccountAdminDataDto>(input);
             return DataResult(result);
         }
 
         [HttpPost]
         [SwaggerOperation("Tạo tài khoản")]
         [Transactional]
-        public async Task<DataResult<AccountDataAdminDto>> Create([FromBody] AccountCreateAdminDto input)
+        public async Task<DataResult<Guid>> Create([FromBody] AccountAdminCreateDto input)
         {
-            var result = await AccountService.CreateWithMapper<AccountDataAdminDto>(input);
-            return DataResult(result);
+            var result = await AccountService.CreateWithMapper(input);
+            return DataResult(result.Id);
         }
 
         [HttpPut("{id}")]
         [SwaggerOperation("Sửa tài khoản")]
         [Transactional]
-        public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountUpdateAdminDto input)
+        public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountAdminUpdateDto input)
         {
-            var entity = await AccountService.GetFirstById(route.Id);
-            await AccountService.UpdateWithMapper(entity, input);
+            await AccountService.UpdateWithMapper(route.Id, input);
             return SuccessResult();
         }
 
@@ -37,8 +36,7 @@
         [Transactional]
         public async Task<SuccessResult> Delete(RouteId route)
         {
-            var entity = await AccountService.GetFirstById(route.Id);
-            await AccountService.SoftDelete(entity);
+            await AccountService.SoftDelete(route.Id);
             return SuccessResult();
         }
 
@@ -47,8 +45,7 @@
         [Transactional]
         public async Task<SuccessResult> Restore(RouteId route)
         {
-            var entity = await AccountService.GetFirstById(route.Id);
-            await AccountService.Restore(entity);
+            await AccountService.Restore(route.Id);
             return SuccessResult();
         }
     }

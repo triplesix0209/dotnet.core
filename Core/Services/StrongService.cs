@@ -1,5 +1,6 @@
 ﻿using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Services
 {
@@ -18,6 +19,54 @@ namespace TripleSix.Core.Services
         protected StrongService(IDbDataContext db)
             : base(db)
         {
+        }
+
+        public async Task Update(Guid id, Action<TEntity> updateMethod)
+        {
+            var entity = await GetFirstById(id);
+            await Update(entity, updateMethod);
+        }
+
+        public async Task UpdateWithMapper(Guid id, IDto input)
+        {
+            var entity = await GetFirstById(id);
+            await UpdateWithMapper(entity, input);
+        }
+
+        public async Task HardDelete(Guid id)
+        {
+            var entity = await GetFirstById(id);
+            await HardDelete(entity);
+        }
+
+        public async Task SoftDelete(TEntity entity)
+        {
+            using var activity = StartTraceMethodActivity();
+
+            entity.DeleteAt = DateTime.UtcNow;
+            _db.Set<TEntity>().Update(entity);
+            await _db.SaveChangesAsync(true);
+        }
+
+        public async Task SoftDelete(Guid id)
+        {
+            var entity = await GetFirstById(id);
+            await SoftDelete(entity);
+        }
+
+        public async Task Restore(TEntity entity)
+        {
+            using var activity = StartTraceMethodActivity();
+
+            entity.DeleteAt = null;
+            _db.Set<TEntity>().Update(entity);
+            await _db.SaveChangesAsync(true);
+        }
+
+        public async Task Restore(Guid id)
+        {
+            var entity = await GetFirstById(id);
+            await Restore(entity);
         }
 
         public async Task<TResult?> GetFirstOrDefaultById<TResult>(Guid id)
@@ -44,24 +93,6 @@ namespace TripleSix.Core.Services
         {
             var query = Query.Where(x => x.Id == id);
             return await GetFirst(query);
-        }
-
-        public async Task SoftDelete(TEntity entity)
-        {
-            using var activity = StartTraceMethodActivity();
-
-            entity.DeleteAt = DateTime.UtcNow;
-            _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true);
-        }
-
-        public async Task Restore(TEntity entity)
-        {
-            using var activity = StartTraceMethodActivity();
-
-            entity.DeleteAt = null;
-            _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true);
         }
     }
 }

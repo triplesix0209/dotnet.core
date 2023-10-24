@@ -119,6 +119,9 @@ namespace TripleSix.Core.WebApi
                     .GetRawGeneric(typeof(BaseQueryDto<>))?
                     .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
                     .GetCustomAttribute<CommentAttribute>()?.Comment;
+                displayName ??= propertyInfo.DeclaringType?
+                    .GetCustomAttribute<MapFromEntityAttribute>()?
+                    .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
 
                 if (!displayName.IsNullOrWhiteSpace())
                 {

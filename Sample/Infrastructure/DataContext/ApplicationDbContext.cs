@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Sample.Domain.DataContext;
 
 namespace Sample.Infrastructure.DataContext
 {

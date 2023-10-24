@@ -1,8 +1,8 @@
 ﻿namespace Sample.WebApi.Common
 {
-    [Route("App/[controller]")]
+    [Route("[controller]")]
     [ApiExplorerSettings(GroupName = "app")]
-    public abstract class AppController : BaseController
+    public abstract class CommonController : BaseController
     {
     }
 }

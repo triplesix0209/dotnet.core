@@ -43,6 +43,12 @@ namespace TripleSix.Core.Services
             return entity;
         }
 
+        public async Task<TEntity> CreateWithMapper(IDto input)
+        {
+            var entity = Mapper.MapData<IDto, TEntity>(input);
+            return await Create(entity);
+        }
+
         public async Task<TResult> CreateWithMapper<TResult>(IDto input)
             where TResult : class
         {

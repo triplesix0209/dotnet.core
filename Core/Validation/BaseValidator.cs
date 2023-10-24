@@ -107,6 +107,15 @@ namespace TripleSix.Core.Validation
                     .WithName(propertyDisplayName);
             }
 
+            var mustTrimAttr = property.GetCustomAttribute<MustTrimAttribute>();
+            if (mustTrimAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustTrimValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
             var mustLowerCaseAttr = property.GetCustomAttribute<MustLowerCaseAttribute>();
             if (mustLowerCaseAttr != null)
             {
@@ -121,6 +130,15 @@ namespace TripleSix.Core.Validation
             {
                 RuleFor(x => valueGetter(x))
                     .SetValidator(new MustUpperCaseValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
+            var mustWordNumberAttr = property.GetCustomAttribute<MustWordNumberAttribute>();
+            if (mustWordNumberAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustWordNumberValidator<T, object?>())
                     .OverridePropertyName(propertyName)
                     .WithName(propertyDisplayName);
             }
