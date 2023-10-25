@@ -33,19 +33,22 @@ namespace TripleSix.Core.WebApi
                 }
             }
 
-            foreach (var field in context.ModelState)
+            if (!errors.Any())
             {
-                if (field.Value.ValidationState != ModelValidationState.Invalid)
-                    continue;
-
-                foreach (var error in field.Value.Errors)
+                foreach (var field in context.ModelState)
                 {
-                    errors.Add(new InputInvalidItem
+                    if (field.Value.ValidationState != ModelValidationState.Invalid)
+                        continue;
+
+                    foreach (var error in field.Value.Errors)
                     {
-                        FieldName = field.Key,
-                        ErrorCode = "model_validator",
-                        ErrorMessage = error.ErrorMessage,
-                    });
+                        errors.Add(new InputInvalidItem
+                        {
+                            FieldName = field.Key.IsNullOrEmpty() ? "input" : field.Key,
+                            ErrorCode = "model_validator",
+                            ErrorMessage = error.ErrorMessage,
+                        });
+                    }
                 }
             }
 
