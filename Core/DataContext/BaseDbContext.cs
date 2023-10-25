@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Data;
+using System.Reflection;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -37,9 +38,19 @@ namespace TripleSix.Core.DataContext
             return Database.BeginTransaction();
         }
 
+        public IDbContextTransaction BeginTransaction(IsolationLevel isolationLevel)
+        {
+            return Database.BeginTransaction(isolationLevel);
+        }
+
         public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             return await Database.BeginTransactionAsync(cancellationToken);
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
+        {
+            return await Database.BeginTransactionAsync(isolationLevel, cancellationToken);
         }
 
         public void Migrate()
