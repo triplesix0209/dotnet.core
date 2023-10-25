@@ -14,40 +14,32 @@ namespace TripleSix.Core.WebApi
         /// <summary>
         /// Kiểm tra phải có scope chỉ định.
         /// </summary>
-        /// <param name="acceptedScopes">Danh sách Scope cho phép, chỉ cần có một.</param>
-        public RequireScope(params string[] acceptedScopes)
+        /// <param name="acceptedScope">Scope cho phép.</param>
+        public RequireScope(string acceptedScope)
             : base(typeof(RequireScopeImplement))
         {
-            Arguments = new object[] { acceptedScopes };
+            Arguments = new object[] { acceptedScope };
         }
 
         private class RequireScopeImplement : IAuthorizationFilter
         {
-            private readonly string[] _acceptedScopes;
+            private readonly string _acceptedScope;
 
-            public RequireScopeImplement(string[] acceptedScopes)
+            public RequireScopeImplement(string acceptedScope)
             {
-                _acceptedScopes = acceptedScopes ?? throw new ArgumentNullException(nameof(_acceptedScopes));
-                if (_acceptedScopes.Length == 0) throw new ArgumentException("must have at least 1 item", nameof(acceptedScopes));
+                if (acceptedScope.IsNullOrWhiteSpace()) throw new ArgumentException("must not be null or white space only", nameof(acceptedScope));
+
+                _acceptedScope = acceptedScope;
             }
 
             public void OnAuthorization(AuthorizationFilterContext context)
             {
-                var userScopeValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Scope).ToCamelCase());
-                if (userScopeValue == null)
+                var scopeValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Scope).ToCamelCase());
+                if (scopeValue == null || !scopeValue.Split(' ').Any(x => x == _acceptedScope))
                 {
                     context.Result = new ForbidResult();
                     return;
                 }
-
-                var userScopes = userScopeValue.Split(' ');
-                foreach (var acceptedScope in _acceptedScopes)
-                {
-                    if (userScopes.Any(s => s == acceptedScope))
-                        return;
-                }
-
-                context.Result = new ForbidResult();
             }
         }
     }
