@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -27,6 +28,22 @@ namespace TripleSix.Core.WebApi
                     {
                         FieldName = propertyName,
                         ErrorCode = error.ErrorCode.ToSnakeCase(),
+                        ErrorMessage = error.ErrorMessage,
+                    });
+                }
+            }
+
+            foreach (var field in context.ModelState)
+            {
+                if (field.Value.ValidationState != ModelValidationState.Invalid)
+                    continue;
+
+                foreach (var error in field.Value.Errors)
+                {
+                    errors.Add(new InputInvalidItem
+                    {
+                        FieldName = field.Key,
+                        ErrorCode = "model_validator",
                         ErrorMessage = error.ErrorMessage,
                     });
                 }
