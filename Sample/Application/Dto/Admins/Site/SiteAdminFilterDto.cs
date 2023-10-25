@@ -9,8 +9,8 @@
         public override IQueryable<Site> ToQueryable(IQueryable<Site> query)
         {
             return query
-                .WhereIf(!Code.IsNullOrWhiteSpace(), x => EF.Functions.Like(x.Code!, $"%{Code}%"))
-                .WhereIf(!Name.IsNullOrWhiteSpace(), x => EF.Functions.Like(x.Name!, $"%{Name}%"));
+                .WhereIf(!Code.IsNullOrEmpty(), x => EF.Functions.Like(x.Code!, $"%{Code}%"))
+                .WhereIf(!Name.IsNullOrEmpty(), x => EF.Functions.Like(x.Name!, $"%{Name}%"));
         }
     }
 }
