@@ -29,7 +29,6 @@ namespace TripleSix.Core.Services
 
         public async Task UpdateWithMapper(Guid id, IDto input)
         {
-            input.Normalize();
             var entity = await GetFirstById(id);
             await UpdateWithMapper(entity, input);
         }

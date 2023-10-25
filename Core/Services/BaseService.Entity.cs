@@ -45,7 +45,9 @@ namespace TripleSix.Core.Services
 
         public async Task<TEntity> CreateWithMapper(IDto input)
         {
+            input.Validate(throwOnFailures: true);
             input.Normalize();
+
             var entity = Mapper.MapData<IDto, TEntity>(input);
             return await Create(entity);
         }
@@ -53,7 +55,9 @@ namespace TripleSix.Core.Services
         public async Task<TResult> CreateWithMapper<TResult>(IDto input)
             where TResult : class
         {
+            input.Validate(throwOnFailures: true);
             input.Normalize();
+
             var entity = Mapper.MapData<IDto, TEntity>(input);
             var result = await Create(entity);
             return Mapper.MapData<TEntity, TResult>(result);
@@ -71,8 +75,9 @@ namespace TripleSix.Core.Services
         public async Task UpdateWithMapper(TEntity entity, IDto input)
         {
             if (!input.IsAnyPropertyChanged()) return;
-
+            input.Validate(throwOnFailures: true);
             input.Normalize();
+
             await Update(entity, e => Mapper.MapUpdate(input, e));
         }
 
