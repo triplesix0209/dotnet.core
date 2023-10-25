@@ -8,28 +8,20 @@
         /// <summary>
         /// Khởi tạo <see cref="NotFoundException"/>.
         /// </summary>
-        /// <param name="entityType">Loại entity.</param>
-        public NotFoundException(Type entityType)
-            : base($"Không tìm thấy {entityType.Name}")
+        /// <param name="type">Loại đối tượng.</param>
+        public NotFoundException(Type type)
+            : base($"Không tìm thấy {type.Name}")
         {
-            EntityType = entityType;
         }
 
         /// <summary>
         /// Khởi tạo <see cref="NotFoundException"/>.
         /// </summary>
-        /// <param name="entityType">Loại entity.</param>
-        /// <param name="message"><inheritdoc/></param>
-        public NotFoundException(Type entityType, string message)
-            : base(message)
+        /// <param name="name">Tên đối tượng.</param>
+        public NotFoundException(string name)
+            : base($"Không tìm thấy {name}")
         {
-            EntityType = entityType;
         }
-
-        /// <summary>
-        /// Loại entity.
-        /// </summary>
-        public virtual Type EntityType { get; }
 
         public override int HttpCodeStatus => 404;
     }
