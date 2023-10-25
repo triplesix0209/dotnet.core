@@ -4,13 +4,13 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
-    public class MustWordNumberValidator<T, TProperty> : PropertyValidator<T, TProperty>
+    public class MustNumberValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
-        public MustWordNumberValidator()
+        public MustNumberValidator()
         {
         }
 
-        public override string Name => "MustWordNumberValidator";
+        public override string Name => "MustNumberValidator";
 
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
@@ -19,7 +19,7 @@ namespace TripleSix.Core.Validation.Validators
 
             switch (value)
             {
-                case string str when !Regex.IsMatch(str, @"^[a-zA-Z0-9]+$"):
+                case string str when !Regex.IsMatch(str, @"^[0-9]+$"):
                     return false;
             }
 
@@ -27,6 +27,6 @@ namespace TripleSix.Core.Validation.Validators
         }
 
         protected override string GetDefaultMessageTemplate(string errorCode)
-            => "'{PropertyName}' chỉ được phép chứa chữ cái hoặc chữ số";
+            => "'{PropertyName}' chỉ được phép chứa chữ số";
     }
 }

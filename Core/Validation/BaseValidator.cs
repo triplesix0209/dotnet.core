@@ -143,6 +143,15 @@ namespace TripleSix.Core.Validation
                     .WithName(propertyDisplayName);
             }
 
+            var mustNumberAttr = property.GetCustomAttribute<MustNumberAttribute>();
+            if (mustNumberAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustNumberValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
             if (propertyType.IsAssignableTo<IDto>())
             {
                 foreach (var childProperty in propertyType.GetProperties())

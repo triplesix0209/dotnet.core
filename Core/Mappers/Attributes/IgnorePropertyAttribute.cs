@@ -3,7 +3,7 @@
     /// <summary>
     /// Loại bỏ property khi map.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class IgnorePropertyAttribute : Attribute
     {
         /// <summary>

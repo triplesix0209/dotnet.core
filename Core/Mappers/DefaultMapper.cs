@@ -33,14 +33,25 @@ namespace TripleSix.Core.Mappers
                     if (configToEntity != null)
                     {
                         var map = CreateMap(dtoType, entityType, MemberList.Destination);
-                        var ignoreProperties = dtoType.GetCustomAttributes<IgnorePropertyAttribute>();
-                        if (!ignoreProperties.IsNullOrEmpty())
+                        var ignoreProperties = new List<string>();
+
+                        if (dtoType.GetCustomAttribute<IgnoreUnmapPropertyAttribute>() != null)
                         {
-                            var unmapProperties = entityType.GetPublicProperties()
-                                .Where(x => ignoreProperties.Any(p => p.PropertyName == x.Name));
-                            foreach (var property in unmapProperties)
-                                map.ForMember(property.Name, o => o.Ignore());
+                            ignoreProperties.AddRange(entityType.GetPublicProperties()
+                                .Where(p => dtoType.GetProperty(p.Name) == null)
+                                .Select(p => p.Name));
                         }
+
+                        var ignorePropertyAttributes = dtoType.GetCustomAttributes<IgnorePropertyAttribute>(true);
+                        if (!ignorePropertyAttributes.IsNullOrEmpty())
+                        {
+                            ignoreProperties.AddRange(entityType.GetPublicProperties()
+                                .Where(p => ignorePropertyAttributes.Any(x => x.PropertyName == p.Name))
+                                .Select(p => p.Name));
+                        }
+
+                        foreach (var property in ignoreProperties.Distinct())
+                            map.ForMember(property, o => o.Ignore());
                     }
                 }
             }
