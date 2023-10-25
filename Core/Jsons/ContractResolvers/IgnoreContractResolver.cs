@@ -18,7 +18,7 @@ namespace TripleSix.Core.Jsons
         {
             var property = base.CreateProperty(member, memberSerialization);
 
-            if (!property.PropertyName.IsNullOrWhiteSpace()
+            if (!property.PropertyName.IsNullOrEmpty()
                 && _ignoreProps.Contains(property.PropertyName.ToLower()))
                 property.ShouldSerialize = _ => false;
 

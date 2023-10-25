@@ -27,7 +27,7 @@ namespace TripleSix.Core.Helpers
         /// <returns>Chuỗi sau khi được ghép từ danh sách.</returns>
         public static string ToString<T>(this IEnumerable<T> list, string separator)
         {
-            return string.Join(separator, list.Where(x => x != null && !x.ToString().IsNullOrWhiteSpace()));
+            return string.Join(separator, list.Where(x => x != null && !x.ToString().IsNullOrEmpty()));
         }
     }
 }

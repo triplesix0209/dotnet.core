@@ -146,7 +146,7 @@ namespace TripleSix.Core.Helpers
         public static string GetDisplayName(this MemberInfo propertyInfo)
         {
             var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
-            if (displayName == null || displayName.DisplayName.IsNullOrWhiteSpace())
+            if (displayName == null || displayName.DisplayName.IsNullOrEmpty())
                 return propertyInfo.Name;
 
             return displayName.DisplayName.ToTitleCase();

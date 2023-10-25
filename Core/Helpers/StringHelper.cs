@@ -29,7 +29,7 @@ namespace TripleSix.Core.Helpers
         /// </summary>
         /// <param name="text">Chuỗi cần kiểm tra.</param>
         /// <returns>Kết quả kiểm tra.</returns>
-        public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? text)
+        public static bool IsNullOrEmpty([NotNullWhen(false)] this string? text)
         {
             return string.IsNullOrWhiteSpace(text);
         }

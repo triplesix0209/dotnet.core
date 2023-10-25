@@ -123,14 +123,12 @@ namespace TripleSix.Core.WebApi
                     .GetCustomAttribute<MapFromEntityAttribute>()?
                     .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
 
-                if (!displayName.IsNullOrWhiteSpace())
-                {
+                if (!displayName.IsNullOrEmpty())
                     if (propertyInfo.DeclaringType?.Name.EndsWith(FilterDtoPostfix) == true) displayName = "Lọc theo " + displayName;
-                }
             }
 
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();
-            result.Description = new[] { displayName, description }.Where(x => !x.IsNullOrWhiteSpace()).ToString("<br/>")
+            result.Description = new[] { displayName, description }.Where(x => !x.IsNullOrEmpty()).ToString("<br/>")
                 + result.Description;
 
             result.MinLength = propertyInfo.GetCustomAttribute<MinLengthAttribute>()?.Length;

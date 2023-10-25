@@ -27,7 +27,7 @@ namespace TripleSix.Core.WebApi
 
             public RequireScopeImplement(string acceptedScope)
             {
-                if (acceptedScope.IsNullOrWhiteSpace()) throw new ArgumentException("must not be null or white space only", nameof(acceptedScope));
+                if (acceptedScope.IsNullOrEmpty()) throw new ArgumentException("must not be null or white space only", nameof(acceptedScope));
 
                 _acceptedScope = acceptedScope;
             }

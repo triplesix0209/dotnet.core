@@ -81,9 +81,9 @@ namespace TripleSix.Core.WebApi
                         context.HandleResponse();
 
                         // ensure error info
-                        if (context.Error.IsNullOrWhiteSpace())
+                        if (context.Error.IsNullOrEmpty())
                             context.Error = "invalid_token";
-                        if (context.ErrorDescription.IsNullOrWhiteSpace())
+                        if (context.ErrorDescription.IsNullOrEmpty())
                             context.ErrorDescription = "This request requires a valid access token to be provided";
 
                         // expired tokens case

@@ -28,7 +28,7 @@ namespace TripleSix.Core.WebApi
             public RequireAnyScopeImplement(string[] acceptedScopes)
             {
                 if (acceptedScopes.IsNullOrEmpty()) throw new ArgumentException("must have at least 1 scope", nameof(acceptedScopes));
-                if (acceptedScopes.Any(x => x.IsNullOrWhiteSpace())) throw new ArgumentException("scope must not be null or white space only", nameof(acceptedScopes));
+                if (acceptedScopes.Any(x => x.IsNullOrEmpty())) throw new ArgumentException("scope must not be null or white space only", nameof(acceptedScopes));
 
                 _acceptedScopes = acceptedScopes;
             }

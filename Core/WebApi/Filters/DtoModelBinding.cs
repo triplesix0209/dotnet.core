@@ -27,7 +27,7 @@ namespace TripleSix.Core.WebApi
                 if (data == null || data is not IDto dto) continue;
 
                 var bindingSource = parameter.BindingInfo?.BindingSource?.Id;
-                if (bindingSource.IsNullOrWhiteSpace()) bindingSource = "Query";
+                if (bindingSource.IsNullOrEmpty()) bindingSource = "Query";
 
                 context.ActionArguments[parameter.Name] = await NormalizeParameter(request, bindingSource, dto);
             }

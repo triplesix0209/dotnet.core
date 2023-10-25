@@ -17,7 +17,7 @@
             var e = exception;
             while (e != null)
             {
-                if (!e.Message.IsNullOrWhiteSpace())
+                if (!e.Message.IsNullOrEmpty())
                     result.Add(e.Message);
                 e = e.InnerException;
             }

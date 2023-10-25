@@ -16,7 +16,7 @@ namespace TripleSix.Core.Validation.Validators
 
             switch (value)
             {
-                case string str when str.IsNullOrWhiteSpace():
+                case string str when str.IsNullOrEmpty():
                 case ICollection { Count: 0 }:
                 case Array { Length: 0 }:
                 case IEnumerable e when !e.GetEnumerator().MoveNext():
