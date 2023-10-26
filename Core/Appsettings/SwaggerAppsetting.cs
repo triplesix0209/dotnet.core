@@ -18,5 +18,15 @@ namespace TripleSix.Core.Appsettings
         /// Route đến swagger.
         /// </summary>
         public string Route { get; set; } = "swagger";
+
+        /// <summary>
+        /// Tiêu đề của API Document.
+        /// </summary>
+        public string Title { get; set; } = "API Document";
+
+        /// <summary>
+        /// Version của API Document.
+        /// </summary>
+        public string Version { get; set; } = string.Empty;
     }
 }

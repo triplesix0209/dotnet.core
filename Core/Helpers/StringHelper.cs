@@ -37,7 +37,7 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Cắt từ khỏi chuỗi.
         /// </summary>
-        /// <param name="text">Chuỗi cần xử lý</param>
+        /// <param name="text">Chuỗi cần xử lý.</param>
         /// <returns>Danh sách các từ đã cắt.</returns>
         public static string[] SplitCase(this string text)
         {

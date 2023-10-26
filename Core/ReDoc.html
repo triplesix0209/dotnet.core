@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .ellipsis::after {
+            content: "..." !important;
+        }
+
+        .sc-qZtCU {
+            font-size: 0;
+        }
+
+        .sc-qZtCU::after {
+            content: "x";
+            font-size: 13pt;
+            line-height: 17pt;
+        }
+    </style>
+</head>
+
+<body>
+    <redoc scroll-y-offset="body > nav"></redoc>
+    <script src="redoc.standalone.js"></script>
+    <script>
+        var options = {
+            hideSchemaTitles: true,
+            requiredPropsFirst: true,
+        };
+
+        Redoc.init('openapi/swagger.json', options);
+    </script>
+</body>
+
+</html>

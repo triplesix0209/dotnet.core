@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
+
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -103,6 +106,57 @@ namespace TripleSix.Core.WebApi
 
             #endregion
 
+            #region [authorization]
+
+            var authorizeAttr = methodInfo.GetCustomAttribute<AuthorizeAttribute>(true)
+                ?? controllerInfo.ControllerTypeInfo.GetCustomAttribute<AuthorizeAttribute>(true);
+
+            if (authorizeAttr != null)
+            {
+                var requireScopeAttrs = methodInfo.GetCustomAttributes<RequireScope>(true).ToList();
+                requireScopeAttrs.AddRange(controllerInfo.ControllerTypeInfo.GetCustomAttributes<RequireScope>(true));
+                var requireAnyScopeAttrs = methodInfo.GetCustomAttributes<RequireAnyScope>(true).ToList();
+                requireAnyScopeAttrs.AddRange(controllerInfo.ControllerTypeInfo.GetCustomAttributes<RequireAnyScope>(true));
+                var requireScopes = new HashSet<string>();
+
+                foreach (var requireScopeAttr in requireScopeAttrs)
+                {
+                    var scope = requireScopeAttr.Arguments?[0].ToString();
+                    if (scope.IsNullOrEmpty()) continue;
+                    requireScopes.Add(scope);
+                }
+
+                foreach (var requireScopeAttr in requireAnyScopeAttrs)
+                {
+                    var scopes = requireScopeAttr.Arguments?.SelectMany(x => (string[])x);
+                    if (scopes.IsNullOrEmpty()) continue;
+
+                    if (scopes.Count() == 1) requireScopes.Add(scopes.First());
+                    else requireScopes.Add($"[{scopes.ToString(", ")}]");
+                }
+
+                operation.Security.Add(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Name = "Bearer",
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "AccessToken",
+                            },
+                        },
+                        requireScopes.ToList()
+                    }
+                });
+            }
+
+            #endregion
+
+            operation.OperationId = controllerInfo.ActionName + controllerInfo.ControllerName;
+            if (operation.RequestBody.Content.Count == 0)
+                operation.RequestBody = null;
             context.SchemaRepository.Schemas.Clear();
         }
     }

@@ -3,7 +3,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.OpenApi.Models;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Quartz;
@@ -34,24 +33,7 @@ namespace Sample.WebApi
             builder.Services.AddHttpContextAccessor();
             builder.Services.ConfigureMvcService(ConfigureMvc, ConfigureApplicationPartManager);
             builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
-
-            #region [swagger]
-
-            builder.Services.AddSwagger(configuration, (options, appsetting) =>
-            {
-                options.SwaggerDoc("app", new OpenApiInfo { Title = "App API Document", Version = "1.0" });
-                options.SwaggerDoc("admin", new OpenApiInfo { Title = "Admin API Document", Version = "1.0" });
-
-                options.AddSecurityDefinition("access-token", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.ApiKey,
-                    In = ParameterLocation.Header,
-                    Name = "Authorization",
-                    Description = "Nhập access token vào field của header để tiến hành xác thực",
-                });
-            });
-
-            #endregion
+            builder.Services.AddSwagger(configuration);
 
             #region [build app]
 
@@ -69,6 +51,7 @@ namespace Sample.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
             app.Use404JsonError();
+            app.UseReDocUI(configuration);
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.Use(next => context =>
@@ -77,36 +60,6 @@ namespace Sample.WebApi
                 return next(context);
             });
             app.MapControllers();
-
-            #endregion
-
-            #region [redoc]
-
-            var swaggerAppsetting = new SwaggerAppsetting(configuration);
-            if (swaggerAppsetting.Enable)
-            {
-                app.UseSwagger();
-                app.UseReDoc(options =>
-                {
-                    options.RoutePrefix = swaggerAppsetting.Route;
-                    options.IndexStream = () =>
-                    {
-                        var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                            .First(x => x.GetName().Name == AppDomain.CurrentDomain.FriendlyName);
-
-                        var redocStream = assembly.GetManifestResourceNames()
-                            .First(x => x.EndsWith("ReDoc.html"));
-
-                        return assembly.GetManifestResourceStream(redocStream);
-                    };
-                });
-
-                app.MapGet("/", context =>
-                {
-                    context.Response.Redirect("/" + swaggerAppsetting.Route);
-                    return Task.CompletedTask;
-                });
-            }
 
             #endregion
 

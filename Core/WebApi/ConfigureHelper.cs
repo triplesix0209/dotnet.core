@@ -121,6 +121,15 @@ namespace TripleSix.Core.WebApi
 
             return services.AddSwaggerGen(options =>
             {
+                options.SwaggerDoc("openapi", new OpenApiInfo { Title = appsetting.Title, Version = appsetting.Version });
+                options.AddSecurityDefinition("AccessToken", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "Nhập `Access Token` vào header để truy cập",
+                });
+
                 options.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
                 options.CustomSchemaIds(x => x.FullName);
                 options.EnableAnnotations();
@@ -133,6 +142,34 @@ namespace TripleSix.Core.WebApi
 
                 setupAction?.Invoke(options, appsetting);
             });
+        }
+
+        /// <summary>
+        /// Sử dụng Redoc làm API Document.
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns><see cref="IApplicationBuilder"/>.</returns>
+        public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            var appsetting = new SwaggerAppsetting(configuration);
+            if (!appsetting.Enable) return app;
+
+            app.UseSwagger();
+            app.UseReDoc(options =>
+            {
+                options.RoutePrefix = appsetting.Route;
+                options.IndexStream = () =>
+                {
+                    var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                        .First(x => x.GetName().Name == $"{nameof(TripleSix)}.{nameof(Core)}");
+                    var streamName = assembly.GetManifestResourceNames()
+                        .First(x => x.EndsWith("ReDoc.html"));
+                    return assembly.GetManifestResourceStream(streamName);
+                };
+            });
+
+            return app;
         }
 
         /// <summary>

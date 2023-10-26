@@ -12,7 +12,6 @@ using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Types;
 using TripleSix.Core.Validation;
-using TripleSix.Core.Validation.Validators;
 
 namespace TripleSix.Core.WebApi
 {
@@ -194,7 +193,7 @@ namespace TripleSix.Core.WebApi
                     validators.Select(x => x.GetType().Name)
                         .Select(x => x[..^9])
                         .Select(x => x.SplitCase().ToString(" "))
-                        .Select(x => $"<span class='sc-laZMeE sc-ckTSus dmLkmF cDPDUw' style='color: blue'>{x}</span>")
+                        .Select(x => $"`{x}`")
                         .ToString(" ") + "<br/>"
                     + result.Description;
             }

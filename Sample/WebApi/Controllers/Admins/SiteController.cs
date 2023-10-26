@@ -1,7 +1,7 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("chi nhánh")]
-    public class SiteController : CommonController
+    public class SiteController : AdminController
     {
         public ISiteService SiteService { get; set; }
 

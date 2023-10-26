@@ -1,6 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Reflection;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
 {
@@ -8,6 +13,11 @@ namespace TripleSix.Core.WebApi
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
+            var orderedPaths = swaggerDoc.Paths.OrderBy(x => x.Key).ToList();
+            swaggerDoc.Paths.Clear();
+            foreach (var (key, value) in orderedPaths)
+                swaggerDoc.Paths.Add(key, value);
+
             foreach (var (_, openApiPathItem) in swaggerDoc.Paths)
             {
                 foreach (var (_, operation) in openApiPathItem.Operations)
@@ -22,10 +32,67 @@ namespace TripleSix.Core.WebApi
                 }
             }
 
-            var orderedPaths = swaggerDoc.Paths.OrderBy(x => x.Key).ToList();
-            swaggerDoc.Paths.Clear();
-            foreach (var (key, value) in orderedPaths)
-                swaggerDoc.Paths.Add(key, value);
+            var tagGroups = new List<TagGroupItem>();
+            foreach (var apiDescription in context.ApiDescriptions)
+            {
+                if (apiDescription.ActionDescriptor is not ControllerActionDescriptor controllerDescriptor) continue;
+
+                var swaggerTagAttr = controllerDescriptor.ControllerTypeInfo.GetCustomAttribute<SwaggerTagAttribute>();
+                if (swaggerTagAttr is null) continue;
+                var tag = swaggerDoc.Tags.FirstOrDefault(x => x.Description == swaggerTagAttr.Description);
+                if (tag is null) continue;
+
+                var baseController = controllerDescriptor.ControllerTypeInfo.BaseType;
+                if (baseController is null) continue;
+                var swaggerTagGroupAttr = baseController.GetCustomAttribute<SwaggerTagGroupAttribute>();
+                var groupName = swaggerTagGroupAttr?.Description;
+                if (groupName is null)
+                {
+                    groupName = baseController.Name;
+                    if (groupName.EndsWith("Controller")) groupName = groupName[..^10];
+                }
+
+                var tagGroup = tagGroups.FirstOrDefault(x => x.Name == groupName);
+                if (tagGroup == null)
+                {
+                    tagGroups.Add(new TagGroupItem
+                    {
+                        Name = groupName,
+                        OrderIndex = swaggerTagGroupAttr?.OrderIndex ?? 0,
+                        Tags = new HashSet<string> { tag.Name },
+                    });
+                }
+                else
+                {
+                    tagGroup.Tags.Add(tag.Name);
+                }
+            }
+
+            foreach (var tag in swaggerDoc.Tags)
+                tag.Description = tag.Description.ToTitleCase();
+
+            var xTagGroups = new OpenApiArray();
+            foreach (var group in tagGroups.OrderBy(x => x.OrderIndex))
+            {
+                var xTagGroupItem = new OpenApiArray();
+                xTagGroupItem.AddRange(group.Tags.Select(x => new OpenApiString(x)));
+                xTagGroups.Add(new OpenApiObject()
+                {
+                    ["name"] = new OpenApiString(group.Name),
+                    ["tags"] = xTagGroupItem,
+                });
+            }
+
+            swaggerDoc.Extensions.Add("x-tagGroups", xTagGroups);
+        }
+
+        private class TagGroupItem
+        {
+            public string Name { get; set; }
+
+            public int OrderIndex { get; set; }
+
+            public HashSet<string> Tags { get; set; }
         }
     }
 }

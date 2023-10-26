@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="ReDoc.html" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>

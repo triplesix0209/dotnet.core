@@ -1,8 +1,8 @@
 ﻿namespace Sample.WebApi.Common
 {
     [Route("App/[controller]")]
-    [ApiExplorerSettings(GroupName = "app")]
     [Authorize]
+    [SwaggerTagGroup("App", 1)]
     public abstract class AppController : BaseController
     {
     }

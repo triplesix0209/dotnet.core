@@ -1,7 +1,7 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("tài khoản")]
-    public class AccountController : CommonController
+    public class AccountController : AdminController
     {
         public IAccountService AccountService { get; set; }
 
