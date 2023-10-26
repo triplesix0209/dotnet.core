@@ -152,6 +152,24 @@ namespace TripleSix.Core.Validation
                     .WithName(propertyDisplayName);
             }
 
+            var mustEmailAttr = property.GetCustomAttribute<MustEmailAttribute>();
+            if (mustEmailAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustEmailValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
+            var mustPhoneAttr = property.GetCustomAttribute<MustPhoneAttribute>();
+            if (mustPhoneAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustPhoneValidator<T, object?>())
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
             if (propertyType.IsAssignableTo<IDto>())
             {
                 foreach (var childProperty in propertyType.GetProperties())

@@ -12,6 +12,7 @@ using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Types;
 using TripleSix.Core.Validation;
+using TripleSix.Core.Validation.Validators;
 
 namespace TripleSix.Core.WebApi
 {
@@ -154,13 +155,47 @@ namespace TripleSix.Core.WebApi
             if (result.Nullable && propertyInfo.GetCustomAttributes().Any(x => x.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute"))
                 result.Nullable = false;
 
+            var validators = new List<Attribute>();
             var requireAttr = propertyInfo.GetCustomAttribute<RequiredAttribute>();
             var notEmptyAttr = propertyInfo.GetCustomAttribute<NotEmptyAttribute>();
             if ((requireAttr != null && !requireAttr.AllowEmptyStrings) || notEmptyAttr != null)
+                validators.Add(new NotEmptyAttribute());
+
+            var notNullAtrr = propertyInfo.GetCustomAttribute<NotNullAttribute>();
+            if (notNullAtrr != null) validators.Add(notNullAtrr);
+
+            var noSpaceAtrr = propertyInfo.GetCustomAttribute<NoSpaceAttribute>();
+            if (noSpaceAtrr != null) validators.Add(noSpaceAtrr);
+
+            var mustLowerCaseAtrr = propertyInfo.GetCustomAttribute<MustLowerCaseAttribute>();
+            if (mustLowerCaseAtrr != null) validators.Add(mustLowerCaseAtrr);
+
+            var mustUpperCaseAtrr = propertyInfo.GetCustomAttribute<MustUpperCaseAttribute>();
+            if (mustUpperCaseAtrr != null) validators.Add(mustUpperCaseAtrr);
+
+            var mustTrimAtrr = propertyInfo.GetCustomAttribute<MustTrimAttribute>();
+            if (mustTrimAtrr != null) validators.Add(mustTrimAtrr);
+
+            var mustWordNumberAtrr = propertyInfo.GetCustomAttribute<MustWordNumberAttribute>();
+            if (mustWordNumberAtrr != null) validators.Add(mustWordNumberAtrr);
+
+            var mustNumberAtrr = propertyInfo.GetCustomAttribute<MustNumberAttribute>();
+            if (mustNumberAtrr != null) validators.Add(mustNumberAtrr);
+
+            var mustEmailAtrr = propertyInfo.GetCustomAttribute<MustEmailAttribute>();
+            if (mustEmailAtrr != null) validators.Add(mustEmailAtrr);
+
+            var mustPhoneAtrr = propertyInfo.GetCustomAttribute<MustPhoneAttribute>();
+            if (mustPhoneAtrr != null) validators.Add(mustPhoneAtrr);
+
+            if (validators.Any())
             {
-                result.Description = "<span class=\"sc-fbIWvP JIFSj\">Allow empty: </span>"
-                    + "<span class=\"sc-fbIWvP sc-hmbstg JIFSj eqivia\">false</span>"
-                    + "<br/>"
+                result.Description = "<span class='sc-laZMeE dmLkmF'>Validators:</span> " +
+                    validators.Select(x => x.GetType().Name)
+                        .Select(x => x[..^9])
+                        .Select(x => x.SplitCase().ToString(" "))
+                        .Select(x => $"<span class='sc-laZMeE sc-ckTSus dmLkmF cDPDUw' style='color: blue'>{x}</span>")
+                        .ToString(" ") + "<br/>"
                     + result.Description;
             }
 

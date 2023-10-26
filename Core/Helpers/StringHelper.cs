@@ -35,6 +35,20 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
+        /// Cắt từ khỏi chuỗi.
+        /// </summary>
+        /// <param name="text">Chuỗi cần xử lý</param>
+        /// <returns>Danh sách các từ đã cắt.</returns>
+        public static string[] SplitCase(this string text)
+        {
+            return Regex.Replace(text, @"([a-z0-9])([A-Z])", "$1 $2")
+                .Split(' ', '-', '_')
+                .Select(x => x.Trim())
+                .Where(x => x.Length > 0)
+                .ToArray();
+        }
+
+        /// <summary>
         /// Chuyển chuỗi sang dạng Camel Case.
         /// </summary>
         /// <param name="text">Chuỗi cần xử lý.</param>
@@ -99,14 +113,5 @@ namespace TripleSix.Core.Helpers
             "ýỳỵỷỹ",
             "ÝỲỴỶỸ",
         };
-
-        private static string[] SplitCase(string text)
-        {
-            return Regex.Replace(text, @"([a-z0-9])([A-Z])", "$1 $2")
-                .Split(' ', '-', '_')
-                .Select(x => x.Trim())
-                .Where(x => x.Length > 0)
-                .ToArray();
-        }
     }
 }
