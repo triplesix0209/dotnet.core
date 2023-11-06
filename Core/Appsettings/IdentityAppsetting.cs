@@ -15,14 +15,14 @@ namespace TripleSix.Core.Appsettings
         public string SigningKey { get; set; }
 
         /// <summary>
-        /// Issuer hợp lệ.
+        /// Danh sách Issuer hợp lệ.
         /// </summary>
-        public string Issuer { get; set; } = "Identity";
+        public string[] Issuer { get; set; } = new[] { "Identity" };
 
         /// <summary>
-        /// Audience hợp lệ.
+        /// Danh sách Audience hợp lệ.
         /// </summary>
-        public string Audience { get; set; } = "Identity";
+        public string[] Audience { get; set; } = new[] { "Identity" };
 
         /// <summary>
         /// Bật/tắt kiểm tra Issuer.

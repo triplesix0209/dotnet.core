@@ -59,9 +59,9 @@ namespace TripleSix.Core.Identity
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = signingKey,
                 ValidateIssuer = appsetting.ValidateIssuer,
-                ValidIssuer = appsetting.Issuer,
+                ValidIssuers = appsetting.Issuer,
                 ValidateAudience = appsetting.ValidateAudience,
-                ValidAudience = appsetting.Audience,
+                ValidAudiences = appsetting.Audience,
             };
 
             return new JwtSecurityTokenHandler().ValidateToken(accessToken, tokenValidationParameters, out _);

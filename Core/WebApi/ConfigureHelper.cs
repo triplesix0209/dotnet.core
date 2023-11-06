@@ -69,9 +69,9 @@ namespace TripleSix.Core.WebApi
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = signingKey,
                     ValidateIssuer = appsetting.ValidateIssuer,
-                    ValidIssuer = appsetting.Issuer,
+                    ValidIssuers = appsetting.Issuer,
                     ValidateAudience = appsetting.ValidateAudience,
-                    ValidAudience = appsetting.Audience,
+                    ValidAudiences = appsetting.Audience,
                 };
 
                 options.Events = new JwtBearerEvents
