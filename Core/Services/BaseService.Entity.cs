@@ -43,22 +43,26 @@ namespace TripleSix.Core.Services
             return entity;
         }
 
-        public async Task<TEntity> CreateWithMapper(IDto input)
+        public async Task<TEntity> CreateWithMapper(IDto input, Action<TEntity>? afterMap = null)
         {
             input.Validate(throwOnFailures: true);
             input.Normalize();
 
             var entity = Mapper.MapData<IDto, TEntity>(input);
+            afterMap?.Invoke(entity);
+
             return await Create(entity);
         }
 
-        public async Task<TResult> CreateWithMapper<TResult>(IDto input)
+        public async Task<TResult> CreateWithMapper<TResult>(IDto input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
             input.Validate(throwOnFailures: true);
             input.Normalize();
 
             var entity = Mapper.MapData<IDto, TEntity>(input);
+            afterMap?.Invoke(entity);
+
             var result = await Create(entity);
             return Mapper.MapData<TEntity, TResult>(result);
         }
@@ -72,13 +76,17 @@ namespace TripleSix.Core.Services
             await _db.SaveChangesAsync(true);
         }
 
-        public async Task UpdateWithMapper(TEntity entity, IDto input)
+        public async Task UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
         {
             if (!input.IsAnyPropertyChanged()) return;
             input.Validate(throwOnFailures: true);
             input.Normalize();
 
-            await Update(entity, e => Mapper.MapUpdate(input, e));
+            await Update(entity, e =>
+            {
+                Mapper.MapUpdate(input, e);
+                afterMap?.Invoke(e);
+            });
         }
 
         public virtual async Task HardDelete(TEntity entity)

@@ -27,10 +27,10 @@ namespace TripleSix.Core.Services
             await Update(entity, updateMethod);
         }
 
-        public async Task UpdateWithMapper(Guid id, IDto input)
+        public async Task UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null)
         {
             var entity = await GetFirstById(id);
-            await UpdateWithMapper(entity, input);
+            await UpdateWithMapper(entity, input, afterMap);
         }
 
         public async Task HardDelete(Guid id)
