@@ -2,6 +2,7 @@
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.Validators;
+using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
@@ -26,7 +27,7 @@ namespace TripleSix.Core.Validation.Validators
             }
 
             if (instance is not IDto dto) return true;
-            if (!dto.IsPropertyChanged(propertyName)) return false;
+            if (context.RootContextData[nameof(HttpContext)] != null && !dto.IsPropertyChanged(propertyName)) return false;
 
             var property = dto.GetType().GetProperty(propertyName);
             if (property == null) return true;
