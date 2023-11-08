@@ -27,7 +27,7 @@ namespace TripleSix.Core.Validation.Validators
             }
 
             if (instance is not IDto dto) return true;
-            if (context.RootContextData[nameof(HttpContext)] != null && !dto.IsPropertyChanged(propertyName)) return false;
+            if (!dto.IsPropertyChanged(propertyName)) return false;
 
             var property = dto.GetType().GetProperty(propertyName);
             if (property == null) return true;
