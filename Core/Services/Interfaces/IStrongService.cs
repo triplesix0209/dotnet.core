@@ -11,6 +11,24 @@ namespace TripleSix.Core.Services
         where TEntity : class, IStrongEntity
     {
         /// <summary>
+        /// Cập nhật entity.
+        /// </summary>
+        /// <param name="id">Id entity sử dụng để cập nhận.</param>
+        /// <param name="updateAction">Hàm thực hiện thao tác chỉnh sửa.</param>
+        /// <returns>Entity sau chỉnh sửa.</returns>
+        Task<TEntity> Update(Guid id, Action<TEntity> updateAction);
+
+        /// <summary>
+        /// Cập nhật entity.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="id">Id entity sử dụng để cập nhận.</param>
+        /// <param name="updateAction">Hàm thực hiện thao tác chỉnh sửa.</param>
+        /// <returns>Dữ liệu được map từ entity sau chỉnh sửa.</returns>
+        Task<TResult> Update<TResult>(Guid id, Action<TEntity> updateAction)
+            where TResult : class;
+
+        /// <summary>
         /// Cập nhật entity với Mapper.
         /// </summary>
         /// <param name="id">Id entity sử dụng để cập nhận.</param>
