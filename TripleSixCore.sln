@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "Sample\WebApi\Web
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E01ACE88-0396-447F-9996-D87DD8EAF01F}"
 	ProjectSection(SolutionItems) = preProject
-		Build\GetBuildVersion.psm1 = Build\GetBuildVersion.psm1
+		.github\workflows\nuget.yml = .github\workflows\nuget.yml
 	EndProjectSection
 EndProject
 Global
