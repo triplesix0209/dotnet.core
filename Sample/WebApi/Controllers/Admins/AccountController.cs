@@ -9,13 +9,6 @@
         [SwaggerOperation("Lấy danh sách tài khoản")]
         public async Task<DataResult<List<AccountAdminDataDto>>> GetAll(AccountAdminFilterDto input)
         {
-            var x = new AccountAdminCreateDto();
-            x.PropertyChanged += (_, a) =>
-            {
-                Console.WriteLine(a.PropertyName);
-            };
-            x.Code = "OK";
-
             var result = await AccountService.GetListByQueryModel<AccountAdminDataDto>(input);
             return DataResult(result);
         }

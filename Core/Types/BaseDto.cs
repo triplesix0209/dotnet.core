@@ -17,9 +17,14 @@ namespace TripleSix.Core.Types
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <param name="propertyName">Name of property.</param>
         public virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            SetPropertyChanged(propertyName, true);
         }
 
         public ValidationResult Validate(IValidator? validator = default, HttpContext? httpContext = default, bool throwOnFailures = false)
