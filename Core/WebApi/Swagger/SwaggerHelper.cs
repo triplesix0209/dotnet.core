@@ -122,7 +122,7 @@ namespace TripleSix.Core.WebApi
                     .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
 
                 if (!displayName.IsNullOrEmpty())
-                    if (propertyInfo.DeclaringType?.IsSubclassOfRawGeneric(typeof(BaseQueryDto<>)) == true) displayName = "Lọc theo " + displayName;
+                    if (propertyInfo.DeclaringType?.IsSubclassOfOpenGeneric(typeof(BaseQueryDto<>)) == true) displayName = "Lọc theo " + displayName;
             }
 
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();

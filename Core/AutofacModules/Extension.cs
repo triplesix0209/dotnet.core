@@ -12,6 +12,7 @@ using AutoMapper.Internal;
 using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Quartz;
@@ -218,6 +219,10 @@ namespace TripleSix.Core.AutofacModules
             this ContainerBuilder builder,
             Assembly assembly)
         {
+            builder.RegisterAssemblyOpenGenericTypes(assembly)
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableToGenericType(typeof(IControllerEndpoint<>)))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)

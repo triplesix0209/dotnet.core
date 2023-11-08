@@ -35,12 +35,12 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
-        /// Kiểm tra type có phải là con của 1 raw generic type hay không.
+        /// Kiểm tra type có phải là con của 1 generic type hay không.
         /// </summary>
         /// <param name="type">Type cần kiểm tra.</param>
-        /// <param name="genericType">Raw generic type làm đối chiếu.</param>
-        /// <returns><c>True</c> nếu type là con của raw generic type chỉ định, ngược lại là <c>False</c>.</returns>
-        public static bool IsSubclassOfRawGeneric(this Type type, Type genericType)
+        /// <param name="genericType">Generic type làm đối chiếu.</param>
+        /// <returns><c>True</c> nếu type là con của generic type chỉ định, ngược lại là <c>False</c>.</returns>
+        public static bool IsSubclassOfOpenGeneric(this Type type, Type genericType)
         {
             if (!genericType.IsGenericType)
                 return false;
@@ -56,6 +56,54 @@ namespace TripleSix.Core.Helpers
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Kiểm tra type có implement 1 generic type hay không.
+        /// </summary>
+        /// <param name="type">Type cần kiểm tra.</param>
+        /// <param name="genericType">Generic type làm đối chiếu.</param>
+        /// <returns><c>True</c> nếu type có implement generic type chỉ định, ngược lại là <c>False</c>.</returns>
+        public static bool IsAssignableToGenericType(this Type type, Type genericType)
+        {
+            var interfaceTypes = type.GetInterfaces();
+            foreach (var it in interfaceTypes)
+            {
+                if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
+                    return true;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == genericType)
+                return true;
+
+            var baseType = type.BaseType;
+            if (baseType == null) return false;
+
+            return IsAssignableToGenericType(baseType, genericType);
+        }
+
+        /// <summary>
+        /// Lấy danh sách tham số của 1 generic chỉnh định.
+        /// </summary>
+        /// <param name="type">Type cần kiểm tra.</param>
+        /// <param name="genericType">Generic type làm đối chiếu.</param>
+        /// <returns>Danh sách tham số.</returns>
+        public static Type[] GetGenericArguments(this Type type, Type genericType)
+        {
+            var interfaceTypes = type.GetInterfaces();
+            foreach (var it in interfaceTypes)
+            {
+                if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
+                    return it.GetGenericArguments();
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == genericType)
+                return type.GetGenericArguments();
+
+            var baseType = type.BaseType;
+            if (baseType == null) return Array.Empty<Type>();
+
+            return GetGenericArguments(baseType, genericType);
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapToEntity(typeof(Site))]
-    public class SiteAdminCreateDto : BaseDto
+    [MapToEntity(typeof(Account))]
+    public class AccountCreateAdminDto : BaseDto
     {
         [Required]
         [MustWordNumber]
@@ -10,5 +10,8 @@
 
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        public Guid SiteId { get; set; }
     }
 }
