@@ -42,6 +42,9 @@ namespace TripleSix.Core.WebApi
 
                     foreach (var error in field.Value.Errors)
                     {
+                        if (!field.Key.IsNullOrEmpty() && error.ErrorMessage.EndsWith("is required."))
+                            continue;
+
                         errors.Add(new InputInvalidItem
                         {
                             FieldName = field.Key.IsNullOrEmpty() ? "input" : field.Key,

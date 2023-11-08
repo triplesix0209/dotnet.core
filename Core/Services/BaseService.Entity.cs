@@ -1,6 +1,5 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
-using Autofac;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
@@ -38,9 +37,16 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            _db.Set<TEntity>().Add(entity);
+            var result = _db.Set<TEntity>().Add(entity);
             await _db.SaveChangesAsync(true);
-            return entity;
+            return result.Entity;
+        }
+
+        public async Task<TResult> Create<TResult>(TEntity entity)
+            where TResult : class
+        {
+            var result = await Create(entity);
+            return Mapper.MapData<TEntity, TResult>(result);
         }
 
         public async Task<TEntity> CreateWithMapper(IDto input, Action<TEntity>? afterMap = null)
@@ -67,26 +73,39 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
-        public virtual async Task Update(TEntity entity, Action<TEntity> updateMethod)
+        public virtual async Task<TEntity> Update(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
-            updateMethod(entity);
-            _db.Set<TEntity>().Update(entity);
+            var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+            return result.Entity;
         }
 
-        public async Task UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TResult> Update<TResult>(TEntity entity)
+            where TResult : class
         {
-            if (!input.IsAnyPropertyChanged()) return;
+            var result = await Update(entity);
+            return Mapper.MapData<TEntity, TResult>(result);
+        }
+
+        public async Task<TEntity> UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+        {
+            if (!input.IsAnyPropertyChanged()) return entity;
             input.Validate(throwOnFailures: true);
             input.Normalize();
 
-            await Update(entity, e =>
-            {
-                Mapper.MapUpdate(input, e);
-                afterMap?.Invoke(e);
-            });
+            Mapper.MapUpdate(input, entity);
+            afterMap?.Invoke(entity);
+
+            return await Update(entity);
+        }
+
+        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+            where TResult : class
+        {
+            var result = await UpdateWithMapper(entity, input, afterMap);
+            return Mapper.MapData<TEntity, TResult>(result);
         }
 
         public virtual async Task HardDelete(TEntity entity)

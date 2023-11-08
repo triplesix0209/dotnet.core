@@ -9,7 +9,22 @@
         [SwaggerOperation("Lấy danh sách tài khoản")]
         public async Task<DataResult<List<AccountAdminDataDto>>> GetAll(AccountAdminFilterDto input)
         {
+            var x = new AccountAdminCreateDto();
+            x.PropertyChanged += (_, a) =>
+            {
+                Console.WriteLine(a.PropertyName);
+            };
+            x.Code = "OK";
+
             var result = await AccountService.GetListByQueryModel<AccountAdminDataDto>(input);
+            return DataResult(result);
+        }
+
+        [HttpGet("{id}")]
+        [SwaggerOperation("Lấy chi tiết tài khoản")]
+        public async Task<DataResult<AccountAdminDataDto>> GetDetail(RouteId route)
+        {
+            var result = await AccountService.GetFirstById<AccountAdminDataDto>(route.Id);
             return DataResult(result);
         }
 
@@ -27,7 +42,7 @@
         [Transactional]
         public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountAdminUpdateDto input)
         {
-            await AccountService.UpdateWithMapper(route.Id, input);
+            var result = await AccountService.UpdateWithMapper(route.Id, input);
             return SuccessResult();
         }
 

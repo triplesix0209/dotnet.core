@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.ComponentModel;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 
@@ -7,7 +8,7 @@ namespace TripleSix.Core.Types
     /// <summary>
     /// DTO cơ bản.
     /// </summary>
-    public interface IDto
+    public interface IDto : INotifyPropertyChanged
     {
         /// <summary>
         /// Kiểm tra dữ liệu với các <see cref="IValidator"/>.

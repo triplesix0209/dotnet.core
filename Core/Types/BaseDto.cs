@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.ComponentModel;
+using Autofac;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +14,13 @@ namespace TripleSix.Core.Types
     {
         private static readonly Dictionary<Type, IValidator?> _defaultValidators = new();
         private readonly HashSet<string> _propertyTracking = new();
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public ValidationResult Validate(IValidator? validator = default, HttpContext? httpContext = default, bool throwOnFailures = false)
         {
