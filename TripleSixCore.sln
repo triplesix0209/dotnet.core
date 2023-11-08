@@ -13,7 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Sample\In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Sample\Application\Application.csproj", "{88B4A3F0-B681-4413-82AF-C07DA1FA90DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "Sample\WebApi\WebApi.csproj", "{859359EE-FC48-41C9-BFCF-246C374F73AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "Sample\WebApi\WebApi.csproj", "{859359EE-FC48-41C9-BFCF-246C374F73AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E01ACE88-0396-447F-9996-D87DD8EAF01F}"
+	ProjectSection(SolutionItems) = preProject
+		Build\GetBuildVersion.psm1 = Build\GetBuildVersion.psm1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
