@@ -14,7 +14,7 @@ env:
     PACK_PROJECT: Core
     
 jobs:
-    build:
+    deploy:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout
@@ -27,11 +27,6 @@ jobs:
 
         - name: Pack NuGet package
           run: dotnet pack ${{ env.PACK_PROJECT }} --configuration Release --output out
-            
-    deploy:
-        runs-on: ubuntu-latest
-        needs:
-        - build
-        steps:
+
         - name: Publish NuGet package
           run: dotnet nuget push ./<project>/out/*.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
