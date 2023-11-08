@@ -18,20 +18,6 @@ namespace TripleSix.Core.WebApi
             foreach (var (key, value) in orderedPaths)
                 swaggerDoc.Paths.Add(key, value);
 
-            foreach (var (_, openApiPathItem) in swaggerDoc.Paths)
-            {
-                foreach (var (_, operation) in openApiPathItem.Operations)
-                {
-                    if (operation.Summary == null) continue;
-
-                    var tagName = operation.Tags[0].Name;
-                    var controllerName = swaggerDoc.Tags.FirstOrDefault(x => x.Name == tagName)?.Description
-                                         ?? tagName;
-
-                    operation.Summary = Regex.Replace(operation.Summary, @"\[controller\]", controllerName);
-                }
-            }
-
             var tagGroups = new List<TagGroupItem>();
             foreach (var apiDescription in context.ApiDescriptions)
             {
@@ -94,6 +80,20 @@ namespace TripleSix.Core.WebApi
             }
 
             swaggerDoc.Extensions.Add("x-tagGroups", xTagGroups);
+
+            foreach (var (_, openApiPathItem) in swaggerDoc.Paths)
+            {
+                foreach (var (_, operation) in openApiPathItem.Operations)
+                {
+                    if (operation.Summary == null) continue;
+
+                    var tagName = operation.Tags[0].Name;
+                    var controllerName = swaggerDoc.Tags.FirstOrDefault(x => x.Name == tagName)?.Description
+                                         ?? tagName;
+
+                    operation.Summary = Regex.Replace(operation.Summary, @"\[controller\]", controllerName);
+                }
+            }
         }
 
         private class TagGroupItem
