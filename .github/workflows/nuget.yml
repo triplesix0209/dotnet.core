@@ -41,7 +41,7 @@ jobs:
             retention-days: 7
             path: ${{ env.NuGetDirectory }}/*.nupkg
 
-    validate_nuget:
+    validate-nuget:
         runs-on: ubuntu-latest
         needs:
         - create-nuget
