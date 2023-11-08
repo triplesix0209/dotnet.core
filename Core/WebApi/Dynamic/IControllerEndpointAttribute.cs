@@ -3,13 +3,9 @@
 namespace TripleSix.Core.WebApi
 {
     /// <summary>
-    /// Base controller endpoint.
+    /// Controller endpoint attribute.
     /// </summary>
-    /// <typeparam name="TController">Controller type.</typeparam>
-    [AttributeUsage(AttributeTargets.Class)]
-    public abstract class BaseControllerEndpointAttribute<TController> : Attribute,
-        IControllerEndpointAttribute
-        where TController : BaseController
+    public interface IControllerEndpointAttribute
     {
         /// <summary>
         /// Chuyển hóa sang TypeInfo.

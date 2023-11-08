@@ -1,6 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    public class AccountFilterAdminDto : BaseQueryDto<Account>
+    public class AccountFilterAdminDto : BaseFilterAdminDto<Account>
     {
         public string? Code { get; set; }
 

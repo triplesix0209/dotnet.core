@@ -1,8 +1,8 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
-    public class AdminCreateEndpoint<TBaseController, TEntity, TInput> : AdminController,
-        IControllerEndpoint<TBaseController>
-        where TBaseController : BaseController
+    public class AdminCreateEndpoint<TController, TEntity, TInput> : AdminController,
+        IControllerEndpoint<TController>
+        where TController : BaseController
         where TEntity : class, IStrongEntity
         where TInput : class, IDto
     {
@@ -18,23 +18,15 @@
         }
     }
 
-    public class CreateEndpointAttribute : BaseControllerEndpointAttribute
+    public class CreateEndpointAttribute<TController, TEntity, TInput> : BaseControllerEndpointAttribute<TController>
+        where TController : BaseController
+        where TEntity : class, IStrongEntity
+        where TInput : class, IDto
     {
-        public CreateEndpointAttribute(Type controllerType, Type entityType, Type inputType)
-            : base(controllerType)
-        {
-            EntityType = entityType;
-            InputType = inputType;
-        }
-
-        public Type EntityType { get; }
-
-        public Type InputType { get; }
-
         public override TypeInfo ToEndpointTypeInfo()
         {
             return typeof(AdminCreateEndpoint<,,>)
-                .MakeGenericType(ControllerType, EntityType, InputType)
+                .MakeGenericType(typeof(TController), typeof(TEntity), typeof(TInput))
                 .GetTypeInfo();
         }
     }
