@@ -1,8 +1,8 @@
-﻿namespace Sample.WebApi.Common
+﻿namespace Sample.WebApi.Controllers.Abstracts
 {
     [Route("Admin/[controller]")]
-    //[Authorize]
-    //[RequireScope("admin")]
+    [Authorize]
+    [RequireScope("admin")]
     [SwaggerTagGroup("Admin", 2)]
     public abstract class AdminController : BaseController
     {

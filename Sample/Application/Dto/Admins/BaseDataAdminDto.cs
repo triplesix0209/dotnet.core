@@ -1,6 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    public abstract class BaseAdminDataDto : BaseDto
+    public abstract class BaseDataAdminDto : BaseDto
     {
         [DisplayName("Id định danh")]
         public Guid Id { get; set; }

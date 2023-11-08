@@ -5,26 +5,18 @@
     {
         public IAccountService AccountService { get; set; }
 
-        [HttpGet]
-        [SwaggerOperation("Lấy danh sách tài khoản")]
-        public async Task<DataResult<List<AccountAdminDataDto>>> GetAll(AccountAdminFilterDto input)
-        {
-            var result = await AccountService.GetListByQueryModel<AccountAdminDataDto>(input);
-            return DataResult(result);
-        }
-
         [HttpGet("{id}")]
         [SwaggerOperation("Lấy chi tiết tài khoản")]
-        public async Task<DataResult<AccountAdminDataDto>> GetDetail(RouteId route)
+        public async Task<DataResult<AccountDataAdminDto>> GetDetail(RouteId route)
         {
-            var result = await AccountService.GetFirstById<AccountAdminDataDto>(route.Id);
+            var result = await AccountService.GetFirstById<AccountDataAdminDto>(route.Id);
             return DataResult(result);
         }
 
         [HttpPost]
         [SwaggerOperation("Tạo tài khoản")]
         [Transactional]
-        public async Task<DataResult<Guid>> Create([FromBody] AccountAdminCreateDto input)
+        public async Task<DataResult<Guid>> Create([FromBody] AccountCreateAdminDto input)
         {
             var result = await AccountService.CreateWithMapper(input);
             return DataResult(result.Id);
@@ -33,7 +25,7 @@
         [HttpPut("{id}")]
         [SwaggerOperation("Sửa tài khoản")]
         [Transactional]
-        public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountAdminUpdateDto input)
+        public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountUpdateAdminDto input)
         {
             var result = await AccountService.UpdateWithMapper(route.Id, input);
             return SuccessResult();
