@@ -1,4 +1,4 @@
-﻿namespace Sample.WebApi.Controllers.Abstracts
+﻿namespace Sample.WebApi.Abstracts
 {
     [Route("[controller]")]
     [SwaggerTagGroup("General", 0)]

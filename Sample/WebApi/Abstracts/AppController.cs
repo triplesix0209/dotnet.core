@@ -1,4 +1,4 @@
-﻿namespace Sample.WebApi.Controllers.Abstracts
+﻿namespace Sample.WebApi.Abstracts
 {
     [Route("App/[controller]")]
     [Authorize]

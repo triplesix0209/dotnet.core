@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac;
-using Sample.WebApi.Controllers.Admins;
+﻿using Autofac;
 using TripleSix.Core.AutofacModules;
 
 namespace Sample.WebApi
@@ -19,8 +17,6 @@ namespace Sample.WebApi
 
             builder.RegisterAllQuartzJob(assembly);
             builder.RegisterAllController(assembly);
-
-            builder.RegisterGeneric(typeof(AdminReadEndpoint<,,>)).PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
         }
     }
 }

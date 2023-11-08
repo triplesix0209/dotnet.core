@@ -92,7 +92,7 @@ namespace TripleSix.Core.Mappers
 
                     var propertyType = x.PropertyType.GetUnderlyingType();
                     return propertyType.IsAssignableTo<IEntity>()
-                        || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>));
+                        || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, o => o.Ignore());
@@ -149,7 +149,7 @@ namespace TripleSix.Core.Mappers
                 {
                     var propertyType = x.PropertyType.GetUnderlyingType();
                     return propertyType.IsAssignableTo<IEntity>()
-                        || propertyType.IsSubclassOfRawGeneric(typeof(ICollection<>));
+                        || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, o => o.Ignore());

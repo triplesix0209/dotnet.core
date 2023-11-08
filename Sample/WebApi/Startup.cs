@@ -1,9 +1,6 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Sample.WebApi.Controllers.Admins;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Quartz;
@@ -20,21 +17,11 @@ namespace Sample.WebApi
             builder.RegisterModule(new WebApi.AutofacModule(configuration));
         }
 
-        public static void ConfigureMvc(MvcOptions options)
-        {
-            options.Conventions.Add(new AdminControllerRouteConvention());
-        }
-
-        public static void ConfigureApplicationPartManager(ApplicationPartManager options)
-        {
-            options.FeatureProviders.Add(new AdminControllerFeatureProvider());
-        }
-
         public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
         {
             var assembly = Assembly.GetExecutingAssembly();
+            builder.Services.ConfigureMvcService(assembly);
             builder.Services.AddHttpContextAccessor();
-            builder.Services.ConfigureMvcService(ConfigureMvc, ConfigureApplicationPartManager);
             builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
             builder.Services.AddSwagger(configuration);
 

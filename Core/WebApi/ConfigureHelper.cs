@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -25,11 +26,13 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình MVC Controller.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="assembly">Assembly đang thực thi.</param>
         /// <param name="configureMvc">Hàm tùy chỉnh mvc.</param>
         /// <param name="configureApplicationPartManager">Hàm tùy chỉnh application part.</param>
         /// <returns><see cref="IMvcBuilder"/>.</returns>
         public static IMvcBuilder ConfigureMvcService(
             this IServiceCollection services,
+            Assembly assembly,
             Action<MvcOptions>? configureMvc = null,
             Action<ApplicationPartManager>? configureApplicationPartManager = null)
         {
@@ -39,10 +42,15 @@ namespace TripleSix.Core.WebApi
                     options.AllowEmptyInputInBodyModelBinding = true;
                     options.ModelBinderProviders.Insert(0, new TimestampModelBinderProvider());
                     options.Filters.Add(typeof(DtoModelBinding), 0);
+                    options.Conventions.Add(new ControllerEndpointRouteConvention());
                     configureMvc?.Invoke(options);
                 })
                 .AddControllersAsServices()
-                .ConfigureApplicationPartManager(options => configureApplicationPartManager?.Invoke(options))
+                .ConfigureApplicationPartManager(options =>
+                {
+                    options.FeatureProviders.Add(new ControllerEndpointFeatureProvider(assembly));
+                    configureApplicationPartManager?.Invoke(options);
+                })
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new BaseContractResolver();

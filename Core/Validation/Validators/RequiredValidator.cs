@@ -2,7 +2,6 @@
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.Validators;
-using Microsoft.AspNetCore.Http;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 

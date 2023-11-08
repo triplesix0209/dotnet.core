@@ -1,8 +1,10 @@
-﻿global using Microsoft.AspNetCore.Authorization;
+﻿global using System.Reflection;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Sample.Application.Dto.Admins;
 global using Sample.Application.Services;
-global using Sample.WebApi.Controllers.Abstracts;
+global using Sample.Domain.Entities;
+global using Sample.WebApi.Abstracts;
 global using Swashbuckle.AspNetCore.Annotations;
 global using TripleSix.Core.Entities;
 global using TripleSix.Core.Services;

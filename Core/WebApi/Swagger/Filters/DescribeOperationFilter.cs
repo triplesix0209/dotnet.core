@@ -90,7 +90,7 @@ namespace TripleSix.Core.WebApi
             #region [response]
 
             var returnType = methodInfo.ReturnType;
-            returnType = returnType != null && returnType.IsSubclassOfRawGeneric(typeof(Task<>))
+            returnType = returnType != null && returnType.IsSubclassOfOpenGeneric(typeof(Task<>))
                 ? returnType.GetGenericArguments()[0]
                 : typeof(SuccessResult);
 
