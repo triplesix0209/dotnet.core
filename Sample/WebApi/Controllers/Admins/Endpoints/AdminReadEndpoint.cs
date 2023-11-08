@@ -1,11 +1,11 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
-    public class AdminReadEndpoint<TBaseController, TEntity, TData, TFilter> : AdminController,
-        IControllerEndpoint<TBaseController>
-        where TBaseController : BaseController
+    public class AdminReadEndpoint<TController, TEntity, TData, TFilter> : AdminController,
+        IControllerEndpoint<TController>
+        where TController : BaseController
         where TEntity : class, IStrongEntity
         where TData : class, IDto
-        where TFilter : class, IQueryableDto<TEntity>
+        where TFilter : class, IQueryableDto<TEntity>, IPagingInput
     {
         public IStrongService<TEntity> Service { get; set; }
 
@@ -13,7 +13,7 @@
         [SwaggerOperation("Lấy danh sách [controller]")]
         public async Task<PagingResult<TData>> GetPage(TFilter input)
         {
-            var result = await Service.GetPageByQueryModel<TData>(input, 1, 10);
+            var result = await Service.GetPageByQueryModel<TData>(input, input.Page, input.Size);
             return PagingResult(result);
         }
 
@@ -26,26 +26,16 @@
         }
     }
 
-    public class ReadEndpointAttribute : BaseControllerEndpointAttribute
+    public class ReadEndpointAttribute<TController, TEntity, TData, TFilter> : BaseControllerEndpointAttribute<TController>
+        where TController : BaseController
+        where TEntity : class, IStrongEntity
+        where TData : class, IDto
+        where TFilter : class, IQueryableDto<TEntity>, IPagingInput
     {
-        public ReadEndpointAttribute(Type controllerType, Type entityType, Type dataType, Type filterType)
-            : base(controllerType)
-        {
-            EntityType = entityType;
-            DataType = dataType;
-            FilterType = filterType;
-        }
-
-        public Type EntityType { get; }
-
-        public Type DataType { get; }
-
-        public Type FilterType { get; }
-
         public override TypeInfo ToEndpointTypeInfo()
         {
             return typeof(AdminReadEndpoint<,,,>)
-                .MakeGenericType(ControllerType, EntityType, DataType, FilterType)
+                .MakeGenericType(typeof(TController), typeof(TEntity), typeof(TData), typeof(TFilter))
                 .GetTypeInfo();
         }
     }

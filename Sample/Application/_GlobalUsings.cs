@@ -4,6 +4,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Sample.Domain.DataContext;
 global using Sample.Domain.Entities;
 global using TripleSix.Core.DataContext;
+global using TripleSix.Core.Entities;
 global using TripleSix.Core.Helpers;
 global using TripleSix.Core.Mappers;
 global using TripleSix.Core.Services;

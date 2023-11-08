@@ -1,8 +1,8 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("tài khoản")]
-    [ReadEndpoint(typeof(AccountController), typeof(Account), typeof(AccountDataAdminDto), typeof(AccountFilterAdminDto))]
-    [CreateEndpoint(typeof(AccountController), typeof(Account), typeof(AccountCreateAdminDto))]
+    [ReadEndpoint<AccountController, Account, AccountDataAdminDto, AccountFilterAdminDto>]
+    [CreateEndpoint<AccountController, Account, AccountCreateAdminDto>]
     public class AccountController : AdminController
     {
         public IAccountService AccountService { get; set; }

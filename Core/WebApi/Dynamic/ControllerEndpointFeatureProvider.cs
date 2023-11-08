@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Autofac;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
@@ -20,13 +21,13 @@ namespace TripleSix.Core.WebApi
                 .Where(x => x.IsSubclassOf(typeof(BaseController)));
             var endpointAttributeTypes = _assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract && !x.IsInterface)
-                .Where(x => x.IsSubclassOf(typeof(BaseControllerEndpointAttribute)));
+                .Where(x => x.IsAssignableTo<IControllerEndpointAttribute>());
 
             foreach (var controllerType in controllerTypes)
             {
                 foreach (var endpointAttributeType in endpointAttributeTypes)
                 {
-                    if (controllerType.GetCustomAttribute(endpointAttributeType) is BaseControllerEndpointAttribute attr)
+                    if (controllerType.GetCustomAttribute(endpointAttributeType) is IControllerEndpointAttribute attr)
                         feature.Controllers.Add(attr.ToEndpointTypeInfo());
                 }
             }
