@@ -23,8 +23,9 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="id">Id entity sử dụng để cập nhận.</param>
         /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
+        /// <param name="afterMap">Hảm xử lý sau khi map dữ liệu, trước khi ghi nhận database.</param>
         /// <returns>Task xử lý.</returns>
-        Task UpdateWithMapper(Guid id, IDto input);
+        Task UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null);
 
         /// <summary>
         /// Xóa bỏ entity.

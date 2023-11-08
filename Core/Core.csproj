@@ -4,7 +4,7 @@
     <RootNamespace>TripleSix.Core</RootNamespace>
     <AssemblyName>TripleSix.Core</AssemblyName>
     <PackageId>TripleSix.Core</PackageId>
-    <Version>7.1.38</Version>
+    <Version>7.1.39</Version>
     <Authors>triplesix0209@gmail.com</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
