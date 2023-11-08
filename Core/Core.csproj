@@ -9,7 +9,7 @@
     <Nullable>enable</Nullable>
 
     <PackageId>TripleSix.Core</PackageId>
-    <Version>7.1.41-aplha</Version>
+    <Version>7.1.41-alpha</Version>
     <Authors>triplesix0209@gmail.com</Authors>
   </PropertyGroup>
 

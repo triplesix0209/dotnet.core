@@ -26,7 +26,7 @@ jobs:
           uses: actions/setup-dotnet@v1
 
         - name: Pack NuGet package
-          run: dotnet pack ${{ env.PACK_PROJECT }} --configuration Release --output out
+          run: dotnet pack ${{ env.PACK_PROJECT }} --configuration Release --output dist
 
         - name: Publish NuGet package
-          run: dotnet nuget push ./out/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          run: dotnet nuget push ./dist/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
