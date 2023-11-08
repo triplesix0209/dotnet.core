@@ -3,14 +3,14 @@
   <PropertyGroup>
     <RootNamespace>TripleSix.Core</RootNamespace>
     <AssemblyName>TripleSix.Core</AssemblyName>
-    <PackageId>TripleSix.Core</PackageId>
-    <Version>7.1.41-aplha</Version>
-    <Authors>triplesix0209@gmail.com</Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <PackageId>TripleSix.Core</PackageId>
+    <Version>7.1.41-aplha</Version>
+    <Authors>triplesix0209@gmail.com</Authors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,10 +42,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="MinVer" Version="4.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
