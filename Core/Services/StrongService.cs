@@ -1,5 +1,6 @@
 ﻿using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Services
@@ -21,16 +22,17 @@ namespace TripleSix.Core.Services
         {
         }
 
-        public async Task Update(Guid id, Action<TEntity> updateMethod)
+        public async Task<TEntity> UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null)
         {
             var entity = await GetFirstById(id);
-            await Update(entity, updateMethod);
+            return await UpdateWithMapper(entity, input, afterMap);
         }
 
-        public async Task UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IDto input, Action<TEntity>? afterMap = null)
+            where TResult : class
         {
             var entity = await GetFirstById(id);
-            await UpdateWithMapper(entity, input, afterMap);
+            return await UpdateWithMapper<TResult>(entity, input, afterMap);
         }
 
         public async Task HardDelete(Guid id)
@@ -39,34 +41,66 @@ namespace TripleSix.Core.Services
             await HardDelete(entity);
         }
 
-        public async Task SoftDelete(TEntity entity)
+        public virtual async Task<TEntity> SoftDelete(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
             entity.DeleteAt = DateTime.UtcNow;
-            _db.Set<TEntity>().Update(entity);
+            var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+
+            return result.Entity;
         }
 
-        public async Task SoftDelete(Guid id)
+        public async Task<TResult> SoftDelete<TResult>(TEntity entity)
+            where TResult : class
+        {
+            var result = await SoftDelete(entity);
+            return Mapper.MapData<TEntity, TResult>(result);
+        }
+
+        public async Task<TEntity> SoftDelete(Guid id)
         {
             var entity = await GetFirstById(id);
-            await SoftDelete(entity);
+            return await SoftDelete(entity);
         }
 
-        public async Task Restore(TEntity entity)
+        public async Task<TResult> SoftDelete<TResult>(Guid id)
+            where TResult : class
+        {
+            var entity = await GetFirstById(id);
+            return await SoftDelete<TResult>(entity);
+        }
+
+        public virtual async Task<TEntity> Restore(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
             entity.DeleteAt = null;
-            _db.Set<TEntity>().Update(entity);
+            var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+
+            return result.Entity;
         }
 
-        public async Task Restore(Guid id)
+        public async Task<TResult> Restore<TResult>(TEntity entity)
+            where TResult : class
+        {
+            var result = await Restore(entity);
+            return Mapper.MapData<TEntity, TResult>(result);
+        }
+
+        public async Task<TEntity> Restore(Guid id)
         {
             var entity = await GetFirstById(id);
-            await Restore(entity);
+            return await Restore(entity);
+        }
+
+        public async Task<TResult> Restore<TResult>(Guid id)
+            where TResult : class
+        {
+            var entity = await GetFirstById(id);
+            return await Restore<TResult>(entity);
         }
 
         public async Task<TResult?> GetFirstOrDefaultById<TResult>(Guid id)

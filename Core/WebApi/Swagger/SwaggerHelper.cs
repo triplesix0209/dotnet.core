@@ -17,8 +17,6 @@ namespace TripleSix.Core.WebApi
 {
     public static class SwaggerHelper
     {
-        private const string FilterDtoPostfix = "FilterDto";
-
         public static OpenApiSchema GenerateSwaggerSchema(
             this Type objectType,
             ISchemaGenerator schemaGenerator,
@@ -124,7 +122,7 @@ namespace TripleSix.Core.WebApi
                     .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
 
                 if (!displayName.IsNullOrEmpty())
-                    if (propertyInfo.DeclaringType?.Name.EndsWith(FilterDtoPostfix) == true) displayName = "Lọc theo " + displayName;
+                    if (propertyInfo.DeclaringType?.IsSubclassOfRawGeneric(typeof(BaseQueryDto<>)) == true) displayName = "Lọc theo " + displayName;
             }
 
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();

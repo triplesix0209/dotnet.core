@@ -1,6 +1,5 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
-using Autofac;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
@@ -38,9 +37,16 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            _db.Set<TEntity>().Add(entity);
+            var result = _db.Set<TEntity>().Add(entity);
             await _db.SaveChangesAsync(true);
-            return entity;
+            return result.Entity;
+        }
+
+        public async Task<TResult> Create<TResult>(TEntity entity)
+            where TResult : class
+        {
+            var result = await Create(entity);
+            return Mapper.MapData<TEntity, TResult>(result);
         }
 
         public async Task<TEntity> CreateWithMapper(IDto input, Action<TEntity>? afterMap = null)
@@ -67,26 +73,39 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
-        public virtual async Task Update(TEntity entity, Action<TEntity> updateMethod)
+        public virtual async Task<TEntity> Update(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
 
-            updateMethod(entity);
-            _db.Set<TEntity>().Update(entity);
+            var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+            return result.Entity;
         }
 
-        public async Task UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TResult> Update<TResult>(TEntity entity)
+            where TResult : class
         {
-            if (!input.IsAnyPropertyChanged()) return;
+            var result = await Update(entity);
+            return Mapper.MapData<TEntity, TResult>(result);
+        }
+
+        public async Task<TEntity> UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+        {
+            if (!input.IsAnyPropertyChanged()) return entity;
             input.Validate(throwOnFailures: true);
             input.Normalize();
 
-            await Update(entity, e =>
-            {
-                Mapper.MapUpdate(input, e);
-                afterMap?.Invoke(e);
-            });
+            Mapper.MapUpdate(input, entity);
+            afterMap?.Invoke(entity);
+
+            return await Update(entity);
+        }
+
+        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+            where TResult : class
+        {
+            var result = await UpdateWithMapper(entity, input, afterMap);
+            return Mapper.MapData<TEntity, TResult>(result);
         }
 
         public virtual async Task HardDelete(TEntity entity)
@@ -129,12 +148,7 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            if (!CanConvertEntityToModel<TResult>())
-                return await query.FirstOrDefaultAsync<TResult>(Mapper);
-
-            var data = await query.FirstOrDefaultAsync();
-            if (data == null) return null;
-            return await ConvertEntityToModel<TResult>(data);
+            return await query.FirstOrDefaultAsync<TResult>(Mapper);
         }
 
         public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default)
@@ -183,11 +197,7 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            if (!CanConvertEntityToModel<TResult>())
-                return await query.ToListAsync<TResult>(Mapper);
-
-            var data = await query.ToListAsync();
-            return await ConvertEntityToModel<TResult>(data);
+            return await query.ToListAsync<TResult>(Mapper);
         }
 
         public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default)
@@ -218,24 +228,11 @@ namespace TripleSix.Core.Services
             var result = new Paging<TResult>(page, size)
             {
                 Total = await query.LongCountAsync(),
+                Items = await query
+                    .Skip((page - 1) * size)
+                    .Take(size)
+                    .ToListAsync<TResult>(Mapper),
             };
-
-            if (!CanConvertEntityToModel<TResult>())
-            {
-                result.Items = await query
-                    .Skip((page - 1) * size)
-                    .Take(size)
-                    .ToListAsync<TResult>(Mapper);
-            }
-            else
-            {
-                var data = await query
-                    .Skip((page - 1) * size)
-                    .Take(size)
-                    .ToListAsync();
-                result.Items = await ConvertEntityToModel<TResult>(data);
-            }
-
             return result;
         }
 
@@ -253,68 +250,6 @@ namespace TripleSix.Core.Services
         public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
             return await GetPage(model.ToQueryable(Query), page, size);
-        }
-
-        /// <summary>
-        /// Kiểm tra có thể chuyển đổi dữ liệu entity sang kiểu chỉ định không.
-        /// </summary>
-        /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
-        /// <returns><c>True</c> nếu có thể, ngược lại là <c>False</c>.</returns>
-        protected bool CanConvertEntityToModel<TModel>()
-        {
-            if (!typeof(TModel).IsAssignableTo<IDto>()) return false;
-            var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
-            return GetType().IsAssignableTo(readInterface);
-        }
-
-        /// <summary>
-        /// Chuyển đổi danh sách dữ liệu entity sang kiểu chỉ định.
-        /// </summary>
-        /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
-        /// <param name="entities">Danh sách entity sẽ chuyển đổi.</param>
-        /// <returns>Danh sách dữ liệu sau khi chuyển đổi.</returns>
-        protected async Task<List<TModel>> ConvertEntityToModel<TModel>(List<TEntity> entities)
-        {
-            var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
-            var method = readInterface.GetMethod(nameof(IReadableWithModel<IEntity, IDto>.ConvertEntityToModel))
-                ?? throw new Exception($"{GetType().Name} need implement {nameof(IReadableWithModel<IEntity, IDto>)}<{typeof(TEntity).Name}, {typeof(TModel).Name}>");
-
-            var result = new List<TModel>();
-            foreach (var entity in entities)
-            {
-                var input = new object?[] { entity, null };
-                if (method.Invoke(this, input) is not Task task)
-                    throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
-                await task.WaitAsync(CancellationToken.None);
-
-                if (input[1] == null)
-                    throw new Exception($"Error to convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
-                result.Add((TModel)input[1]!);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Chuyển đổi dữ liệu entity sang kiểu chỉ định.
-        /// </summary>
-        /// <typeparam name="TModel">Kiểu dữ liệu đầu ra.</typeparam>
-        /// <param name="entity">entity sẽ chuyển đổi.</param>
-        /// <returns>Dữ liệu sau khi chuyển đổi.</returns>
-        protected async Task<TModel> ConvertEntityToModel<TModel>(TEntity entity)
-        {
-            var readInterface = typeof(IReadableWithModel<,>).MakeGenericType(typeof(TEntity), typeof(TModel));
-            var method = readInterface.GetMethod(nameof(IReadableWithModel<IEntity, IDto>.ConvertEntityToModel))
-                ?? throw new Exception($"{GetType().Name} need implement {nameof(IReadableWithModel<IEntity, IDto>)}<{typeof(TEntity).Name}, {typeof(TModel).Name}>");
-
-            var input = new object?[] { entity, null };
-            if (method.Invoke(this, input) is not Task task)
-                throw new Exception($"Error when convert {typeof(TEntity).Name} to {typeof(TModel).Name}");
-            await task.WaitAsync(CancellationToken.None);
-
-            if (input[1] == null)
-                throw new Exception($"Error to convert {typeof(TEntity).Name} to {typeof(TModel).FullName}");
-            return (TModel)input[1]!;
         }
     }
 }

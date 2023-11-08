@@ -11,21 +11,24 @@ namespace TripleSix.Core.Services
         where TEntity : class, IStrongEntity
     {
         /// <summary>
-        /// Cập nhật entity.
-        /// </summary>
-        /// <param name="id">Id entity sử dụng để cập nhận.</param>
-        /// <param name="updateMethod">Hàm thực hiện các thay đổi của entity.</param>
-        /// <returns>Task xử lý.</returns>
-        Task Update(Guid id, Action<TEntity> updateMethod);
-
-        /// <summary>
         /// Cập nhật entity với Mapper.
         /// </summary>
         /// <param name="id">Id entity sử dụng để cập nhận.</param>
         /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
         /// <param name="afterMap">Hảm xử lý sau khi map dữ liệu, trước khi ghi nhận database.</param>
-        /// <returns>Task xử lý.</returns>
-        Task UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null);
+        /// <returns>Entity sau được chỉnh sửa.</returns>
+        Task<TEntity> UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null);
+
+        /// <summary>
+        /// Cập nhật entity với Mapper.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="id">Id entity sử dụng để cập nhận.</param>
+        /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
+        /// <param name="afterMap">Hảm xử lý sau khi map dữ liệu, trước khi ghi nhận database.</param>
+        /// <returns>Dữ liệu được map từ entity sau chỉnh sửa.</returns>
+        Task<TResult> UpdateWithMapper<TResult>(Guid id, IDto input, Action<TEntity>? afterMap = null)
+            where TResult : class;
 
         /// <summary>
         /// Xóa bỏ entity.
@@ -38,29 +41,65 @@ namespace TripleSix.Core.Services
         /// Tạm xóa entity.
         /// </summary>
         /// <param name="entity">Entity sẽ bị đánh dấu xóa.</param>
-        /// <returns>Task xử lý.</returns>
-        Task SoftDelete(TEntity entity);
+        /// <returns>Entity sau xử lý.</returns>
+        Task<TEntity> SoftDelete(TEntity entity);
+
+        /// <summary>
+        /// Tạm xóa entity.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="entity">Entity sẽ bị đánh dấu xóa.</param>
+        /// <returns>Dữ liệu được map từ entity sau xử lý.</returns>
+        Task<TResult> SoftDelete<TResult>(TEntity entity)
+            where TResult : class;
 
         /// <summary>
         /// Tạm xóa entity.
         /// </summary>
         /// <param name="id">Id entity sẽ bị đánh dấu xóa.</param>
-        /// <returns>Task xử lý.</returns>
-        Task SoftDelete(Guid id);
+        /// <returns>Entity sau xử lý.</returns>
+        Task<TEntity> SoftDelete(Guid id);
+
+        /// <summary>
+        /// Tạm xóa entity.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="id">Id entity sẽ bị đánh dấu xóa.</param>
+        /// <returns>Dữ liệu được map từ entity sau xử lý.</returns>
+        Task<TResult> SoftDelete<TResult>(Guid id)
+            where TResult : class;
 
         /// <summary>
         /// Khôi phục các entity bị tạm xóa.
         /// </summary>
         /// <param name="entity">Entity sẽ bị đánh dấu xóa.</param>
-        /// <returns>Task xử lý.</returns>
-        Task Restore(TEntity entity);
+        /// <returns>Entity sau xử lý.</returns>
+        Task<TEntity> Restore(TEntity entity);
+
+        /// <summary>
+        /// Khôi phục các entity bị tạm xóa.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="entity">Entity sẽ bị đánh dấu xóa.</param>
+        /// <returns>Dữ liệu được map từ entity sau xử lý.</returns>
+        Task<TResult> Restore<TResult>(TEntity entity)
+            where TResult : class;
 
         /// <summary>
         /// Khôi phục các entity bị tạm xóa.
         /// </summary>
         /// <param name="id">Id entity sẽ bị đánh dấu xóa.</param>
-        /// <returns>Task xử lý.</returns>
-        Task Restore(Guid id);
+        /// <returns>Entity sau xử lý.</returns>
+        Task<TEntity> Restore(Guid id);
+
+        /// <summary>
+        /// Khôi phục các entity bị tạm xóa.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="id">Id entity sẽ bị đánh dấu xóa.</param>
+        /// <returns>Dữ liệu được map từ entity sau xử lý.</returns>
+        Task<TResult> Restore<TResult>(Guid id)
+            where TResult : class;
 
         /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper theo Id, không có sẽ trả về null.

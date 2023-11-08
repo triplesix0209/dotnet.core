@@ -13,6 +13,14 @@
             return DataResult(result);
         }
 
+        [HttpGet("{id}")]
+        [SwaggerOperation("Lấy chi tiết tài khoản")]
+        public async Task<DataResult<AccountAdminDataDto>> GetDetail(RouteId route)
+        {
+            var result = await AccountService.GetFirstById<AccountAdminDataDto>(route.Id);
+            return DataResult(result);
+        }
+
         [HttpPost]
         [SwaggerOperation("Tạo tài khoản")]
         [Transactional]
@@ -27,7 +35,7 @@
         [Transactional]
         public async Task<SuccessResult> Update(RouteId route, [FromBody] AccountAdminUpdateDto input)
         {
-            await AccountService.UpdateWithMapper(route.Id, input);
+            var result = await AccountService.UpdateWithMapper(route.Id, input);
             return SuccessResult();
         }
 
