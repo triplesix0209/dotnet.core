@@ -22,6 +22,21 @@ namespace TripleSix.Core.Services
         {
         }
 
+        public async Task<TEntity> Update(Guid id, Action<TEntity> updateAction)
+        {
+            var entity = await GetFirstById(id);
+            updateAction(entity);
+
+            return await Update(entity);
+        }
+
+        public async Task<TResult> Update<TResult>(Guid id, Action<TEntity> updateAction)
+            where TResult : class
+        {
+            var result = await Update(id, updateAction);
+            return Mapper.MapData<TEntity, TResult>(result);
+        }
+
         public async Task<TEntity> UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null)
         {
             var entity = await GetFirstById(id);
