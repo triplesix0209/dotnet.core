@@ -6,10 +6,10 @@ on:
       - release/**
   push:
     branches:
-      - v7
+      - master
   pull_request:
     branches:
-      - v7
+      - master
 
 jobs:
   build:
