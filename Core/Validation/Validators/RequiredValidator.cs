@@ -38,7 +38,7 @@ namespace TripleSix.Core.Validation.Validators
 
             var option = property.GetCustomAttribute<RequiredAttribute>();
             if (value is string str && option != null && !option.AllowEmptyStrings)
-                return !str.IsNullOrEmpty();
+                return str.IsNotNullOrEmpty();
 
             return true;
         }

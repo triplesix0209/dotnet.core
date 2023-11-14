@@ -35,6 +35,16 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
+        /// Kiểm tra chuỗi không null, không rỗng và không chỉ chứa khoảng trống.
+        /// </summary>
+        /// <param name="text">Chuỗi cần kiểm tra.</param>
+        /// <returns>Kết quả kiểm tra.</returns>
+        public static bool IsNotNullOrEmpty([NotNullWhen(true)] this string? text)
+        {
+            return !string.IsNullOrWhiteSpace(text);
+        }
+
+        /// <summary>
         /// Cắt từ khỏi chuỗi.
         /// </summary>
         /// <param name="text">Chuỗi cần xử lý.</param>

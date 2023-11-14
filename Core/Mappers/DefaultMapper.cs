@@ -43,7 +43,7 @@ namespace TripleSix.Core.Mappers
                         }
 
                         var ignorePropertyAttributes = dtoType.GetCustomAttributes<IgnorePropertyAttribute>(true);
-                        if (!ignorePropertyAttributes.IsNullOrEmpty())
+                        if (ignorePropertyAttributes.IsNotNullOrEmpty())
                         {
                             ignoreProperties.AddRange(entityType.GetPublicProperties()
                                 .Where(p => ignorePropertyAttributes.Any(x => x.PropertyName == p.Name))

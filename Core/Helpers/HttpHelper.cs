@@ -57,7 +57,7 @@ namespace TripleSix.Core.Helpers
                 var bodyText = await reader.ReadToEndAsync();
                 request.Body.Position = 0;
 
-                if (!bodyText.IsNullOrEmpty())
+                if (bodyText.IsNotNullOrEmpty())
                 {
                     try
                     {
@@ -100,7 +100,7 @@ namespace TripleSix.Core.Helpers
             if (requestMessage.Content != null)
             {
                 var bodyText = await requestMessage.Content.ReadAsStringAsync();
-                if (!bodyText.IsNullOrEmpty())
+                if (bodyText.IsNotNullOrEmpty())
                 {
                     try
                     {

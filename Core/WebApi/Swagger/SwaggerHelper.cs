@@ -121,12 +121,12 @@ namespace TripleSix.Core.WebApi
                     .GetCustomAttribute<MapFromEntityAttribute>()?
                     .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
 
-                if (!displayName.IsNullOrEmpty())
+                if (displayName.IsNotNullOrEmpty())
                     if (propertyInfo.DeclaringType?.IsSubclassOfOpenGeneric(typeof(BaseQueryDto<>)) == true) displayName = "Lọc theo " + displayName;
             }
 
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();
-            result.Description = new[] { displayName, description }.Where(x => !x.IsNullOrEmpty()).ToString("<br/>")
+            result.Description = new[] { displayName, description }.Where(x => x.IsNotNullOrEmpty()).ToString("<br/>")
                 + result.Description;
 
             result.MinLength = propertyInfo.GetCustomAttribute<MinLengthAttribute>()?.Length;
