@@ -84,6 +84,14 @@ namespace TripleSix.Core.WebApi
 
                 options.Events = new JwtBearerEvents
                 {
+                    OnMessageReceived = context =>
+                    {
+                        var authorizationValue = context.HttpContext.Request.Headers.Authorization.FirstOrDefault();
+                        if (authorizationValue == null) return Task.CompletedTask;
+
+                        context.Token = authorizationValue.Split(' ')[^1];
+                        return Task.CompletedTask;
+                    },
                     OnChallenge = context =>
                     {
                         context.HandleResponse();

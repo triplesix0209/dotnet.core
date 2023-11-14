@@ -42,11 +42,9 @@ namespace TripleSix.Core.Identity
 
         public virtual string? GetAccessToken(HttpContext httpContext)
         {
-            var accessToken = httpContext.Request.Headers.Authorization.FirstOrDefault();
-            if (accessToken == null) return null;
-
-            if (accessToken.Split(" ").Length > 1) accessToken = accessToken.Split(" ")[1];
-            return accessToken;
+            var authorizationValue = httpContext.Request.Headers.Authorization.FirstOrDefault();
+            if (authorizationValue == null) return null;
+            return authorizationValue.Split(' ')[^1];
         }
 
         public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration)

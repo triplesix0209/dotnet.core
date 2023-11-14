@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TripleSix.Core.Jsons;
 
@@ -32,9 +31,8 @@ namespace TripleSix.Core.Helpers
         /// </summary>
         /// <param name="obj">Đối tượng sẽ được mã hóa.</param>
         /// <returns>Chuỗi JSON ứng với đối tượng chỉ định.</returns>
-        public static string? ToJson([NotNullWhen(false)] this object? obj)
+        public static string ToJson(this object obj)
         {
-            if (obj == null) return null;
             return JsonConvert.SerializeObject(obj, SerializerSettings);
         }
 
@@ -44,9 +42,8 @@ namespace TripleSix.Core.Helpers
         /// <param name="obj">Đối tượng sẽ được mã hóa.</param>
         /// <param name="ignorePropertyNames">Danh sách property loại bỏ.</param>
         /// <returns>Chuỗi JSON ứng với đối tượng chỉ định.</returns>
-        public static string? ToJson([NotNullWhen(false)] this object? obj, params string[] ignorePropertyNames)
+        public static string ToJson(this object obj, params string[] ignorePropertyNames)
         {
-            if (obj == null) return null;
             return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
             {
                 ContractResolver = new IgnoreContractResolver(ignorePropertyNames),
@@ -59,7 +56,7 @@ namespace TripleSix.Core.Helpers
         /// </summary>
         /// <param name="json">Chuổi JSON cần đọc.</param>
         /// <returns><see cref="JToken"/>.</returns>
-        public static JToken? ToJToken([NotNullWhen(false)] this string? json)
+        public static JToken? ToJToken(this string json)
         {
             if (json.IsNullOrEmpty()) return null;
             return JsonConvert.DeserializeObject<JToken>(json, SerializerSettings);
@@ -71,7 +68,7 @@ namespace TripleSix.Core.Helpers
         /// <param name="json">Chuổi Json cần đọc.</param>
         /// <param name="type">Loại đối tượng.</param>
         /// <returns>Đối tượng được chuyển đổi từ chuỗi JSON.</returns>
-        public static object? ToObject([NotNullWhen(false)] this string? json, Type type)
+        public static object? ToObject(this string json, Type type)
         {
             if (json.IsNullOrEmpty()) return null;
             return JsonConvert.DeserializeObject(json, type, SerializerSettings);
@@ -83,7 +80,7 @@ namespace TripleSix.Core.Helpers
         /// <typeparam name="T">Loại đối tượng.</typeparam>
         /// <param name="json">Chuổi Json cần đọc.</param>
         /// <returns>Đối tượng được chuyển đổi từ chuỗi JSON.</returns>
-        public static T? ToObject<T>([NotNullWhen(false)] this string json)
+        public static T? ToObject<T>(this string json)
         {
             if (json.IsNullOrEmpty()) return default;
             return JsonConvert.DeserializeObject<T>(json, SerializerSettings);
