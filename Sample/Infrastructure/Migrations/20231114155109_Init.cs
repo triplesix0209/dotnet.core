@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -19,6 +20,7 @@ namespace Sample.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Code = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Mã số"),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Tên gọi"),
+                    SapCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Mã SAP"),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian khởi tạo"),
                     CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người tạo"),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
@@ -59,11 +61,11 @@ namespace Sample.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Site",
-                columns: new[] { "Id", "Code", "CreateAt", "CreatorId", "DeleteAt", "Name", "UpdateAt", "UpdatorId" },
+                columns: new[] { "Id", "Code", "CreateAt", "CreatorId", "DeleteAt", "Name", "SapCode", "UpdateAt", "UpdatorId" },
                 values: new object[,]
                 {
-                    { new Guid("3e08cf2e-d8a2-49b5-8663-fa31f0cdd168"), "H002", null, null, null, "Quận 6", null, null },
-                    { new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22"), "H001", null, null, null, "Quận 5", null, null }
+                    { new Guid("3e08cf2e-d8a2-49b5-8663-fa31f0cdd168"), "H002", null, null, null, "Quận 6", "H001", null, null },
+                    { new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22"), "H001", null, null, null, "Quận 5", "H001", null, null }
                 });
 
             migrationBuilder.InsertData(
