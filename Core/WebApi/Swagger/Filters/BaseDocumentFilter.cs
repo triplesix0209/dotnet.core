@@ -26,14 +26,16 @@ namespace TripleSix.Core.WebApi
                 var swaggerTagAttr = controllerDescriptor.ControllerTypeInfo.GetCustomAttribute<SwaggerTagAttribute>();
                 if (swaggerTagAttr is null && controllerDescriptor.ControllerTypeInfo.IsAssignableToGenericType(typeof(IControllerEndpoint<>)))
                     swaggerTagAttr = controllerDescriptor.ControllerTypeInfo.GetGenericArguments(typeof(IControllerEndpoint<>))[0].GetCustomAttribute<SwaggerTagAttribute>();
-                if (swaggerTagAttr is null) continue;
-                var tag = swaggerDoc.Tags.FirstOrDefault(x => x.Description == swaggerTagAttr.Description);
+
+                var tag = swaggerDoc.Tags.FirstOrDefault(x => swaggerTagAttr is null
+                    ? x.Name == controllerDescriptor.ControllerName
+                    : x.Description == swaggerTagAttr.Description);
                 if (tag is null)
                 {
                     tag = new OpenApiTag
                     {
                         Name = controllerDescriptor.ControllerName,
-                        Description = swaggerTagAttr.Description,
+                        Description = swaggerTagAttr is null ? controllerDescriptor.ControllerName : swaggerTagAttr.Description,
                     };
                     swaggerDoc.Tags.Add(tag);
                 }
