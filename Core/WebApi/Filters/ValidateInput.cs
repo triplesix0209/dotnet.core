@@ -42,7 +42,7 @@ namespace TripleSix.Core.WebApi
 
                     foreach (var error in field.Value.Errors)
                     {
-                        if (!field.Key.IsNullOrEmpty() && error.ErrorMessage.EndsWith("is required."))
+                        if (field.Key.IsNotNullOrEmpty() && error.ErrorMessage.EndsWith("is required."))
                             continue;
 
                         errors.Add(new InputInvalidItem

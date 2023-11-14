@@ -12,10 +12,21 @@ namespace TripleSix.Core.Helpers
         /// </summary>
         /// <typeparam name="T">Loại dữ liệu.</typeparam>
         /// <param name="list">Danh sách cần kiểm tra.</param>
-        /// <returns>true nếu danh sách null hoặc rổng, ngược lại là false.</returns>
+        /// <returns>true nếu danh sách null hoặc rỗng, ngược lại là false.</returns>
         public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this IEnumerable<T>? list)
         {
             return list == null || !list.Any();
+        }
+
+        /// <summary>
+        /// Kiểm tra danh sách không null và không rỗng.
+        /// </summary>
+        /// <typeparam name="T">Loại dữ liệu.</typeparam>
+        /// <param name="list">Danh sách cần kiểm tra.</param>
+        /// <returns>true nếu danh sách không null và không rỗng, ngược lại là false.</returns>
+        public static bool IsNotNullOrEmpty<T>([NotNullWhen(true)] this IEnumerable<T>? list)
+        {
+            return list != null && list.Any();
         }
 
         /// <summary>
@@ -27,7 +38,7 @@ namespace TripleSix.Core.Helpers
         /// <returns>Chuỗi sau khi được ghép từ danh sách.</returns>
         public static string ToString<T>(this IEnumerable<T> list, string separator)
         {
-            return string.Join(separator, list.Where(x => x != null && !x.ToString().IsNullOrEmpty()));
+            return string.Join(separator, list.Where(x => x != null && x.ToString().IsNotNullOrEmpty()));
         }
     }
 }

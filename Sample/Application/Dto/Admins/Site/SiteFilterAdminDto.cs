@@ -9,8 +9,8 @@
         public override IQueryable<Site> ToQueryable(IQueryable<Site> query)
         {
             return query
-                .WhereIf(!Code.IsNullOrEmpty(), x => EF.Functions.Like(x.Code!, $"%{Code}%"))
-                .WhereIf(!Name.IsNullOrEmpty(), x => EF.Functions.Like(x.Name!, $"%{Name}%"));
+                .WhereIf(Code.IsNotNullOrEmpty(), x => EF.Functions.Like(x.Code, $"%{Code}%"))
+                .WhereIf(Name.IsNotNullOrEmpty(), x => EF.Functions.Like(x.Name, $"%{Name}%"));
         }
     }
 }
