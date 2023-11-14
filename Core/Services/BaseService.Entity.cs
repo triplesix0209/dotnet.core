@@ -170,8 +170,8 @@ namespace TripleSix.Core.Services
         public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
-            var data = await GetFirstOrDefault<TResult>(query);
-            if (data == null) throw new NotFoundException(typeof(TEntity));
+            var data = await GetFirstOrDefault<TResult>(query)
+                ?? throw new NotFoundException<TEntity>();
             return data;
         }
 
