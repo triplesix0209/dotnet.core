@@ -1,4 +1,6 @@
-﻿namespace TripleSix.Core.Exceptions
+﻿using TripleSix.Core.Helpers;
+
+namespace TripleSix.Core.Exceptions
 {
     /// <summary>
     /// Lỗi không tìm thấy entity.
@@ -10,7 +12,7 @@
         /// </summary>
         /// <param name="type">Loại đối tượng.</param>
         public NotFoundException(Type type)
-            : base($"Không tìm thấy {type.Name}")
+            : base($"Không tìm thấy {type.GetDisplayName()}")
         {
         }
 
