@@ -1,7 +1,8 @@
 ﻿namespace Sample.Domain.Entities
 {
     [Comment("Chi nhánh")]
-    public class Site : StrongEntity<Site>
+    public class Site : StrongEntity<Site>,
+        ISapSynchronizableEntity
     {
         [Comment("Mã số")]
         [MaxLength(100)]
@@ -10,6 +11,10 @@
         [Comment("Tên gọi")]
         [MaxLength(200)]
         public string Name { get; set; }
+
+        [Comment("Mã SAP")]
+        [MaxLength(100)]
+        public string SapCode { get; set; }
 
         public virtual IList<Account> Accounts { get; set; }
 
