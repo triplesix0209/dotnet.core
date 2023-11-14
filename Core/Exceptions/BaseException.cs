@@ -28,9 +28,8 @@ namespace TripleSix.Core.Exceptions
                 if (GetType() == typeof(BaseException))
                     return "exception";
 
-                var code = GetType().Name;
-                if (code.EndsWith("Exception"))
-                    code = code[..^9];
+                var code = GetType().Name.Split('`')[0];
+                if (code.EndsWith("Exception")) code = code[..^9];
                 code = code.ToSnakeCase();
                 return code;
             }
