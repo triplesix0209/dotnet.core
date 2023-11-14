@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Helpers
 {
@@ -187,17 +188,35 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
-        /// Lấy tên hiển thị của property được khai báo bằng <see cref="DisplayNameAttribute"/>.
+        /// Lấy tên hiển thị của type.
+        /// </summary>
+        /// <param name="type">Type cần xử lý.</param>
+        /// <returns>Tên hiển thị của property.</returns>
+        public static string GetDisplayName(this Type type)
+        {
+            var displayNameAttr = type.GetCustomAttribute<DisplayNameAttribute>();
+            if (displayNameAttr != null && displayNameAttr.DisplayName.IsNotNullOrEmpty())
+                return displayNameAttr.DisplayName.Trim().ToTitleCase();
+
+            var commentAttr = type.GetCustomAttribute<CommentAttribute>();
+            if (commentAttr != null && commentAttr.Comment.IsNotNullOrEmpty())
+                return commentAttr.Comment.Trim().ToTitleCase();
+
+            return type.Name;
+        }
+
+        /// <summary>
+        /// Lấy tên hiển thị của property.
         /// </summary>
         /// <param name="propertyInfo">Property cần xử lý.</param>
         /// <returns>Tên hiển thị của property.</returns>
         public static string GetDisplayName(this MemberInfo propertyInfo)
         {
-            var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
-            if (displayName == null || displayName.DisplayName.IsNullOrEmpty())
-                return propertyInfo.Name;
+            var displayNameAttr = propertyInfo.GetCustomAttribute<DisplayNameAttribute>();
+            if (displayNameAttr != null && displayNameAttr.DisplayName.IsNotNullOrEmpty())
+                return displayNameAttr.DisplayName.Trim().ToTitleCase();
 
-            return displayName.DisplayName.ToTitleCase();
+            return propertyInfo.Name;
         }
     }
 }
