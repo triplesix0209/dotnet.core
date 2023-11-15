@@ -55,7 +55,7 @@ namespace TripleSix.Core.Exceptions
 
         public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
         {
-            return new ErrorResult(HttpCodeStatus, Code, Message, Items);
+            return new ErrorResult(HttpCodeStatus, Code, Message, Items, StackTrace);
         }
     }
 

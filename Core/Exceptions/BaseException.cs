@@ -47,7 +47,7 @@ namespace TripleSix.Core.Exceptions
         /// <returns><see cref="ErrorResult"/>.</returns>
         public virtual ErrorResult ToErrorResult(HttpContext? httpContext = default)
         {
-            return new ErrorResult(HttpCodeStatus, Code, Message);
+            return new ErrorResult(HttpCodeStatus, Code, Message, stackTrace: StackTrace);
         }
     }
 }

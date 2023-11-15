@@ -64,12 +64,13 @@ namespace TripleSix.Core.WebApi
 
         private ErrorResult ConvertExceptionToErrorResult(Exception exception)
         {
-            var error = new ErrorResult(500, "exception", exception.Message);
+            var error = new ErrorResult(500, "exception", exception.Message, stackTrace: exception.StackTrace);
 
             var innerException = exception.InnerException;
             while (innerException != null)
             {
-                error.Detail.Add(innerException.Message);
+                if (innerException.Message.IsNotNullOrEmpty())
+                    error.Error.Message += $" {innerException.Message}";
                 innerException = innerException.InnerException;
             }
 
@@ -78,9 +79,9 @@ namespace TripleSix.Core.WebApi
 
         private async Task SendResponse(HttpContext httpContext, ErrorResult error)
         {
-            var json = _webApiAppsetting.ShowErrorDetail ?
+            var json = _webApiAppsetting.ShowStackTrace ?
                 error.ToJson() :
-                error.ToJson(nameof(ErrorResult.Detail));
+                error.ToJson(nameof(ErrorResult.StackTrace));
 
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = error.HttpStatusCode;

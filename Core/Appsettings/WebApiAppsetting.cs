@@ -10,8 +10,8 @@ namespace TripleSix.Core.Appsettings
         }
 
         /// <summary>
-        /// Hiển thị chi tiết lỗi.
+        /// Hiển thị stack trace.
         /// </summary>
-        public bool ShowErrorDetail { get; set; } = false;
+        public bool ShowStackTrace { get; set; } = false;
     }
 }
