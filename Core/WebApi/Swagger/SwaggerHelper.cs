@@ -77,9 +77,8 @@ namespace TripleSix.Core.WebApi
             }
 
             result.Reference = null;
+            if (result.Type != "object" && generateDefaultValue) result.Default = objectType.SwaggerValue(defaultValue);
             result.Nullable = objectType.IsNullableType();
-            if (result.Type != "object" && generateDefaultValue)
-                result.Default = objectType.SwaggerValue(defaultValue);
 
             if (propertyType.IsEnum)
             {
@@ -117,7 +116,7 @@ namespace TripleSix.Core.WebApi
                     .GetRawGeneric(typeof(BaseQueryDto<>))?
                     .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
                     .GetCustomAttribute<CommentAttribute>()?.Comment;
-                displayName ??= propertyInfo.DeclaringType?
+                displayName ??= propertyInfo.PropertyType
                     .GetCustomAttribute<MapFromEntityAttribute>()?
                     .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
 
@@ -148,9 +147,6 @@ namespace TripleSix.Core.WebApi
                     $"[{nameof(parameterName).ToKebabCase()}]",
                     parameterName);
             }
-
-            if (result.Nullable && propertyInfo.GetCustomAttributes().Any(x => x.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute"))
-                result.Nullable = false;
 
             var validators = new List<Attribute>();
             var requireAttr = propertyInfo.GetCustomAttribute<RequiredAttribute>();

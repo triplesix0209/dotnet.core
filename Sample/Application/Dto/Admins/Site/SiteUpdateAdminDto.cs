@@ -1,15 +1,14 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
     [MapToEntity(typeof(Site))]
-    public class SiteCreateAdminDto : BaseDto
+    [IgnoreUnmapProperty]
+    public class SiteUpdateAdminDto : BaseDto
     {
-        [Required]
         [MustTrim]
         [MustUpperCase]
         [MaxLength(100)]
         public string Code { get; set; }
 
-        [Required]
         [MustTrim]
         [MaxLength(200)]
         public string Name { get; set; }

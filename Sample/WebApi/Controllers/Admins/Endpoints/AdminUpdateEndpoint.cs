@@ -1,6 +1,6 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
-    public class AdminCreateEndpoint<TController, TEntity, TInput> : AdminController,
+    public class AdminUpdateEndpoint<TController, TEntity, TInput> : AdminController,
         IControllerEndpoint<TController>
         where TController : BaseController
         where TEntity : class, IStrongEntity
@@ -8,24 +8,24 @@
     {
         public IStrongService<TEntity> Service { get; set; }
 
-        [HttpPost]
-        [SwaggerOperation("Tạo [controller]")]
+        [HttpPut("{id}")]
+        [SwaggerOperation("Sửa [controller]")]
         [Transactional]
-        public async Task<DataResult<Guid>> Create([FromBody] TInput input)
+        public async Task<SuccessResult> Update(RouteId route, [FromBody] TInput input)
         {
-            var result = await Service.CreateWithMapper(input);
-            return DataResult(result.Id);
+            await Service.UpdateWithMapper(route.Id, input);
+            return SuccessResult();
         }
     }
 
-    public class AdminCreateEndpointAttribute<TController, TEntity, TInput> : BaseControllerEndpointAttribute<TController>
+    public class AdminUpdateEndpointAttribute<TController, TEntity, TInput> : BaseControllerEndpointAttribute<TController>
         where TController : BaseController
         where TEntity : class, IStrongEntity
         where TInput : class, IDto
     {
         public override TypeInfo ToEndpointTypeInfo()
         {
-            return typeof(AdminCreateEndpoint<,,>)
+            return typeof(AdminUpdateEndpoint<,,>)
                 .MakeGenericType(typeof(TController), typeof(TEntity), typeof(TInput))
                 .GetTypeInfo();
         }

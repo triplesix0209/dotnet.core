@@ -1,41 +1,43 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
-    public class AdminReadEndpoint<TController, TEntity, TData, TFilter> : AdminController,
+    public class AdminReadEndpoint<TController, TEntity, TItem, TDetail, TFilter> : AdminController,
         IControllerEndpoint<TController>
         where TController : BaseController
         where TEntity : class, IStrongEntity
-        where TData : class, IDto
+        where TItem : class, IDto
+        where TDetail : class, IDto
         where TFilter : class, IQueryableDto<TEntity>, IPagingInput
     {
         public IStrongService<TEntity> Service { get; set; }
 
         [HttpGet]
         [SwaggerOperation("Lấy danh sách [controller]")]
-        public async Task<PagingResult<TData>> GetPage(TFilter input)
+        public async Task<PagingResult<TItem>> GetPage(TFilter input)
         {
-            var result = await Service.GetPageByQueryModel<TData>(input, input.Page, input.Size);
+            var result = await Service.GetPageByQueryModel<TItem>(input, input.Page, input.Size);
             return PagingResult(result);
         }
 
         [HttpGet("{id}")]
         [SwaggerOperation("Lấy chi tiết [controller]")]
-        public async Task<DataResult<AccountDataAdminDto>> GetDetail(RouteId route)
+        public async Task<DataResult<TDetail>> GetDetail(RouteId route)
         {
-            var result = await Service.GetFirstById<AccountDataAdminDto>(route.Id);
+            var result = await Service.GetFirstById<TDetail>(route.Id);
             return DataResult(result);
         }
     }
 
-    public class ReadEndpointAttribute<TController, TEntity, TData, TFilter> : BaseControllerEndpointAttribute<TController>
+    public class AdminReadEndpointAttribute<TController, TEntity, TItem, TDetail, TFilter> : BaseControllerEndpointAttribute<TController>
         where TController : BaseController
         where TEntity : class, IStrongEntity
-        where TData : class, IDto
+        where TItem : class, IDto
+        where TDetail : class, IDto
         where TFilter : class, IQueryableDto<TEntity>, IPagingInput
     {
         public override TypeInfo ToEndpointTypeInfo()
         {
-            return typeof(AdminReadEndpoint<,,,>)
-                .MakeGenericType(typeof(TController), typeof(TEntity), typeof(TData), typeof(TFilter))
+            return typeof(AdminReadEndpoint<,,,,>)
+                .MakeGenericType(typeof(TController), typeof(TEntity), typeof(TItem), typeof(TDetail), typeof(TFilter))
                 .GetTypeInfo();
         }
     }
