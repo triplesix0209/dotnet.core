@@ -53,8 +53,12 @@ namespace TripleSix.Core.WebApi
             }
             else if (result.Type is null)
             {
+                if (objectType.Name == "AccountDetailAdminDto")
+                { }
+
                 result.Type = "object";
                 var properties = objectType.GetProperties()
+                    .OrderBy(x => x.DeclaringType?.BaseTypesAndSelf().Count())
                     .OrderBy(x => x.GetCustomAttribute<JsonPropertyAttribute>(true)?.Order ?? 0);
 
                 foreach (var property in properties)
