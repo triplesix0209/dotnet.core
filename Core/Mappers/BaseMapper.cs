@@ -87,7 +87,7 @@ namespace TripleSix.Core.Mappers
                 .GetProperties()
                 .Where(x =>
                 {
-                    if (x.GetMethod != null && x.GetMethod.IsVirtual && !x.GetMethod.IsFinal)
+                    if (x.SetMethod != null && x.SetMethod.IsVirtual && !x.SetMethod.IsFinal)
                         return true;
 
                     var propertyType = x.PropertyType.GetUnderlyingType();
