@@ -1,5 +1,8 @@
 ﻿namespace TripleSix.Core.Validation
 {
+    /// <summary>
+    /// Kiểm tra giá trị của property không lớn hơn số chỉ định.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class MaxValueAttribute : Attribute
     {
