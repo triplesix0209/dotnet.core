@@ -94,10 +94,12 @@ namespace TripleSix.Core.Mappers
                     if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdateAt)) return true;
                     if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdatorId)) return true;
 
-                    var propertyType = p.PropertyType.GetUnderlyingType();
+                    var propertyType = p.PropertyType;
+                    if (propertyType.IsArray) propertyType = propertyType.GetElementType();
+                    propertyType = propertyType!.GetUnderlyingType();
+
                     return propertyType.IsAssignableTo<IEntity>()
-                        || propertyType.IsSubclassOfOpenGeneric(typeof(IList<>))
-                        || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
+                        || propertyType.IsAssignableToGenericType(typeof(ICollection<>));
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, o => o.Ignore());
