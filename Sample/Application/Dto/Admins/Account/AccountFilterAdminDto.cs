@@ -2,6 +2,8 @@
 {
     public class AccountFilterAdminDto : BaseFilterAdminDto<Account>
     {
+        public string? Test { get; set; }
+
         public string? Code { get; set; }
 
         public string? Name { get; set; }
