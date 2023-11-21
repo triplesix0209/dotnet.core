@@ -3,13 +3,13 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
-    public class NoSpaceValidator<T, TProperty> : PropertyValidator<T, TProperty>
+    public class MustNoSpaceValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
-        public NoSpaceValidator()
+        public MustNoSpaceValidator()
         {
         }
 
-        public override string Name => "NoSpaceValidator";
+        public override string Name => "MustNoSpaceValidator";
 
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
