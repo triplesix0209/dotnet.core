@@ -161,8 +161,8 @@ namespace TripleSix.Core.WebApi
             var notNullAtrr = propertyInfo.GetCustomAttribute<NotNullAttribute>();
             if (notNullAtrr != null) validators.Add(notNullAtrr);
 
-            var noSpaceAtrr = propertyInfo.GetCustomAttribute<NoSpaceAttribute>();
-            if (noSpaceAtrr != null) validators.Add(noSpaceAtrr);
+            var mustNoSpaceAtrr = propertyInfo.GetCustomAttribute<MustNoSpaceAttribute>();
+            if (mustNoSpaceAtrr != null) validators.Add(mustNoSpaceAtrr);
 
             var mustLowerCaseAtrr = propertyInfo.GetCustomAttribute<MustLowerCaseAttribute>();
             if (mustLowerCaseAtrr != null) validators.Add(mustLowerCaseAtrr);

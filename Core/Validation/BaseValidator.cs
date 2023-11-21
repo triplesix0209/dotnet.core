@@ -98,11 +98,11 @@ namespace TripleSix.Core.Validation
                     .WithName(propertyDisplayName);
             }
 
-            var noSpaceAttr = property.GetCustomAttribute<NoSpaceAttribute>();
-            if (noSpaceAttr != null)
+            var mustNoSpaceAttr = property.GetCustomAttribute<MustNoSpaceAttribute>();
+            if (mustNoSpaceAttr != null)
             {
                 RuleFor(x => valueGetter(x))
-                    .SetValidator(new NoSpaceValidator<T, object?>())
+                    .SetValidator(new MustNoSpaceValidator<T, object?>())
                     .OverridePropertyName(propertyName)
                     .WithName(propertyDisplayName);
             }
