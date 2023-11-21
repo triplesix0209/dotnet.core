@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using AutoMapper;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -96,7 +95,9 @@ namespace TripleSix.Core.Mappers
                     if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdatorId)) return true;
 
                     var propertyType = p.PropertyType.GetUnderlyingType();
-                    return propertyType.IsAssignableTo<IEntity>() || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
+                    return propertyType.IsAssignableTo<IEntity>()
+                        || propertyType.IsSubclassOfOpenGeneric(typeof(IList<>))
+                        || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, o => o.Ignore());
