@@ -14,6 +14,7 @@ namespace TripleSix.Core.Jsons
             _ignoreProps = new HashSet<string>(propertyNamesToIgnore.Select(x => x.ToLower()));
         }
 
+        /// <inheritdoc/>
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var property = base.CreateProperty(member, memberSerialization);

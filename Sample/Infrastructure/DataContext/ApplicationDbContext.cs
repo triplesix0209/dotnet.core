@@ -14,6 +14,7 @@ namespace Sample.Infrastructure.DataContext
             _configuration = configuration;
         }
 
+        /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
             base.OnConfiguring(builder);

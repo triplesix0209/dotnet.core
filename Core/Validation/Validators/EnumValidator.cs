@@ -14,8 +14,10 @@ namespace TripleSix.Core.Validation.Validators
                 _values.Add((int)value);
         }
 
+        /// <inheritdoc/>
         public override string Name => "EnumValidator";
 
+        /// <inheritdoc/>
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
             if (value == null)
@@ -25,6 +27,7 @@ namespace TripleSix.Core.Validation.Validators
             return _values.Contains(val);
         }
 
+        /// <inheritdoc/>
         protected override string GetDefaultMessageTemplate(string errorCode)
             => "'{PropertyName}' có giá trị không phù hợp với tập giá trị cho phép";
     }

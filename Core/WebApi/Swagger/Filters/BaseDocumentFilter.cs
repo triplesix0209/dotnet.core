@@ -11,6 +11,7 @@ namespace TripleSix.Core.WebApi
 {
     public class BaseDocumentFilter : IDocumentFilter
     {
+        /// <inheritdoc/>
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             var tagGroups = new List<TagGroupItem>();

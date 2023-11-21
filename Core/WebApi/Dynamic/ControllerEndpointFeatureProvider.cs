@@ -14,6 +14,7 @@ namespace TripleSix.Core.WebApi
             _assembly = assembly;
         }
 
+        /// <inheritdoc/>
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             var controllerTypes = _assembly.GetExportedTypes()

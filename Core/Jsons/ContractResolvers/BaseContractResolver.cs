@@ -6,6 +6,7 @@ namespace TripleSix.Core.Jsons
 {
     public class BaseContractResolver : CamelCasePropertyNamesContractResolver
     {
+        /// <inheritdoc/>
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             return base.CreateProperties(type, memberSerialization)

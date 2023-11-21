@@ -23,6 +23,7 @@
         where TEntity : class, IStrongEntity
         where TInput : class, IDto
     {
+        /// <inheritdoc/>
         public override TypeInfo ToEndpointTypeInfo()
         {
             return typeof(AdminUpdateEndpoint<,,>)

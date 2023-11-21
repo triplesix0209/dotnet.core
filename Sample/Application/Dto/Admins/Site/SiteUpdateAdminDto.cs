@@ -1,7 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapToEntity(typeof(Site))]
-    [IgnoreUnmapProperty]
+    [MapData<SiteUpdateAdminDto, Site>(IgnoreUndeclareProperty = true)]
     public class SiteUpdateAdminDto : BaseDto
     {
         [MustTrim]

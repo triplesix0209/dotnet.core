@@ -7,6 +7,7 @@
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
+        /// <inheritdoc/>
         public string Scope { get; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapToEntity(typeof(Site))]
+    [MapData<SiteCreateAdminDto, Site>]
     public class SiteCreateAdminDto : BaseDto
     {
         [Required]

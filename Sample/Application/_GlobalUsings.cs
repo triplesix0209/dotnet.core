@@ -1,5 +1,6 @@
 ﻿global using System.ComponentModel;
 global using System.ComponentModel.DataAnnotations;
+global using AutoMapper;
 global using Microsoft.EntityFrameworkCore;
 global using Sample.Domain.DataContext;
 global using Sample.Domain.Entities;

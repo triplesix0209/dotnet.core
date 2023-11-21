@@ -17,10 +17,7 @@ using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.WebApi
 {
-    /// <summary>
-    /// Helper hỗ trợ cấu hình Web Api.
-    /// </summary>
-    public static class ConfigureHelper
+    public static class Extension
     {
         /// <summary>
         /// Cấu hình MVC Controller.

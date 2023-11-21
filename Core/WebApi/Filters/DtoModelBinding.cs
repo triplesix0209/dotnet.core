@@ -17,6 +17,7 @@ namespace TripleSix.Core.WebApi
     {
         private static readonly StringComparison _stringComparison = StringComparison.CurrentCultureIgnoreCase;
 
+        /// <inheritdoc/>
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var request = context.HttpContext.Request;

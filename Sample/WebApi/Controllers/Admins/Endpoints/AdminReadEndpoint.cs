@@ -34,6 +34,7 @@
         where TDetail : class, IDto
         where TFilter : class, IQueryableDto<TEntity>, IPagingInput
     {
+        /// <inheritdoc/>
         public override TypeInfo ToEndpointTypeInfo()
         {
             return typeof(AdminReadEndpoint<,,,,>)

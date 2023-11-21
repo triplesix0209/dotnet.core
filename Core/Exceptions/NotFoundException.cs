@@ -25,6 +25,7 @@ namespace TripleSix.Core.Exceptions
         {
         }
 
+        /// <inheritdoc/>
         public override int HttpCodeStatus => 404;
     }
 }

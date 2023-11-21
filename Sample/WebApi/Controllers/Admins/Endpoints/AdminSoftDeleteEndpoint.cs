@@ -30,6 +30,7 @@
         where TController : BaseController
         where TEntity : class, IStrongEntity
     {
+        /// <inheritdoc/>
         public override TypeInfo ToEndpointTypeInfo()
         {
             return typeof(AdminSoftDeleteEndpoint<,>)

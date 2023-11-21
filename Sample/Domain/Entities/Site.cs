@@ -13,6 +13,7 @@
 
         public virtual IList<Account>? Accounts { get; set; }
 
+        /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<Site> builder)
         {
             base.Configure(builder);

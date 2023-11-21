@@ -5,6 +5,7 @@ namespace Sample.Infrastructure.DataContext
 {
     public class MigrationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
+        /// <inheritdoc/>
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()

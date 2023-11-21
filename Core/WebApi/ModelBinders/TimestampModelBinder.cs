@@ -5,6 +5,7 @@ namespace TripleSix.Core.WebApi
 {
     public class TimestampModelBinder : IModelBinder
     {
+        /// <inheritdoc/>
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             var values = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
@@ -19,6 +20,7 @@ namespace TripleSix.Core.WebApi
 
     public class TimestampModelBinderProvider : IModelBinderProvider
     {
+        /// <inheritdoc/>
         public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
             if (context == null)

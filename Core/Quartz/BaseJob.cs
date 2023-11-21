@@ -26,6 +26,7 @@ namespace TripleSix.Core.Quartz
             return builder.WithIdentity(JobName + "Tigger");
         }
 
+        /// <inheritdoc/>
         public abstract Task Execute(IJobExecutionContext context);
     }
 }

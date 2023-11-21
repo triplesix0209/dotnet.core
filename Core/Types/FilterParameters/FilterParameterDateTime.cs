@@ -41,6 +41,7 @@ namespace TripleSix.Core.Types
         [DisplayName("loại lọc của [parameter-name]")]
         public FilterParameterDatetimeOperators Operator { get; set; } = FilterParameterDatetimeOperators.Equal;
 
+        /// <inheritdoc/>
         public IQueryable<TEntity> ToQueryable<TEntity>(IQueryable<TEntity> query, string propertyName)
             where TEntity : class, IEntity
         {

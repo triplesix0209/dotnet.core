@@ -33,6 +33,7 @@ namespace TripleSix.Core.Services
         /// </summary>
         protected IQueryable<TEntity> Query => _db.Set<TEntity>();
 
+        /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
@@ -42,6 +43,7 @@ namespace TripleSix.Core.Services
             return result.Entity;
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> Create<TResult>(TEntity entity)
             where TResult : class
         {
@@ -49,6 +51,7 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> CreateWithMapper(IDto input, Action<TEntity>? afterMap = null)
         {
             input.Validate(throwOnFailures: true);
@@ -60,6 +63,7 @@ namespace TripleSix.Core.Services
             return await Create(entity);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> CreateWithMapper<TResult>(IDto input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
@@ -73,6 +77,7 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public virtual async Task<TEntity> Update(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
@@ -82,6 +87,7 @@ namespace TripleSix.Core.Services
             return result.Entity;
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> Update<TResult>(TEntity entity)
             where TResult : class
         {
@@ -89,6 +95,7 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
         {
             if (!input.IsAnyPropertyChanged()) return entity;
@@ -101,6 +108,7 @@ namespace TripleSix.Core.Services
             return await Update(entity);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
@@ -108,6 +116,7 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public virtual async Task HardDelete(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
@@ -116,6 +125,7 @@ namespace TripleSix.Core.Services
             await _db.SaveChangesAsync(true);
         }
 
+        /// <inheritdoc/>
         public async Task<bool> Any(IQueryable<TEntity>? query = default)
         {
             using var activity = StartTraceMethodActivity();
@@ -124,11 +134,13 @@ namespace TripleSix.Core.Services
             return await query.AnyAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model)
         {
             return await Any(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<long> Count(IQueryable<TEntity>? query = default)
         {
             using var activity = StartTraceMethodActivity();
@@ -137,11 +149,13 @@ namespace TripleSix.Core.Services
             return await query.LongCountAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<long> CountByQueryModel(IQueryableDto<TEntity> model)
         {
             return await Count(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
@@ -151,22 +165,26 @@ namespace TripleSix.Core.Services
             return await query.FirstOrDefaultAsync<TResult>(Mapper);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default)
         {
             return await GetFirstOrDefault<TEntity>(query);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model)
             where TResult : class
         {
             return await GetFirstOrDefault<TResult>(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model)
         {
             return await GetFirstOrDefault(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
@@ -175,22 +193,26 @@ namespace TripleSix.Core.Services
             return data;
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default)
         {
             return await GetFirst<TEntity>(query);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model)
             where TResult : class
         {
             return await GetFirst<TResult>(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model)
         {
             return await GetFirst(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
@@ -200,22 +222,26 @@ namespace TripleSix.Core.Services
             return await query.ToListAsync<TResult>(Mapper);
         }
 
+        /// <inheritdoc/>
         public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default)
         {
             return await GetList<TEntity>(query);
         }
 
+        /// <inheritdoc/>
         public async Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model)
             where TResult : class
         {
             return await GetList<TResult>(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model)
         {
             return await GetList(model.ToQueryable(Query));
         }
 
+        /// <inheritdoc/>
         public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
             where TResult : class
         {
@@ -236,17 +262,20 @@ namespace TripleSix.Core.Services
             return result;
         }
 
+        /// <inheritdoc/>
         public async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
         {
             return await GetPage<TEntity>(query, page, size);
         }
 
+        /// <inheritdoc/>
         public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10)
             where TResult : class
         {
             return await GetPage<TResult>(model.ToQueryable(Query), page, size);
         }
 
+        /// <inheritdoc/>
         public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
             return await GetPage(model.ToQueryable(Query), page, size);

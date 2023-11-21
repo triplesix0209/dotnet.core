@@ -6,3 +6,5 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Custom", Scope = "namespaceanddescendants", Target = "Sample.Application.Services")]
+
+[assembly: SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1015:Closing generic brackets should be spaced correctly", Justification = "Custom", Scope = "namespaceanddescendants", Target = "Sample.Application.Dto")]

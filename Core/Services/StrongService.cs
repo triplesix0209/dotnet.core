@@ -22,6 +22,7 @@ namespace TripleSix.Core.Services
         {
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> Update(Guid id, Action<TEntity> updateAction)
         {
             var entity = await GetFirstById(id);
@@ -30,6 +31,7 @@ namespace TripleSix.Core.Services
             return await Update(entity);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> Update<TResult>(Guid id, Action<TEntity> updateAction)
             where TResult : class
         {
@@ -37,12 +39,14 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null)
         {
             var entity = await GetFirstById(id);
             return await UpdateWithMapper(entity, input, afterMap);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IDto input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
@@ -50,12 +54,14 @@ namespace TripleSix.Core.Services
             return await UpdateWithMapper<TResult>(entity, input, afterMap);
         }
 
+        /// <inheritdoc/>
         public async Task HardDelete(Guid id)
         {
             var entity = await GetFirstById(id);
             await HardDelete(entity);
         }
 
+        /// <inheritdoc/>
         public virtual async Task<TEntity> SoftDelete(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
@@ -67,6 +73,7 @@ namespace TripleSix.Core.Services
             return result.Entity;
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> SoftDelete<TResult>(TEntity entity)
             where TResult : class
         {
@@ -74,12 +81,14 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> SoftDelete(Guid id)
         {
             var entity = await GetFirstById(id);
             return await SoftDelete(entity);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> SoftDelete<TResult>(Guid id)
             where TResult : class
         {
@@ -87,6 +96,7 @@ namespace TripleSix.Core.Services
             return await SoftDelete<TResult>(entity);
         }
 
+        /// <inheritdoc/>
         public virtual async Task<TEntity> Restore(TEntity entity)
         {
             using var activity = StartTraceMethodActivity();
@@ -98,6 +108,7 @@ namespace TripleSix.Core.Services
             return result.Entity;
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> Restore<TResult>(TEntity entity)
             where TResult : class
         {
@@ -105,12 +116,14 @@ namespace TripleSix.Core.Services
             return Mapper.MapData<TEntity, TResult>(result);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> Restore(Guid id)
         {
             var entity = await GetFirstById(id);
             return await Restore(entity);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> Restore<TResult>(Guid id)
             where TResult : class
         {
@@ -118,6 +131,7 @@ namespace TripleSix.Core.Services
             return await Restore<TResult>(entity);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult?> GetFirstOrDefaultById<TResult>(Guid id)
             where TResult : class
         {
@@ -125,12 +139,14 @@ namespace TripleSix.Core.Services
             return await GetFirstOrDefault<TResult>(query);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity?> GetFirstOrDefaultById(Guid id)
         {
             var query = Query.Where(x => x.Id == id);
             return await GetFirstOrDefault(query);
         }
 
+        /// <inheritdoc/>
         public async Task<TResult> GetFirstById<TResult>(Guid id)
             where TResult : class
         {
@@ -138,6 +154,7 @@ namespace TripleSix.Core.Services
             return await GetFirst<TResult>(query);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity> GetFirstById(Guid id)
         {
             var query = Query.Where(x => x.Id == id);

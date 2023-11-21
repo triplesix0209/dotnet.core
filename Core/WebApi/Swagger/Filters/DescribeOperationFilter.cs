@@ -13,6 +13,7 @@ namespace TripleSix.Core.WebApi
 {
     public class DescribeOperationFilter : IOperationFilter
     {
+        /// <inheritdoc/>
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor controllerInfo) return;

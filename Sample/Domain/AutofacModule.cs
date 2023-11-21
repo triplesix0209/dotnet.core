@@ -13,6 +13,7 @@ namespace Sample.Domain
         {
         }
 
+        /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);

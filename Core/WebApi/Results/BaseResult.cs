@@ -22,6 +22,7 @@ namespace TripleSix.Core.WebApi
         [DisplayName("thông tin metadata")]
         public virtual TMeta Meta { get; set; }
 
+        /// <inheritdoc/>
         public async Task ExecuteResultAsync(ActionContext context)
         {
             var result = new ObjectResult(this) { StatusCode = HttpStatusCode };

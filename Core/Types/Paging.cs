@@ -35,12 +35,16 @@
             Size = size;
         }
 
+        /// <inheritdoc/>
         public long Total { get; set; }
 
+        /// <inheritdoc/>
         public List<TItem> Items { get; set; }
 
+        /// <inheritdoc/>
         public int Page { get; set; }
 
+        /// <inheritdoc/>
         public int Size { get; set; }
     }
 }

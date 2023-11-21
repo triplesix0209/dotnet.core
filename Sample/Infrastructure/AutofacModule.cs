@@ -12,6 +12,7 @@ namespace Sample.Infrastructure
         {
         }
 
+        /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
