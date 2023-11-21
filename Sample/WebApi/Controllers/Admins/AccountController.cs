@@ -1,6 +1,6 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
-    [SwaggerTag("tài khoản")]
+    [SwaggerTag("Tài khoản")]
     [AdminReadEndpoint<AccountController, Account, AccountDataAdminDto, AccountDetailAdminDto, AccountFilterAdminDto>]
     [AdminCreateEndpoint<AccountController, Account, AccountCreateAdminDto>]
     [AdminUpdateEndpoint<AccountController, Account, AccountUpdateAdminDto>]

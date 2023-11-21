@@ -13,11 +13,6 @@ namespace TripleSix.Core.WebApi
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            var orderedPaths = swaggerDoc.Paths.OrderBy(x => x.Key).ToList();
-            swaggerDoc.Paths.Clear();
-            foreach (var (key, value) in orderedPaths)
-                swaggerDoc.Paths.Add(key, value);
-
             var tagGroups = new List<TagGroupItem>();
             foreach (var apiDescription in context.ApiDescriptions)
             {
@@ -67,9 +62,13 @@ namespace TripleSix.Core.WebApi
             }
 
             foreach (var tag in swaggerDoc.Tags)
-                tag.Description = tag.Description.ToTitleCase();
+            {
+                tag.Description = tag.Description?.ToTitleCase() ?? null;
+                tag.Extensions.Add("x-displayName", new OpenApiString(tag.Description ?? tag.Name));
+            }
 
             var xTagGroups = new OpenApiArray();
+            swaggerDoc.Extensions.Add("x-tagGroups", xTagGroups);
             foreach (var group in tagGroups.OrderBy(x => x.OrderIndex))
             {
                 var xTagGroupItem = new OpenApiArray();
@@ -81,8 +80,6 @@ namespace TripleSix.Core.WebApi
                 });
             }
 
-            swaggerDoc.Extensions.Add("x-tagGroups", xTagGroups);
-
             foreach (var (_, openApiPathItem) in swaggerDoc.Paths)
             {
                 foreach (var (_, operation) in openApiPathItem.Operations)
@@ -90,12 +87,12 @@ namespace TripleSix.Core.WebApi
                     if (operation.Summary == null) continue;
 
                     var tagName = operation.Tags[0].Name;
-                    var controllerName = swaggerDoc.Tags.FirstOrDefault(x => x.Name == tagName)?.Description
-                                         ?? tagName;
-
-                    operation.Summary = Regex.Replace(operation.Summary, @"\[controller\]", controllerName);
+                    operation.Summary = Regex.Replace(operation.Summary, @"\[controller\]", swaggerDoc.Tags.FirstOrDefault(x => x.Name == tagName)?.Description ?? tagName);
                 }
             }
+
+            foreach (var tag in swaggerDoc.Tags)
+                tag.Description = tag.Description == tag.Name ? null : tag.Description = tag.Name;
         }
 
         private class TagGroupItem
