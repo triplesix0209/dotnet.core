@@ -17,6 +17,7 @@
         [ForeignKey(nameof(SiteId))]
         public virtual Site Site { get; set; }
 
+        /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<Account> builder)
         {
             base.Configure(builder);

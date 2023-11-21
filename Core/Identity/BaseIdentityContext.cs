@@ -36,10 +36,13 @@ namespace TripleSix.Core.Identity
             }
         }
 
+        /// <inheritdoc/>
         public Guid? Id { get; set; }
 
+        /// <inheritdoc/>
         public IEnumerable<string> Scope { get; set; }
 
+        /// <inheritdoc/>
         public virtual string? GetAccessToken(HttpContext httpContext)
         {
             var authorizationValue = httpContext.Request.Headers.Authorization.FirstOrDefault();
@@ -47,6 +50,7 @@ namespace TripleSix.Core.Identity
             return authorizationValue.Split(' ')[^1];
         }
 
+        /// <inheritdoc/>
         public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration)
         {
             var appsetting = new IdentityAppsetting(configuration);

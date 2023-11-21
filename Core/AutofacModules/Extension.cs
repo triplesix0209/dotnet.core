@@ -81,6 +81,14 @@ namespace TripleSix.Core.AutofacModules
                 .SingleInstance()
                 .AsSelf();
 
+            builder.RegisterAssemblyTypes(assembly)
+                .PublicOnly()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableToGenericType(typeof(IMappingAction<,>)))
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .AsSelf();
+
             builder.Register(c => new MapperConfiguration(config =>
             {
                 config.AddExpressionMapping();

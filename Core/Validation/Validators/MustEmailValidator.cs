@@ -10,8 +10,10 @@ namespace TripleSix.Core.Validation.Validators
         {
         }
 
+        /// <inheritdoc/>
         public override string Name => "MustEmailValidator";
 
+        /// <inheritdoc/>
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
             if (value == null)
@@ -26,6 +28,7 @@ namespace TripleSix.Core.Validation.Validators
             return true;
         }
 
+        /// <inheritdoc/>
         protected override string GetDefaultMessageTemplate(string errorCode)
             => "'{PropertyName}' phải là e-mail";
     }

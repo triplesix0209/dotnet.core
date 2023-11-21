@@ -1,6 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapFromEntity(typeof(Account))]
+    [MapData<Account, AccountDetailAdminDto>]
     public class AccountDetailAdminDto : AccountDataAdminDto
     {
         public SiteDataAdminDto Site { get; set; }

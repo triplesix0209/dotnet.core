@@ -53,6 +53,7 @@ namespace TripleSix.Core.Types
         [DisplayName("loại lọc của [parameter-name]")]
         public FilterParameterStringOperators Operator { get; set; } = FilterParameterStringOperators.Equal;
 
+        /// <inheritdoc/>
         public IQueryable<TEntity> ToQueryable<TEntity>(IQueryable<TEntity> query, string propertyName)
             where TEntity : class, IEntity
         {

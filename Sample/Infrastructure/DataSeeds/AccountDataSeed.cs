@@ -2,6 +2,7 @@
 {
     public class AccountDataSeed : BaseDataSeed
     {
+        /// <inheritdoc/>
         public override void OnDataSeeding(ModelBuilder builder, DatabaseFacade database)
         {
             var accounts = new List<Account>()

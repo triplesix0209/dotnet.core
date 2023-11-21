@@ -15,8 +15,10 @@ namespace TripleSix.Core.Validation.Validators
             _maxLength = maxLength;
         }
 
+        /// <inheritdoc/>
         public override string Name => "MustPhoneValidator";
 
+        /// <inheritdoc/>
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
             context.MessageFormatter.AppendArgument("MinLength", _minLength);
@@ -35,6 +37,7 @@ namespace TripleSix.Core.Validation.Validators
             return true;
         }
 
+        /// <inheritdoc/>
         protected override string GetDefaultMessageTemplate(string errorCode)
             => "'{PropertyName}' phải là số điện thoại";
     }

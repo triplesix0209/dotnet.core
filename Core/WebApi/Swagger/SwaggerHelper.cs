@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Types;
@@ -108,24 +109,37 @@ namespace TripleSix.Core.WebApi
             var autoDisplayName = displayName == null;
             if (autoDisplayName)
             {
-                displayName ??= propertyInfo.DeclaringType?
-                    .GetCustomAttribute<MapFromEntityAttribute>()?
-                    .EntityType.GetProperty(propertyInfo.Name)?
-                    .GetCustomAttribute<CommentAttribute>()?.Comment;
-                displayName ??= propertyInfo.DeclaringType?
-                    .GetCustomAttribute<MapToEntityAttribute>()?
-                    .EntityType.GetProperty(propertyInfo.Name)?
-                    .GetCustomAttribute<CommentAttribute>()?.Comment;
-                displayName ??= propertyInfo.DeclaringType?
-                    .GetRawGeneric(typeof(BaseQueryDto<>))?
-                    .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
-                    .GetCustomAttribute<CommentAttribute>()?.Comment;
-                displayName ??= propertyInfo.PropertyType
-                    .GetCustomAttribute<MapFromEntityAttribute>()?
-                    .EntityType.GetCustomAttribute<CommentAttribute>()?.Comment;
+                if (propertyInfo.DeclaringType?.IsSubclassOfOpenGeneric(typeof(BaseQueryDto<>)) == true)
+                {
+                    displayName ??= propertyInfo.DeclaringType?
+                        .GetRawGeneric(typeof(BaseQueryDto<>))?
+                        .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
+                        .GetCustomAttribute<CommentAttribute>()?.Comment;
+                    if (displayName.IsNotNullOrEmpty())
+                        displayName = "Lọc theo " + displayName;
+                }
+                else
+                {
+                    var mapDataAttributes = propertyInfo.DeclaringType?
+                        .GetCustomAttributes(typeof(MapDataAttribute<,>))
+                        .Select(x => x.TypeId as Type)
+                        .Select(x => x!.GetGenericArguments());
+                    var entityType = mapDataAttributes!.Where(x => x[0].IsAssignableTo<IEntity>()).Select(x => x[0]).FirstOrDefault()
+                        ?? mapDataAttributes!.Where(x => x[1].IsAssignableTo<IEntity>()).Select(x => x[1]).FirstOrDefault();
+                    displayName ??= entityType?.GetProperty(propertyInfo.Name)?
+                        .GetCustomAttribute<CommentAttribute>()?.Comment;
 
-                if (displayName.IsNotNullOrEmpty())
-                    if (propertyInfo.DeclaringType?.IsSubclassOfOpenGeneric(typeof(BaseQueryDto<>)) == true) displayName = "Lọc theo " + displayName;
+                    if (displayName.IsNullOrEmpty())
+                    {
+                        var propertyMapDataAttributes = propertyInfo.PropertyType
+                            .GetCustomAttributes(typeof(MapDataAttribute<,>))
+                            .Select(x => x.TypeId as Type)
+                            .Select(x => x!.GetGenericArguments());
+                        var propertyEntityType = propertyMapDataAttributes!.Where(x => x[0].IsAssignableTo<IEntity>()).Select(x => x[0]).FirstOrDefault()
+                            ?? propertyMapDataAttributes!.Where(x => x[1].IsAssignableTo<IEntity>()).Select(x => x[1]).FirstOrDefault();
+                        displayName ??= propertyEntityType?.GetCustomAttribute<CommentAttribute>()?.Comment;
+                    }
+                }
             }
 
             var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();

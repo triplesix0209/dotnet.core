@@ -10,6 +10,7 @@ namespace TripleSix.Core.AutofacModules
     /// </summary>
     internal class ServiceInterceptor : IInterceptor
     {
+        /// <inheritdoc/>
         public void Intercept(IInvocation invocation)
         {
             using var activity = Activity.Current?.Source.StartActivity(

@@ -31,38 +31,46 @@ namespace TripleSix.Core.DataContext
 
         public IIdentityContext Identity { get; set; }
 
+        /// <inheritdoc/>
         public IDbContextTransaction? CurrentTransaction => Database.CurrentTransaction;
 
+        /// <inheritdoc/>
         public IDbContextTransaction BeginTransaction()
         {
             return Database.BeginTransaction();
         }
 
+        /// <inheritdoc/>
         public IDbContextTransaction BeginTransaction(IsolationLevel isolationLevel)
         {
             return Database.BeginTransaction(isolationLevel);
         }
 
+        /// <inheritdoc/>
         public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             return await Database.BeginTransactionAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
         {
             return await Database.BeginTransactionAsync(isolationLevel, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public void Migrate()
         {
             Database.Migrate();
         }
 
+        /// <inheritdoc/>
         public async Task MigrateAsync(CancellationToken cancellationToken = default)
         {
             await Database.MigrateAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public new virtual int SaveChanges(bool autoAudit = true)
         {
             if (autoAudit)
@@ -99,6 +107,7 @@ namespace TripleSix.Core.DataContext
             return base.SaveChanges();
         }
 
+        /// <inheritdoc/>
         public new virtual Task<int> SaveChangesAsync(bool autoAudit = true, CancellationToken cancellationToken = default)
         {
             if (autoAudit)
@@ -135,6 +144,7 @@ namespace TripleSix.Core.DataContext
             return SaveChangesAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -142,6 +152,7 @@ namespace TripleSix.Core.DataContext
             optionsBuilder.UseLazyLoadingProxies();
         }
 
+        /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

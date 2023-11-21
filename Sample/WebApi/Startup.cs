@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
+using TripleSix.Core.Mappers;
 using TripleSix.Core.Quartz;
 
 namespace Sample.WebApi
@@ -31,7 +32,7 @@ namespace Sample.WebApi
 
             var autofacContainer = app.Services.GetAutofacRoot();
             if (autofacContainer.IsRegistered<MapperConfiguration>())
-                autofacContainer.Resolve<MapperConfiguration>().AssertConfigurationIsValid();
+                autofacContainer.Resolve<MapperConfiguration>().ValidateConfiguration();
 
             BaseValidator.SetupGlobal();
             BaseValidator.ValidateDtoValidator(typeof(Domain.AutofacModule).Assembly);

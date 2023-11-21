@@ -11,6 +11,7 @@ namespace TripleSix.Core.WebApi
     /// </summary>
     public class ValidateInput : ActionFilterAttribute
     {
+        /// <inheritdoc/>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var errors = new List<InputInvalidItem>();

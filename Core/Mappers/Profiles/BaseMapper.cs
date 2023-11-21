@@ -11,11 +11,24 @@ namespace TripleSix.Core.Mappers
     /// </summary>
     public abstract class BaseMapper : Profile
     {
+        /// <summary>
+        /// Create a mapping configuration from the source type to destination type. Use this method when the source and destination type are known at runtime and not compile time.
+        /// </summary>
+        /// <param name="sourceType">Source type.</param>
+        /// <param name="destinationType">Destination type.</param>
+        /// <returns>Mapping expression for more configuration options.</returns>
         public new IMappingExpression CreateMap(Type sourceType, Type destinationType)
         {
             return base.CreateMap(sourceType, destinationType);
         }
 
+        /// <summary>
+        /// Create a mapping configuration from the source type to destination type. Specify the member list to validate against during configuration validation.
+        /// </summary>
+        /// <param name="sourceType">Source type.</param>
+        /// <param name="destinationType">Destination type.</param>
+        /// <param name="memberList">Member list to validate.</param>
+        /// <returns>Mapping expression for more configuration options.</returns>
         public new IMappingExpression CreateMap(Type sourceType, Type destinationType, MemberList memberList)
         {
             if (sourceType.IsAssignableTo<IEntity>() && !destinationType.IsAssignableTo<IEntity>())
@@ -25,11 +38,24 @@ namespace TripleSix.Core.Mappers
             return base.CreateMap(sourceType, destinationType, memberList);
         }
 
+        /// <summary>
+        /// Create a mapping configuration from the source type to destination type. Use this method when the source and destination type are known at compile time.
+        /// </summary>
+        /// <typeparam name="TSource">Source type.</typeparam>
+        /// <typeparam name="TDestination">Destination type.</typeparam>
+        /// <returns>Mapping expression for more configuration options.</returns>
         public new IMappingExpression<TSource, TDestination> CreateMap<TSource, TDestination>()
         {
             return CreateMap<TSource, TDestination>(MemberList.Destination);
         }
 
+        /// <summary>
+        /// Create a mapping configuration from the source type to destination type. Specify the member list to validate against during configuration validation.
+        /// </summary>
+        /// <typeparam name="TSource">Source type.</typeparam>
+        /// <typeparam name="TDestination">Destination type.</typeparam>
+        /// <param name="memberList">Member list to validate.</param>
+        /// <returns>Mapping expression for more configuration options.</returns>
         public new IMappingExpression<TSource, TDestination> CreateMap<TSource, TDestination>(MemberList memberList)
         {
             var sourceType = typeof(TSource);
@@ -152,11 +178,21 @@ namespace TripleSix.Core.Mappers
             // bỏ qua các property reference
             var ignoreProperties = entityType
                 .GetProperties()
-                .Where(x =>
+                .Where(p =>
                 {
-                    var propertyType = x.PropertyType.GetUnderlyingType();
+                    if (entityType.IsAssignableTo<IIdentifiableEntity>() && p.Name == nameof(IIdentifiableEntity.Id)) return true;
+                    if (entityType.IsAssignableTo<ISoftDeletableEntity>() && p.Name == nameof(ISoftDeletableEntity.DeleteAt)) return true;
+                    if (entityType.IsAssignableTo<ICreateAuditableEntity>() && p.Name == nameof(ICreateAuditableEntity.CreateAt)) return true;
+                    if (entityType.IsAssignableTo<ICreateAuditableEntity>() && p.Name == nameof(ICreateAuditableEntity.CreatorId)) return true;
+                    if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdateAt)) return true;
+                    if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdatorId)) return true;
+
+                    var propertyType = p.PropertyType;
+                    if (propertyType.IsArray) propertyType = propertyType.GetElementType();
+                    propertyType = propertyType!.GetUnderlyingType();
+
                     return propertyType.IsAssignableTo<IEntity>()
-                        || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
+                        || propertyType.IsAssignableToGenericType(typeof(ICollection<>));
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, o => o.Ignore());

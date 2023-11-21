@@ -9,8 +9,10 @@ namespace TripleSix.Core.Validation.Validators
 {
     public class RequiredValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
+        /// <inheritdoc/>
         public override string Name => "RequiredValidator";
 
+        /// <inheritdoc/>
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
             var instance = context.InstanceToValidate as object;
@@ -43,6 +45,7 @@ namespace TripleSix.Core.Validation.Validators
             return true;
         }
 
+        /// <inheritdoc/>
         protected override string GetDefaultMessageTemplate(string errorCode)
             => "Bạn chưa nhập '{PropertyName}'";
     }

@@ -13,8 +13,10 @@ namespace TripleSix.Core.Validation.Validators
             _length = length;
         }
 
+        /// <inheritdoc/>
         public override string Name => "MinLengthValidator";
 
+        /// <inheritdoc/>
         public override bool IsValid(ValidationContext<T> context, TProperty value)
         {
             context.MessageFormatter.AppendArgument("Length", _length);
@@ -33,6 +35,7 @@ namespace TripleSix.Core.Validation.Validators
             return true;
         }
 
+        /// <inheritdoc/>
         protected override string GetDefaultMessageTemplate(string errorCode)
             => "'{PropertyName}' phải có độ dài >= {Length}";
     }

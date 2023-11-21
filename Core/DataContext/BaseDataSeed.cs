@@ -8,6 +8,7 @@ namespace TripleSix.Core.DataContext
     /// </summary>
     public abstract class BaseDataSeed : IDbDataSeed
     {
+        /// <inheritdoc/>
         public abstract void OnDataSeeding(ModelBuilder builder, DatabaseFacade database);
     }
 }

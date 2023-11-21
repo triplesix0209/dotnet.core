@@ -10,6 +10,7 @@
 
         public Guid? SiteId { get; set; }
 
+        /// <inheritdoc/>
         public override IQueryable<Account> ToQueryable(IQueryable<Account> query)
         {
             return query

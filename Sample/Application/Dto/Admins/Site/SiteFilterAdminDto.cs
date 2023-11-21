@@ -6,6 +6,7 @@
 
         public string? Name { get; set; }
 
+        /// <inheritdoc/>
         public override IQueryable<Site> ToQueryable(IQueryable<Site> query)
         {
             return query

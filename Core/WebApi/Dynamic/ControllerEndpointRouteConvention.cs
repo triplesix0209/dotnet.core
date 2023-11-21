@@ -5,6 +5,7 @@ namespace TripleSix.Core.WebApi
 {
     public class ControllerEndpointRouteConvention : IControllerModelConvention
     {
+        /// <inheritdoc/>
         public void Apply(ControllerModel controller)
         {
             if (!controller.ControllerType.IsAssignableToGenericType(typeof(IControllerEndpoint<>))) return;

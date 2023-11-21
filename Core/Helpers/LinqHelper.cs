@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Autofac;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.Entities;
@@ -25,6 +24,19 @@ namespace TripleSix.Core.Helpers
             where TEntity : IStrongEntity
         {
             return query.Where(x => x.DeleteAt == null);
+        }
+
+        /// <summary>
+        /// Thêm where lọc các mục bị soft delete.
+        /// </summary>
+        /// <typeparam name="TEntity">Loại entity.</typeparam>
+        /// <param name="query">Câu query cần xử lý.</param>
+        /// <returns>Câu query đã được xử lý.</returns>
+        public static IQueryable<TEntity> WhereDeleted<TEntity>(
+            this IQueryable<TEntity> query)
+            where TEntity : IStrongEntity
+        {
+            return query.Where(x => x.DeleteAt != null);
         }
 
         /// <summary>
@@ -71,20 +83,14 @@ namespace TripleSix.Core.Helpers
         public static async Task<TResult> FirstAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            var item = typeof(TResult).IsAssignableTo<IEntity>()
-                ? await query.FirstOrDefaultAsync(cancellationToken) as TResult
-                : await query.ProjectTo<TResult>(mapper.ConfigurationProvider)
-                    .FirstOrDefaultAsync(cancellationToken);
+            var entityType = query.ElementType;
+            var result = await query.FirstOrDefaultAsync(cancellationToken)
+                ?? throw new NotFoundException(entityType);
 
-            if (item == null)
-            {
-                var entityType = query.GetType().GetInterfaces()
-                    .First(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IQueryable<>))
-                    .GetGenericArguments()[0];
-                throw new NotFoundException(entityType);
-            }
+            if (typeof(TResult) == query.ElementType)
+                return (TResult)result;
 
-            return item;
+            return mapper.MapData<TResult>(result);
         }
 
         /// <summary>
@@ -98,12 +104,13 @@ namespace TripleSix.Core.Helpers
         public static async Task<TResult?> FirstOrDefaultAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            if (typeof(TResult).IsAssignableTo<IEntity>())
-                return await query.FirstOrDefaultAsync(cancellationToken) as TResult;
+            var result = await query.FirstOrDefaultAsync(cancellationToken);
+            if (result == null) return null;
 
-            return await query
-                .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(cancellationToken);
+            if (typeof(TResult) == query.ElementType)
+                return result as TResult;
+
+            return mapper.MapData<TResult>(result);
         }
 
         /// <summary>
@@ -117,12 +124,11 @@ namespace TripleSix.Core.Helpers
         public static async Task<TResult[]> ToArrayAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            if (typeof(TResult).IsAssignableTo<IEntity>())
-                return (await query.ToArrayAsync(cancellationToken)).Cast<TResult>().ToArray();
+            var result = await query.ToArrayAsync(cancellationToken);
+            if (typeof(TResult) == query.ElementType)
+                return result.Cast<TResult>().ToArray();
 
-            return await query
-                .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                .ToArrayAsync(cancellationToken);
+            return result.Select(x => mapper.MapData<TResult>(x)).ToArray();
         }
 
         /// <summary>
@@ -136,12 +142,11 @@ namespace TripleSix.Core.Helpers
         public static async Task<List<TResult>> ToListAsync<TResult>(this IQueryable<IEntity> query, IMapper mapper, CancellationToken cancellationToken = default)
             where TResult : class
         {
-            if (typeof(TResult).IsAssignableTo<IEntity>())
-                return (await query.ToArrayAsync(cancellationToken)).Cast<TResult>().ToList();
+            var result = await query.ToListAsync(cancellationToken);
+            if (typeof(TResult) == query.ElementType)
+                return result.Cast<TResult>().ToList();
 
-            return await query
-                .ProjectTo<TResult>(mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            return result.Select(x => mapper.MapData<TResult>(x)).ToList();
         }
     }
 }
