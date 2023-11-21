@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AutoMapper;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -85,14 +86,17 @@ namespace TripleSix.Core.Mappers
             // bỏ qua các property reference
             var ignoreProperties = entityType
                 .GetProperties()
-                .Where(x =>
+                .Where(p =>
                 {
-                    if (x.SetMethod != null && x.SetMethod.IsVirtual && !x.SetMethod.IsFinal)
-                        return true;
+                    if (entityType.IsAssignableTo<IIdentifiableEntity>() && p.Name == nameof(IIdentifiableEntity.Id)) return true;
+                    if (entityType.IsAssignableTo<ISoftDeletableEntity>() && p.Name == nameof(ISoftDeletableEntity.DeleteAt)) return true;
+                    if (entityType.IsAssignableTo<ICreateAuditableEntity>() && p.Name == nameof(ICreateAuditableEntity.CreateAt)) return true;
+                    if (entityType.IsAssignableTo<ICreateAuditableEntity>() && p.Name == nameof(ICreateAuditableEntity.CreatorId)) return true;
+                    if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdateAt)) return true;
+                    if (entityType.IsAssignableTo<IUpdateAuditableEntity>() && p.Name == nameof(IUpdateAuditableEntity.UpdatorId)) return true;
 
-                    var propertyType = x.PropertyType.GetUnderlyingType();
-                    return propertyType.IsAssignableTo<IEntity>()
-                        || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
+                    var propertyType = p.PropertyType.GetUnderlyingType();
+                    return propertyType.IsAssignableTo<IEntity>() || propertyType.IsSubclassOfOpenGeneric(typeof(ICollection<>));
                 });
             foreach (var property in ignoreProperties)
                 map.ForMember(property.Name, o => o.Ignore());
