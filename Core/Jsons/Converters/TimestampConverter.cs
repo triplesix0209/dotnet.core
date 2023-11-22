@@ -4,6 +4,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Jsons
 {
+    /// <summary>
+    /// Timestamp converter.
+    /// </summary>
     public class TimestampConverter : DateTimeConverterBase
     {
         /// <inheritdoc/>

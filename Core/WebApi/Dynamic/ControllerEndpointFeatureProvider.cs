@@ -5,10 +5,17 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Controller endpoint feature provider.
+    /// </summary>
     public class ControllerEndpointFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
     {
         private readonly Assembly _assembly;
 
+        /// <summary>
+        /// Controller endpoint feature provider.
+        /// </summary>
+        /// <param name="assembly"><see cref="Assembly"/>.</param>
         public ControllerEndpointFeatureProvider(Assembly assembly)
         {
             _assembly = assembly;

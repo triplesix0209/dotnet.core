@@ -5,10 +5,17 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Jsons
 {
+    /// <summary>
+    /// Ignore contract resolver.
+    /// </summary>
     public class IgnoreContractResolver : BaseContractResolver
     {
         private readonly HashSet<string> _ignoreProps;
 
+        /// <summary>
+        /// Ignore contract resolver.
+        /// </summary>
+        /// <param name="propertyNamesToIgnore">List property name to ignore.</param>
         public IgnoreContractResolver(IEnumerable<string> propertyNamesToIgnore)
         {
             _ignoreProps = new HashSet<string>(propertyNamesToIgnore.Select(x => x.ToLower()));

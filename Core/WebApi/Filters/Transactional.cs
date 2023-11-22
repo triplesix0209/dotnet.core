@@ -9,6 +9,9 @@ namespace TripleSix.Core.WebApi
     /// </summary>
     public class Transactional : TypeFilterAttribute
     {
+        /// <summary>
+        /// Transaction cho các request.
+        /// </summary>
         public Transactional()
             : base(typeof(TransactionalImplement))
         {

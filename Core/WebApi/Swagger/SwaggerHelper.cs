@@ -147,21 +147,6 @@ namespace TripleSix.Core.WebApi
             result.Minimum = propertyInfo.GetCustomAttribute<MinValueAttribute>()?.Value;
             result.Maximum = propertyInfo.GetCustomAttribute<MaxValueAttribute>()?.Value;
 
-            if (parentPropertyInfo != null && parentPropertyInfo.PropertyType.IsAssignableTo<IFilterParameter>())
-            {
-                var parameterDisplayName = parentPropertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
-                var parameterName = parameterDisplayName != null && parameterDisplayName.StartsWith("lọc theo ", StringComparison.CurrentCultureIgnoreCase)
-                    ? parameterDisplayName[9..]
-                    : parameterDisplayName;
-
-                result.Description = result.Description.Replace(
-                    $"[{nameof(parameterDisplayName).ToKebabCase()}]",
-                    parameterDisplayName);
-                result.Description = result.Description.Replace(
-                    $"[{nameof(parameterName).ToKebabCase()}]",
-                    parameterName);
-            }
-
             var validators = new List<Attribute>();
             var requireAttr = propertyInfo.GetCustomAttribute<RequiredAttribute>();
             var notEmptyAttr = propertyInfo.GetCustomAttribute<NotEmptyAttribute>();

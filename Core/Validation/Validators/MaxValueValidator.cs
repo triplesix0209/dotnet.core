@@ -3,10 +3,19 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Max value validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class MaxValueValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
         private long _value;
 
+        /// <summary>
+        /// Max value validator.
+        /// </summary>
+        /// <param name="value">Max value allowed.</param>
         public MaxValueValidator(long value)
         {
             _value = value;

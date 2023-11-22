@@ -9,6 +9,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Base document filter.
+    /// </summary>
     public class BaseDocumentFilter : IDocumentFilter
     {
         /// <inheritdoc/>

@@ -4,10 +4,19 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Min length validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class MinLengthValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
         private int _length;
 
+        /// <summary>
+        /// Min length validator.
+        /// </summary>
+        /// <param name="length">Min length allowed.</param>
         public MinLengthValidator(int length)
         {
             _length = length;

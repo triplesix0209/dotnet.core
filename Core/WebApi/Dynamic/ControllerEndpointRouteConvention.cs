@@ -3,6 +3,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Controller endpoint route convention.
+    /// </summary>
     public class ControllerEndpointRouteConvention : IControllerModelConvention
     {
         /// <inheritdoc/>

@@ -1,5 +1,6 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
+using Elastic.Clients.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
@@ -40,6 +41,8 @@ namespace TripleSix.Core.Services
 
             var result = _db.Set<TEntity>().Add(entity);
             await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(result.Entity, EntityEvents.Created);
+
             return result.Entity;
         }
 
@@ -84,6 +87,8 @@ namespace TripleSix.Core.Services
 
             var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(result.Entity, EntityEvents.Updated);
+
             return result.Entity;
         }
 
@@ -123,6 +128,7 @@ namespace TripleSix.Core.Services
 
             _db.Set<TEntity>().Remove(entity);
             await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(entity, EntityEvents.HardDeleted);
         }
 
         /// <inheritdoc/>
@@ -279,6 +285,17 @@ namespace TripleSix.Core.Services
         public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
             return await GetPage(model.ToQueryable(Query), page, size);
+        }
+
+        /// <summary>
+        /// Sự kiện khi entity được save changed thành công.
+        /// </summary>
+        /// <param name="entity">Entity xữ lý.</param>
+        /// <param name="event">Sự kiện gây thay đổi.</param>
+        /// <returns>Task xử lý.</returns>
+        protected virtual Task OnEntitySaveChanged(TEntity entity, EntityEvents @event)
+        {
+            return Task.CompletedTask;
         }
     }
 }

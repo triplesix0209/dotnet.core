@@ -2,6 +2,9 @@
 
 namespace TripleSix.Core.Mappers
 {
+    /// <summary>
+    /// Extension.
+    /// </summary>
     public static class Extension
     {
         /// <summary>

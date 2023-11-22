@@ -4,12 +4,13 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Must email validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class MustEmailValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
-        public MustEmailValidator()
-        {
-        }
-
         /// <inheritdoc/>
         public override string Name => "MustEmailValidator";
 

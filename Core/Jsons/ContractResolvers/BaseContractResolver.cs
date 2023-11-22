@@ -4,6 +4,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Jsons
 {
+    /// <summary>
+    /// Base contract resolver.
+    /// </summary>
     public class BaseContractResolver : CamelCasePropertyNamesContractResolver
     {
         /// <inheritdoc/>

@@ -25,6 +25,9 @@ using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.AutofacModules
 {
+    /// <summary>
+    /// Extension.
+    /// </summary>
     public static class Extension
     {
         /// <summary>

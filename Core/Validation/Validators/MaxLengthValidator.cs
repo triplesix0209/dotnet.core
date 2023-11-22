@@ -4,10 +4,19 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Max length validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class MaxLengthValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
         private int _length;
 
+        /// <summary>
+        /// Max length validator.
+        /// </summary>
+        /// <param name="length">Max lenght allowed.</param>
         public MaxLengthValidator(int length)
         {
             _length = length;

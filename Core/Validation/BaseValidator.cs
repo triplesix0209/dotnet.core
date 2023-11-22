@@ -183,6 +183,9 @@ namespace TripleSix.Core.Validation
         }
     }
 
+    /// <summary>
+    /// Base validator.
+    /// </summary>
     public class BaseValidator
     {
         /// <summary>
