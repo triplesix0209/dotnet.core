@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace TripleSix.Core.Services
 {
@@ -26,6 +27,11 @@ namespace TripleSix.Core.Services
         /// <see cref="IHttpContextAccessor"/>.
         /// </summary>
         public IHttpContextAccessor? HttpContextAccessor { get; set; }
+
+        /// <summary>
+        /// <see cref="ILogger"/>.
+        /// </summary>
+        public ILogger<IService> Logger { get; set; }
 
         /// <summary>
         /// Tạo activity để trace cho method hiện tại.

@@ -101,6 +101,16 @@ namespace TripleSix.Core.Elastic
             return new ElasticsearchClient(setting);
         }
 
+        private static void LogElasticResponse(this ILogger? logger, ElasticsearchResponse response, string message)
+        {
+            if (logger == null) return;
+
+            if (response.IsValidResponse)
+                logger.LogInformation($"{message}... Success");
+            else
+                logger.LogError($"{message}... Failed" + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
+        }
+
         private static IProperty ElasticPropertyType(this Type type, ElasticsearchAppsetting config, int level = 0)
         {
             if (level > config.MaxDepthPropertyAllowed)
@@ -110,9 +120,6 @@ namespace TripleSix.Core.Elastic
 
             if (dataType == typeof(bool))
                 return new BooleanProperty();
-
-            if (dataType.IsEnum)
-                return new IntegerNumberProperty();
 
             if (dataType == typeof(byte) || dataType == typeof(sbyte))
                 return new ByteNumberProperty();
@@ -134,7 +141,10 @@ namespace TripleSix.Core.Elastic
 
             if (dataType == typeof(string))
                 return new TextProperty();
+
             if (dataType == typeof(Guid))
+                return new KeywordProperty();
+            if (dataType.IsEnum)
                 return new KeywordProperty();
 
             if (dataType.IsClass || dataType.IsAssignableToGenericType(typeof(ICollection<>)))
@@ -153,16 +163,6 @@ namespace TripleSix.Core.Elastic
             }
 
             throw new Exception($"Unsupport mapping for {dataType.Name}");
-        }
-
-        private static void LogElasticResponse(this ILogger? logger, ElasticsearchResponse response, string message)
-        {
-            if (logger == null) return;
-
-            if (response.IsValidResponse)
-                logger.LogInformation($"{message}... Success");
-            else
-                logger.LogError($"{message}... Failed" + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
         }
     }
 }
