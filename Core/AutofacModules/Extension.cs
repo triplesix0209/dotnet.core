@@ -66,12 +66,10 @@ namespace TripleSix.Core.AutofacModules
         /// </summary>
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các mapper và dto để scan.</param>
-        /// <param name="entityAssembly">Assembly chứa các entity để scan.</param>
         /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
         public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAllMapper(
             this ContainerBuilder builder,
-            Assembly assembly,
-            Assembly entityAssembly)
+            Assembly assembly)
         {
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
@@ -98,7 +96,7 @@ namespace TripleSix.Core.AutofacModules
                     .Where(x => !x.IsAbstract)
                     .Where(x => x.IsAssignableTo<BaseMapper>());
 
-                config.AddProfile(new DefaultMapper(entityAssembly, assembly));
+                config.AddProfile(new DefaultMapper(assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));
             })).SingleInstance().AsSelf();
 
