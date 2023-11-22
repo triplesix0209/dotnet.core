@@ -68,12 +68,27 @@ namespace TripleSix.Core.AutofacModules
         }
 
         /// <summary>
+        /// Đăng ký AutoMapper InstancePerLifetimeScope với IMapper.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAutoMapper(
+            this ContainerBuilder builder)
+        {
+            return builder.Register(c =>
+            {
+                var context = c.Resolve<IComponentContext>();
+                var config = context.Resolve<MapperConfiguration>();
+                return config.CreateMapper(context.Resolve);
+            }).InstancePerLifetimeScope().As<IMapper>();
+        }
+
+        /// <summary>
         /// Đăng ký các mapper dưới dạng InstancePerLifetimeScope với IMapper.
         /// </summary>
         /// <param name="builder">Container builder.</param>
         /// <param name="assembly">Assembly chứa các mapper và dto để scan.</param>
-        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<IMapper, SimpleActivatorData, SingleRegistrationStyle> RegisterAllMapper(
+        public static void RegisterAllMapperProfile(
             this ContainerBuilder builder,
             Assembly assembly)
         {
@@ -98,20 +113,13 @@ namespace TripleSix.Core.AutofacModules
                 config.AddExpressionMapping();
                 config.Internal().AllowAdditiveTypeMapCreation = true;
 
+                config.AddProfile(new DefaultMapper(assembly));
                 var mappers = assembly.GetExportedTypes()
                     .Where(x => !x.IsAbstract)
                     .Where(x => x.IsAssignableTo<BaseMapper>());
-
-                config.AddProfile(new DefaultMapper(assembly));
                 config.AddProfiles(mappers.Select(t => c.Resolve(t) as Profile));
-            })).SingleInstance().AsSelf();
-
-            return builder.Register(c =>
-            {
-                var context = c.Resolve<IComponentContext>();
-                var config = context.Resolve<MapperConfiguration>();
-                return config.CreateMapper(context.Resolve);
-            }).InstancePerLifetimeScope().As<IMapper>();
+            })).SingleInstance()
+                .AsSelf();
         }
 
         /// <summary>
