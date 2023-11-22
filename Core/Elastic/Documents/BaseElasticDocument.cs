@@ -7,7 +7,9 @@ namespace TripleSix.Core.Elastic
     /// <summary>
     /// Elastic document.
     /// </summary>
-    public abstract class BaseElasticDocument : IElasticDocument
+    /// <typeparam name="TDocument">Document type.</typeparam>
+    public abstract class BaseElasticDocument<TDocument> : IElasticDocument
+        where TDocument : class, IElasticDocument
     {
         /// <inheritdoc/>
         public virtual string GetIndexName()
@@ -27,7 +29,8 @@ namespace TripleSix.Core.Elastic
         /// <inheritdoc/>
         public virtual async Task<IndexResponse> Index(ElasticsearchClient client)
         {
-            return await client.IndexAsync(this, GetIndexName());
+            var data = this as TDocument;
+            return await client.IndexAsync(data!, GetIndexName());
         }
 
         /// <inheritdoc/>
