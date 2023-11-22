@@ -69,6 +69,7 @@ namespace TripleSix.Core.Services
             entity.DeleteAt = DateTime.UtcNow;
             var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(result.Entity, EntityEvents.SoftDeleted);
 
             return result.Entity;
         }
@@ -104,6 +105,7 @@ namespace TripleSix.Core.Services
             entity.DeleteAt = null;
             var result = _db.Set<TEntity>().Update(entity);
             await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(result.Entity, EntityEvents.Restore);
 
             return result.Entity;
         }

@@ -10,7 +10,6 @@ using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
 using Elastic.Clients.Elasticsearch;
-using Elastic.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Appsettings;
@@ -254,11 +253,8 @@ namespace TripleSix.Core.AutofacModules
         {
             return builder.Register(c =>
             {
-                var config = new ElasticsearchAppsetting(c.Resolve<IConfiguration>());
-                var setting = new ElasticsearchClientSettings(new Uri(config.Host));
-                if (config.Username.IsNotNullOrEmpty() && config.Password.IsNotNullOrEmpty())
-                    setting.Authentication(new BasicAuthentication(config.Username, config.Password));
-                return new ElasticsearchClient(setting);
+                var config = c.Resolve<IConfiguration>();
+                return Elastic.Extension.CreateElasticsearchClient(config);
             }).PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsSelf();

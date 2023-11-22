@@ -1,4 +1,6 @@
-﻿namespace TripleSix.Core.Elastic
+﻿using TripleSix.Core.Helpers;
+
+namespace TripleSix.Core.Elastic
 {
     /// <summary>
     /// Cấu hình elastic document.
@@ -26,5 +28,16 @@
         /// Tên template.
         /// </summary>
         public string? TemplateName { get; }
+
+        /// <summary>
+        /// Lấy đầy đủ tên index, bao gồm cả template nếu có.
+        /// </summary>
+        /// <returns>Tên index.</returns>
+        public string FullIndexName()
+        {
+            if (TemplateName.IsNotNullOrEmpty())
+                return TemplateName + IndexName;
+            return IndexName;
+        }
     }
 }
