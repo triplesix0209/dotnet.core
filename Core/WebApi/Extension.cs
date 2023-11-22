@@ -17,6 +17,9 @@ using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Extension.
+    /// </summary>
     public static class Extension
     {
         /// <summary>

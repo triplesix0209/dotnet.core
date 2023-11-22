@@ -5,6 +5,11 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Not empty validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class NotEmptyValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
         /// <inheritdoc/>

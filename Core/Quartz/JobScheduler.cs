@@ -3,17 +3,30 @@ using Quartz;
 
 namespace TripleSix.Core.Quartz
 {
+    /// <summary>
+    /// Job scheduler.
+    /// </summary>
     public class JobScheduler
     {
         private readonly IScheduler _scheduler;
 
+        /// <summary>
+        /// Job scheduler.
+        /// </summary>
+        /// <param name="scheduler"><see cref="IScheduler"/>.</param>
         public JobScheduler(IScheduler scheduler)
         {
             _scheduler = scheduler;
         }
 
+        /// <summary>
+        /// Component context.
+        /// </summary>
         public IComponentContext Container { get; set; }
 
+        /// <summary>
+        /// Start scheduler.
+        /// </summary>
         public void Start()
         {
             var jobTypes = AppDomain.CurrentDomain.GetAssemblies()

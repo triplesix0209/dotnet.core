@@ -7,6 +7,11 @@ using TripleSix.Core.Types;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Required validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class RequiredValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
         /// <inheritdoc/>

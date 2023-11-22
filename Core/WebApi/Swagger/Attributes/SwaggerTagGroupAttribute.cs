@@ -6,6 +6,11 @@
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SwaggerTagGroupAttribute : Attribute
     {
+        /// <summary>
+        /// Adds Tag Group metadata for a given controller.
+        /// </summary>
+        /// <param name="description">A short description for the tag group.</param>
+        /// <param name="orderIndex">A index use for sort tag groups.</param>
         public SwaggerTagGroupAttribute(string description, int orderIndex = 0)
         {
             Description = description;

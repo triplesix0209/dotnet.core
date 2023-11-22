@@ -3,12 +3,13 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Must lower case validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class MustLowerCaseValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
-        public MustLowerCaseValidator()
-        {
-        }
-
         /// <inheritdoc/>
         public override string Name => "MustLowerCaseValidator";
 

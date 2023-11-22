@@ -3,6 +3,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Timestamp model binder.
+    /// </summary>
     public class TimestampModelBinder : IModelBinder
     {
         /// <inheritdoc/>
@@ -18,6 +21,9 @@ namespace TripleSix.Core.WebApi
         }
     }
 
+    /// <summary>
+    /// Timestamp model binder provider.
+    /// </summary>
     public class TimestampModelBinderProvider : IModelBinderProvider
     {
         /// <inheritdoc/>

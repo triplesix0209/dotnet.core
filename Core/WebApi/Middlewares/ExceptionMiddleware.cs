@@ -15,12 +15,22 @@ namespace TripleSix.Core.WebApi
         private readonly RequestDelegate _next;
         private readonly WebApiAppsetting _webApiAppsetting;
 
+        /// <summary>
+        /// Exception middleware.
+        /// </summary>
+        /// <param name="next">Next action.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
         public ExceptionMiddleware(RequestDelegate next, IConfiguration configuration)
         {
             _next = next;
             _webApiAppsetting = new WebApiAppsetting(configuration);
         }
 
+        /// <summary>
+        /// Middleware process.
+        /// </summary>
+        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
+        /// <returns>Task process.</returns>
         public async Task InvokeAsync(HttpContext httpContext)
         {
             try

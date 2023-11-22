@@ -88,7 +88,7 @@ namespace TripleSix.Core.Elastic
             }
         }
 
-        public static IProperty ElasticPropertyType(this Type type, ElasticsearchAppsetting config, int level = 0)
+        private static IProperty ElasticPropertyType(this Type type, ElasticsearchAppsetting config, int level = 0)
         {
             if (level > config.MaxDepthPropertyAllowed)
                 throw new Exception("Max depth property reach");

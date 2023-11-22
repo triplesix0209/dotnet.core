@@ -4,11 +4,21 @@ using FluentValidation.Validators;
 
 namespace TripleSix.Core.Validation.Validators
 {
+    /// <summary>
+    /// Must phone validator.
+    /// </summary>
+    /// <typeparam name="T">Data type.</typeparam>
+    /// <typeparam name="TProperty">Property type.</typeparam>
     public class MustPhoneValidator<T, TProperty> : PropertyValidator<T, TProperty>
     {
         private int _minLength;
         private int? _maxLength;
 
+        /// <summary>
+        /// Must phone validator.
+        /// </summary>
+        /// <param name="minLength">Min length allowed.</param>
+        /// <param name="maxLength">Max length allowed.</param>
         public MustPhoneValidator(int minLength = 10, int? maxLength = null)
         {
             _minLength = minLength;

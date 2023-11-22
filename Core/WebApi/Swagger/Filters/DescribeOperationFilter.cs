@@ -11,6 +11,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Describe operation filter.
+    /// </summary>
     public class DescribeOperationFilter : IOperationFilter
     {
         /// <inheritdoc/>
