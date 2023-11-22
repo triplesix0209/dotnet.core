@@ -1,6 +1,7 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
 using System.Reflection;
+using Elastic.Clients.Elasticsearch;
 using Elastic.Transport.Products.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -291,38 +292,50 @@ namespace TripleSix.Core.Services
         }
 
         /// <summary>
+        /// Hàm xử lý tự động đồng bộ dữ liệu với elasticsearch.
+        /// </summary>
+        /// <param name="entity">Entity xử lý.</param>
+        /// <param name="event">Sự kiện gây thay đổi.</param>
+        /// <returns>Task xử lý.</returns>
+        protected virtual async Task AutoSyncElastic(TEntity entity, EntityEvents @event)
+        {
+            if (!(@event == EntityEvents.Created
+                || @event == EntityEvents.Updated
+                || @event == EntityEvents.HardDeleted))
+                return;
+
+            var elasticAutoSyncAttrs = GetType().GetCustomAttributes(typeof(ElasticAutoSyncAttribute<>));
+            if (elasticAutoSyncAttrs.IsNullOrEmpty()) return;
+
+            var client = Extension.CreateElasticsearchClient(Configuration);
+            foreach (var elasticAutoSyncAttr in elasticAutoSyncAttrs)
+            {
+                var documentType = elasticAutoSyncAttr.GetType().GetGenericArguments()[0];
+                var elasticDocumentAttr = documentType.GetCustomAttribute<ElasticDocumentAttribute>();
+                if (elasticDocumentAttr == null) continue;
+                if (Mapper.MapData(entity, typeof(TEntity), documentType) is not IElasticDocument document) continue;
+
+                ElasticsearchResponse? response;
+                if (@event == EntityEvents.HardDeleted) response = await document.Delete(client);
+                else response = await document.Index(client);
+
+                if (response != null && response.IsValidResponse == false)
+                {
+                    Logger.LogError($"Auto sync elastic [{document.GetIndexName()}] failed"
+                        + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
+                }
+            }
+        }
+
+        /// <summary>
         /// Sự kiện khi entity được save changed thành công.
         /// </summary>
-        /// <param name="entity">Entity xữ lý.</param>
+        /// <param name="entity">Entity xử lý.</param>
         /// <param name="event">Sự kiện gây thay đổi.</param>
         /// <returns>Task xử lý.</returns>
         protected virtual async Task OnEntitySaveChanged(TEntity entity, EntityEvents @event)
         {
-            // Elastic auto sync
-            var elasticAutoSyncAttrs = GetType().GetCustomAttributes(typeof(ElasticAutoSyncAttribute<>));
-            if (elasticAutoSyncAttrs.IsNotNullOrEmpty())
-            {
-                var client = Extension.CreateElasticsearchClient(Configuration);
-                foreach (var elasticAutoSyncAttr in elasticAutoSyncAttrs)
-                {
-                    var documentType = elasticAutoSyncAttr.GetType().GetGenericArguments()[0];
-                    var elasticDocumentAttr = documentType.GetCustomAttribute<ElasticDocumentAttribute>();
-                    if (elasticDocumentAttr == null) continue;
-                    if (Mapper.MapData(entity, typeof(TEntity), documentType) is not IElasticDocument document) continue;
-
-                    ElasticsearchResponse? response = null;
-                    if (@event == EntityEvents.Created || @event == EntityEvents.Updated || @event == EntityEvents.Restore)
-                        response = await document.Index(client);
-                    else if (@event == EntityEvents.HardDeleted || @event == EntityEvents.SoftDeleted)
-                        response = await document.Delete(client);
-
-                    if (response != null && response.IsValidResponse == false)
-                    {
-                        Logger.LogError($"Auto sync elastic [{document.GetIndexName()}] failed"
-                            + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
-                    }
-                }
-            }
+            await AutoSyncElastic(entity, @event);
         }
     }
 }
