@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.IndexManagement;
 using Elastic.Clients.Elasticsearch.Mapping;
@@ -22,7 +23,7 @@ namespace TripleSix.Core.Elastic
         /// </summary>
         /// <param name="app"><see cref="IHost"/>.</param>
         /// <param name="configuration"><see cref="IConfiguration"/>.</param>
-        /// <param name="assembly"><see cref="Assembly"/>.</param>
+        /// <param name="assembly"><see cref="Assembly"/> chứa các elastic documents.</param>
         /// <param name="putTemplateOption">Cấu hình template mặc định.</param>
         /// <returns>Task xử lý.</returns>
         public static async Task SetupElasticsearch(
@@ -33,11 +34,19 @@ namespace TripleSix.Core.Elastic
         {
             var logger = app.Services.GetService(typeof(ILogger<ElasticsearchClient>)) as ILogger<ElasticsearchClient>;
             var config = new ElasticsearchAppsetting(configuration);
-            var setting = new ElasticsearchClientSettings(new Uri(config.Host));
-            if (config.Username.IsNotNullOrEmpty() && config.Password.IsNotNullOrEmpty())
-                setting.Authentication(new BasicAuthentication(config.Username, config.Password));
-            var client = new ElasticsearchClient(setting);
+            var client = CreateElasticsearchClient(configuration);
+            var documentTypes = assembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.GetCustomAttribute<ElasticDocumentAttribute>() != null);
             ElasticsearchResponse response;
+
+            // validate
+            foreach (var documentType in documentTypes)
+            {
+                var properties = documentType.GetProperties();
+                if (!properties.Any(x => x.GetCustomAttribute<KeyAttribute>() != null))
+                    throw new Exception($"{documentType.Name} is missing [Key] property");
+            }
 
             // put template
             var templateConfig = config.Template;
@@ -59,17 +68,12 @@ namespace TripleSix.Core.Elastic
                 logger.LogElasticResponse(response, $"Update default template [{templateConfig.Pattern}]");
             }
 
-            var documentTypes = assembly.GetExportedTypes()
-                .Where(x => !x.IsAbstract)
-                .Where(x => x.GetCustomAttribute<ElasticDocumentAttribute>() != null);
+            // setup documents
             foreach (var documentType in documentTypes)
             {
                 var attr = documentType.GetCustomAttribute<ElasticDocumentAttribute>();
                 if (attr == null) continue;
-
-                var indexName = attr.IndexName;
-                if (attr.TemplateName.IsNotNullOrEmpty())
-                    indexName = attr.TemplateName + indexName;
+                var indexName = attr.FullIndexName();
 
                 // create index
                 var existsResponse = await client.Indices.ExistsAsync(indexName);
@@ -86,6 +90,15 @@ namespace TripleSix.Core.Elastic
                 response = await client.Indices.PutMappingAsync(putMappingRequest);
                 logger.LogElasticResponse(response, $"Update mapping [{indexName}]");
             }
+        }
+
+        internal static ElasticsearchClient CreateElasticsearchClient(IConfiguration configuration)
+        {
+            var config = new ElasticsearchAppsetting(configuration);
+            var setting = new ElasticsearchClientSettings(new Uri(config.Host));
+            if (config.Username.IsNotNullOrEmpty() && config.Password.IsNotNullOrEmpty())
+                setting.Authentication(new BasicAuthentication(config.Username, config.Password));
+            return new ElasticsearchClient(setting);
         }
 
         private static IProperty ElasticPropertyType(this Type type, ElasticsearchAppsetting config, int level = 0)
@@ -121,6 +134,8 @@ namespace TripleSix.Core.Elastic
 
             if (dataType == typeof(string))
                 return new TextProperty();
+            if (dataType == typeof(Guid))
+                return new KeywordProperty();
 
             if (dataType.IsClass || dataType.IsAssignableToGenericType(typeof(ICollection<>)))
             {

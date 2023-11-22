@@ -1,8 +1,9 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
-using Elastic.Clients.Elasticsearch;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using TripleSix.Core.DataContext;
+using TripleSix.Core.Elastic;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
@@ -293,9 +294,26 @@ namespace TripleSix.Core.Services
         /// <param name="entity">Entity xữ lý.</param>
         /// <param name="event">Sự kiện gây thay đổi.</param>
         /// <returns>Task xử lý.</returns>
-        protected virtual Task OnEntitySaveChanged(TEntity entity, EntityEvents @event)
+        protected virtual async Task OnEntitySaveChanged(TEntity entity, EntityEvents @event)
         {
-            return Task.CompletedTask;
+            // Elastic auto sync
+            var elasticAutoSyncAttrs = GetType().GetCustomAttributes(typeof(ElasticAutoSyncAttribute<>));
+            if (elasticAutoSyncAttrs.IsNotNullOrEmpty())
+            {
+                var client = Extension.CreateElasticsearchClient(Configuration);
+                foreach (var elasticAutoSyncAttr in elasticAutoSyncAttrs)
+                {
+                    var documentType = elasticAutoSyncAttr.GetType().GetGenericArguments()[0];
+                    var elasticDocumentAttr = documentType.GetCustomAttribute<ElasticDocumentAttribute>();
+                    if (elasticDocumentAttr == null) continue;
+                    if (Mapper.MapData(entity, typeof(TEntity), documentType) is not IElasticDocument document) continue;
+
+                    if (@event == EntityEvents.Created || @event == EntityEvents.Updated || @event == EntityEvents.Restore)
+                        await document.Index(client);
+                    else if (@event == EntityEvents.HardDeleted || @event == EntityEvents.SoftDeleted)
+                        await document.Delete(client);
+                }
+            }
         }
     }
 }
