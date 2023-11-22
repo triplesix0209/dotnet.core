@@ -11,6 +11,9 @@ using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Identity
 {
+    /// <summary>
+    /// Base identity.
+    /// </summary>
     public abstract class BaseIdentityContext : IIdentityContext
     {
         /// <summary>

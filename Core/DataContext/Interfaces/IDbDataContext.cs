@@ -15,14 +15,14 @@ namespace TripleSix.Core.DataContext
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         This property is null unless one of <see cref="BeginTransaction" />,
+        ///         This property is null unless one of BeginTransaction,
         ///         <see cref="M:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.BeginTransaction" />, or
         ///         <see cref="O:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.UseTransaction" />
         ///         has been called.
         ///         No attempt is made to obtain a transaction from the current DbConnection or similar.
         ///     </para>
         ///     <para>
-        ///         For relational databases, the underlying <see cref="DbTransaction" /> can be obtained using
+        ///         For relational databases, the underlying DbTransaction can be obtained using
         ///         <see cref="M:Microsoft.EntityFrameworkCore.Storage.DbContextTransactionExtensions.GetDbTransaction" />
         ///         on the returned <see cref="IDbContextTransaction" />.
         ///     </para>

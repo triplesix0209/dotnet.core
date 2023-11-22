@@ -41,9 +41,9 @@ namespace TripleSix.Core.Exceptions
         public virtual int HttpCodeStatus => 500;
 
         /// <summary>
-        /// Chuyển đổi thành <see cref=">ErrorResult"/>.
+        /// Chuyển đổi thành <see cref="ErrorResult"/>.
         /// </summary>x`
-        /// <param name="httpContext"><see cref=">HttpContext"/>.</param>
+        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         /// <returns><see cref="ErrorResult"/>.</returns>
         public virtual ErrorResult ToErrorResult(HttpContext? httpContext = default)
         {

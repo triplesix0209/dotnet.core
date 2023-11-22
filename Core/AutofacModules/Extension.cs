@@ -9,7 +9,10 @@ using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.Internal;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Helpers;
@@ -235,6 +238,26 @@ namespace TripleSix.Core.AutofacModules
                 .Where(x => x.IsAssignableTo<BaseController>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope();
+        }
+
+        /// <summary>
+        /// Đăng ký elastic client dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<ElasticsearchClient, SimpleActivatorData, SingleRegistrationStyle> RegisterElasticClient(
+            this ContainerBuilder builder)
+        {
+            return builder.Register(c =>
+            {
+                var config = new ElasticsearchAppsetting(c.Resolve<IConfiguration>());
+                var setting = new ElasticsearchClientSettings(new Uri(config.Host));
+                if (config.Username.IsNotNullOrEmpty() && config.Password.IsNotNullOrEmpty())
+                    setting.Authentication(new BasicAuthentication(config.Username, config.Password));
+                return new ElasticsearchClient(setting);
+            }).PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .AsSelf();
         }
     }
 }

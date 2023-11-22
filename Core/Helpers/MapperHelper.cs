@@ -129,6 +129,8 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Execute a mapping from the source object to a new destination object with supplied mapping options, only map property changed.
         /// </summary>
+        /// <typeparam name="TSource">Source type to map.</typeparam>
+        /// <typeparam name="TDestination">Destination type to update.</typeparam>
         /// <param name="mapper"><see cref="IMapper"/>.</param>
         /// <param name="source">Source object to map from.</param>
         /// <param name="destination">Destination object to create.</param>

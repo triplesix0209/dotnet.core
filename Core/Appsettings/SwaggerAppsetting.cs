@@ -2,8 +2,15 @@
 
 namespace TripleSix.Core.Appsettings
 {
+    /// <summary>
+    /// Cấu hình swagger.
+    /// </summary>
     public class SwaggerAppsetting : BaseAppsetting
     {
+        /// <summary>
+        /// Cấu hình swagger.
+        /// </summary>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
         public SwaggerAppsetting(IConfiguration configuration)
             : base(configuration, "Swagger")
         {

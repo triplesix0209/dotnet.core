@@ -11,7 +11,7 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Lấy mô tả của giá trị.
         /// </summary>
-        /// <typeparam name="T">Loại dữ liệu</typeparam>
+        /// <typeparam name="T">Loại dữ liệu.</typeparam>
         /// <param name="value">Dữ liệu.</param>
         /// <returns>Chuỗi mô tả giá trị của enum.</returns>
         public static string GetDescription<T>(this T value)

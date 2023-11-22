@@ -67,7 +67,6 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Lấy IValidator mặc định.
         /// </summary>
-        /// <param name="dataType">Kiểu dữ liệu cần kiểm tra.</param>
         /// <returns><see cref="IValidator"/>.</returns>
         internal IValidator? GetDefaultValidator()
         {

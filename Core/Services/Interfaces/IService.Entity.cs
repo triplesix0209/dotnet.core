@@ -38,7 +38,7 @@ namespace TripleSix.Core.Services
         /// Khởi tạo entity với Mapper.
         /// </summary>
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
-        /// <param name="input">Dữ liệu đầu vào dùng để map sang entity.</param
+        /// <param name="input">Dữ liệu đầu vào dùng để map sang entity.</param>
         /// <param name="afterMap">Hảm xử lý sau khi map dữ liệu, trước khi ghi nhận database.</param>
         /// <returns>Dữ liệu được map từ entity dã tạo.</returns>
         Task<TResult> CreateWithMapper<TResult>(IDto input, Action<TEntity>? afterMap = null)

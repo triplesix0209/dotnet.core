@@ -13,48 +13,51 @@ namespace TripleSix.Core.WebApi
     [ValidateInput]
     public abstract class BaseController : ControllerBase
     {
+        /// <summary>
+        /// Auto ampper.
+        /// </summary>
         public IMapper Mapper { get; set; }
 
         /// <summary>
-        /// Tạo <see cref="SuccessResult"/>.
+        /// Tạo success result.
         /// </summary>
-        /// <returns><see cref="SuccessResult"/>.</returns>
+        /// <returns>Success result.</returns>
         protected static SuccessResult SuccessResult()
         {
             return new SuccessResult();
         }
 
         /// <summary>
-        /// Tạo <see cref="DataResult"/>.
+        /// Tạo data result.
         /// </summary>
         /// <typeparam name="TData">Loại dữ liệu.</typeparam>
         /// <param name="data">Kết quả xử lý.</param>
-        /// <returns><see cref="DataResult"/>.</returns>
+        /// <returns>Data result.</returns>
         protected static DataResult<TData> DataResult<TData>(TData data)
         {
             return new DataResult<TData>(data);
         }
 
         /// <summary>
-        /// Tạo <see cref="PagingResult"/>.
+        /// Tạo Paging result.
         /// </summary>
         /// <typeparam name="TItem">Loại dữ liệu.</typeparam>
         /// <param name="data">Kết quả xử lý.</param>
         /// <param name="total">Tổng số mục.</param>
         /// <param name="page">Vị trí trang.</param>
         /// <param name="size">Kích thước trang.</param>
-        /// <returns><see cref="PagingResult"/>.</returns>
+        /// <returns>Paging result.</returns>
         protected static PagingResult<TItem> PagingResult<TItem>(IList<TItem> data, long total, int page, int size)
         {
             return new PagingResult<TItem>(data, total, page, size);
         }
 
         /// <summary>
-        /// Tạo <see cref="PagingResult"/>.
+        /// Tạo Paging result.
         /// </summary>
         /// <typeparam name="TItem">Loại dữ liệu.</typeparam>
         /// <param name="data">Kết quả xử lý.</param>
-        /// <returns><see cref="PagingResult"/>.</returns>
+        /// <returns>Paging result.</returns>
         protected static PagingResult<TItem> PagingResult<TItem>(IPaging<TItem> data)
         {
             return new PagingResult<TItem>(data);
