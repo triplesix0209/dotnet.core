@@ -12,51 +12,89 @@ namespace TripleSix.Core.Mappers
     /// </summary>
     internal class DefaultMapper : BaseMapper
     {
-        public DefaultMapper(Assembly entityAssembly, Assembly dtoAssembly)
+        public DefaultMapper(Assembly assembly)
         {
-            var mapDataAttributes = dtoAssembly.GetExportedTypes()
-                .Where(x => !x.IsAbstract)
-                .Where(x => x.GetCustomAttribute(typeof(MapDataAttribute<,>)) != null)
-                .SelectMany(x => x.GetCustomAttributes(typeof(MapDataAttribute<,>)));
-            foreach (var mapDataAttribute in mapDataAttributes)
-            {
-                // get source type & destination type
-                var mapData = (Type)mapDataAttribute.TypeId;
-                var mapTypes = mapData.GetGenericArguments();
-                var sourceType = mapTypes[0];
-                var destinationType = mapTypes[1];
-                if (sourceType == null || destinationType == null) continue;
+            MapFromProfile(assembly);
+            MapToProfile(assembly);
+        }
 
-                // create map profile
-                var createMap = GetType().GetMethods()
-                    .First(x => x.DeclaringType == typeof(BaseMapper)
-                        && x.Name == nameof(CreateMap) && x.IsGenericMethod
-                        && x.GetParameters().Length > 0 && x.GetParameters()[0].ParameterType == typeof(MemberList))
-                    .MakeGenericMethod(sourceType, destinationType);
-                var isMapToEntity = destinationType.IsAssignableTo<IEntity>();
-                var mapper = createMap.Invoke(this, new object[] { isMapToEntity ? MemberList.Destination : MemberList.None });
-                if (mapper == null) continue;
-                if (isMapToEntity)
+        private void MapFromProfile(Assembly assembly)
+        {
+            var destinationTypes = assembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.GetCustomAttribute(typeof(MapFromEntityAttribute<>)) != null);
+            foreach (var destinationType in destinationTypes)
+            {
+                var mapAttributes = destinationType.GetCustomAttributes(typeof(MapFromEntityAttribute<>));
+                foreach (var mapAttribute in mapAttributes)
                 {
+                    var mapTypes = mapAttribute.GetType().GetGenericArguments();
+                    var sourceType = mapTypes[0];
+
+                    // create map profile
+                    var createMap = GetType().GetMethods()
+                        .First(x => x.DeclaringType == typeof(BaseMapper)
+                            && x.Name == nameof(CreateMap) && x.IsGenericMethod
+                            && x.GetParameters().Length > 0 && x.GetParameters()[0].ParameterType == typeof(MemberList))
+                        .MakeGenericMethod(sourceType, destinationType);
+                    var mapper = createMap.Invoke(this, new object[] { MemberList.None });
+                    if (mapper == null) continue;
+
+                    // create after map
+                    var mappingAction = mapTypes.Length > 2 ? mapTypes[2] : null;
+                    if (mappingAction != null)
+                    {
+                        var afterMap = mapper.GetType().GetMethods()
+                            .First(x => x.Name == nameof(IMappingExpression.AfterMap) && x.IsGenericMethod)
+                            .MakeGenericMethod(mappingAction);
+                        afterMap.Invoke(mapper, Array.Empty<object>());
+                    }
+                }
+            }
+        }
+
+        private void MapToProfile(Assembly assembly)
+        {
+            var sourceTypes = assembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.GetCustomAttribute(typeof(MapToEntityAttribute<>)) != null);
+            foreach (var sourceType in sourceTypes)
+            {
+                var mapAttributes = sourceType.GetCustomAttributes(typeof(MapToEntityAttribute<>));
+                foreach (var mapAttribute in mapAttributes)
+                {
+                    var mapTypes = mapAttribute.GetType().GetGenericArguments();
+                    var destinationType = mapTypes[0];
+
+                    // create map profile
+                    var createMap = GetType().GetMethods()
+                        .First(x => x.DeclaringType == typeof(BaseMapper)
+                            && x.Name == nameof(CreateMap) && x.IsGenericMethod
+                            && x.GetParameters().Length > 0 && x.GetParameters()[0].ParameterType == typeof(MemberList))
+                        .MakeGenericMethod(sourceType, destinationType);
+                    var mapper = createMap.Invoke(this, new object[] { MemberList.Destination });
+                    if (mapper == null) continue;
+
+                    // ignore properties
                     var ignoreProperties = new List<string>();
 
-                    var ignoreUndeclareSourceProperty = mapData
-                        .GetProperty(nameof(MapDataAttribute<object, object>.IgnoreUndeclareProperty))
-                        ?.GetValue(mapDataAttribute) as bool?;
-                    if (ignoreUndeclareSourceProperty == true)
+                    var ignoreUndeclareProperty = mapAttribute.GetType()
+                        .GetProperty(nameof(MapToEntityAttribute<IEntity>.IgnoreUndeclareProperty))
+                        ?.GetValue(mapAttribute) as bool?;
+                    if (ignoreUndeclareProperty == true)
                     {
                         ignoreProperties.AddRange(destinationType.GetPublicProperties()
                             .Where(p => sourceType.GetProperty(p.Name) == null)
                             .Select(p => p.Name));
                     }
 
-                    var ignorePropertyAttributes = mapData
-                        .GetProperty(nameof(MapDataAttribute<object, object>.IgnoreProperties))
-                        ?.GetValue(mapDataAttribute) as string[];
-                    if (ignorePropertyAttributes.IsNotNullOrEmpty())
+                    var ignoreDestinationProperties = mapAttribute.GetType()
+                        .GetProperty(nameof(MapToEntityAttribute<IEntity>.IgnoreProperties))
+                        ?.GetValue(mapAttribute) as string[];
+                    if (ignoreDestinationProperties.IsNotNullOrEmpty())
                     {
                         ignoreProperties.AddRange(destinationType.GetPublicProperties()
-                            .Where(p => ignorePropertyAttributes.Any(x => x == p.Name))
+                            .Where(p => ignoreDestinationProperties.Any(x => x == p.Name))
                             .Select(p => p.Name));
                     }
 
@@ -77,16 +115,16 @@ namespace TripleSix.Core.Mappers
                                 && x.GetParameters()[0].ParameterType == typeof(string));
                         forMember?.Invoke(mapper, new object[] { property, memberOptions });
                     }
-                }
 
-                // create after map
-                var mappingAction = mapTypes.Length > 2 ? mapTypes[2] : null;
-                if (mappingAction != null)
-                {
-                    var afterMap = mapper.GetType().GetMethods()
-                        .First(x => x.Name == nameof(IMappingExpression.AfterMap) && x.IsGenericMethod)
-                        .MakeGenericMethod(mappingAction);
-                    afterMap.Invoke(mapper, Array.Empty<object>());
+                    // create after map
+                    var mappingAction = mapTypes.Length > 1 ? mapTypes[1] : null;
+                    if (mappingAction != null)
+                    {
+                        var afterMap = mapper.GetType().GetMethods()
+                            .First(x => x.Name == nameof(IMappingExpression.AfterMap) && x.IsGenericMethod)
+                            .MakeGenericMethod(mappingAction);
+                        afterMap.Invoke(mapper, Array.Empty<object>());
+                    }
                 }
             }
         }

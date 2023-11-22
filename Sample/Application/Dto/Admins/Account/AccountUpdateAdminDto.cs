@@ -1,6 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapData<AccountUpdateAdminDto, Account>]
+    [MapToEntity<Account>(true)]
     public class AccountUpdateAdminDto : BaseDto
     {
         public string Name { get; set; }

@@ -8,7 +8,6 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Types;
@@ -16,9 +15,9 @@ using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.WebApi
 {
-    public static class SwaggerHelper
+    internal static class SwaggerHelper
     {
-        public static OpenApiSchema GenerateSwaggerSchema(
+        internal static OpenApiSchema GenerateSwaggerSchema(
             this Type objectType,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
@@ -54,9 +53,6 @@ namespace TripleSix.Core.WebApi
             }
             else if (result.Type is null)
             {
-                if (objectType.Name == "AccountDetailAdminDto")
-                { }
-
                 result.Type = "object";
                 var properties = objectType.GetProperties()
                     .OrderBy(x => x.DeclaringType?.BaseTypesAndSelf().Count())
@@ -120,23 +116,23 @@ namespace TripleSix.Core.WebApi
                 }
                 else
                 {
-                    var mapDataAttributes = propertyInfo.DeclaringType?
-                        .GetCustomAttributes(typeof(MapDataAttribute<,>))
-                        .Select(x => x.TypeId as Type)
-                        .Select(x => x!.GetGenericArguments());
-                    var entityType = mapDataAttributes!.Where(x => x[0].IsAssignableTo<IEntity>()).Select(x => x[0]).FirstOrDefault()
-                        ?? mapDataAttributes!.Where(x => x[1].IsAssignableTo<IEntity>()).Select(x => x[1]).FirstOrDefault();
+                    var entityType = propertyInfo.DeclaringType?
+                        .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
+                        .GetType().GetGenericArguments()[0] ??
+                        propertyInfo.DeclaringType?
+                        .GetCustomAttribute(typeof(MapToEntityAttribute<>))?
+                        .GetType().GetGenericArguments()[0];
                     displayName ??= entityType?.GetProperty(propertyInfo.Name)?
                         .GetCustomAttribute<CommentAttribute>()?.Comment;
 
                     if (displayName.IsNullOrEmpty())
                     {
-                        var propertyMapDataAttributes = propertyInfo.PropertyType
-                            .GetCustomAttributes(typeof(MapDataAttribute<,>))
-                            .Select(x => x.TypeId as Type)
-                            .Select(x => x!.GetGenericArguments());
-                        var propertyEntityType = propertyMapDataAttributes!.Where(x => x[0].IsAssignableTo<IEntity>()).Select(x => x[0]).FirstOrDefault()
-                            ?? propertyMapDataAttributes!.Where(x => x[1].IsAssignableTo<IEntity>()).Select(x => x[1]).FirstOrDefault();
+                        var propertyEntityType = propertyInfo.PropertyType
+                            .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
+                            .GetType().GetGenericArguments()[0] ??
+                            propertyInfo.PropertyType
+                            .GetCustomAttribute(typeof(MapToEntityAttribute<>))?
+                            .GetType().GetGenericArguments()[0];
                         displayName ??= propertyEntityType?.GetCustomAttribute<CommentAttribute>()?.Comment;
                     }
                 }
@@ -213,7 +209,7 @@ namespace TripleSix.Core.WebApi
             return result;
         }
 
-        public static IOpenApiAny? SwaggerValue(this Type type, object? value)
+        internal static IOpenApiAny? SwaggerValue(this Type type, object? value)
         {
             if (value is null)
                 return new OpenApiNull();

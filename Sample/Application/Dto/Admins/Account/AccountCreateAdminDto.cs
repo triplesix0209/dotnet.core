@@ -1,17 +1,20 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapData<AccountCreateAdminDto, Account>]
+    [MapToEntity<Account, AccountCreateAdminMapAction>(nameof(Account.Code))]
     public class AccountCreateAdminDto : BaseDto
     {
-        [Required]
-        [MustWordNumber]
-        [MustUpperCase]
-        public string Code { get; set; }
-
         [Required]
         public string Name { get; set; }
 
         [Required]
         public Guid SiteId { get; set; }
+    }
+
+    public class AccountCreateAdminMapAction : IMappingAction<AccountCreateAdminDto, Account>
+    {
+        public void Process(AccountCreateAdminDto source, Account destination, ResolutionContext context)
+        {
+            destination.Code = RandomHelper.RandomString(10);
+        }
     }
 }

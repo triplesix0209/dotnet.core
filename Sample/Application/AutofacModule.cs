@@ -12,14 +12,12 @@ namespace Sample.Application
         {
         }
 
-        /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
             var assembly = Assembly.GetExecutingAssembly();
 
-            var domainAssembly = Assembly.Load(assembly.GetReferencedAssemblies().First(x => x.Name == $"{nameof(Sample)}.{nameof(Sample.Domain)}"));
-            builder.RegisterAllMapper(assembly, domainAssembly);
+            builder.RegisterAllMapper(assembly);
             builder.RegisterAllRepository(assembly);
             builder.RegisterAllService(assembly);
         }
