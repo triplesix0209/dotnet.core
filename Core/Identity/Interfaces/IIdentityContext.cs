@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace TripleSix.Core.Identity
 {
+    /// <summary>
+    /// Identity context.
+    /// </summary>
     public interface IIdentityContext
     {
         /// <summary>

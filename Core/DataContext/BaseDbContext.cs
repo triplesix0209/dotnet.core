@@ -29,6 +29,9 @@ namespace TripleSix.Core.DataContext
             _seedAssembly = seedAssembly;
         }
 
+        /// <summary>
+        /// Identity context.
+        /// </summary>
         public IIdentityContext Identity { get; set; }
 
         /// <inheritdoc/>

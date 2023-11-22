@@ -2,8 +2,16 @@
 
 namespace TripleSix.Core.Appsettings
 {
+    /// <summary>
+    /// Cấu hình mặc định.
+    /// </summary>
     public abstract class BaseAppsetting
     {
+        /// <summary>
+        /// Cấu hình mặc định.
+        /// </summary>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="key">Key mục load dữ liệu.</param>
         protected BaseAppsetting(IConfiguration configuration, string key)
         {
             var data = configuration.GetSection(key).GetChildren();

@@ -32,12 +32,12 @@ namespace TripleSix.Core.Mappers
         /// <summary>
         /// Bỏ qua các property không có khai báo ở đối tượng nguồn.
         /// </summary>
-        public bool IgnoreUndeclareProperty { get; set; }
+        public bool IgnoreUndeclareProperty { get; }
 
         /// <summary>
         /// Danh sách property đích sẽ không mapping.
         /// </summary>
-        public string[]? IgnoreProperties { get; set; }
+        public string[]? IgnoreProperties { get; }
     }
 
     /// <summary>

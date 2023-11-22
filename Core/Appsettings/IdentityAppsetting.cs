@@ -2,8 +2,15 @@
 
 namespace TripleSix.Core.Appsettings
 {
+    /// <summary>
+    /// Cấu hình identity.
+    /// </summary>
     public class IdentityAppsetting : BaseAppsetting
     {
+        /// <summary>
+        /// Cấu hình identity.
+        /// </summary>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
