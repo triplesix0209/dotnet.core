@@ -41,7 +41,7 @@ namespace TripleSix.Core.Mappers
                     if (mapper == null) continue;
 
                     // create after map
-                    var mappingAction = mapTypes.Length > 2 ? mapTypes[2] : null;
+                    var mappingAction = mapTypes.Length > 1 ? mapTypes[1] : null;
                     if (mappingAction != null)
                     {
                         var afterMap = mapper.GetType().GetMethods()
