@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Helpers
@@ -105,30 +106,6 @@ namespace TripleSix.Core.Helpers
             if (baseType == null) return Array.Empty<Type>();
 
             return GetGenericArguments(baseType, genericType);
-        }
-
-        /// <summary>
-        /// Lấy raw generic type.
-        /// </summary>
-        /// <param name="type">Type cần kiểm tra.</param>
-        /// <param name="genericType">Raw generic type làm đối chiếu.</param>
-        /// <returns>Raw generic type.</returns>
-        public static Type? GetRawGeneric(this Type type, Type genericType)
-        {
-            if (!genericType.IsGenericType)
-                throw new ArgumentException("must be generic type", nameof(genericType));
-
-            while (type != null && type != typeof(object))
-            {
-                var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-                if (genericType == cur)
-                    return type;
-
-                if (type.BaseType == null) break;
-                type = type.BaseType;
-            }
-
-            return null;
         }
 
         /// <summary>

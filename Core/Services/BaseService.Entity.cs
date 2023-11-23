@@ -145,7 +145,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model)
+        public async Task<bool> AnyByQueryModel(IEntityQueryableDto<TEntity> model)
         {
             return await Any(model.ToQueryable(Query));
         }
@@ -160,7 +160,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<long> CountByQueryModel(IQueryableDto<TEntity> model)
+        public async Task<long> CountByQueryModel(IEntityQueryableDto<TEntity> model)
         {
             return await Count(model.ToQueryable(Query));
         }
@@ -182,14 +182,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model)
+        public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class
         {
             return await GetFirstOrDefault<TResult>(model.ToQueryable(Query));
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model)
+        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IEntityQueryableDto<TEntity> model)
         {
             return await GetFirstOrDefault(model.ToQueryable(Query));
         }
@@ -210,14 +210,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model)
+        public async Task<TResult> GetFirstByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class
         {
             return await GetFirst<TResult>(model.ToQueryable(Query));
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model)
+        public async Task<TEntity> GetFirstByQueryModel(IEntityQueryableDto<TEntity> model)
         {
             return await GetFirst(model.ToQueryable(Query));
         }
@@ -239,14 +239,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model)
+        public async Task<List<TResult>> GetListByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class
         {
             return await GetList<TResult>(model.ToQueryable(Query));
         }
 
         /// <inheritdoc/>
-        public async Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model)
+        public async Task<List<TEntity>> GetListByQueryModel(IEntityQueryableDto<TEntity> model)
         {
             return await GetList(model.ToQueryable(Query));
         }
@@ -279,14 +279,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10)
+        public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
             where TResult : class
         {
             return await GetPage<TResult>(model.ToQueryable(Query), page, size);
         }
 
         /// <inheritdoc/>
-        public async Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10)
+        public async Task<IPaging<TEntity>> GetPageByQueryModel(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
             return await GetPage(model.ToQueryable(Query), page, size);
         }

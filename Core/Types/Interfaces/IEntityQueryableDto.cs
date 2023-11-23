@@ -6,7 +6,7 @@ namespace TripleSix.Core.Types
     /// Model cho phép chuyển thành <see cref="IQueryable"/>.
     /// </summary>
     /// <typeparam name="TEntity">Loại entity.</typeparam>
-    public interface IQueryableDto<TEntity>
+    public interface IEntityQueryableDto<TEntity>
         where TEntity : IEntity
     {
         /// <summary>
