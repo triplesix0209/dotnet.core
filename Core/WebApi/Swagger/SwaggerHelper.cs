@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Xml.Linq;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
@@ -105,11 +106,24 @@ namespace TripleSix.Core.WebApi
             var autoDisplayName = displayName == null;
             if (autoDisplayName)
             {
-                if (propertyInfo.DeclaringType?.IsSubclassOfOpenGeneric(typeof(BaseQueryDto<>)) == true)
+                if (propertyInfo.DeclaringType?.IsAssignableToGenericType(typeof(IEntityQueryableDto<>)) == true)
                 {
-                    displayName ??= propertyInfo.DeclaringType?
-                        .GetRawGeneric(typeof(BaseQueryDto<>))?
+                    displayName ??= propertyInfo.DeclaringType.GetInterfaces()
+                        .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEntityQueryableDto<>))?
                         .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
+                        .GetCustomAttribute<CommentAttribute>()?.Comment;
+                    if (displayName.IsNotNullOrEmpty())
+                        displayName = "Lọc theo " + displayName;
+                }
+                else if (propertyInfo.DeclaringType?.IsAssignableToGenericType(typeof(IElasticQueryableDto<>)) == true)
+                {
+                    var documentType = propertyInfo.DeclaringType.GetInterfaces()
+                        .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IElasticQueryableDto<>))?
+                        .GenericTypeArguments[0];
+                    var entityType = documentType?
+                        .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
+                        .GetType().GetGenericArguments()[0];
+                    displayName ??= entityType?.GetProperty(propertyInfo.Name)?
                         .GetCustomAttribute<CommentAttribute>()?.Comment;
                     if (displayName.IsNotNullOrEmpty())
                         displayName = "Lọc theo " + displayName;
@@ -122,6 +136,16 @@ namespace TripleSix.Core.WebApi
                         propertyInfo.DeclaringType?
                         .GetCustomAttribute(typeof(MapToEntityAttribute<>))?
                         .GetType().GetGenericArguments()[0];
+                    if (entityType == null)
+                    {
+                        var documentType = propertyInfo.DeclaringType?
+                        .GetCustomAttribute(typeof(MapFromElasticDocumentAttribute<>))?
+                        .GetType().GetGenericArguments()[0];
+                        entityType = documentType?
+                            .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
+                            .GetType().GetGenericArguments()[0];
+                    }
+
                     displayName ??= entityType?.GetProperty(propertyInfo.Name)?
                         .GetCustomAttribute<CommentAttribute>()?.Comment;
 

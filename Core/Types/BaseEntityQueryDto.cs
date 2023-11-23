@@ -6,8 +6,8 @@ namespace TripleSix.Core.Types
     /// DTO query.
     /// </summary>
     /// <typeparam name="TEntity">Loại entity.</typeparam>
-    public abstract class BaseQueryDto<TEntity> : BaseDto,
-        IQueryableDto<TEntity>
+    public abstract class BaseEntityQueryDto<TEntity> : BaseDto,
+        IEntityQueryableDto<TEntity>
         where TEntity : IEntity
     {
         /// <inheritdoc/>

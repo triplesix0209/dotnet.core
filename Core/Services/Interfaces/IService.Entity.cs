@@ -99,7 +99,7 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns><c>True</c> nếu có bất kỳ entity nào tồn tại, ngược lại là <c>False</c>.</returns>
-        Task<bool> AnyByQueryModel(IQueryableDto<TEntity> model);
+        Task<bool> AnyByQueryModel(IEntityQueryableDto<TEntity> model);
 
         /// <summary>
         /// Đếm số lượng tất cả các entity.
@@ -113,7 +113,7 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Số lượng entity.</returns>
-        Task<long> CountByQueryModel(IQueryableDto<TEntity> model);
+        Task<long> CountByQueryModel(IEntityQueryableDto<TEntity> model);
 
         /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper, không có sẽ trả về null.
@@ -137,7 +137,7 @@ namespace TripleSix.Core.Services
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Dữ liệu của entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IQueryableDto<TEntity> model)
+        Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class;
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TEntity?> GetFirstOrDefaultByQueryModel(IQueryableDto<TEntity> model);
+        Task<TEntity?> GetFirstOrDefaultByQueryModel(IEntityQueryableDto<TEntity> model);
 
         /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper.
@@ -169,7 +169,7 @@ namespace TripleSix.Core.Services
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Dữ liệu của entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TResult> GetFirstByQueryModel<TResult>(IQueryableDto<TEntity> model)
+        Task<TResult> GetFirstByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class;
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TEntity> GetFirstByQueryModel(IQueryableDto<TEntity> model);
+        Task<TEntity> GetFirstByQueryModel(IEntityQueryableDto<TEntity> model);
 
         /// <summary>
         /// Lấy danh sách các entity và convert với Mapper.
@@ -201,7 +201,7 @@ namespace TripleSix.Core.Services
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Danh sách dữ liệu của entity.</returns>
-        Task<List<TResult>> GetListByQueryModel<TResult>(IQueryableDto<TEntity> model)
+        Task<List<TResult>> GetListByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class;
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="model">Model để tạo câu query.</param>
         /// <returns>Danh sách entity.</returns>
-        Task<List<TEntity>> GetListByQueryModel(IQueryableDto<TEntity> model);
+        Task<List<TEntity>> GetListByQueryModel(IEntityQueryableDto<TEntity> model);
 
         /// <summary>
         /// Lấy phân trang các entity và convert với Mapper.
@@ -239,7 +239,7 @@ namespace TripleSix.Core.Services
         /// <param name="page">Số trang.</param>
         /// <param name="size">Kích thước trang.</param>
         /// <returns>Dữ liệu phân trang của entity.</returns>
-        Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IQueryableDto<TEntity> model, int page = 1, int size = 10)
+        Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
             where TResult : class;
 
         /// <summary>
@@ -249,6 +249,6 @@ namespace TripleSix.Core.Services
         /// <param name="page">Số trang.</param>
         /// <param name="size">Kích thước trang.</param>
         /// <returns>Dữ liệu phân trang entity.</returns>
-        Task<IPaging<TEntity>> GetPageByQueryModel(IQueryableDto<TEntity> model, int page = 1, int size = 10);
+        Task<IPaging<TEntity>> GetPageByQueryModel(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10);
     }
 }
