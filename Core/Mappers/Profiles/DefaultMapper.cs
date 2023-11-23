@@ -14,11 +14,12 @@ namespace TripleSix.Core.Mappers
     {
         public DefaultMapper(Assembly assembly)
         {
-            MapFromProfile(assembly);
-            MapToProfile(assembly);
+            MapFromEntityProfile(assembly);
+            MapFromElasticDocumentProfile(assembly);
+            MapToEntityProfile(assembly);
         }
 
-        private void MapFromProfile(Assembly assembly)
+        private void MapFromEntityProfile(Assembly assembly)
         {
             var destinationTypes = assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
@@ -53,7 +54,42 @@ namespace TripleSix.Core.Mappers
             }
         }
 
-        private void MapToProfile(Assembly assembly)
+        private void MapFromElasticDocumentProfile(Assembly assembly)
+        {
+            var destinationTypes = assembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.GetCustomAttribute(typeof(MapFromElasticDocumentAttribute<>)) != null);
+            foreach (var destinationType in destinationTypes)
+            {
+                var mapAttributes = destinationType.GetCustomAttributes(typeof(MapFromElasticDocumentAttribute<>));
+                foreach (var mapAttribute in mapAttributes)
+                {
+                    var mapTypes = mapAttribute.GetType().GetGenericArguments();
+                    var sourceType = mapTypes[0];
+
+                    // create map profile
+                    var createMap = GetType().GetMethods()
+                        .First(x => x.DeclaringType == typeof(BaseMapper)
+                            && x.Name == nameof(CreateMap) && x.IsGenericMethod
+                            && x.GetParameters().Length > 0 && x.GetParameters()[0].ParameterType == typeof(MemberList))
+                        .MakeGenericMethod(sourceType, destinationType);
+                    var mapper = createMap.Invoke(this, new object[] { MemberList.None });
+                    if (mapper == null) continue;
+
+                    // create after map
+                    var mappingAction = mapTypes.Length > 1 ? mapTypes[1] : null;
+                    if (mappingAction != null)
+                    {
+                        var afterMap = mapper.GetType().GetMethods()
+                            .First(x => x.Name == nameof(IMappingExpression.AfterMap) && x.IsGenericMethod)
+                            .MakeGenericMethod(mappingAction);
+                        afterMap.Invoke(mapper, Array.Empty<object>());
+                    }
+                }
+            }
+        }
+
+        private void MapToEntityProfile(Assembly assembly)
         {
             var sourceTypes = assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
