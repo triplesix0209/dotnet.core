@@ -60,8 +60,25 @@ namespace TripleSix.Core.Elastic
                     Settings = new Dictionary<string, object>(),
                 };
 
+                templateRequest.Settings.Add("index.analysis", new Dictionary<string, object>()
+                {
+                    {
+                        "analyzer", new Dictionary<string, object>()
+                        {
+                            {
+                                "vi_analyzer", new Dictionary<string, object>()
+                                {
+                                    { "tokenizer", "icu_tokenizer" },
+                                    { "filter", new[] { "icu_folding", "lowercase" } },
+                                }
+                            },
+                        }
+                    },
+                });
+
                 if (templateConfig.NumberOfReplicas.HasValue)
                     templateRequest.Settings.Add("index.number_of_replicas", templateConfig.NumberOfReplicas);
+
                 putTemplateOption?.Invoke(templateRequest, templateConfig);
 
                 response = await client.Indices.PutTemplateAsync(templateRequest);
@@ -139,13 +156,13 @@ namespace TripleSix.Core.Elastic
             if (dataType == typeof(DateTime))
                 return new DateProperty();
 
-            if (dataType == typeof(string))
-                return new TextProperty();
-
             if (dataType == typeof(Guid))
                 return new KeywordProperty();
             if (dataType.IsEnum)
                 return new KeywordProperty();
+
+            if (dataType == typeof(string))
+                return new TextProperty { Analyzer = "vi_analyzer" };
 
             if (dataType.IsClass || dataType.IsAssignableToGenericType(typeof(ICollection<>)))
             {
