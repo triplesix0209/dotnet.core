@@ -19,15 +19,16 @@ namespace TripleSix.Core.WebApi
         /// <inheritdoc/>
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor controllerInfo) return;
-            var methodInfo = controllerInfo.MethodInfo;
+            if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor controllerDescriptor) return;
+            var baseController = controllerDescriptor.ControllerTypeInfo.BaseType;
+            if (baseController is null) return;
+            var methodInfo = controllerDescriptor.MethodInfo;
             if (methodInfo == null) return;
 
             #region [parameter]
 
             operation.Parameters.Clear();
             operation.RequestBody = new OpenApiRequestBody();
-
             foreach (var parameterDescription in context.ApiDescription.ParameterDescriptions)
             {
                 if (parameterDescription.Type == null) continue;
@@ -89,6 +90,9 @@ namespace TripleSix.Core.WebApi
                 }
             }
 
+            if (operation.RequestBody.Content.Count == 0)
+                operation.RequestBody = null;
+
             #endregion
 
             #region [response]
@@ -113,14 +117,14 @@ namespace TripleSix.Core.WebApi
             #region [authorization]
 
             var authorizeAttr = methodInfo.GetCustomAttribute<AuthorizeAttribute>(true)
-                ?? controllerInfo.ControllerTypeInfo.GetCustomAttribute<AuthorizeAttribute>(true);
+                ?? controllerDescriptor.ControllerTypeInfo.GetCustomAttribute<AuthorizeAttribute>(true);
 
             if (authorizeAttr != null)
             {
                 var requireScopeAttrs = methodInfo.GetCustomAttributes<RequireScope>(true).ToList();
-                requireScopeAttrs.AddRange(controllerInfo.ControllerTypeInfo.GetCustomAttributes<RequireScope>(true));
+                requireScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireScope>(true));
                 var requireAnyScopeAttrs = methodInfo.GetCustomAttributes<RequireAnyScope>(true).ToList();
-                requireAnyScopeAttrs.AddRange(controllerInfo.ControllerTypeInfo.GetCustomAttributes<RequireAnyScope>(true));
+                requireAnyScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireAnyScope>(true));
                 var requireScopes = new HashSet<string>();
 
                 foreach (var requireScopeAttr in requireScopeAttrs)
@@ -158,9 +162,34 @@ namespace TripleSix.Core.WebApi
 
             #endregion
 
-            operation.OperationId = controllerInfo.ActionName + controllerInfo.ControllerName;
-            if (operation.RequestBody.Content.Count == 0)
-                operation.RequestBody = null;
+            #region [tag]
+
+            var groupName = baseController.GetCustomAttribute<SwaggerTagGroupAttribute>()?.Name;
+            if (groupName.IsNullOrEmpty())
+            {
+                groupName = baseController.Name;
+                if (groupName.EndsWith("Controller")) groupName = groupName[..^10];
+            }
+
+            if (operation.Tags.IsNullOrEmpty())
+            {
+                var tag = new OpenApiTag();
+                tag.Name = groupName + tag.Name;
+                tag.Extensions.Add("x-tagGroup", new OpenApiString(groupName));
+                operation.Tags = new List<OpenApiTag> { tag };
+            }
+            else
+            {
+                foreach (var tag in operation.Tags)
+                {
+                    tag.Name = groupName + tag.Name;
+                    tag.Extensions.Add("x-tagGroup", new OpenApiString(groupName));
+                }
+            }
+
+            #endregion
+
+            operation.OperationId = groupName + controllerDescriptor.ControllerName + controllerDescriptor.ActionName;
             context.SchemaRepository.Schemas.Clear();
         }
     }
