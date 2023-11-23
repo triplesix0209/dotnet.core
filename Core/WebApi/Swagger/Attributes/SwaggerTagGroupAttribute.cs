@@ -9,22 +9,29 @@
         /// <summary>
         /// Adds Tag Group metadata for a given controller.
         /// </summary>
-        /// <param name="description">A short description for the tag group.</param>
+        /// <param name="name">name for the tag group.</param>
         /// <param name="orderIndex">A index use for sort tag groups.</param>
-        public SwaggerTagGroupAttribute(string description, int orderIndex = 0)
+        /// <param name="description">A short description for the tag group.</param>
+        public SwaggerTagGroupAttribute(string name, int orderIndex = 0, string? description = null)
         {
+            Name = name;
             Description = description;
             OrderIndex = orderIndex;
         }
 
         /// <summary>
-        /// A short description for the tag group.
+        /// A name for the tag group.
         /// </summary>
-        public string Description { get; }
+        public string Name { get; }
 
         /// <summary>
         /// A index use for sort tag groups.
         /// </summary>
         public int OrderIndex { get; }
+
+        /// <summary>
+        /// A short description for the tag group.
+        /// </summary>
+        public string? Description { get; }
     }
 }
