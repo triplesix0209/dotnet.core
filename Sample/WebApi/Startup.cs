@@ -12,8 +12,13 @@ namespace Sample.WebApi
     {
         public static async Task<WebApplication> BuildApp(string[] args)
         {
-            var assembly = Assembly.GetExecutingAssembly();
             var configuration = LoadConfiguration(args);
+            var assembly = Assembly.GetExecutingAssembly();
+            var domainAssembly = typeof(Domain.AutofacModule).Assembly;
+
+            // dto validators
+            BaseValidator.SetupGlobal();
+            BaseValidator.ValidateDtoValidator(domainAssembly);
 
             // builder & services
             var builder = WebApplication.CreateBuilder(args);
@@ -54,9 +59,6 @@ namespace Sample.WebApi
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
-            BaseValidator.SetupGlobal();
-            BaseValidator.ValidateDtoValidator(typeof(Domain.AutofacModule).Assembly);
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
