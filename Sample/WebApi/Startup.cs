@@ -10,7 +10,46 @@ namespace Sample.WebApi
 {
     public static class Startup
     {
-        public static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
+        public static async Task<WebApplication> BuildApp(string[] args)
+        {
+            var configuration = LoadConfiguration(args);
+            var assembly = Assembly.GetExecutingAssembly();
+            var domainAssembly = typeof(Domain.AutofacModule).Assembly;
+
+            // dto validators
+            BaseValidator.SetupGlobal();
+            BaseValidator.ValidateDtoValidator(domainAssembly);
+
+            // builder & services
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Configuration.AddConfiguration(configuration);
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
+            builder.Services.ConfigureMvcService(assembly);
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
+            builder.Services.AddSwagger(configuration);
+
+            // build app
+            var app = builder.Build();
+            app.ConfigureApp(configuration);
+            await app.OnStartup(configuration);
+            return app;
+        }
+
+        private static IConfiguration LoadConfiguration(string[] args)
+        {
+            var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            return new ConfigurationBuilder()
+               .AddJsonFile(Path.Combine("Appsettings", "appsettings.json"), true)
+               .AddJsonFile(Path.Combine("Appsettings", $"appsettings.{envName}.json"), true)
+               .AddEnvironmentVariables()
+               .AddCommandLine(args)
+               .Build();
+        }
+
+        private static void ConfigureContainer(this ContainerBuilder builder, IConfiguration configuration)
         {
             builder.RegisterModule(new Domain.AutofacModule(configuration));
             builder.RegisterModule(new Application.AutofacModule(configuration));
@@ -18,63 +57,41 @@ namespace Sample.WebApi
             builder.RegisterModule(new WebApi.AutofacModule(configuration));
         }
 
-        public static async Task<WebApplication> BuildApp(this WebApplicationBuilder builder, IConfiguration configuration)
+        private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            builder.Services.ConfigureMvcService(assembly);
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
-            builder.Services.AddSwagger(configuration);
-
-            #region [build app]
-
-            var app = builder.Build();
-
-            var autofacContainer = app.Services.GetAutofacRoot();
-            if (autofacContainer.IsRegistered<MapperConfiguration>())
-                autofacContainer.Resolve<MapperConfiguration>().ValidateConfiguration();
-
-            BaseValidator.SetupGlobal();
-            BaseValidator.ValidateDtoValidator(typeof(Domain.AutofacModule).Assembly);
-
             app.UseRouting();
-            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.Use404JsonError();
             app.UseReDocUI(configuration);
             app.UseMiddleware<ExceptionMiddleware>();
-
             app.Use(next => context =>
             {
                 context.Request.EnableBuffering();
                 return next(context);
             });
             app.MapControllers();
+        }
 
-            #endregion
+        private static async Task OnStartup(this WebApplication app, IConfiguration configuration)
+        {
+            using var scope = app.Services.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
 
-            #region [startup action]
+            // validate mapper profile
+            var mapperConfiguration = serviceProvider.GetService<MapperConfiguration>();
+            mapperConfiguration?.ValidateConfiguration();
 
-            using (var scope = app.Services.CreateScope())
+            // apply migrations
+            var migrationAppsetting = new MigrationAppsetting(configuration);
+            if (migrationAppsetting.ApplyOnStartup)
             {
-                var serviceProvider = scope.ServiceProvider;
-
-                // apply migrations
-                var migrationAppsetting = new MigrationAppsetting(configuration);
-                if (migrationAppsetting.ApplyOnStartup)
-                {
-                    var db = serviceProvider.GetRequiredService<IDbMigrationContext>();
-                    await db.MigrateAsync();
-                }
-
-                // start quartz jobs
-                serviceProvider.GetRequiredService<JobScheduler>().Start();
+                var db = serviceProvider.GetRequiredService<IDbMigrationContext>();
+                await db.MigrateAsync();
             }
 
-            #endregion
-
-            return app;
+            // start quartz jobs
+            serviceProvider.GetRequiredService<JobScheduler>().Start();
         }
     }
 }

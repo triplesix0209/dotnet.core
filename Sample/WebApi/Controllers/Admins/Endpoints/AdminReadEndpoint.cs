@@ -6,7 +6,7 @@
         where TEntity : class, IStrongEntity
         where TItem : class, IDto
         where TDetail : class, IDto
-        where TFilter : class, IQueryableDto<TEntity>, IPagingInput
+        where TFilter : class, IEntityQueryableDto<TEntity>, IPagingInput
     {
         public IStrongService<TEntity> Service { get; set; }
 
@@ -32,7 +32,7 @@
         where TEntity : class, IStrongEntity
         where TItem : class, IDto
         where TDetail : class, IDto
-        where TFilter : class, IQueryableDto<TEntity>, IPagingInput
+        where TFilter : class, IEntityQueryableDto<TEntity>, IPagingInput
     {
         /// <inheritdoc/>
         public override TypeInfo ToEndpointTypeInfo()
