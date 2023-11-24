@@ -27,8 +27,8 @@ namespace Sample.WebApi
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
             builder.Services.ConfigureMvcService(assembly);
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
             builder.Services.AddSwagger(configuration);
+            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
 
             // build app
             var app = builder.Build();
