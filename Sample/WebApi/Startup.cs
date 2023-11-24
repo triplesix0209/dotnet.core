@@ -10,22 +10,23 @@ namespace Sample.WebApi
 {
     public static class Startup
     {
+        private static readonly Assembly DomainAssembly = typeof(Domain.AutofacModule).Assembly;
+        private static readonly Assembly WebApiAssembly = typeof(WebApi.AutofacModule).Assembly;
+
         public static async Task<WebApplication> BuildApp(string[] args)
         {
             var configuration = LoadConfiguration(args);
-            var assembly = Assembly.GetExecutingAssembly();
-            var domainAssembly = typeof(Domain.AutofacModule).Assembly;
 
             // dto validators
             BaseValidator.SetupGlobal();
-            BaseValidator.ValidateDtoValidator(domainAssembly);
+            BaseValidator.ValidateDtoValidator(DomainAssembly);
 
             // builder & services
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddConfiguration(configuration);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
-            builder.Services.ConfigureMvcService(assembly);
+            builder.Services.ConfigureMvcService(WebApiAssembly);
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSwagger(configuration);
             builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
