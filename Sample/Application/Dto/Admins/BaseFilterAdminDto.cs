@@ -1,6 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    public abstract class BaseFilterAdminDto<TEntity> : BaseQueryDto<TEntity>,
+    public abstract class BaseFilterAdminDto<TEntity> : BaseEntityQueryDto<TEntity>,
         IPagingInput
         where TEntity : IStrongEntity
     {
