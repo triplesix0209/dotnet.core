@@ -10,25 +10,19 @@ namespace Sample.WebApi
 {
     public static class Startup
     {
+        private static readonly Assembly DomainAssembly = typeof(Domain.AutofacModule).Assembly;
+        private static readonly Assembly WebApiAssembly = typeof(WebApi.AutofacModule).Assembly;
+
         public static async Task<WebApplication> BuildApp(string[] args)
         {
             var configuration = LoadConfiguration(args);
-            var assembly = Assembly.GetExecutingAssembly();
-            var domainAssembly = typeof(Domain.AutofacModule).Assembly;
-
-            // dto validators
-            BaseValidator.SetupGlobal();
-            BaseValidator.ValidateDtoValidator(domainAssembly);
 
             // builder & services
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddConfiguration(configuration);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
-            builder.Services.ConfigureMvcService(assembly);
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
-            builder.Services.AddSwagger(configuration);
+            builder.Services.ConfigureServices(configuration);
 
             // build app
             var app = builder.Build();
@@ -55,6 +49,18 @@ namespace Sample.WebApi
             builder.RegisterModule(new Application.AutofacModule(configuration));
             builder.RegisterModule(new Infrastructure.AutofacModule(configuration));
             builder.RegisterModule(new WebApi.AutofacModule(configuration));
+        }
+
+        private static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHttpContextAccessor();
+            services.AddSwagger(configuration);
+            services.AddMvcServices(WebApiAssembly);
+            services.AddAuthentication().AddJwtAccessToken(configuration);
+
+            // dto validators
+            BaseValidator.SetupGlobal();
+            BaseValidator.ValidateDtoValidator(DomainAssembly);
         }
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)

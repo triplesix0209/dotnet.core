@@ -30,7 +30,7 @@ namespace TripleSix.Core.WebApi
         /// <param name="configureMvc">Hàm tùy chỉnh mvc.</param>
         /// <param name="configureApplicationPartManager">Hàm tùy chỉnh application part.</param>
         /// <returns><see cref="IMvcBuilder"/>.</returns>
-        public static IMvcBuilder ConfigureMvcService(
+        public static IMvcBuilder AddMvcServices(
             this IServiceCollection services,
             Assembly assembly,
             Action<MvcOptions>? configureMvc = null,
