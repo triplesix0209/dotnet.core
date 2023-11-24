@@ -53,9 +53,9 @@ namespace Sample.WebApi
 
         private static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.ConfigureMvcService(WebApiAssembly);
             services.AddHttpContextAccessor();
             services.AddSwagger(configuration);
+            services.AddMvcServices(WebApiAssembly);
             services.AddAuthentication().AddJwtAccessToken(configuration);
 
             // dto validators
