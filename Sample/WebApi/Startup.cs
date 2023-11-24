@@ -17,19 +17,12 @@ namespace Sample.WebApi
         {
             var configuration = LoadConfiguration(args);
 
-            // dto validators
-            BaseValidator.SetupGlobal();
-            BaseValidator.ValidateDtoValidator(DomainAssembly);
-
             // builder & services
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration.AddConfiguration(configuration);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
-            builder.Services.ConfigureMvcService(WebApiAssembly);
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddSwagger(configuration);
-            builder.Services.AddAuthentication().AddJwtAccessToken(configuration);
+            builder.Services.ConfigureServices(configuration);
 
             // build app
             var app = builder.Build();
@@ -56,6 +49,18 @@ namespace Sample.WebApi
             builder.RegisterModule(new Application.AutofacModule(configuration));
             builder.RegisterModule(new Infrastructure.AutofacModule(configuration));
             builder.RegisterModule(new WebApi.AutofacModule(configuration));
+        }
+
+        private static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.ConfigureMvcService(WebApiAssembly);
+            services.AddHttpContextAccessor();
+            services.AddSwagger(configuration);
+            services.AddAuthentication().AddJwtAccessToken(configuration);
+
+            // dto validators
+            BaseValidator.SetupGlobal();
+            BaseValidator.ValidateDtoValidator(DomainAssembly);
         }
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
