@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
-using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 
 namespace TripleSix.Core.Helpers

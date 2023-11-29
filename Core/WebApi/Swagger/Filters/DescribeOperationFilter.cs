@@ -3,11 +3,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Types;
 
 namespace TripleSix.Core.WebApi
 {
@@ -121,12 +123,10 @@ namespace TripleSix.Core.WebApi
 
             if (authorizeAttr != null)
             {
-                var requireScopeAttrs = methodInfo.GetCustomAttributes<RequireScope>(true).ToList();
-                requireScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireScope>(true));
-                var requireAnyScopeAttrs = methodInfo.GetCustomAttributes<RequireAnyScope>(true).ToList();
-                requireAnyScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireAnyScope>(true));
                 var requireScopes = new HashSet<string>();
 
+                var requireScopeAttrs = methodInfo.GetCustomAttributes<RequireScope>(true).ToList();
+                requireScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireScope>(true));
                 foreach (var requireScopeAttr in requireScopeAttrs)
                 {
                     var scope = requireScopeAttr.Arguments?[0].ToString();
@@ -134,11 +134,39 @@ namespace TripleSix.Core.WebApi
                     requireScopes.Add(scope);
                 }
 
+                var requireScopeTransformerAttrs = methodInfo.GetCustomAttributes(typeof(RequireScope<>), true).ToList();
+                foreach (var requireScopeTransformerAttr in requireScopeTransformerAttrs)
+                {
+                    var typeFilter = requireScopeTransformerAttr as TypeFilterAttribute;
+                    var inputScope = typeFilter?.Arguments?[0] as string;
+                    if (inputScope.IsNullOrEmpty()) continue;
+                    if (Activator.CreateInstance(requireScopeTransformerAttr.GetType().GetGenericArguments()[0]) is not IScopeTransformer transformer)
+                        continue;
+
+                    requireScopes.Add(transformer.Transform(inputScope, controllerDescriptor));
+                }
+
+                var requireAnyScopeAttrs = methodInfo.GetCustomAttributes<RequireAnyScope>(true).ToList();
+                requireAnyScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireAnyScope>(true));
                 foreach (var requireScopeAttr in requireAnyScopeAttrs)
                 {
                     var scopes = requireScopeAttr.Arguments?.SelectMany(x => (string[])x);
                     if (scopes.IsNullOrEmpty()) continue;
 
+                    if (scopes.Count() == 1) requireScopes.Add(scopes.First());
+                    else requireScopes.Add($"[{scopes.ToString(", ")}]");
+                }
+
+                var requireAnyScopeTransformerAttrs = methodInfo.GetCustomAttributes(typeof(RequireAnyScope<>), true).ToList();
+                foreach (var requireAnyScopeTransformerAttr in requireAnyScopeTransformerAttrs)
+                {
+                    var typeFilter = requireAnyScopeTransformerAttr as TypeFilterAttribute;
+                    var inputScopes = typeFilter?.Arguments?.SelectMany(x => (string[])x);
+                    if (inputScopes.IsNullOrEmpty()) continue;
+                    if (Activator.CreateInstance(requireAnyScopeTransformerAttr.GetType().GetGenericArguments()[0]) is not IScopeTransformer transformer)
+                        continue;
+
+                    var scopes = inputScopes.Select(inputScope => transformer.Transform(inputScope, controllerDescriptor));
                     if (scopes.Count() == 1) requireScopes.Add(scopes.First());
                     else requireScopes.Add($"[{scopes.ToString(", ")}]");
                 }

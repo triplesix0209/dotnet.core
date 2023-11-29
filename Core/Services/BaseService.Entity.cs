@@ -1,7 +1,6 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
 using System.Reflection;
-using Elastic.Clients.Elasticsearch;
 using Elastic.Transport.Products.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
