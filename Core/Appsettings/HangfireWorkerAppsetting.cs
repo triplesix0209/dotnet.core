@@ -22,9 +22,9 @@ namespace TripleSix.Core.Appsettings
         }
 
         /// <summary>
-        /// Bật/tắt hangfire worker (mặc định là true).
+        /// Bật/tắt hangfire worker (mặc định là false).
         /// </summary>
-        public bool Enable { get; set; } = true;
+        public bool Enable { get; set; } = false;
 
         /// <summary>
         /// Database connection string.

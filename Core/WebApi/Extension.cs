@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -63,12 +64,11 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình JWT Access Token.
         /// </summary>
         /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setting"><see cref="IdentityAppsetting"/>.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration)
+        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IdentityAppsetting setting)
         {
-            var appsetting = new IdentityAppsetting(configuration);
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SigningKey));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SigningKey));
             return authenticationBuilder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -76,10 +76,10 @@ namespace TripleSix.Core.WebApi
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = signingKey,
-                    ValidateIssuer = appsetting.ValidateIssuer,
-                    ValidIssuers = appsetting.Issuer,
-                    ValidateAudience = appsetting.ValidateAudience,
-                    ValidAudiences = appsetting.Audience,
+                    ValidateIssuer = setting.ValidateIssuer,
+                    ValidIssuers = setting.Issuer,
+                    ValidateAudience = setting.ValidateAudience,
+                    ValidAudiences = setting.Audience,
                 };
 
                 options.Events = new JwtBearerEvents
@@ -121,6 +121,17 @@ namespace TripleSix.Core.WebApi
                     },
                 };
             });
+        }
+
+        /// <summary>
+        /// Cấu hình JWT Access Token.
+        /// </summary>
+        /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration)
+        {
+            return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration));
         }
 
         /// <summary>
@@ -169,6 +180,44 @@ namespace TripleSix.Core.WebApi
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
         {
             return AddSwagger(services, new SwaggerAppsetting(configuration), setupAction);
+        }
+
+        /// <summary>
+        /// Cấu hình Hangfire worker.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="setting"><see cref="HangfireWorkerAppsetting"/>.</param>
+        /// <param name="setup">Hàm cấu hình hangfire.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, HangfireWorkerAppsetting setting, Action<IGlobalConfiguration, HangfireWorkerAppsetting> setup)
+        {
+            if (!setting.Enable) return services;
+
+            services.AddHangfire(options =>
+            {
+                options.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseRecommendedSerializerSettings()
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseIgnoredAssemblyVersionTypeResolver();
+                setup(options, setting);
+            });
+
+            return services.AddHangfireServer(options =>
+            {
+                options.Queues = setting.Queues;
+            });
+        }
+
+        /// <summary>
+        /// Cấu hình Hangfire worker.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setup">Hàm cấu hình hangfire.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, IConfiguration configuration, Action<IGlobalConfiguration, HangfireWorkerAppsetting> setup)
+        {
+            return AddHangfireWorker(services, new HangfireWorkerAppsetting(configuration), setup);
         }
 
         /// <summary>

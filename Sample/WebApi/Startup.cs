@@ -1,10 +1,11 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
+using DMCLSample.WebApi.Hangfire;
+using Hangfire;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Mappers;
-using TripleSix.Core.Quartz;
 
 namespace Sample.WebApi
 {
@@ -53,14 +54,14 @@ namespace Sample.WebApi
 
         private static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            BaseValidator.SetupGlobal();
+            BaseValidator.ValidateDtoValidator(DomainAssembly);
+
             services.AddHttpContextAccessor();
             services.AddSwagger(configuration);
             services.AddMvcServices(WebApiAssembly);
             services.AddAuthentication().AddJwtAccessToken(configuration);
-
-            // dto validators
-            BaseValidator.SetupGlobal();
-            BaseValidator.ValidateDtoValidator(DomainAssembly);
+            services.AddHangfireWorker(configuration, (options, setting) => options.UseSqlServerStorage(setting.ConnectionString));
         }
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
@@ -96,8 +97,8 @@ namespace Sample.WebApi
                 await db.MigrateAsync();
             }
 
-            // start quartz jobs
-            serviceProvider.GetRequiredService<JobScheduler>().Start();
+            // setup hangfire
+            serviceProvider.GetRequiredService<HangfireStartup>().Setup();
         }
     }
 }

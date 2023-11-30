@@ -125,12 +125,17 @@ namespace TripleSix.Core.Elastic
             await SetupElasticsearch(app, new ElasticsearchAppsetting(configuration), assembly, putTemplateOption);
         }
 
-        internal static ElasticsearchClient CreateElasticsearchClient(ElasticsearchAppsetting config)
+        internal static ElasticsearchClient CreateElasticsearchClient(ElasticsearchAppsetting setting)
         {
-            var setting = new ElasticsearchClientSettings(new Uri(config.Host));
-            if (config.Username.IsNotNullOrEmpty() && config.Password.IsNotNullOrEmpty())
-                setting.Authentication(new BasicAuthentication(config.Username, config.Password));
-            return new ElasticsearchClient(setting);
+            var clientSetting = new ElasticsearchClientSettings(new Uri(setting.Host));
+            if (setting.Username.IsNotNullOrEmpty() && setting.Password.IsNotNullOrEmpty())
+                clientSetting.Authentication(new BasicAuthentication(setting.Username, setting.Password));
+            return new ElasticsearchClient(clientSetting);
+        }
+
+        internal static ElasticsearchClient CreateElasticsearchClient(IConfiguration configuration)
+        {
+            return CreateElasticsearchClient(new ElasticsearchAppsetting(configuration));
         }
 
         private static void LogElasticResponse(this ILogger? logger, ElasticsearchResponse response, string message)

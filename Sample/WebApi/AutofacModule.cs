@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using DMCLSample.WebApi.Hangfire;
 using TripleSix.Core.AutofacModules;
 
 namespace Sample.WebApi
@@ -17,6 +18,10 @@ namespace Sample.WebApi
 
             builder.RegisterAllQuartzJob(assembly);
             builder.RegisterAllController(assembly);
+
+            builder.Register(c => new HangfireStartup())
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope();
         }
     }
 }
