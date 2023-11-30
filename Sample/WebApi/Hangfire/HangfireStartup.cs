@@ -10,7 +10,7 @@ namespace DMCLSample.WebApi.Hangfire
 
         public void Setup()
         {
-            RecurringJobManager.AddOrUpdateExternal<ISiteService>("Sample", "sample", service => service.RunJob(), "* * * * *");
+            RecurringJobManager.AddOrUpdateExternal<ISiteService>("Sample", "sample", service => service.RunJob("Test"), "* * * * *");
         }
     }
 }

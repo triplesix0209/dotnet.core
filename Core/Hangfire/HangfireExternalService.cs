@@ -11,18 +11,17 @@
         public IServiceProvider ServiceProvider { get; set; }
 
         /// <inheritdoc/>
-        public Task Run(string serviceTypeName, string methodName)
+        public async Task Run(string serviceTypeName, string methodName, params string?[]? arguments)
         {
-            var x = Type.GetType(serviceTypeName);
-            return Task.CompletedTask;
-            //var service = ServiceProvider.GetService(serviceType)
-            //    ?? throw new Exception("Cannot find target service");
-            //var method = serviceType.GetMethod(methodName)
-            //    ?? throw new Exception("Cannot find target method");
+            var serviceType = Type.GetType(serviceTypeName)
+                ?? throw new Exception("Cannot find target service");
+            var service = ServiceProvider.GetService(serviceType)
+                ?? throw new Exception("Cannot find target service");
+            var method = serviceType.GetMethod(methodName)
+                ?? throw new Exception("Cannot find target method");
 
-            //var result = method.Invoke(service, null) as Task;
-            //if (result == null) return Task.CompletedTask;
-            //return result!.WaitAsync(CancellationToken.None);
+            var result = method.Invoke(service, new object[] { }) as Task;
+            await result!.WaitAsync(CancellationToken.None);
         }
     }
 }
