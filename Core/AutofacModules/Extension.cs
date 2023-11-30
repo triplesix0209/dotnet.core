@@ -260,16 +260,34 @@ namespace TripleSix.Core.AutofacModules
         }
 
         /// <summary>
-        /// Đăng ký các service của hangfire dưới dạng InstancePerLifetimeScope.
+        /// Đăng ký các core của hangfire.
         /// </summary>
         /// <param name="builder">Container builder.</param>
-        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
-        public static IRegistrationBuilder<IHangfireExternalService, SimpleActivatorData, SingleRegistrationStyle> RegisterHangfire(
+        public static void RegisterHangfireCore(
             this ContainerBuilder builder)
         {
-            return builder.Register<IHangfireExternalService>(c => new HangfireExternalService())
+            builder.Register(c => new HangfireExternalCaller())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope();
+        }
+
+        /// <summary>
+        /// Đăng ký startup của hangfire.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các controller để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterHangfireStartup(
+            this ContainerBuilder builder,
+            Assembly assembly)
+        {
+            return builder.RegisterAssemblyTypes(assembly)
+                .PublicOnly()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableTo<HangfireBaseStartup>())
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .As<HangfireBaseStartup>();
         }
     }
 }
