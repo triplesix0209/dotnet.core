@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -179,6 +180,44 @@ namespace TripleSix.Core.WebApi
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
         {
             return AddSwagger(services, new SwaggerAppsetting(configuration), setupAction);
+        }
+
+        /// <summary>
+        /// Cấu hình Hangfire worker.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="setting"><see cref="HangfireWorkerAppsetting"/>.</param>
+        /// <param name="setup">Hàm cấu hình hangfire.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, HangfireWorkerAppsetting setting, Action<IGlobalConfiguration, HangfireWorkerAppsetting> setup)
+        {
+            if (!setting.Enable) return services;
+
+            services.AddHangfire(options =>
+            {
+                options.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseRecommendedSerializerSettings()
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseIgnoredAssemblyVersionTypeResolver();
+                setup(options, setting);
+            });
+
+            return services.AddHangfireServer(options =>
+            {
+                options.Queues = setting.Queues;
+            });
+        }
+
+        /// <summary>
+        /// Cấu hình Hangfire worker.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setup">Hàm cấu hình hangfire.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, IConfiguration configuration, Action<IGlobalConfiguration, HangfireWorkerAppsetting> setup)
+        {
+            return AddHangfireWorker(services, new HangfireWorkerAppsetting(configuration), setup);
         }
 
         /// <summary>

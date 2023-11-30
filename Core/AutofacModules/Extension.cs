@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
+using TripleSix.Core.Hangfire;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
@@ -44,8 +45,7 @@ namespace TripleSix.Core.AutofacModules
                     (p, c) => p.ParameterType == typeof(HttpContext),
                     (p, c) => c.Resolve<IHttpContextAccessor>().HttpContext!))
                 .InstancePerLifetimeScope()
-                .As<IIdentityContext>()
-                .AsSelf();
+                .As<IIdentityContext>();
         }
 
         /// <summary>
@@ -130,8 +130,7 @@ namespace TripleSix.Core.AutofacModules
                 .Where(x => x.IsAssignableTo<IRepository>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
-                .AsImplementedInterfaces()
-                .AsSelf();
+                .AsImplementedInterfaces();
         }
 
         /// <summary>
@@ -152,10 +151,10 @@ namespace TripleSix.Core.AutofacModules
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IService>())
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
-                .InstancePerLifetimeScope()
-                .AsImplementedInterfaces()
                 .EnableInterfaceInterceptors()
-                .InterceptedBy(typeof(ServiceInterceptor));
+                .InterceptedBy(typeof(ServiceInterceptor))
+                .InstancePerLifetimeScope()
+                .AsImplementedInterfaces();
         }
 
         /// <summary>
@@ -258,6 +257,19 @@ namespace TripleSix.Core.AutofacModules
             }).PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .AsSelf();
+        }
+
+        /// <summary>
+        /// Đăng ký các service của hangfire dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<IHangfireExternalService, SimpleActivatorData, SingleRegistrationStyle> RegisterHangfire(
+            this ContainerBuilder builder)
+        {
+            return builder.Register<IHangfireExternalService>(c => new HangfireExternalService())
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope();
         }
     }
 }
