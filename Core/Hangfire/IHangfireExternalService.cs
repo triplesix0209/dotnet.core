@@ -11,6 +11,6 @@
         /// <param name="serviceType">Type service.</param>
         /// <param name="methodName">Method name.</param>
         /// <returns>Task.</returns>
-        Task Run(Type serviceType, string methodName);
+        Task Run(string serviceTypeName, string methodName);
     }
 }

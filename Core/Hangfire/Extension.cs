@@ -20,7 +20,7 @@ namespace TripleSix.Core.Hangfire
         public static void AddOrUpdateExternal<T>(this IRecurringJobManager recurringJobManager, string recurringJobId, string queue, Expression<Func<T, Task>> methodCall, string cronExpression)
         {
             var method = ((MethodCallExpression)methodCall.Body).Method;
-            recurringJobManager.AddOrUpdate<IHangfireExternalService>(recurringJobId, queue, service => service.Run(typeof(T), method.Name), cronExpression);
+            recurringJobManager.AddOrUpdate<IHangfireExternalService>(recurringJobId, queue, service => service.Run(typeof(T).FullName!, method.Name), cronExpression);
         }
     }
 }
