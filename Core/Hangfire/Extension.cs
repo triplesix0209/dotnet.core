@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
 using Hangfire;
 using TripleSix.Core.Helpers;
 
@@ -18,7 +20,14 @@ namespace TripleSix.Core.Hangfire
         /// <param name="queue">Job queue.</param>
         /// <param name="methodCall">Method call.</param>
         /// <param name="cronExpression">Cron expression.</param>
-        public static void AddOrUpdateExternal<T>(this IRecurringJobManager recurringJobManager, string recurringJobId, string queue, Expression<Func<T, Task>> methodCall, string cronExpression)
+        /// <param name="jobDisplayName">Tên hiển thị của job.</param>
+        public static void AddOrUpdateExternal<T>(
+            this IRecurringJobManager recurringJobManager,
+            string recurringJobId,
+            string queue,
+            Expression<Func<T, Task>> methodCall,
+            string cronExpression,
+            string? jobDisplayName = null)
         {
             var serviceTypeName = typeof(T).AssemblyQualifiedName!;
             var method = ((MethodCallExpression)methodCall.Body).Method;
@@ -26,7 +35,12 @@ namespace TripleSix.Core.Hangfire
                 .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
                 .ToArray();
 
-            recurringJobManager.AddOrUpdate<IHangfireExternalService>(recurringJobId, queue, service => service.Run(serviceTypeName, method.Name, arguments), cronExpression);
+            jobDisplayName ??= method.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? method.Name;
+            var assemblyName = typeof(T).Assembly.GetName().Name;
+            if (assemblyName.IsNotNullOrEmpty()) jobDisplayName = $"{assemblyName}.{jobDisplayName}";
+
+            recurringJobManager.AddOrUpdate<IHangfireExternalService>(
+                recurringJobId, queue, service => service.Run(jobDisplayName, serviceTypeName, method.Name, arguments), cronExpression);
         }
     }
 }

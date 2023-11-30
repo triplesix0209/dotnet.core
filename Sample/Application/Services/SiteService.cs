@@ -2,7 +2,8 @@
 {
     public interface ISiteService : IStrongService<Site>
     {
-        Task RunJob(string data);
+        [DisplayName("Hello")]
+        Task RunJob(string text, int number, DateTime date);
     }
 
     public class SiteService : StrongService<Site>, ISiteService
@@ -14,9 +15,9 @@
 
         public IApplicationDbContext Db { get; set; }
 
-        public async Task RunJob(string data)
+        public async Task RunJob(string text, int number, DateTime date)
         {
-            throw new Exception(data);
+            throw new Exception(text + " " + number + " " + date.ToString());
         }
     }
 }
