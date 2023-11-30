@@ -127,17 +127,16 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình Swagger.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setting"><see cref="SwaggerAppsetting"/>.</param>
         /// <param name="setupAction">Hàm tùy chỉnh Swagger.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, SwaggerAppsetting setting, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
         {
-            var appsetting = new SwaggerAppsetting(configuration);
-            if (!appsetting.Enable) return services;
+            if (!setting.Enable) return services;
 
             return services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("openapi", new OpenApiInfo { Title = appsetting.Title, Version = appsetting.Version });
+                options.SwaggerDoc("openapi", new OpenApiInfo { Title = setting.Title, Version = setting.Version });
                 options.AddSecurityDefinition("AccessToken", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.ApiKey,
@@ -156,25 +155,36 @@ namespace TripleSix.Core.WebApi
                 options.DocumentFilter<BaseDocumentFilter>();
                 options.OperationFilter<DescribeOperationFilter>();
 
-                setupAction?.Invoke(options, appsetting);
+                setupAction?.Invoke(options, setting);
             });
+        }
+
+        /// <summary>
+        /// Cấu hình Swagger.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setupAction">Hàm tùy chỉnh Swagger.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
+        {
+            return AddSwagger(services, new SwaggerAppsetting(configuration), setupAction);
         }
 
         /// <summary>
         /// Sử dụng Redoc làm API Document.
         /// </summary>
         /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setting"><see cref="SwaggerAppsetting"/>.</param>
         /// <returns><see cref="IApplicationBuilder"/>.</returns>
-        public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, IConfiguration configuration)
+        public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, SwaggerAppsetting setting)
         {
-            var appsetting = new SwaggerAppsetting(configuration);
-            if (!appsetting.Enable) return app;
+            if (!setting.Enable) return app;
 
             app.UseSwagger();
             app.UseReDoc(options =>
             {
-                options.RoutePrefix = appsetting.Route;
+                options.RoutePrefix = setting.Route;
                 options.IndexStream = () =>
                 {
                     var assembly = AppDomain.CurrentDomain.GetAssemblies()
@@ -186,6 +196,17 @@ namespace TripleSix.Core.WebApi
             });
 
             return app;
+        }
+
+        /// <summary>
+        /// Sử dụng Redoc làm API Document.
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns><see cref="IApplicationBuilder"/>.</returns>
+        public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            return UseReDocUI(app, new SwaggerAppsetting(configuration));
         }
 
         /// <summary>

@@ -54,22 +54,27 @@ namespace TripleSix.Core.Identity
         }
 
         /// <inheritdoc/>
-        public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration)
+        public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IdentityAppsetting setting)
         {
-            var appsetting = new IdentityAppsetting(configuration);
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SigningKey));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SigningKey));
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = signingKey,
-                ValidateIssuer = appsetting.ValidateIssuer,
-                ValidIssuers = appsetting.Issuer,
-                ValidateAudience = appsetting.ValidateAudience,
-                ValidAudiences = appsetting.Audience,
+                ValidateIssuer = setting.ValidateIssuer,
+                ValidIssuers = setting.Issuer,
+                ValidateAudience = setting.ValidateAudience,
+                ValidAudiences = setting.Audience,
             };
 
             return new JwtSecurityTokenHandler().ValidateToken(accessToken, tokenValidationParameters, out _);
+        }
+
+        /// <inheritdoc/>
+        public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration)
+        {
+            return ValidateAccessToken(accessToken, new IdentityAppsetting(configuration));
         }
 
         /// <summary>
