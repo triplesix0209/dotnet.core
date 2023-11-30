@@ -22,19 +22,18 @@ namespace TripleSix.Core.Elastic
         /// Thiết lập Elasticsearch.
         /// </summary>
         /// <param name="app"><see cref="IHost"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setting"><see cref="ElasticsearchAppsetting"/>.</param>
         /// <param name="assembly"><see cref="Assembly"/> chứa các elastic documents.</param>
         /// <param name="putTemplateOption">Cấu hình template mặc định.</param>
         /// <returns>Task xử lý.</returns>
         public static async Task SetupElasticsearch(
             this IHost app,
-            IConfiguration configuration,
+            ElasticsearchAppsetting setting,
             Assembly assembly,
             Action<PutTemplateRequest, ElasticsearchTemplateAppsetting>? putTemplateOption = null)
         {
             var logger = app.Services.GetService(typeof(ILogger<ElasticsearchClient>)) as ILogger<ElasticsearchClient>;
-            var config = new ElasticsearchAppsetting(configuration);
-            var client = CreateElasticsearchClient(configuration);
+            var client = CreateElasticsearchClient(setting);
             var documentTypes = assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.GetCustomAttribute<ElasticDocumentAttribute>() != null);
@@ -49,7 +48,7 @@ namespace TripleSix.Core.Elastic
             }
 
             // put template
-            var templateConfig = config.Template;
+            var templateConfig = setting.Template;
             if (templateConfig != null)
             {
                 var pattern = templateConfig.Pattern;
@@ -103,15 +102,31 @@ namespace TripleSix.Core.Elastic
                 // put mapping
                 var putMappingRequest = new PutMappingRequest(indexName) { Properties = new Properties() };
                 foreach (var property in documentType.GetProperties())
-                    putMappingRequest.Properties.Add(property.Name.ToCamelCase(), property.PropertyType.ElasticPropertyType(config));
+                    putMappingRequest.Properties.Add(property.Name.ToCamelCase(), property.PropertyType.ElasticPropertyType(setting));
                 response = await client.Indices.PutMappingAsync(putMappingRequest);
                 logger.LogElasticResponse(response, $"Update mapping [{indexName}]");
             }
         }
 
-        internal static ElasticsearchClient CreateElasticsearchClient(IConfiguration configuration)
+        /// <summary>
+        /// Thiết lập Elasticsearch.
+        /// </summary>
+        /// <param name="app"><see cref="IHost"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="assembly"><see cref="Assembly"/> chứa các elastic documents.</param>
+        /// <param name="putTemplateOption">Cấu hình template mặc định.</param>
+        /// <returns>Task xử lý.</returns>
+        public static async Task SetupElasticsearch(
+            this IHost app,
+            IConfiguration configuration,
+            Assembly assembly,
+            Action<PutTemplateRequest, ElasticsearchTemplateAppsetting>? putTemplateOption = null)
         {
-            var config = new ElasticsearchAppsetting(configuration);
+            await SetupElasticsearch(app, new ElasticsearchAppsetting(configuration), assembly, putTemplateOption);
+        }
+
+        internal static ElasticsearchClient CreateElasticsearchClient(ElasticsearchAppsetting config)
+        {
             var setting = new ElasticsearchClientSettings(new Uri(config.Host));
             if (config.Username.IsNotNullOrEmpty() && config.Password.IsNotNullOrEmpty())
                 setting.Authentication(new BasicAuthentication(config.Username, config.Password));
@@ -128,9 +143,9 @@ namespace TripleSix.Core.Elastic
                 logger.LogError($"{message}... Failed" + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
         }
 
-        private static IProperty ElasticPropertyType(this Type type, ElasticsearchAppsetting config, int level = 0)
+        private static IProperty ElasticPropertyType(this Type type, ElasticsearchAppsetting setting, int level = 0)
         {
-            if (level > config.MaxDepthPropertyAllowed)
+            if (level > setting.MaxDepthPropertyAllowed)
                 throw new Exception("Max depth property reach");
 
             var dataType = type.GetUnderlyingType();
@@ -174,7 +189,7 @@ namespace TripleSix.Core.Elastic
 
                 var listProperty = itemType != null ? itemType.GetProperties() : dataType.GetProperties();
                 foreach (var property in listProperty)
-                    result.Properties.Add(property.Name.ToCamelCase(), property.PropertyType.ElasticPropertyType(config, level + 1));
+                    result.Properties.Add(property.Name.ToCamelCase(), property.PropertyType.ElasticPropertyType(setting, level + 1));
 
                 return result;
             }
