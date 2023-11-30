@@ -35,9 +35,12 @@ namespace TripleSix.Core.Hangfire
                 .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
                 .ToArray();
 
-            jobDisplayName ??= method.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? method.Name;
-            var assemblyName = typeof(T).Assembly.GetName().Name;
-            if (assemblyName.IsNotNullOrEmpty()) jobDisplayName = $"{assemblyName}.{jobDisplayName}";
+            jobDisplayName ??= method.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+            var assemblyName = typeof(T).Assembly.GetName().Name!;
+            if (jobDisplayName.IsNullOrEmpty())
+                jobDisplayName = $"{assemblyName}.{method.Name}";
+            else
+                jobDisplayName = $"[{assemblyName}] {jobDisplayName}";
 
             recurringJobManager.AddOrUpdate<IHangfireExternalService>(
                 recurringJobId, queue, service => service.Run(jobDisplayName, serviceTypeName, method.Name, arguments), cronExpression);
