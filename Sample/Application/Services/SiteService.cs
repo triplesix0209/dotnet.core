@@ -2,7 +2,7 @@
 {
     public interface ISiteService : IStrongService<Site>
     {
-        Task RunJob();
+        Task RunJob(string data);
     }
 
     public class SiteService : StrongService<Site>, ISiteService
@@ -14,9 +14,9 @@
 
         public IApplicationDbContext Db { get; set; }
 
-        public Task RunJob()
+        public async Task RunJob(string data)
         {
-            throw new NotImplementedException();
+            throw new Exception(data);
         }
     }
 }

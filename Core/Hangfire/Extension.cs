@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Hangfire;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Hangfire
 {
@@ -19,8 +20,13 @@ namespace TripleSix.Core.Hangfire
         /// <param name="cronExpression">Cron expression.</param>
         public static void AddOrUpdateExternal<T>(this IRecurringJobManager recurringJobManager, string recurringJobId, string queue, Expression<Func<T, Task>> methodCall, string cronExpression)
         {
+            var serviceTypeName = typeof(T).AssemblyQualifiedName!;
             var method = ((MethodCallExpression)methodCall.Body).Method;
-            recurringJobManager.AddOrUpdate<IHangfireExternalService>(recurringJobId, queue, service => service.Run(typeof(T).FullName!, method.Name), cronExpression);
+            var arguments = ((MethodCallExpression)methodCall.Body).Arguments
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .ToArray();
+
+            recurringJobManager.AddOrUpdate<IHangfireExternalService>(recurringJobId, queue, service => service.Run(serviceTypeName, method.Name, arguments), cronExpression);
         }
     }
 }

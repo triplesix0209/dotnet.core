@@ -8,9 +8,10 @@
         /// <summary>
         /// Chạy method.
         /// </summary>
-        /// <param name="serviceType">Type service.</param>
+        /// <param name="serviceTypeName">Type service.</param>
         /// <param name="methodName">Method name.</param>
+        /// <param name="arguments">Method arguments.</param>
         /// <returns>Task.</returns>
-        Task Run(string serviceTypeName, string methodName);
+        Task Run(string serviceTypeName, string methodName, params string?[]? arguments);
     }
 }
