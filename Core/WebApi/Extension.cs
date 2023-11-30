@@ -63,12 +63,11 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình JWT Access Token.
         /// </summary>
         /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setting"><see cref="IdentityAppsetting"/>.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration)
+        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IdentityAppsetting setting)
         {
-            var appsetting = new IdentityAppsetting(configuration);
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appsetting.SigningKey));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SigningKey));
             return authenticationBuilder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -76,10 +75,10 @@ namespace TripleSix.Core.WebApi
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = signingKey,
-                    ValidateIssuer = appsetting.ValidateIssuer,
-                    ValidIssuers = appsetting.Issuer,
-                    ValidateAudience = appsetting.ValidateAudience,
-                    ValidAudiences = appsetting.Audience,
+                    ValidateIssuer = setting.ValidateIssuer,
+                    ValidIssuers = setting.Issuer,
+                    ValidateAudience = setting.ValidateAudience,
+                    ValidAudiences = setting.Audience,
                 };
 
                 options.Events = new JwtBearerEvents
@@ -121,6 +120,17 @@ namespace TripleSix.Core.WebApi
                     },
                 };
             });
+        }
+
+        /// <summary>
+        /// Cấu hình JWT Access Token.
+        /// </summary>
+        /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration)
+        {
+            return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration));
         }
 
         /// <summary>
