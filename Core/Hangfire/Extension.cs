@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Hangfire
@@ -42,8 +43,17 @@ namespace TripleSix.Core.Hangfire
             else
                 jobDisplayName = $"[{assemblyName}] {jobDisplayName}";
 
-            recurringJobManager.AddOrUpdate<IHangfireExternalService>(
+            recurringJobManager.AddOrUpdate<HangfireExternalCaller>(
                 recurringJobId, queue, service => service.Run(jobDisplayName, serviceTypeName, method.Name, arguments), cronExpression);
+        }
+
+        /// <summary>
+        /// Khởi chạy hangfire.
+        /// </summary>
+        /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
+        public static void StartHangfire(this IServiceProvider serviceProvider)
+        {
+            serviceProvider.GetRequiredService<HangfireBaseStartup>().Setup();
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
-using DMCLSample.WebApi.Hangfire;
 using Hangfire;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
+using TripleSix.Core.Hangfire;
 using TripleSix.Core.Mappers;
 
 namespace Sample.WebApi
@@ -98,7 +98,7 @@ namespace Sample.WebApi
             }
 
             // setup hangfire
-            serviceProvider.GetRequiredService<HangfireStartup>().Setup();
+            serviceProvider.StartHangfire();
         }
     }
 }
