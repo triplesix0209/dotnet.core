@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
-using Elastic.Clients.Elasticsearch.QueryDsl;
 using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using TripleSix.Core.Helpers;
