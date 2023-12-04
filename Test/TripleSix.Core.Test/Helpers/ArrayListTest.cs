@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TripleSix.Core.Helpers;
+using TripleSix.CoreOld.Helpers;
 
-namespace TripleSix.Core.Test.Helpers
+namespace TripleSix.CoreOld.Test.Helpers
 {
     [TestClass]
     public class ArrayListTest

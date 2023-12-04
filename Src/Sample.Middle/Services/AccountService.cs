@@ -11,9 +11,9 @@ using Sample.Data.Entities;
 using Sample.Data.Repositories;
 using Sample.Middle.Abstracts;
 using Sample.Middle.Helpers;
-using TripleSix.Core.Dto;
-using TripleSix.Core.Helpers;
-using TripleSix.Core.Mappers;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.Helpers;
+using TripleSix.CoreOld.Mappers;
 
 namespace Sample.Middle.Services
 {

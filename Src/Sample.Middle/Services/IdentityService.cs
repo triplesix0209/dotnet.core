@@ -12,10 +12,10 @@ using Sample.Common.Dto;
 using Sample.Common.Enum;
 using Sample.Data.Entities;
 using Sample.Data.Repositories;
-using TripleSix.Core.Dto;
-using TripleSix.Core.Helpers;
-using TripleSix.Core.Mappers;
-using TripleSix.Core.Services;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.Helpers;
+using TripleSix.CoreOld.Mappers;
+using TripleSix.CoreOld.Services;
 
 namespace Sample.Middle.Services
 {

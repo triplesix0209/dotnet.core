@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sample.Middle.Services;
-using TripleSix.Core.AutoAdmin;
-using TripleSix.Core.Dto;
-using TripleSix.Core.Entities;
-using TripleSix.Core.Repositories;
+using TripleSix.CoreOld.AutoAdmin;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.Entities;
+using TripleSix.CoreOld.Repositories;
 
 namespace Sample.Middle.Abstracts
 {

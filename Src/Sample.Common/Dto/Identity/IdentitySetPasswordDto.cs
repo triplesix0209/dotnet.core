@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
-using TripleSix.Core.Attributes;
-using TripleSix.Core.Dto;
+using TripleSix.CoreOld.Attributes;
+using TripleSix.CoreOld.Dto;
 
 namespace Sample.Common.Dto
 {

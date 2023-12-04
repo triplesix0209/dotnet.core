@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sample.Data.Entities;
-using TripleSix.Core.AutoAdmin;
-using TripleSix.Core.DataContexts;
+using TripleSix.CoreOld.AutoAdmin;
+using TripleSix.CoreOld.DataContexts;
 
 namespace Sample.Data.DataContexts
 {

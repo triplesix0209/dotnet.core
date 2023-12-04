@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Sample.Common.Dto;
 using Sample.Data.DataContexts;
 using Sample.Data.Entities;
-using TripleSix.Core.Dto;
-using TripleSix.Core.Helpers;
-using TripleSix.Core.Repositories;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.Helpers;
+using TripleSix.CoreOld.Repositories;
 
 namespace Sample.Data.Repositories
 {

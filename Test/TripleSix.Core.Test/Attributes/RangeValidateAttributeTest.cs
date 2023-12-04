@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TripleSix.Core.Attributes;
+using TripleSix.CoreOld.Attributes;
 
-namespace TripleSix.Core.Test.Attributes
+namespace TripleSix.CoreOld.Test.Attributes
 {
     [TestClass]
     public class RangeValidateAttributeTest

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Microsoft.Extensions.Configuration;
-using TripleSix.Core.ModuleAutofac;
+using TripleSix.CoreOld.ModuleAutofac;
 
 namespace Sample.Quartz
 {

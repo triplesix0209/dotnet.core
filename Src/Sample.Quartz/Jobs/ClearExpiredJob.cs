@@ -2,7 +2,7 @@
 using Quartz;
 using Sample.Common;
 using Sample.Middle.Services;
-using TripleSix.Core.Quartz;
+using TripleSix.CoreOld.Quartz;
 
 namespace Sample.Quartz.Jobs
 {

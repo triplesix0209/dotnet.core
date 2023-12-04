@@ -2,7 +2,7 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Sample.Middle.Helpers;
-using TripleSix.Core.ModuleAutofac;
+using TripleSix.CoreOld.ModuleAutofac;
 
 namespace Sample.Middle
 {

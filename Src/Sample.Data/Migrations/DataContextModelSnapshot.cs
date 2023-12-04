@@ -1071,7 +1071,7 @@ namespace Sample.Data.Migrations
                     b.ToTable("test");
                 });
 
-            modelBuilder.Entity("TripleSix.Core.AutoAdmin.ObjectLogEntity", b =>
+            modelBuilder.Entity("TripleSix.CoreOld.AutoAdmin.ObjectLogEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

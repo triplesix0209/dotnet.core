@@ -1,7 +1,7 @@
 ﻿using Sample.Common.Dto;
 using Sample.WebApi.Abstracts;
 using Swashbuckle.AspNetCore.Annotations;
-using TripleSix.Core.AutoAdmin;
+using TripleSix.CoreOld.AutoAdmin;
 
 namespace Sample.WebApi.Controllers.Admins
 {

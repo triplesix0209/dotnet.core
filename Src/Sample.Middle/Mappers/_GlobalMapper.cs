@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TripleSix.Core.Dto;
-using TripleSix.Core.Helpers;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.Helpers;
 
 namespace Sample.Middle.Mappers
 {
-    public class GlobalMapper : TripleSix.Core.Mappers.GlobalMapper
+    public class GlobalMapper : TripleSix.CoreOld.Mappers.GlobalMapper
     {
         protected override IEnumerable<Type> SelectDtoType(string objectName)
         {

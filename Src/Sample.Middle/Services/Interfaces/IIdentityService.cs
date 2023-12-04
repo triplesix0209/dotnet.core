@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Sample.Common.Dto;
-using TripleSix.Core.Dto;
-using TripleSix.Core.Services;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.Services;
 
 namespace Sample.Middle.Services
 {

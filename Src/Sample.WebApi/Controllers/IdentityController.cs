@@ -8,11 +8,11 @@ using Sample.Data.Entities;
 using Sample.Middle.Services;
 using Sample.WebApi.Abstracts;
 using Swashbuckle.AspNetCore.Annotations;
-using TripleSix.Core.Attributes;
-using TripleSix.Core.Dto;
-using TripleSix.Core.WebApi.Controllers;
-using TripleSix.Core.WebApi.Filters;
-using TripleSix.Core.WebApi.Results;
+using TripleSix.CoreOld.Attributes;
+using TripleSix.CoreOld.Dto;
+using TripleSix.CoreOld.WebApi.Controllers;
+using TripleSix.CoreOld.WebApi.Filters;
+using TripleSix.CoreOld.WebApi.Results;
 
 namespace Sample.WebApi.Controllers.Commons
 {

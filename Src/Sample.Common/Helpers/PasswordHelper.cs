@@ -1,4 +1,4 @@
-﻿using TripleSix.Core.Helpers;
+﻿using TripleSix.CoreOld.Helpers;
 
 namespace Sample.Common.Helpers
 {

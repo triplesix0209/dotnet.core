@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using TripleSix.Core.Dto;
+using TripleSix.CoreOld.Dto;
 
 namespace Sample.Common
 {

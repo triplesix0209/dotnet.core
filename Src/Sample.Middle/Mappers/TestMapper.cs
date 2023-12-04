@@ -1,4 +1,4 @@
-﻿using TripleSix.Core.Mappers;
+﻿using TripleSix.CoreOld.Mappers;
 
 namespace Sample.Middle.Mappers
 {

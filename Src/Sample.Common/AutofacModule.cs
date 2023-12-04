@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using TripleSix.Core.ModuleAutofac;
+using TripleSix.CoreOld.ModuleAutofac;
 
 namespace Sample.Common
 {

@@ -1,5 +1,5 @@
 ﻿using Sample.Data.Entities;
-using TripleSix.Core.AutoAdmin;
+using TripleSix.CoreOld.AutoAdmin;
 
 namespace Sample.Middle.Services
 {

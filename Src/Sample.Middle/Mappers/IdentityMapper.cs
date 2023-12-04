@@ -2,7 +2,7 @@
 using Sample.Common.Dto;
 using Sample.Common.Enum;
 using Sample.Data.Entities;
-using TripleSix.Core.Mappers;
+using TripleSix.CoreOld.Mappers;
 
 namespace Sample.Middle.Mappers
 {

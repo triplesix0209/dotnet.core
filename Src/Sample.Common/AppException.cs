@@ -1,7 +1,7 @@
 ﻿#pragma warning disable SA1201 // ElementsMustAppearInTheCorrectOrder
 
-using TripleSix.Core.Attributes;
-using TripleSix.Core.Exceptions;
+using TripleSix.CoreOld.Attributes;
+using TripleSix.CoreOld.Exceptions;
 
 namespace Sample.Common
 {

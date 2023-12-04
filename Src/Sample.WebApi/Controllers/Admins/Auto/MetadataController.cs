@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TripleSix.Core.AutoAdmin;
+using TripleSix.CoreOld.AutoAdmin;
 
 namespace Sample.WebApi.Controllers.Admins.Auto
 {

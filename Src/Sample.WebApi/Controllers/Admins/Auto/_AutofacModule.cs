@@ -2,7 +2,7 @@
 
 using Autofac;
 using Microsoft.Extensions.Configuration;
-using TripleSix.Core.ModuleAutofac;
+using TripleSix.CoreOld.ModuleAutofac;
 
 namespace Sample.WebApi.Controllers.Admins.Auto
 {

@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Configuration;
-using TripleSix.Core.ModuleAutofac;
+using TripleSix.CoreOld.ModuleAutofac;
 
-namespace TripleSix.Core.Test
+namespace TripleSix.CoreOld.Test
 {
     public class AutofacModule : BaseModule
     {

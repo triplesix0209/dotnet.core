@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TripleSix.Core.Entities;
+using TripleSix.CoreOld.Entities;
 
 namespace Sample.Data.Entities
 {

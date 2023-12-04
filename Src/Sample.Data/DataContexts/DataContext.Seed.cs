@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using Sample.Common.Enum;
 using Sample.Common.Helpers;
 using Sample.Data.Entities;
-using TripleSix.Core.Helpers;
+using TripleSix.CoreOld.Helpers;
 
 namespace Sample.Data.DataContexts
 {

@@ -2,8 +2,8 @@
 using Sample.Common.Dto;
 using Sample.Common.Enum;
 using Sample.Data.Entities;
-using TripleSix.Core.AutoAdmin;
-using TripleSix.Core.Mappers;
+using TripleSix.CoreOld.AutoAdmin;
+using TripleSix.CoreOld.Mappers;
 
 namespace Sample.Middle.Mappers
 {
