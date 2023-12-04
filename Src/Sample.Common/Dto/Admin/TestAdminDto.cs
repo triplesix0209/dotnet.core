@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel;
-using TripleSix.CoreOld.Attributes;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.Dto;
 
 namespace Sample.Common.Dto
 {

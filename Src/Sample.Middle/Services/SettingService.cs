@@ -5,8 +5,6 @@ using Sample.Common.Dto;
 using Sample.Data.Entities;
 using Sample.Data.Repositories;
 using Sample.Middle.Abstracts;
-using TripleSix.CoreOld.Dto;
-using TripleSix.CoreOld.Helpers;
 
 namespace Sample.Middle.Services
 {

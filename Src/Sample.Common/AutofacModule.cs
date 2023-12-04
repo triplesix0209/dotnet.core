@@ -1,9 +1,4 @@
-﻿using Autofac;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using TripleSix.CoreOld.ModuleAutofac;
-
-namespace Sample.Common
+﻿namespace Sample.Common
 {
     public class AutofacModule : BaseModule
     {

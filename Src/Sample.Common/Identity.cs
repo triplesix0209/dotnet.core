@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using TripleSix.CoreOld.Dto;
-
-namespace Sample.Common
+﻿namespace Sample.Common
 {
     public class Identity : BaseIdentity
     {

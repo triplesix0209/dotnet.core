@@ -6,13 +6,6 @@ using Sample.Common;
 using Sample.Common.Dto;
 using Sample.Data.Entities;
 using Sample.Middle.Services;
-using Sample.WebApi.Abstracts;
-using Swashbuckle.AspNetCore.Annotations;
-using TripleSix.CoreOld.Attributes;
-using TripleSix.CoreOld.Dto;
-using TripleSix.CoreOld.WebApi.Controllers;
-using TripleSix.CoreOld.WebApi.Filters;
-using TripleSix.CoreOld.WebApi.Results;
 
 namespace Sample.WebApi.Controllers.Commons
 {

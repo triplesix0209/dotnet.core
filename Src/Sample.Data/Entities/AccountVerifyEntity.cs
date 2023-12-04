@@ -1,9 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sample.Common.Enum;
-using TripleSix.CoreOld.Entities;
 
 namespace Sample.Data.Entities
 {

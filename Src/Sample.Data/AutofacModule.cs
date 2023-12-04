@@ -1,8 +1,5 @@
 ﻿using System.Reflection;
-using Autofac;
-using Microsoft.Extensions.Configuration;
 using Sample.Data.DataContexts;
-using TripleSix.CoreOld.ModuleAutofac;
 
 namespace Sample.Data
 {

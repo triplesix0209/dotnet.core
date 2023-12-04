@@ -1,9 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using Sample.Common.Enum;
-using TripleSix.CoreOld.Attributes;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.Dto;
 
 namespace Sample.Common.Dto
 {

@@ -1,21 +1,12 @@
 ﻿using System.Reflection;
-using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Sample.Common;
 using Sample.Data.DataContexts;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using TripleSix.CoreOld.Helpers;
-using TripleSix.CoreOld.Quartz;
-using TripleSix.CoreOld.WebApi;
-using TripleSix.CoreOld.WebApi.Authentication;
-using TripleSix.CoreOld.WebApi.Swagger;
 
 namespace Sample.WebApi
 {
@@ -29,7 +20,7 @@ namespace Sample.WebApi
         public override void ConfigureContainer(ContainerBuilder builder)
         {
             base.ConfigureContainer(builder);
-            builder.RegisterModule(new TripleSix.CoreOld.AutoAdmin.AutofacModule(Configuration));
+            builder.RegisterModule(new TripleSix.Core.AutoAdmin.AutofacModule(Configuration));
             builder.RegisterModule(new Common.AutofacModule(Configuration));
             builder.RegisterModule(new Data.AutofacModule(Configuration));
             builder.RegisterModule(new Middle.AutofacModule(Configuration));
@@ -72,7 +63,7 @@ namespace Sample.WebApi
             BaseConfigure(app, env);
             dataContext.Database.Migrate();
             AutofacContainer.Resolve<JobScheduler>().Start();
-            TripleSix.CoreOld.AutoAdmin.BaseAdminMetadataController.Validate();
+            TripleSix.Core.AutoAdmin.BaseAdminMetadataController.Validate();
 
             app.UseRouting();
             app.UseCors();

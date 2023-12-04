@@ -2,10 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Common;
 using Sample.Common.Enum;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.Dto;
-using TripleSix.CoreOld.Entities;
-using TripleSix.CoreOld.WebApi.Filters;
 
 namespace Sample.WebApi.Controllers.Admins.Auto
 {

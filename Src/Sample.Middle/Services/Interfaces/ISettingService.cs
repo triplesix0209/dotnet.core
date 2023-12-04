@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Sample.Data.Entities;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.Dto;
 
 namespace Sample.Middle.Services
 {

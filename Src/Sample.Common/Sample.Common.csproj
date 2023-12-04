@@ -12,8 +12,4 @@
 		<Content Include="Config\**" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\TripleSix.CoreOld\TripleSix.CoreOld.csproj" />
-	</ItemGroup>
-
 </Project>

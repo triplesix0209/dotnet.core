@@ -1,6 +1,4 @@
-﻿using TripleSix.CoreOld.Mappers;
-
-namespace Sample.Middle.Mappers
+﻿namespace Sample.Middle.Mappers
 {
     public class TestMapper : BaseMapper
     {

@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using Sample.Common.Enum;
 using Sample.Common.Helpers;
 using Sample.Data.Entities;
-using TripleSix.CoreOld.Helpers;
 
 namespace Sample.Data.DataContexts
 {

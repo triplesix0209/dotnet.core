@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using Sample.Data.DataContexts;
 
 namespace Sample.Data

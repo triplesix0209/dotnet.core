@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Sample.Common;
 using Sample.Common.Dto;
 using Sample.Common.Enum;
@@ -11,9 +10,6 @@ using Sample.Data.Entities;
 using Sample.Data.Repositories;
 using Sample.Middle.Abstracts;
 using Sample.Middle.Helpers;
-using TripleSix.CoreOld.Dto;
-using TripleSix.CoreOld.Helpers;
-using TripleSix.CoreOld.Mappers;
 
 namespace Sample.Middle.Services
 {

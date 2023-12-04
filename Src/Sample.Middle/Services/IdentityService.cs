@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Sample.Common;
 using Sample.Common.Dto;
 using Sample.Common.Enum;
 using Sample.Data.Entities;
 using Sample.Data.Repositories;
-using TripleSix.CoreOld.Dto;
-using TripleSix.CoreOld.Helpers;
-using TripleSix.CoreOld.Mappers;
-using TripleSix.CoreOld.Services;
 
 namespace Sample.Middle.Services
 {

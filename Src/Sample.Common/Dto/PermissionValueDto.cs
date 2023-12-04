@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using Sample.Common.Enum;
-using TripleSix.CoreOld.Dto;
 
 namespace Sample.Common.Dto
 {

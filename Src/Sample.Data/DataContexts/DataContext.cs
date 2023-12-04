@@ -1,9 +1,5 @@
 ﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Sample.Data.Entities;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.DataContexts;
 
 namespace Sample.Data.DataContexts
 {

@@ -4,11 +4,6 @@ using Sample.Common;
 using Sample.Common.Dto;
 using Sample.Middle.Services;
 using Sample.WebApi.Abstracts;
-using Swashbuckle.AspNetCore.Annotations;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.Dto;
-using TripleSix.CoreOld.WebApi.Filters;
-using TripleSix.CoreOld.WebApi.Results;
 
 namespace Sample.WebApi.Controllers.Admins
 {

@@ -1,6 +1,4 @@
-﻿using TripleSix.CoreOld.Helpers;
-
-namespace Sample.Common.Helpers
+﻿namespace Sample.Common.Helpers
 {
     public static class PasswordHelper
     {

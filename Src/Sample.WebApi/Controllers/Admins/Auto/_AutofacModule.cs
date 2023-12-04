@@ -1,8 +1,6 @@
 ﻿#pragma warning disable SA1649 // File name should match first type name
 
-using Autofac;
 using Microsoft.Extensions.Configuration;
-using TripleSix.CoreOld.ModuleAutofac;
 
 namespace Sample.WebApi.Controllers.Admins.Auto
 {

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Common;
-using TripleSix.CoreOld.AutoAdmin;
-using TripleSix.CoreOld.Dto;
 
 namespace Sample.WebApi.Abstracts
 {
