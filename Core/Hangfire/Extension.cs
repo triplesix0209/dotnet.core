@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using TripleSix.Core.Helpers;
@@ -12,6 +13,103 @@ namespace TripleSix.Core.Hangfire
     /// </summary>
     public static class Extension
     {
+        /// <summary>
+        /// Đăng ký fire-and-forget job với server hangfire.
+        /// </summary>
+        /// <typeparam name="T">Type dùng để chạy method.</typeparam>
+        /// <param name="backgroundJobClient"><see cref="IBackgroundJobClient"/>.</param>
+        /// <param name="queue">Job queue.</param>
+        /// <param name="methodCall">Method call.</param>
+        /// <param name="jobDisplayName">Tên hiển thị của job.</param>
+        public static void EnqueueExternal<T>(
+            this IBackgroundJobClient backgroundJobClient,
+            string queue,
+            Expression<Func<T, Task>> methodCall,
+            string? jobDisplayName = null)
+        {
+            var serviceTypeName = typeof(T).AssemblyQualifiedName!;
+            var method = ((MethodCallExpression)methodCall.Body).Method;
+            var arguments = ((MethodCallExpression)methodCall.Body).Arguments
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .ToArray();
+
+            jobDisplayName ??= method.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+            var assemblyName = typeof(T).Assembly.GetName().Name!;
+            if (jobDisplayName.IsNullOrEmpty())
+                jobDisplayName = $"{assemblyName}.{method.Name}";
+            else
+                jobDisplayName = $"[{assemblyName}] {jobDisplayName}";
+
+            backgroundJobClient.Enqueue<HangfireExternalCaller>(
+                queue, service => service.Run(jobDisplayName, serviceTypeName, method.Name, arguments));
+        }
+
+        /// <summary>
+        /// Đăng ký delay job với server hangfire.
+        /// </summary>
+        /// <typeparam name="T">Type dùng để chạy method.</typeparam>
+        /// <param name="backgroundJobClient"><see cref="IBackgroundJobClient"/>.</param>
+        /// <param name="queue">Job queue.</param>
+        /// <param name="methodCall">Method call.</param>
+        /// <param name="delay">Thời gian chờ.</param>
+        /// <param name="jobDisplayName">Tên hiển thị của job.</param>
+        public static void ScheduleExternal<T>(
+            this IBackgroundJobClient backgroundJobClient,
+            string queue,
+            Expression<Func<T, Task>> methodCall,
+            TimeSpan delay,
+            string? jobDisplayName = null)
+        {
+            var serviceTypeName = typeof(T).AssemblyQualifiedName!;
+            var method = ((MethodCallExpression)methodCall.Body).Method;
+            var arguments = ((MethodCallExpression)methodCall.Body).Arguments
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .ToArray();
+
+            jobDisplayName ??= method.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+            var assemblyName = typeof(T).Assembly.GetName().Name!;
+            if (jobDisplayName.IsNullOrEmpty())
+                jobDisplayName = $"{assemblyName}.{method.Name}";
+            else
+                jobDisplayName = $"[{assemblyName}] {jobDisplayName}";
+
+            backgroundJobClient.Schedule<HangfireExternalCaller>(
+                queue, service => service.Run(jobDisplayName, serviceTypeName, method.Name, arguments), delay);
+        }
+
+        /// <summary>
+        /// Đăng ký continuation job với server hangfire.
+        /// </summary>
+        /// <typeparam name="T">Type dùng để chạy method.</typeparam>
+        /// <param name="backgroundJobClient"><see cref="IBackgroundJobClient"/>.</param>
+        /// <param name="parentId">Id job cha, sẽ chạy job đăng ký nếu job cha chạy xong.</param>
+        /// <param name="queue">Job queue.</param>
+        /// <param name="methodCall">Method call.</param>
+        /// <param name="jobDisplayName">Tên hiển thị của job.</param>
+        public static void ContinueJobWithExternal<T>(
+            this IBackgroundJobClient backgroundJobClient,
+            string parentId,
+            string queue,
+            Expression<Func<T, Task>> methodCall,
+            string? jobDisplayName = null)
+        {
+            var serviceTypeName = typeof(T).AssemblyQualifiedName!;
+            var method = ((MethodCallExpression)methodCall.Body).Method;
+            var arguments = ((MethodCallExpression)methodCall.Body).Arguments
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .ToArray();
+
+            jobDisplayName ??= method.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
+            var assemblyName = typeof(T).Assembly.GetName().Name!;
+            if (jobDisplayName.IsNullOrEmpty())
+                jobDisplayName = $"{assemblyName}.{method.Name}";
+            else
+                jobDisplayName = $"[{assemblyName}] {jobDisplayName}";
+
+            backgroundJobClient.ContinueJobWith<HangfireExternalCaller>(
+                parentId, queue, service => service.Run(jobDisplayName, serviceTypeName, method.Name, arguments));
+        }
+
         /// <summary>
         /// Đăng ký recurring job với server hangfire.
         /// </summary>
