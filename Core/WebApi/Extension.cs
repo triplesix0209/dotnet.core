@@ -205,6 +205,7 @@ namespace TripleSix.Core.WebApi
             return services.AddHangfireServer(options =>
             {
                 options.Queues = setting.Queues;
+                if (setting.WorkerCount.HasValue) options.WorkerCount = setting.WorkerCount.Value;
             });
         }
 
