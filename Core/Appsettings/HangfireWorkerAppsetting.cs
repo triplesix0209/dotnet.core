@@ -19,6 +19,7 @@ namespace TripleSix.Core.Appsettings
 
             if (ConnectionString.IsNullOrEmpty()) throw new ArgumentNullException(nameof(ConnectionString));
             if (Queues.IsNullOrEmpty()) throw new ArgumentNullException(nameof(Queues));
+            if (WorkerCount <= 0) throw new ArgumentOutOfRangeException(nameof(WorkerCount));
         }
 
         /// <summary>
@@ -35,5 +36,10 @@ namespace TripleSix.Core.Appsettings
         /// Danh sách queue listen.
         /// </summary>
         public string[]? Queues { get; set; }
+
+        /// <summary>
+        /// Số lượng worker.
+        /// </summary>
+        public int? WorkerCount { get; set; }
     }
 }
