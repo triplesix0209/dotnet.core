@@ -171,6 +171,18 @@ namespace TripleSix.Core.WebApi
                     else requireScopes.Add($"[{scopes.ToString(", ")}]");
                 }
 
+                if (controllerDescriptor.ControllerTypeInfo.IsAssignableToGenericType(typeof(IControllerEndpoint<,>)))
+                {
+                    var genericArguments = controllerDescriptor.ControllerTypeInfo.GetGenericArguments(typeof(IControllerEndpoint<,>));
+                    var controllerType = genericArguments[0];
+                    if (controllerType.GetCustomAttribute(genericArguments[1]) is IControllerEndpointAttribute endpointAttribute
+                        && endpointAttribute.RequiredAnyScopes.IsNotNullOrEmpty())
+                    {
+                        if (endpointAttribute.RequiredAnyScopes.Length == 1) requireScopes.Add(endpointAttribute.RequiredAnyScopes.First());
+                        else requireScopes.Add($"[{endpointAttribute.RequiredAnyScopes.ToString(", ")}]");
+                    }
+                }
+
                 operation.Security.Add(new OpenApiSecurityRequirement()
                 {
                     {

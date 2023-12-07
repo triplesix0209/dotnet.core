@@ -232,7 +232,7 @@ namespace TripleSix.Core.AutofacModules
         {
             builder.RegisterAssemblyOpenGenericTypes(assembly)
                 .Where(x => !x.IsAbstract)
-                .Where(x => x.IsAssignableToGenericType(typeof(IControllerEndpoint<>)))
+                .Where(x => x.IsAssignableToGenericType(typeof(IControllerEndpoint<,>)))
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()

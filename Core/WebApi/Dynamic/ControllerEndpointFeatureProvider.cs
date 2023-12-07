@@ -36,7 +36,7 @@ namespace TripleSix.Core.WebApi
                 foreach (var endpointAttributeType in endpointAttributeTypes)
                 {
                     if (controllerType.GetCustomAttribute(endpointAttributeType) is IControllerEndpointAttribute attr)
-                        feature.Controllers.Add(attr.ToEndpointTypeInfo());
+                        feature.Controllers.Add(attr.EndpointType.GetTypeInfo());
                 }
             }
         }

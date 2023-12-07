@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
@@ -11,11 +12,20 @@ namespace TripleSix.Core.WebApi
         /// <inheritdoc/>
         public void Apply(ControllerModel controller)
         {
-            if (!controller.ControllerType.IsAssignableToGenericType(typeof(IControllerEndpoint<>))) return;
+            if (!controller.ControllerType.IsAssignableToGenericType(typeof(IControllerEndpoint<,>))) return;
+            var genericArguments = controller.ControllerType.GetGenericArguments(typeof(IControllerEndpoint<,>));
+            var controllerType = genericArguments[0];
 
-            var controllerName = controller.ControllerType.GetGenericArguments(typeof(IControllerEndpoint<>))[0].Name;
+            var controllerName = controllerType.Name;
             if (controllerName.ToLower().EndsWith("controller")) controllerName = controllerName[..^10];
             controller.ControllerName = controllerName;
+
+            if (controllerType.GetCustomAttribute(genericArguments[1]) is IControllerEndpointAttribute endpointAttribute
+                && endpointAttribute.RequiredAnyScopes.IsNotNullOrEmpty())
+            {
+                foreach (var action in controller.Actions)
+                    action.Filters.Add(new RequireAnyScopeImplement(endpointAttribute.RequiredAnyScopes));
+            }
         }
     }
 }

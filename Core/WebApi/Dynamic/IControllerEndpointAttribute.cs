@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace TripleSix.Core.WebApi
+﻿namespace TripleSix.Core.WebApi
 {
     /// <summary>
     /// Controller endpoint attribute.
@@ -8,9 +6,13 @@ namespace TripleSix.Core.WebApi
     public interface IControllerEndpointAttribute
     {
         /// <summary>
-        /// Chuyển hóa sang TypeInfo.
+        /// Endpoint type.
         /// </summary>
-        /// <returns><see cref="TypeInfo"/>.</returns>
-        public abstract TypeInfo ToEndpointTypeInfo();
+        Type EndpointType { get; }
+
+        /// <summary>
+        /// Danh sách scope cần để truy cập (chỉ cần có 1).
+        /// </summary>
+        string[] RequiredAnyScopes { get; set; }
     }
 }

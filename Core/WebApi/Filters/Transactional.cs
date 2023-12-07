@@ -16,28 +16,28 @@ namespace TripleSix.Core.WebApi
             : base(typeof(TransactionalImplement))
         {
         }
+    }
 
-        private class TransactionalImplement : ActionFilterAttribute
+    internal class TransactionalImplement : ActionFilterAttribute
+    {
+        private readonly IDbDataContext _dbContext;
+
+        public TransactionalImplement(IDbDataContext dbContext)
         {
-            private readonly IDbDataContext _dbContext;
+            _dbContext = dbContext;
+        }
 
-            public TransactionalImplement(IDbDataContext dbContext)
+        public override async Task OnActionExecutionAsync(
+            ActionExecutingContext context,
+            ActionExecutionDelegate next)
+        {
+            await using var transaction = await _dbContext.BeginTransactionAsync();
+            var result = await next();
+
+            if (transaction.TransactionId == _dbContext.CurrentTransaction?.TransactionId)
             {
-                _dbContext = dbContext;
-            }
-
-            public override async Task OnActionExecutionAsync(
-                ActionExecutingContext context,
-                ActionExecutionDelegate next)
-            {
-                await using var transaction = await _dbContext.BeginTransactionAsync();
-                var result = await next();
-
-                if (transaction.TransactionId == _dbContext.CurrentTransaction?.TransactionId)
-                {
-                    if (result.Exception == null) await transaction.CommitAsync();
-                    else await transaction.RollbackAsync();
-                }
+                if (result.Exception == null) await transaction.CommitAsync();
+                else await transaction.RollbackAsync();
             }
         }
     }
