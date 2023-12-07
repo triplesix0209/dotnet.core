@@ -20,26 +20,26 @@ namespace TripleSix.Core.WebApi
         {
             Arguments = new object[] { acceptedScope };
         }
+    }
 
-        private class RequireScopeImplement : IAuthorizationFilter
+    internal class RequireScopeImplement : IAuthorizationFilter
+    {
+        private readonly string _acceptedScope;
+
+        public RequireScopeImplement(string acceptedScope)
         {
-            private readonly string _acceptedScope;
+            if (acceptedScope.IsNullOrEmpty()) throw new ArgumentException("must not be null or white space only", nameof(acceptedScope));
 
-            public RequireScopeImplement(string acceptedScope)
+            _acceptedScope = acceptedScope;
+        }
+
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            var scopeValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Scope).ToCamelCase());
+            if (scopeValue == null || !scopeValue.Split(' ').Any(x => x == _acceptedScope))
             {
-                if (acceptedScope.IsNullOrEmpty()) throw new ArgumentException("must not be null or white space only", nameof(acceptedScope));
-
-                _acceptedScope = acceptedScope;
-            }
-
-            public void OnAuthorization(AuthorizationFilterContext context)
-            {
-                var scopeValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Scope).ToCamelCase());
-                if (scopeValue == null || !scopeValue.Split(' ').Any(x => x == _acceptedScope))
-                {
-                    context.Result = new ForbidResult();
-                    return;
-                }
+                context.Result = new ForbidResult();
+                return;
             }
         }
     }

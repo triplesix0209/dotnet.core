@@ -1,7 +1,7 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
     public class AdminReadEndpoint<TController, TEntity, TItem, TDetail, TFilter> : AdminController,
-        IControllerEndpoint<TController>
+        IControllerEndpoint<TController, AdminReadEndpointAttribute<TController, TEntity, TItem, TDetail, TFilter>>
         where TController : BaseController
         where TEntity : class, IStrongEntity
         where TItem : class, IDto
@@ -27,19 +27,14 @@
         }
     }
 
-    public class AdminReadEndpointAttribute<TController, TEntity, TItem, TDetail, TFilter> : BaseControllerEndpointAttribute<TController>
+    public class AdminReadEndpointAttribute<TController, TEntity, TItem, TDetail, TFilter>
+        : BaseControllerEndpointAttribute
         where TController : BaseController
         where TEntity : class, IStrongEntity
         where TItem : class, IDto
         where TDetail : class, IDto
         where TFilter : class, IEntityQueryableDto<TEntity>, IPagingInput
     {
-        /// <inheritdoc/>
-        public override TypeInfo ToEndpointTypeInfo()
-        {
-            return typeof(AdminReadEndpoint<,,,,>)
-                .MakeGenericType(typeof(TController), typeof(TEntity), typeof(TItem), typeof(TDetail), typeof(TFilter))
-                .GetTypeInfo();
-        }
+        public override Type EndpointType => typeof(AdminReadEndpoint<TController, TEntity, TItem, TDetail, TFilter>);
     }
 }

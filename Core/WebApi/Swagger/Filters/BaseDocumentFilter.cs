@@ -33,8 +33,8 @@ namespace TripleSix.Core.WebApi
 
                     var swaggerTagGroupAttr = baseControllerType.GetCustomAttribute<SwaggerTagGroupAttribute>();
                     var swaggerTagAttr = controllerType.GetCustomAttribute<SwaggerTagAttribute>();
-                    if (swaggerTagAttr is null && controllerType.IsAssignableToGenericType(typeof(IControllerEndpoint<>)))
-                        swaggerTagAttr = controllerType.GetGenericArguments(typeof(IControllerEndpoint<>))[0].GetCustomAttribute<SwaggerTagAttribute>();
+                    if (swaggerTagAttr is null && controllerType.IsAssignableToGenericType(typeof(IControllerEndpoint<,>)))
+                        swaggerTagAttr = controllerType.GetGenericArguments(typeof(IControllerEndpoint<,>))[0].GetCustomAttribute<SwaggerTagAttribute>();
 
                     foreach (var tag in operation.Tags)
                     {

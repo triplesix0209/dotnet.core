@@ -1,7 +1,7 @@
 ﻿namespace Sample.WebApi.Controllers.Admins
 {
     public class AdminSoftDeleteEndpoint<TController, TEntity> : AdminController,
-        IControllerEndpoint<TController>
+        IControllerEndpoint<TController, AdminSoftDeleteEndpointAttribute<TController, TEntity>>
         where TController : BaseController
         where TEntity : class, IStrongEntity
     {
@@ -26,16 +26,11 @@
         }
     }
 
-    public class AdminSoftDeleteEndpointAttribute<TController, TEntity> : BaseControllerEndpointAttribute<TController>
+    public class AdminSoftDeleteEndpointAttribute<TController, TEntity>
+        : BaseControllerEndpointAttribute
         where TController : BaseController
         where TEntity : class, IStrongEntity
     {
-        /// <inheritdoc/>
-        public override TypeInfo ToEndpointTypeInfo()
-        {
-            return typeof(AdminSoftDeleteEndpoint<,>)
-                .MakeGenericType(typeof(TController), typeof(TEntity))
-                .GetTypeInfo();
-        }
+        public override Type EndpointType => typeof(AdminSoftDeleteEndpoint<TController, TEntity>);
     }
 }

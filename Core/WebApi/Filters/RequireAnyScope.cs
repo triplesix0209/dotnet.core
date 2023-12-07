@@ -20,37 +20,37 @@ namespace TripleSix.Core.WebApi
         {
             Arguments = new object[] { acceptedScopes };
         }
+    }
 
-        private class RequireAnyScopeImplement : IAuthorizationFilter
+    internal class RequireAnyScopeImplement : IAuthorizationFilter
+    {
+        private readonly string[] _acceptedScopes;
+
+        public RequireAnyScopeImplement(string[] acceptedScopes)
         {
-            private readonly string[] _acceptedScopes;
+            if (acceptedScopes.IsNullOrEmpty()) throw new ArgumentException("must have at least 1 scope", nameof(acceptedScopes));
+            if (acceptedScopes.Any(x => x.IsNullOrEmpty())) throw new ArgumentException("scope must not be null or white space only", nameof(acceptedScopes));
 
-            public RequireAnyScopeImplement(string[] acceptedScopes)
+            _acceptedScopes = acceptedScopes;
+        }
+
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            var scopeValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Scope).ToCamelCase());
+            if (scopeValue == null)
             {
-                if (acceptedScopes.IsNullOrEmpty()) throw new ArgumentException("must have at least 1 scope", nameof(acceptedScopes));
-                if (acceptedScopes.Any(x => x.IsNullOrEmpty())) throw new ArgumentException("scope must not be null or white space only", nameof(acceptedScopes));
-
-                _acceptedScopes = acceptedScopes;
-            }
-
-            public void OnAuthorization(AuthorizationFilterContext context)
-            {
-                var scopeValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Scope).ToCamelCase());
-                if (scopeValue == null)
-                {
-                    context.Result = new ForbidResult();
-                    return;
-                }
-
-                var userScopes = scopeValue.Split(' ');
-                foreach (var acceptedScope in _acceptedScopes)
-                {
-                    if (userScopes.Contains(acceptedScope))
-                        return;
-                }
-
                 context.Result = new ForbidResult();
+                return;
             }
+
+            var userScopes = scopeValue.Split(' ');
+            foreach (var acceptedScope in _acceptedScopes)
+            {
+                if (userScopes.Contains(acceptedScope))
+                    return;
+            }
+
+            context.Result = new ForbidResult();
         }
     }
 }
