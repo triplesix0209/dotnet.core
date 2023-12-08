@@ -1,9 +1,13 @@
-﻿namespace Sample.Application.Services
+﻿using Hangfire;
+using TripleSix.Core.Hangfire;
+
+namespace Sample.Application.Services
 {
     public interface ISiteService : IStrongService<Site>
     {
         [DisplayName("Hello")]
-        Task RunJob(string text, int number, DateTime date);
+        [Queue("sample")]
+        Task RunJob(JobContext? jobContext);
     }
 
     public class SiteService : StrongService<Site>, ISiteService
@@ -15,7 +19,7 @@
 
         public IApplicationDbContext Db { get; set; }
 
-        public Task RunJob(string text, int number, DateTime date)
+        public Task RunJob(JobContext? jobContext)
         {
             return Task.CompletedTask;
         }

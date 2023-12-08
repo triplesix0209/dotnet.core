@@ -1,4 +1,6 @@
-﻿using TripleSix.Core.Helpers;
+﻿using Hangfire;
+using Hangfire.Server;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Hangfire
 {
@@ -15,12 +17,14 @@ namespace TripleSix.Core.Hangfire
         /// <summary>
         /// Chạy method.
         /// </summary>
+        /// <param name="performContext"><see cref="PerformContext"/>.</param>
+        /// <param name="cancellationToken"><see cref="IJobCancellationToken"/>.</param>
         /// <param name="jobDisplayName">Tên hiển thị của job.</param>
         /// <param name="serviceTypeName">Type service.</param>
         /// <param name="methodName">Method name.</param>
         /// <param name="arguments">Method arguments.</param>
         /// <returns>Task.</returns>
-        public async Task Run(string jobDisplayName, string serviceTypeName, string methodName, params string?[]? arguments)
+        public async Task Run(PerformContext performContext, IJobCancellationToken cancellationToken, string jobDisplayName, string serviceTypeName, string methodName, params string?[]? arguments)
         {
             var serviceType = Type.GetType(serviceTypeName)
                 ?? throw new Exception("Cannot find target service");
@@ -30,14 +34,16 @@ namespace TripleSix.Core.Hangfire
                 ?? throw new Exception("Cannot find target method");
 
             var parameterTypes = method.GetParameters();
-            var parameters = arguments?
-                .Select((value, index) =>
-                {
-                    if (value == null) return null;
-                    return value.ToObject(parameterTypes[index].ParameterType);
-                }).ToArray();
+            var parameters = arguments?.Select((value, index) =>
+            {
+                if (parameterTypes[index].ParameterType == typeof(JobContext))
+                    return new JobContext { PerformContext = performContext, CancellationToken = cancellationToken };
 
-            var result = method.Invoke(service, parameters) as Task;
+                if (value == null) return null;
+                return value.ToObject(parameterTypes[index].ParameterType);
+            });
+
+            var result = method.Invoke(service, parameters!.ToArray()) as Task;
             await result!.WaitAsync(CancellationToken.None);
         }
     }
