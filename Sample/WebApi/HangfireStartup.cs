@@ -7,7 +7,8 @@ namespace Sample.WebApi
     {
         public override void Setup()
         {
-            RecurringJob.AddOrUpdateExternal<ISiteService>("Sample", "sample", service => service.RunJob("Test", 1, DateTime.UtcNow), "* * * * *");
+            BackgroundJob.EnqueueExternal<ISiteService>(service => service.RunJob(null));
+            //RecurringJob.AddOrUpdateExternal<ISiteService>("Sample", service => service.RunJob(), "* * * * *");
         }
     }
 }
