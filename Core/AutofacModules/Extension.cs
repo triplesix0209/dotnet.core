@@ -45,7 +45,8 @@ namespace TripleSix.Core.AutofacModules
                     (p, c) => p.ParameterType == typeof(HttpContext),
                     (p, c) => c.Resolve<IHttpContextAccessor>().HttpContext!))
                 .InstancePerLifetimeScope()
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces()
+                .AsSelf();
         }
 
         /// <summary>
