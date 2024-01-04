@@ -6,6 +6,7 @@ global using Sample.Domain.Entities;
 global using Sample.WebApi.Abstracts;
 global using Swashbuckle.AspNetCore.Annotations;
 global using TripleSix.Core.Entities;
+global using TripleSix.Core.Hangfire;
 global using TripleSix.Core.Services;
 global using TripleSix.Core.Types;
 global using TripleSix.Core.Validation;

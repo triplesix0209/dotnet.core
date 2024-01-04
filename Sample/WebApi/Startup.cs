@@ -2,9 +2,10 @@
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Hangfire;
+using Hangfire.Dashboard.Management.v2;
+using Sample.WebApi.Hangfire;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
-using TripleSix.Core.Hangfire;
 using TripleSix.Core.Mappers;
 
 namespace Sample.WebApi
@@ -61,7 +62,11 @@ namespace Sample.WebApi
             services.AddSwagger(configuration);
             services.AddMvcServices(WebApiAssembly);
             services.AddAuthentication().AddJwtAccessToken(configuration);
-            services.AddHangfireWorker(configuration, (options, setting) => options.UseSqlServerStorage(setting.ConnectionString));
+            services.AddHangfireWorker(configuration, (options, setting) =>
+            {
+                options.UseSqlServerStorage(setting.ConnectionString);
+                options.UseManagementPages(WebApiAssembly);
+            });
         }
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
@@ -78,6 +83,7 @@ namespace Sample.WebApi
                 return next(context);
             });
             app.MapControllers();
+            app.UseHangfireDashboard(configuration);
         }
 
         private static async Task OnStartup(this WebApplication app, IConfiguration configuration)
