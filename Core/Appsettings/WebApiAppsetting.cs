@@ -20,5 +20,10 @@ namespace TripleSix.Core.Appsettings
         /// Hiển thị stack trace.
         /// </summary>
         public bool ShowStackTrace { get; set; } = false;
+
+        /// <summary>
+        /// Danh sách domain cho phép request.
+        /// </summary>
+        public string[] AllowedOrigins { get; set; } = new[] { "*" };
     }
 }

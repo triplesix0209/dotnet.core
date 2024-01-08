@@ -38,6 +38,7 @@ namespace TripleSix.Core.WebApi
             Action<ApplicationPartManager>? configureApplicationPartManager = null)
         {
             return services
+                .AddCors()
                 .AddMvc(options =>
                 {
                     options.AllowEmptyInputInBodyModelBinding = true;
@@ -293,6 +294,44 @@ namespace TripleSix.Core.WebApi
         public static IApplicationBuilder Use404JsonError(this IApplicationBuilder app, string errorCode = "endpoint_not_found", string errorMessage = "Request endpopint not found")
         {
             return UseStatusCodeJsonError(app, 404, errorCode, errorMessage);
+        }
+
+        /// <summary>
+        /// Sử dụng MVC Controller.
+        /// </summary>
+        /// <param name="app"><see cref="WebApplication"/>.</param>
+        /// <param name="setting"><see cref="WebApiAppsetting"/>.</param>
+        /// <returns><see cref="WebApplication"/>.</returns>
+        public static WebApplication UseMvcService(this WebApplication app, WebApiAppsetting setting)
+        {
+            app.UseCors(builder =>
+            {
+                if (setting.AllowedOrigins.Contains("^")) builder.AllowAnyOrigin();
+                else builder.WithOrigins(setting.AllowedOrigins);
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
+
+            app.Use(next => context =>
+            {
+                context.Request.EnableBuffering();
+                return next(context);
+            });
+
+            app.MapControllers();
+
+            return app;
+        }
+
+        /// <summary>
+        /// Sử dụng MVC Controller.
+        /// </summary>
+        /// <param name="app"><see cref="WebApplication"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns><see cref="WebApplication"/>.</returns>
+        public static WebApplication UseMvcService(this WebApplication app, IConfiguration configuration)
+        {
+            return app.UseMvcService(new WebApiAppsetting(configuration));
         }
     }
 }
