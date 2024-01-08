@@ -76,13 +76,8 @@ namespace Sample.WebApi
             app.UseAuthorization();
             app.Use404JsonError();
             app.UseReDocUI(configuration);
+            app.UseMvcService(configuration);
             app.UseMiddleware<ExceptionMiddleware>();
-            app.Use(next => context =>
-            {
-                context.Request.EnableBuffering();
-                return next(context);
-            });
-            app.MapControllers();
             app.UseHangfireDashboard(configuration);
         }
 
