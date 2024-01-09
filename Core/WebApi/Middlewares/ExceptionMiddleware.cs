@@ -93,6 +93,10 @@ namespace TripleSix.Core.WebApi
                 error.ToJson() :
                 error.ToJson(nameof(ErrorResult.StackTrace));
 
+            if (_webApiAppsetting.AllowedOrigins.Contains("*"))
+                httpContext.Response.Headers.AccessControlAllowOrigin = "*";
+            else if (httpContext.Request.Headers.Origin.Any() && _webApiAppsetting.AllowedOrigins.Contains(httpContext.Request.Headers.Origin.First()))
+                httpContext.Response.Headers.AccessControlAllowOrigin = httpContext.Request.Headers.Origin.First();
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = error.HttpStatusCode;
             await httpContext.Response.WriteAsync(json!);

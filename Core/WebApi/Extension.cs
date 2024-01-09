@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Text;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
@@ -65,11 +66,15 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình JWT Access Token.
         /// </summary>
         /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
-        /// <param name="setting"><see cref="IdentityAppsetting"/>.</param>
+        /// <param name="identitySetting"><see cref="IdentityAppsetting"/>.</param>
+        /// <param name="webApiAppsetting"><see cref="WebApiAppsetting"/>.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IdentityAppsetting setting)
+        public static AuthenticationBuilder AddJwtAccessToken(
+            this AuthenticationBuilder authenticationBuilder,
+            IdentityAppsetting identitySetting,
+            WebApiAppsetting webApiAppsetting)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SigningKey));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySetting.SigningKey));
             return authenticationBuilder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -77,10 +82,10 @@ namespace TripleSix.Core.WebApi
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = signingKey,
-                    ValidateIssuer = setting.ValidateIssuer,
-                    ValidIssuers = setting.Issuer,
-                    ValidateAudience = setting.ValidateAudience,
-                    ValidAudiences = setting.Audience,
+                    ValidateIssuer = identitySetting.ValidateIssuer,
+                    ValidIssuers = identitySetting.Issuer,
+                    ValidateAudience = identitySetting.ValidateAudience,
+                    ValidAudiences = identitySetting.Audience,
                 };
 
                 options.Events = new JwtBearerEvents
@@ -108,15 +113,23 @@ namespace TripleSix.Core.WebApi
                             context.ErrorDescription = $"The access token has expired";
 
                         // write response
-                        context.Response.StatusCode = 401;
+                        if (webApiAppsetting.AllowedOrigins.Contains("*"))
+                            context.Response.Headers.AccessControlAllowOrigin = "*";
+                        else if (context.Request.Headers.Origin.Any() && webApiAppsetting.AllowedOrigins.Contains(context.Request.Headers.Origin.First()))
+                            context.Response.Headers.AccessControlAllowOrigin = context.Request.Headers.Origin.First();
                         context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = 401;
                         var errorResult = new ErrorResult(context.Response.StatusCode, context.Error, context.ErrorDescription).ToJson();
                         return context.Response.WriteAsync(errorResult!);
                     },
                     OnForbidden = context =>
                     {
-                        context.Response.StatusCode = 403;
+                        if (webApiAppsetting.AllowedOrigins.Contains("*"))
+                            context.Response.Headers.AccessControlAllowOrigin = "*";
+                        else if (context.Request.Headers.Origin.Any() && webApiAppsetting.AllowedOrigins.Contains(context.Request.Headers.Origin.First()))
+                            context.Response.Headers.AccessControlAllowOrigin = context.Request.Headers.Origin.First();
                         context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = 403;
                         var errorResult = new ErrorResult(context.Response.StatusCode, "access_denied", "Your access is denied").ToJson();
                         return context.Response.WriteAsync(errorResult!);
                     },
@@ -132,7 +145,7 @@ namespace TripleSix.Core.WebApi
         /// <returns><see cref="IServiceCollection"/>.</returns>
         public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration)
         {
-            return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration));
+            return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration), new WebApiAppsetting(configuration));
         }
 
         /// <summary>
@@ -279,6 +292,7 @@ namespace TripleSix.Core.WebApi
                 }
 
                 var result = new ErrorResult(statusCode, errorCode, errorMessage).ToJson();
+                context.HttpContext.Response.Headers.AccessControlAllowOrigin = "*";
                 context.HttpContext.Response.ContentType = "application/json";
                 await context.HttpContext.Response.WriteAsync(result!);
             });
@@ -306,7 +320,7 @@ namespace TripleSix.Core.WebApi
         {
             app.UseCors(builder =>
             {
-                if (setting.AllowedOrigins.Contains("^")) builder.AllowAnyOrigin();
+                if (setting.AllowedOrigins.Contains("*")) builder.AllowAnyOrigin();
                 else builder.WithOrigins(setting.AllowedOrigins);
                 builder.AllowAnyMethod();
                 builder.AllowAnyHeader();
