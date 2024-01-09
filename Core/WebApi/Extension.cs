@@ -306,7 +306,7 @@ namespace TripleSix.Core.WebApi
         {
             app.UseCors(builder =>
             {
-                if (setting.AllowedOrigins.Contains("^")) builder.AllowAnyOrigin();
+                if (setting.AllowedOrigins.Contains("*")) builder.AllowAnyOrigin();
                 else builder.WithOrigins(setting.AllowedOrigins);
                 builder.AllowAnyMethod();
                 builder.AllowAnyHeader();
