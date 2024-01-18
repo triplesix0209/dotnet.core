@@ -88,8 +88,9 @@ namespace TripleSix.Core.Types
                 ? typeof(BaseValidator<>).MakeGenericType(dtoType)
                 : validatorTypes.First();
 
-            _defaultValidators[dtoType] = Activator.CreateInstance(validatorType) as IValidator;
-            return _defaultValidators[dtoType];
+            var validator = Activator.CreateInstance(validatorType) as IValidator;
+            _defaultValidators.Add(dtoType, validator);
+            return validator;
         }
     }
 }
