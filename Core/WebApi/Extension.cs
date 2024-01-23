@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
@@ -200,10 +199,10 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình Hangfire worker.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
-        /// <param name="setting"><see cref="HangfireWorkerAppsetting"/>.</param>
+        /// <param name="setting"><see cref="HangfireAppsetting"/>.</param>
         /// <param name="setup">Hàm cấu hình hangfire.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, HangfireWorkerAppsetting setting, Action<IGlobalConfiguration, HangfireWorkerAppsetting> setup)
+        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, HangfireAppsetting setting, Action<IGlobalConfiguration, HangfireAppsetting> setup)
         {
             if (!setting.Enable) return services;
 
@@ -230,9 +229,9 @@ namespace TripleSix.Core.WebApi
         /// <param name="configuration"><see cref="IConfiguration"/>.</param>
         /// <param name="setup">Hàm cấu hình hangfire.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, IConfiguration configuration, Action<IGlobalConfiguration, HangfireWorkerAppsetting> setup)
+        public static IServiceCollection AddHangfireWorker(this IServiceCollection services, IConfiguration configuration, Action<IGlobalConfiguration, HangfireAppsetting> setup)
         {
-            return AddHangfireWorker(services, new HangfireWorkerAppsetting(configuration), setup);
+            return AddHangfireWorker(services, new HangfireAppsetting(configuration), setup);
         }
 
         /// <summary>

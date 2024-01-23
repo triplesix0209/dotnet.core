@@ -67,15 +67,15 @@ namespace TripleSix.Core.WebApi
                             break;
                     }
 
-                    var propertyInfo = parameterDescription.PropertyInfo();
+                    var modelType = parameterDescription.ModelMetadata.ContainerType;
+                    if (modelType == null) continue;
 
+                    var instance = Activator.CreateInstance(modelType);
+                    var propertyInfo = parameterDescription.PropertyInfo();
                     PropertyInfo? parentPropertyInfo = null;
                     if (parameterDescription.Name.Contains('.'))
                         parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType.GetProperty(parameterDescription.Name.Split(".")[0]);
 
-                    var modelType = parameterDescription.ModelMetadata.ContainerType;
-                    if (modelType == null) continue;
-                    var instance = Activator.CreateInstance(modelType);
                     parameter.Schema = parameterDescription.Type.GenerateSwaggerSchema(
                         context.SchemaGenerator,
                         context.SchemaRepository,

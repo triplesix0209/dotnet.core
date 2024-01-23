@@ -2,7 +2,13 @@
 
 using System.Linq.Expressions;
 using Hangfire;
+using Hangfire.Common;
+using Hangfire.Dashboard;
+using Hangfire.Dashboard.BasicAuthorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Hangfire
@@ -125,12 +131,78 @@ namespace TripleSix.Core.Hangfire
         }
 
         /// <summary>
+        /// Cấu hình Hangfire Dashboard.
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
+        /// <param name="setting"><see cref="HangfireAppsetting"/>.</param>
+        /// <param name="setup">Hàm tinh chỉnh option.</param>
+        /// <returns><see cref="IApplicationBuilder"/>.</returns>
+        public static IApplicationBuilder UseHangfireDashboard(this IApplicationBuilder app, HangfireAppsetting setting, Action<DashboardOptions>? setup = null)
+        {
+            if (setting.DashboardEnable == false) return app;
+
+            var option = new DashboardOptions
+            {
+                DarkModeEnabled = false,
+                DisplayNameFunc = JobDisplayName,
+            };
+
+            if (setting.DashboardUsername.IsNotNullOrEmpty() && setting.DashboardPassword.IsNotNullOrEmpty())
+            {
+                option.Authorization = new[]
+                {
+                    new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
+                    {
+                        RequireSsl = false,
+                        SslRedirect = false,
+                        LoginCaseSensitive = true,
+                        Users = new List<BasicAuthAuthorizationUser>()
+                        {
+                            new BasicAuthAuthorizationUser { Login = setting.DashboardUsername, PasswordClear = setting.DashboardPassword },
+                        },
+                    }),
+                };
+            }
+
+            setup?.Invoke(option);
+            return app.UseHangfireDashboard(setting.DashboardPath, option);
+        }
+
+        /// <summary>
+        /// Cấu hình Hangfire Dashboard.
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="setup">Hàm tinh chỉnh option.</param>
+        /// <returns><see cref="IApplicationBuilder"/>.</returns>
+        public static IApplicationBuilder UseHangfireDashboard(this IApplicationBuilder app, IConfiguration configuration, Action<DashboardOptions>? setup = null)
+        {
+            return UseHangfireDashboard(app, new HangfireAppsetting(configuration), setup);
+        }
+
+        /// <summary>
+        /// Hàm hiển thị tên Job.
+        /// </summary>
+        /// <param name="db"><see cref="DashboardContext"/>.</param>
+        /// <param name="job"><see cref="Job"/>.</param>
+        /// <returns>Tên job.</returns>
+        public static string JobDisplayName(DashboardContext db, Job job)
+        {
+            if (job.Method.DeclaringType?.IsAssignableTo(typeof(HangfireExternalCaller)) == true
+                && job.Args[2] is string externalName)
+                return externalName;
+
+            return $"{job.Method.DeclaringType?.Name}.{job.Method.Name}";
+        }
+
+        /// <summary>
         /// Khởi chạy hangfire.
         /// </summary>
         /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
-        public static void StartHangfire(this IServiceProvider serviceProvider)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task StartHangfire(this IServiceProvider serviceProvider)
         {
-            serviceProvider.GetRequiredService<HangfireBaseStartup>().Setup();
+            await serviceProvider.GetRequiredService<HangfireBaseStartup>().Setup();
         }
     }
 }
