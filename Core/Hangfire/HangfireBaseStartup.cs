@@ -20,6 +20,7 @@ namespace TripleSix.Core.Hangfire
         /// <summary>
         /// Perform setup.
         /// </summary>
-        public abstract void Setup();
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public abstract Task Setup();
     }
 }

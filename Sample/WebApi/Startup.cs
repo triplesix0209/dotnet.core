@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Hangfire;
 using Hangfire.Dashboard.Management.v2;
-using Sample.WebApi.Hangfire;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Mappers;
@@ -99,7 +98,7 @@ namespace Sample.WebApi
             }
 
             // setup hangfire
-            serviceProvider.StartHangfire();
+            await serviceProvider.StartHangfire();
         }
     }
 }

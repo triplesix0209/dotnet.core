@@ -2,8 +2,9 @@
 {
     public class HangfireStartup : HangfireBaseStartup
     {
-        public override void Setup()
+        public override Task Setup()
         {
+            return Task.CompletedTask;
         }
     }
 }
