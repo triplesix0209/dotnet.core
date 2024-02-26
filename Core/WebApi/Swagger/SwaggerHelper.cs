@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
@@ -30,7 +31,12 @@ namespace TripleSix.Core.WebApi
             var result = schemaGenerator.GenerateSchema(objectType, schemaRepository);
             var propertyType = objectType.GetUnderlyingType();
 
-            if (propertyType.IsEnum)
+            if (propertyType.IsAssignableTo<JToken>())
+            {
+                result.Type = "object";
+                result.AdditionalProperties = null;
+            }
+            else if (propertyType.IsEnum)
             {
                 result.Type = "integer";
                 result.Format = "int32";
