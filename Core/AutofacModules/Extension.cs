@@ -96,7 +96,6 @@ namespace TripleSix.Core.AutofacModules
             builder.Register(c => new MapperConfiguration(config =>
             {
                 config.AddExpressionMapping();
-                config.Internal().AllowAdditiveTypeMapCreation = true;
 
                 config.AddProfile(new DefaultMapper(assembly));
                 var mappers = assembly.GetExportedTypes()
