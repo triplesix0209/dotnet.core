@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace TripleSix.Core.Appsettings
 {
@@ -14,6 +15,7 @@ namespace TripleSix.Core.Appsettings
         /// <param name="key">Key mục load dữ liệu.</param>
         protected BaseAppsetting(IConfiguration configuration, string key)
         {
+            Configuration = configuration;
             var data = configuration.GetSection(key).GetChildren();
             foreach (var prop in GetType().GetProperties())
             {
@@ -22,5 +24,10 @@ namespace TripleSix.Core.Appsettings
                 prop.SetValue(this, value);
             }
         }
+
+        /// <summary>
+        /// <see cref="IConfiguration"/>.
+        /// </summary>
+        public IConfiguration Configuration { get; }
     }
 }
