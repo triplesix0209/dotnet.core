@@ -103,10 +103,9 @@ namespace Sample.WebApi
             await serviceProvider.StartHangfire();
         }
 
-        private static string GetSigningKey(IdentityAppsetting setting, JwtSecurityToken token)
+        private static string? GetSigningKey(IdentityAppsetting setting, JwtSecurityToken token)
         {
             var connectionString = setting.Configuration.GetValue<string>("Identity:ConnectionString");
-
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
@@ -114,7 +113,7 @@ namespace Sample.WebApi
             command.Parameters.AddWithValue("@AppCode", token.Issuer);
 
             using var reader = command.ExecuteReader();
-            reader.Read();
+            if (reader.Read() == false) return null;
 
             return reader.GetString(0);
         }

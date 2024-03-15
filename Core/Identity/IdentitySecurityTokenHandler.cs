@@ -32,7 +32,7 @@ namespace TripleSix.Core.Identity
         /// <summary>
         /// Hàm lấy signing key.
         /// </summary>
-        public Func<IdentityAppsetting, JwtSecurityToken, string>? GetSigningKeyMethod { get; set; }
+        public Func<IdentityAppsetting, JwtSecurityToken, string?>? GetSigningKeyMethod { get; set; }
 
         /// <inheritdoc/>
         public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
@@ -52,6 +52,7 @@ namespace TripleSix.Core.Identity
 
                     var tokenData = ReadJwtToken(token);
                     var signingKey = GetSigningKeyMethod(Setting, tokenData);
+                    if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
                     validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
                     break;
             }
