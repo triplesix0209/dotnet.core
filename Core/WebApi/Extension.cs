@@ -74,7 +74,7 @@ namespace TripleSix.Core.WebApi
             this AuthenticationBuilder authenticationBuilder,
             IdentityAppsetting identitySetting,
             WebApiAppsetting webApiAppsetting,
-            Func<IdentityAppsetting, JwtSecurityToken, string>? getSigningKeyMethod = null)
+            Func<IdentityAppsetting, JwtSecurityToken, string?>? getSigningKeyMethod = null)
         {
             return authenticationBuilder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -148,7 +148,7 @@ namespace TripleSix.Core.WebApi
         /// <param name="configuration"><see cref="IConfiguration"/>.</param>
         /// <param name="getSigningKeyMethod">Hàm lấy signing key.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration, Func<IdentityAppsetting, JwtSecurityToken, string>? getSigningKeyMethod = null)
+        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration, Func<IdentityAppsetting, JwtSecurityToken, string?>? getSigningKeyMethod = null)
         {
             return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration), new WebApiAppsetting(configuration), getSigningKeyMethod);
         }
