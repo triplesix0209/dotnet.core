@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using TripleSix.Core.Constants;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Appsettings
@@ -15,9 +16,14 @@ namespace TripleSix.Core.Appsettings
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
-            if (ConnectionString.IsNullOrEmpty() && SigningKey.IsNullOrEmpty())
-                throw new Exception($"Please provide {nameof(SigningKey)} or {nameof(ConnectionString)}");
+            if (SigningKeyMode == IdentitySigningKeyModes.Static && SigningKey.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(SigningKey));
         }
+
+        /// <summary>
+        /// Phương pháp lấy Signing Key.
+        /// </summary>
+        public IdentitySigningKeyModes SigningKeyMode { get; set; } = IdentitySigningKeyModes.Static;
 
         /// <summary>
         /// Database connection string.
