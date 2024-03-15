@@ -8,7 +8,6 @@ using Autofac.Extras.Quartz;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
-using AutoMapper.Internal;
 using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -96,7 +95,6 @@ namespace TripleSix.Core.AutofacModules
             builder.Register(c => new MapperConfiguration(config =>
             {
                 config.AddExpressionMapping();
-                config.Internal().AllowAdditiveTypeMapCreation = true;
 
                 config.AddProfile(new DefaultMapper(assembly));
                 var mappers = assembly.GetExportedTypes()

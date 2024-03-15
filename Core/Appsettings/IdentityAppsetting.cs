@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Appsettings
 {
@@ -14,12 +15,19 @@ namespace TripleSix.Core.Appsettings
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
+            if (ConnectionString.IsNullOrEmpty() && SigningKey.IsNullOrEmpty())
+                throw new Exception($"Please provide {nameof(SigningKey)} or {nameof(ConnectionString)}");
         }
+
+        /// <summary>
+        /// Database connection string.
+        /// </summary>
+        public string? ConnectionString { get; set; } = null;
 
         /// <summary>
         /// Signing Key.
         /// </summary>
-        public string SigningKey { get; set; }
+        public string? SigningKey { get; set; } = null;
 
         /// <summary>
         /// Danh sách Issuer hợp lệ.
