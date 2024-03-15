@@ -8,7 +8,6 @@ using Autofac.Extras.Quartz;
 using Autofac.Features.Scanning;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
-using AutoMapper.Internal;
 using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

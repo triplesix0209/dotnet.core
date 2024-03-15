@@ -2,11 +2,8 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Identity
@@ -30,8 +27,8 @@ namespace TripleSix.Core.Identity
 
             try
             {
-                var claims = ValidateAccessToken(accessToken, configuration);
-                ParseData(claims);
+                var data = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+                ParseData(data.Claims);
             }
             catch
             {
@@ -53,35 +50,11 @@ namespace TripleSix.Core.Identity
             return authorizationValue.Split(' ')[^1];
         }
 
-        /// <inheritdoc/>
-        public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IdentityAppsetting setting)
-        {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SigningKey));
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey,
-                ValidateIssuer = setting.ValidateIssuer,
-                ValidIssuers = setting.Issuer,
-                ValidateAudience = setting.ValidateAudience,
-                ValidAudiences = setting.Audience,
-            };
-
-            return new JwtSecurityTokenHandler().ValidateToken(accessToken, tokenValidationParameters, out _);
-        }
-
-        /// <inheritdoc/>
-        public virtual ClaimsPrincipal ValidateAccessToken(string accessToken, IConfiguration configuration)
-        {
-            return ValidateAccessToken(accessToken, new IdentityAppsetting(configuration));
-        }
-
         /// <summary>
         /// Đọc và nhận thông tin của Token.
         /// </summary>
         /// <param name="claims">Danh sách các <see cref="Claim"/>.</param>
-        protected virtual void ParseData(ClaimsPrincipal claims)
+        protected virtual void ParseData(IEnumerable<Claim> claims)
         {
             Id = Guid.Parse(claims.FindFirstValue(nameof(Id).ToCamelCase())!);
             Scope = claims.FindFirstValue(nameof(Scope).ToCamelCase())!.Split(' ');

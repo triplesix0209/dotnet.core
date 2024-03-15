@@ -1,8 +1,10 @@
-﻿using Autofac;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Hangfire;
 using Hangfire.Dashboard.Management.v2;
+using Microsoft.Data.SqlClient;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
 using TripleSix.Core.Mappers;
@@ -60,7 +62,7 @@ namespace Sample.WebApi
             services.AddHttpContextAccessor();
             services.AddSwagger(configuration);
             services.AddMvcServices(WebApiAssembly);
-            services.AddAuthentication().AddJwtAccessToken(configuration);
+            services.AddAuthentication().AddJwtAccessToken(configuration, GetSigningKey);
             services.AddHangfireWorker(configuration, (options, setting) =>
             {
                 options.UseSqlServerStorage(setting.ConnectionString);
@@ -99,6 +101,20 @@ namespace Sample.WebApi
 
             // setup hangfire
             await serviceProvider.StartHangfire();
+        }
+
+        private static string GetSigningKey(IdentityAppsetting setting, JwtSecurityToken token)
+        {
+            using var connection = new SqlConnection(setting.ConnectionString);
+            connection.Open();
+
+            using var command = new SqlCommand("Select SigningKey From App Where Code = @AppCode", connection);
+            command.Parameters.AddWithValue("@AppCode", token.Issuer);
+
+            using var reader = command.ExecuteReader();
+            reader.Read();
+
+            return reader.GetString(0);
         }
     }
 }

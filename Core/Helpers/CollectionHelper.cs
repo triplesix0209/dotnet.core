@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace TripleSix.Core.Helpers
 {
@@ -39,6 +40,18 @@ namespace TripleSix.Core.Helpers
         public static string ToString<T>(this IEnumerable<T> list, string separator)
         {
             return string.Join(separator, list.Where(x => x != null && x.ToString().IsNotNullOrEmpty()));
+        }
+
+        /// <summary>
+        /// Lấy giá trị của từ danh sách claim.
+        /// </summary>
+        /// <param name="claims">Danh sách <see cref="Claim"/> cần lấy giá trị.</param>
+        /// <param name="type">Loại claim cần tìm kiếm.</param>
+        /// <returns>Giá trị đầu tiên tìm thấy, null nếu không tìm thấy.</returns>
+        public static string? FindFirstValue(this IEnumerable<Claim> claims, string type)
+        {
+            var claim = claims.FirstOrDefault(x => x.Type == type);
+            return claim?.Value;
         }
     }
 }

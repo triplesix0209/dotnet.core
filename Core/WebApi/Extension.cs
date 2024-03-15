@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.Identity;
 using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.WebApi
@@ -67,25 +68,29 @@ namespace TripleSix.Core.WebApi
         /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
         /// <param name="identitySetting"><see cref="IdentityAppsetting"/>.</param>
         /// <param name="webApiAppsetting"><see cref="WebApiAppsetting"/>.</param>
+        /// <param name="getSigningKeyMethod">Hàm lấy signing key.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
         public static AuthenticationBuilder AddJwtAccessToken(
             this AuthenticationBuilder authenticationBuilder,
             IdentityAppsetting identitySetting,
-            WebApiAppsetting webApiAppsetting)
+            WebApiAppsetting webApiAppsetting,
+            Func<IdentityAppsetting, JwtSecurityToken, string>? getSigningKeyMethod = null)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySetting.SigningKey));
             return authenticationBuilder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = signingKey,
                     ValidateIssuer = identitySetting.ValidateIssuer,
                     ValidIssuers = identitySetting.Issuer,
                     ValidateAudience = identitySetting.ValidateAudience,
                     ValidAudiences = identitySetting.Audience,
                 };
+
+                var tokenValidator = new IdentitySecurityTokenHandler(identitySetting) { GetSigningKeyMethod = getSigningKeyMethod };
+                options.SecurityTokenValidators.Clear();
+                options.SecurityTokenValidators.Add(tokenValidator);
 
                 options.Events = new JwtBearerEvents
                 {
@@ -141,10 +146,11 @@ namespace TripleSix.Core.WebApi
         /// </summary>
         /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/>.</param>
         /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="getSigningKeyMethod">Hàm lấy signing key.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration)
+        public static AuthenticationBuilder AddJwtAccessToken(this AuthenticationBuilder authenticationBuilder, IConfiguration configuration, Func<IdentityAppsetting, JwtSecurityToken, string>? getSigningKeyMethod = null)
         {
-            return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration), new WebApiAppsetting(configuration));
+            return AddJwtAccessToken(authenticationBuilder, new IdentityAppsetting(configuration), new WebApiAppsetting(configuration), getSigningKeyMethod);
         }
 
         /// <summary>
