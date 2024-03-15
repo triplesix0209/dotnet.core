@@ -105,7 +105,9 @@ namespace Sample.WebApi
 
         private static string GetSigningKey(IdentityAppsetting setting, JwtSecurityToken token)
         {
-            using var connection = new SqlConnection(setting.ConnectionString);
+            var connectionString = setting.Configuration.GetValue<string>("Identity:ConnectionString");
+
+            using var connection = new SqlConnection(connectionString);
             connection.Open();
 
             using var command = new SqlCommand("Select SigningKey From App Where Code = @AppCode", connection);

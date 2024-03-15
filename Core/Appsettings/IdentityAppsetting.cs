@@ -26,11 +26,6 @@ namespace TripleSix.Core.Appsettings
         public IdentitySigningKeyModes SigningKeyMode { get; set; } = IdentitySigningKeyModes.Static;
 
         /// <summary>
-        /// Database connection string.
-        /// </summary>
-        public string? ConnectionString { get; set; } = null;
-
-        /// <summary>
         /// Signing Key.
         /// </summary>
         public string? SigningKey { get; set; } = null;
