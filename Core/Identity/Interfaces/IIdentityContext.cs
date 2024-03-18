@@ -10,12 +10,17 @@ namespace TripleSix.Core.Identity
         /// <summary>
         /// Id người thao tác.
         /// </summary>
-        public Guid? Id { get; set; }
+        Guid? Id { get; set; }
 
         /// <summary>
         /// Danh sách quyền hạn.
         /// </summary>
-        public IEnumerable<string> Scope { get; set; }
+        IEnumerable<string> Scope { get; set; }
+
+        /// <summary>
+        /// Issuer (nơi tạo và ký token).
+        /// </summary>
+        string? Issuer { get; set; }
 
         /// <summary>
         /// Lấy Access Token.

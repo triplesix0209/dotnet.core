@@ -43,6 +43,9 @@ namespace TripleSix.Core.Identity
         public IEnumerable<string> Scope { get; set; }
 
         /// <inheritdoc/>
+        public string? Issuer { get; set; }
+
+        /// <inheritdoc/>
         public virtual string? GetAccessToken(HttpContext httpContext)
         {
             var authorizationValue = httpContext.Request.Headers.Authorization.FirstOrDefault();
@@ -58,6 +61,7 @@ namespace TripleSix.Core.Identity
         {
             Id = Guid.Parse(claims.FindFirstValue(nameof(Id).ToCamelCase())!);
             Scope = claims.FindFirstValue(nameof(Scope).ToCamelCase())!.Split(' ');
+            Issuer = claims.FindFirstValue("iss");
         }
     }
 }
