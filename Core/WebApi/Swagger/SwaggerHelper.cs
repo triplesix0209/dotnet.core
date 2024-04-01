@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Autofac;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -35,6 +36,11 @@ namespace TripleSix.Core.WebApi
             {
                 result.Type = "object";
                 result.AdditionalProperties = null;
+            }
+            else if (propertyType.IsAssignableTo<IFormFile>())
+            {
+                //result.Type = "string";
+                //result.Format = "binary";
             }
             else if (propertyType.IsEnum)
             {

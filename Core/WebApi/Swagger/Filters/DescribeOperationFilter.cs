@@ -51,6 +51,17 @@ namespace TripleSix.Core.WebApi
                         defaultValue: instance,
                         generateDefaultValue: true);
                 }
+                else if (parameterLocation == "FormFile")
+                {
+                    if (!operation.RequestBody.Content.ContainsKey("multipart/form-data"))
+                        operation.RequestBody.Content.Add("multipart/form-data", new OpenApiMediaType());
+                    var bodyContent = operation.RequestBody.Content["multipart/form-data"];
+
+                    bodyContent.Schema = parameterDescription.ParameterDescriptor.ParameterType.GenerateSwaggerSchema(
+                        context.SchemaGenerator,
+                        context.SchemaRepository,
+                        generateDefaultValue: false);
+                }
                 else
                 {
                     var parameter = new OpenApiParameter();
