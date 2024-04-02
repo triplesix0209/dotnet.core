@@ -72,7 +72,6 @@ namespace Sample.WebApi
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
-            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.Use404JsonError();
