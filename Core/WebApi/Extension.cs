@@ -339,6 +339,7 @@ namespace TripleSix.Core.WebApi
 
             app.UseRouting();
             app.MapControllers();
+            app.Use404JsonError();
 
             return app;
         }
