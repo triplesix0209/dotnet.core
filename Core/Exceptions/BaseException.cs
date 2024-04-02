@@ -16,6 +16,18 @@ namespace TripleSix.Core.Exceptions
         public BaseException(string message)
             : base(message)
         {
+            HttpCodeStatus = 500;
+        }
+
+        /// <summary>
+        /// Khởi tạo <see cref="BaseException"/>.
+        /// </summary>
+        /// <param name="message">Mô tả lỗi.</param>
+        /// <param name="httpCodeStatus">Mã số trạng thái HTTP.</param>
+        public BaseException(string message, int httpCodeStatus)
+            : base(message)
+        {
+            HttpCodeStatus = httpCodeStatus;
         }
 
         /// <summary>
@@ -38,7 +50,7 @@ namespace TripleSix.Core.Exceptions
         /// <summary>
         /// Mã số trạng thái HTTP.
         /// </summary>
-        public virtual int HttpCodeStatus => 500;
+        public virtual int HttpCodeStatus { get; protected set; }
 
         /// <summary>
         /// Chuyển đổi thành <see cref="ErrorResult"/>.
