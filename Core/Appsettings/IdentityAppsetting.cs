@@ -49,5 +49,10 @@ namespace TripleSix.Core.Appsettings
         /// Bật/tắt kiểm tra Audience.
         /// </summary>
         public bool ValidateAudience { get; set; } = false;
+
+        /// <summary>
+        /// Danh sách các User ID được phép bypass kiểm tra thời gian.
+        /// </summary>
+        public string[]? BypassUserIds { get; set; } = null;
     }
 }
