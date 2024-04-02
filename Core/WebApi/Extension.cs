@@ -80,6 +80,7 @@ namespace TripleSix.Core.WebApi
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ClockSkew = TimeSpan.Zero,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = identitySetting.ValidateIssuer,

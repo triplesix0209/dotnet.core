@@ -37,6 +37,13 @@ namespace TripleSix.Core.Identity
         /// <inheritdoc/>
         public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
         {
+            if (Setting.BypassUserIds.IsNotNullOrEmpty())
+            {
+                var tokenData = ReadJwtToken(token);
+                var userId = tokenData.Claims.FindFirstValue(nameof(IIdentityContext.Id).ToCamelCase());
+                validationParameters.ValidateLifetime = userId == null || !Setting.BypassUserIds.Contains(userId);
+            }
+
             switch (Setting.SigningKeyMode)
             {
                 case IdentitySigningKeyModes.Static:
