@@ -72,13 +72,13 @@ namespace Sample.WebApi
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.Use404JsonError();
             app.UseReDocUI(configuration);
             app.UseMvcService(configuration);
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseHangfireDashboard(configuration);
+
+            app.UseAuthentication();
+            app.UseAuthorization();
         }
 
         private static async Task OnStartup(this WebApplication app, IConfiguration configuration)
