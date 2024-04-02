@@ -341,6 +341,8 @@ namespace TripleSix.Core.WebApi
             app.MapControllers();
             app.Use404JsonError();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             return app;
         }
 

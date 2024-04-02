@@ -72,7 +72,6 @@ namespace Sample.WebApi
 
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
-            app.UseMiddleware<ExceptionMiddleware>();
             app.UseMvcService(configuration);
             app.UseReDocUI(configuration);
             app.UseHangfireDashboard(configuration);
