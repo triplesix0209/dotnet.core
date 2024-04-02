@@ -337,6 +337,7 @@ namespace TripleSix.Core.WebApi
                 return next(context);
             });
 
+            app.UseRouting();
             app.MapControllers();
 
             return app;
