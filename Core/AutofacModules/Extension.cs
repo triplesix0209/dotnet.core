@@ -30,6 +30,25 @@ namespace TripleSix.Core.AutofacModules
     public static class Extension
     {
         /// <summary>
+        /// Đăng ký các auto injection dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các service để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllAutoInjection(
+            this ContainerBuilder builder,
+            Assembly assembly)
+        {
+            return builder.RegisterAssemblyTypes(assembly)
+                .PublicOnly()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableTo<IAutoInjection>())
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .AsImplementedInterfaces();
+        }
+
+        /// <summary>
         /// Đăng ký các Identity Context dưới dạng InstancePerLifetimeScope.
         /// </summary>
         /// <typeparam name="TIdentityContext">Class Identity Context sử dụng.</typeparam>
