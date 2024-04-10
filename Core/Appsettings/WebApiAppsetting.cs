@@ -17,6 +17,11 @@ namespace TripleSix.Core.Appsettings
         }
 
         /// <summary>
+        /// Url công khai của api.
+        /// </summary>
+        public string PublicUrl { get; set; }
+
+        /// <summary>
         /// Hiển thị stack trace.
         /// </summary>
         public bool ShowStackTrace { get; set; } = false;
