@@ -9,7 +9,7 @@
 		<Nullable>enable</Nullable>
 
 		<PackageId>TripleSix.Core</PackageId>
-		<Version>7.4.29</Version>
+		<Version>7.4.30</Version>
 		<Authors>triplesix0209@gmail.com</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
