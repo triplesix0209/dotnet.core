@@ -181,33 +181,6 @@ namespace TripleSix.Core.Hangfire
         }
 
         /// <summary>
-        /// Sử dụng ExternalCallerTypeResolver để lấy method type.
-        /// </summary>
-        /// <param name="configuration"><see cref="IGlobalConfiguration"/>.</param>
-        /// <returns><see cref="IGlobalConfiguration"/>.</returns>
-        public static IGlobalConfiguration UseExternalCallerTypeResolver(this IGlobalConfiguration configuration)
-        {
-            return configuration.UseTypeResolver(ExternalCallerTypeResolver);
-        }
-
-        /// <summary>
-        /// Hàm lấy method type.
-        /// </summary>
-        /// <param name="typeName">Type name.</param>
-        /// <returns>Method type.</returns>
-        public static Type ExternalCallerTypeResolver(string typeName)
-        {
-            try
-            {
-                return TypeHelper.IgnoredAssemblyVersionTypeResolver(typeName);
-            }
-            catch
-            {
-                return typeof(HangfireUnknownCaller);
-            }
-        }
-
-        /// <summary>
         /// Hàm hiển thị tên Job.
         /// </summary>
         /// <param name="db"><see cref="DashboardContext"/>.</param>
@@ -218,9 +191,6 @@ namespace TripleSix.Core.Hangfire
             if (job.Method.DeclaringType?.IsAssignableTo(typeof(HangfireExternalCaller)) == true
                 && job.Args[2] is string externalName)
                 return externalName;
-
-            if (job.Method.DeclaringType?.IsAssignableTo(typeof(HangfireUnknownCaller)) == true)
-                return "Unknown Caller";
 
             return $"{job.Method.DeclaringType?.Name}.{job.Method.Name}";
         }
