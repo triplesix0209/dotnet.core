@@ -36,7 +36,7 @@ namespace TripleSix.Core.WebApi
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var issuerValue = context.HttpContext.User.FindFirstValue(nameof(IIdentityContext.Issuer).ToCamelCase());
+            var issuerValue = context.HttpContext.User.FindFirstValue("iss");
             if (issuerValue == null)
             {
                 context.Result = new ForbidResult();
