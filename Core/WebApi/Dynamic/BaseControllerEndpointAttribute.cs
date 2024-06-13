@@ -12,5 +12,8 @@
 
         /// <inheritdoc/>
         public string[] RequiredAnyScopes { get; set; }
+
+        /// <inheritdoc/>
+        public string[] RequiredAnyIssuers { get; set; }
     }
 }

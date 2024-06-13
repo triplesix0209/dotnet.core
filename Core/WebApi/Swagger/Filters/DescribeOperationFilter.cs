@@ -50,6 +50,7 @@ namespace TripleSix.Core.WebApi
                         context.SchemaRepository,
                         defaultValue: instance,
                         generateDefaultValue: true);
+                    bodyContent.Schema.Nullable = false;
                 }
                 else if (parameterLocation == "FormFile")
                 {
@@ -61,6 +62,7 @@ namespace TripleSix.Core.WebApi
                         context.SchemaGenerator,
                         context.SchemaRepository,
                         generateDefaultValue: false);
+                    bodyContent.Schema.Nullable = false;
                 }
                 else
                 {
@@ -105,6 +107,8 @@ namespace TripleSix.Core.WebApi
 
             if (operation.RequestBody.Content.Count == 0)
                 operation.RequestBody = null;
+            else
+                operation.RequestBody.Required = true;
 
             #endregion
 
@@ -135,6 +139,7 @@ namespace TripleSix.Core.WebApi
             if (authorizeAttr != null)
             {
                 var requireScopes = new HashSet<string>();
+                var requireIssuers = new HashSet<string>();
 
                 var requireScopeAttrs = methodInfo.GetCustomAttributes<RequireScope>(true).ToList();
                 requireScopeAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireScope>(true));
@@ -182,15 +187,43 @@ namespace TripleSix.Core.WebApi
                     else requireScopes.Add($"[{scopes.ToString(", ")}]");
                 }
 
+                var requireIssuerAttrs = methodInfo.GetCustomAttributes<RequireIssuer>(true).ToList();
+                requireIssuerAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireIssuer>(true));
+                foreach (var requireScopeAttr in requireIssuerAttrs)
+                {
+                    var issuer = requireScopeAttr.Arguments?[0].ToString();
+                    if (issuer.IsNullOrEmpty()) continue;
+                    requireIssuers.Add(issuer);
+                }
+
+                var requireAnyIssuerAttrs = methodInfo.GetCustomAttributes<RequireAnyIssuer>(true).ToList();
+                requireAnyIssuerAttrs.AddRange(controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<RequireAnyIssuer>(true));
+                foreach (var requireIssuerAttr in requireAnyIssuerAttrs)
+                {
+                    var issuers = requireIssuerAttr.Arguments?.SelectMany(x => (string[])x);
+                    if (issuers.IsNullOrEmpty()) continue;
+
+                    if (issuers.Count() == 1) requireIssuers.Add(issuers.First());
+                    else requireIssuers.Add($"[{issuers.ToString(", ")}]");
+                }
+
                 if (controllerDescriptor.ControllerTypeInfo.IsAssignableToGenericType(typeof(IControllerEndpoint<,>)))
                 {
                     var genericArguments = controllerDescriptor.ControllerTypeInfo.GetGenericArguments(typeof(IControllerEndpoint<,>));
                     var controllerType = genericArguments[0];
-                    if (controllerType.GetCustomAttribute(genericArguments[1]) is IControllerEndpointAttribute endpointAttribute
-                        && endpointAttribute.RequiredAnyScopes.IsNotNullOrEmpty())
+                    if (controllerType.GetCustomAttribute(genericArguments[1]) is IControllerEndpointAttribute endpointAttribute)
                     {
-                        if (endpointAttribute.RequiredAnyScopes.Length == 1) requireScopes.Add(endpointAttribute.RequiredAnyScopes.First());
-                        else requireScopes.Add($"[{endpointAttribute.RequiredAnyScopes.ToString(", ")}]");
+                        if (endpointAttribute.RequiredAnyScopes.IsNotNullOrEmpty())
+                        {
+                            if (endpointAttribute.RequiredAnyScopes.Length == 1) requireScopes.Add(endpointAttribute.RequiredAnyScopes.First());
+                            else requireScopes.Add($"[{endpointAttribute.RequiredAnyScopes.ToString(", ")}]");
+                        }
+
+                        if (endpointAttribute.RequiredAnyIssuers.IsNotNullOrEmpty())
+                        {
+                            if (endpointAttribute.RequiredAnyIssuers.Length == 1) requireIssuers.Add(endpointAttribute.RequiredAnyIssuers.First());
+                            else requireIssuers.Add($"[{endpointAttribute.RequiredAnyIssuers.ToString(", ")}]");
+                        }
                     }
                 }
 
@@ -199,7 +232,6 @@ namespace TripleSix.Core.WebApi
                     {
                         new OpenApiSecurityScheme
                         {
-                            Name = "Bearer",
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
@@ -209,6 +241,13 @@ namespace TripleSix.Core.WebApi
                         requireScopes.ToList()
                     }
                 });
+
+                if (requireIssuers.IsNotNullOrEmpty())
+                {
+                    operation.Description = "<b>Required issuers:</b> " +
+                        requireIssuers.Select(x => $"`{x}`").ToString(" ") + "<br/>" +
+                        operation.Description;
+                }
             }
 
             #endregion

@@ -14,5 +14,10 @@
         /// Danh sách scope cần để truy cập (chỉ cần có 1).
         /// </summary>
         string[] RequiredAnyScopes { get; set; }
+
+        /// <summary>
+        /// Danh sách issuer cần để truy cập (chỉ cần có 1).
+        /// </summary>
+        string[] RequiredAnyIssuers { get; set; }
     }
 }
