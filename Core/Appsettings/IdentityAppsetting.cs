@@ -54,5 +54,15 @@ namespace TripleSix.Core.Appsettings
         /// Danh sách các User ID được phép bypass kiểm tra thời gian.
         /// </summary>
         public string[]? BypassUserIds { get; set; } = null;
+
+        /// <summary>
+        /// Token sử dụng để request internal.
+        /// </summary>
+        public string? InternalToken { get; set; } = null;
+
+        /// <summary>
+        /// Url sử dụng để request internal.
+        /// </summary>
+        public string? InternalUrl { get; set; } = null;
     }
 }
