@@ -20,11 +20,19 @@ namespace TripleSix.Core.WebApi
             if (controllerName.ToLower().EndsWith("controller")) controllerName = controllerName[..^10];
             controller.ControllerName = controllerName;
 
-            if (controllerType.GetCustomAttribute(genericArguments[1]) is IControllerEndpointAttribute endpointAttribute
-                && endpointAttribute.RequiredAnyScopes.IsNotNullOrEmpty())
+            if (controllerType.GetCustomAttribute(genericArguments[1]) is IControllerEndpointAttribute endpointAttribute)
             {
-                foreach (var action in controller.Actions)
-                    action.Filters.Add(new RequireAnyScopeImplement(endpointAttribute.RequiredAnyScopes));
+                if (endpointAttribute.RequiredAnyScopes.IsNotNullOrEmpty())
+                {
+                    foreach (var action in controller.Actions)
+                        action.Filters.Add(new RequireAnyScopeImplement(endpointAttribute.RequiredAnyScopes));
+                }
+
+                if (endpointAttribute.RequiredAnyIssuers.IsNotNullOrEmpty())
+                {
+                    foreach (var action in controller.Actions)
+                        action.Filters.Add(new RequireAnyIssuerImplement(endpointAttribute.RequiredAnyIssuers));
+                }
             }
         }
     }
