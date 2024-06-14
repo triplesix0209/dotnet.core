@@ -18,6 +18,8 @@ namespace TripleSix.Core.Appsettings
         {
             if (SigningKeyMode == IdentitySigningKeyModes.Static && SigningKey.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(SigningKey));
+            if (SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0)
+                throw new ArgumentException(nameof(SigningKeyCacheTimelife));
         }
 
         /// <summary>
@@ -26,14 +28,24 @@ namespace TripleSix.Core.Appsettings
         public IdentitySigningKeyModes SigningKeyMode { get; set; } = IdentitySigningKeyModes.Static;
 
         /// <summary>
+        /// Thời gian cache của Signing Key.
+        /// </summary>
+        public long? SigningKeyCacheTimelife { get; set; }
+
+        /// <summary>
+        /// Connection string.
+        /// </summary>
+        public string ConnectionString { get; set; }
+
+        /// <summary>
         /// Signing Key.
         /// </summary>
         public string? SigningKey { get; set; } = null;
 
         /// <summary>
-        /// Danh sách Issuer hợp lệ.
+        /// Issuer hợp lệ.
         /// </summary>
-        public string[] Issuer { get; set; } = new[] { "Identity" };
+        public string Issuer { get; set; } = "Identity";
 
         /// <summary>
         /// Danh sách Audience hợp lệ.
