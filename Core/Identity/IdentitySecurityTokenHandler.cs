@@ -14,6 +14,8 @@ namespace TripleSix.Core.Identity
     public class IdentitySecurityTokenHandler : JwtSecurityTokenHandler,
         ISecurityTokenValidator
     {
+        private static Dictionary<string, SigningKeyCacheItem> _signingKeyCaches = new();
+
         /// <summary>
         /// Create instance of <see cref="IdentitySecurityTokenHandler"/>.
         /// </summary>
@@ -58,13 +60,34 @@ namespace TripleSix.Core.Identity
                         throw new ArgumentNullException(nameof(GetSigningKeyMethod));
 
                     var tokenData = ReadJwtToken(token);
-                    var signingKey = GetSigningKeyMethod(Setting, tokenData);
-                    if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
-                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
+                    var issuer = tokenData.Issuer;
+                    var signingKeyCacheItem = _signingKeyCaches[issuer];
+                    if (signingKeyCacheItem == null || DateTime.UtcNow > signingKeyCacheItem.ExpiredAt)
+                    {
+                        var signingKey = GetSigningKeyMethod(Setting, tokenData);
+                        if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
+                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife ?? 0);
+                        signingKeyCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);
+                    }
+
+                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyCacheItem.SigningKey));
                     break;
             }
 
             return base.ValidateToken(token, validationParameters, out validatedToken);
+        }
+
+        private class SigningKeyCacheItem
+        {
+            public SigningKeyCacheItem(string signingKey, DateTime expiredAt)
+            {
+                SigningKey = signingKey;
+                ExpiredAt = expiredAt;
+            }
+
+            public string SigningKey { get; set; }
+
+            public DateTime ExpiredAt { get; set; }
         }
     }
 }
