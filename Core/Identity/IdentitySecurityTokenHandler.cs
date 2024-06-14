@@ -61,13 +61,15 @@ namespace TripleSix.Core.Identity
 
                     var tokenData = ReadJwtToken(token);
                     var issuer = tokenData.Issuer;
-                    var signingKeyCacheItem = _signingKeyCaches[issuer];
+
+                    var signingKeyCacheItem = _signingKeyCaches.ContainsKey(issuer) ? _signingKeyCaches[issuer] : null;
                     if (signingKeyCacheItem == null || DateTime.UtcNow > signingKeyCacheItem.ExpiredAt)
                     {
                         var signingKey = GetSigningKeyMethod(Setting, tokenData);
                         if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
                         var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife ?? 0);
                         signingKeyCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);
+                        _signingKeyCaches[issuer] = signingKeyCacheItem;
                     }
 
                     validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyCacheItem.SigningKey));
