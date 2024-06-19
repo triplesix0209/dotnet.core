@@ -43,7 +43,11 @@ namespace TripleSix.Core.Identity
             {
                 var tokenData = ReadJwtToken(token);
                 var userId = tokenData.Claims.FindFirstValue(nameof(IIdentityContext.Id).ToCamelCase());
-                validationParameters.ValidateLifetime = userId == null || !Setting.BypassUserIds.Contains(userId);
+                if (userId.IsNotNullOrEmpty() && Setting.BypassUserIds.Contains(userId))
+                {
+                    validationParameters.ValidateLifetime = false;
+                    validationParameters.ValidateIssuer = false;
+                }
             }
 
             switch (Setting.SigningKeyMode)
