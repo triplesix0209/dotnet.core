@@ -46,7 +46,6 @@ namespace TripleSix.Core.Identity
                 if (userId.IsNotNullOrEmpty() && Setting.BypassUserIds.Contains(userId))
                 {
                     validationParameters.ValidateLifetime = false;
-                    validationParameters.ValidateIssuer = false;
                 }
             }
 
