@@ -76,6 +76,36 @@ namespace TripleSix.Core.Mappers
                     var mapper = createMap.Invoke(this, new object[] { MemberList.None });
                     if (mapper == null) continue;
 
+                    // ignore properties
+                    var ignoreProperties = new List<string>();
+                    var ignoreSourceProperties = mapAttribute.GetType()
+                        .GetProperty(nameof(MapToEntityAttribute<IEntity>.IgnoreProperties))
+                        ?.GetValue(mapAttribute) as string[];
+                    if (ignoreSourceProperties.IsNotNullOrEmpty())
+                    {
+                        ignoreProperties.AddRange(destinationType.GetPublicProperties()
+                            .Where(p => ignoreSourceProperties.Any(x => x == p.Name))
+                            .Select(p => p.Name));
+                    }
+
+                    foreach (var property in ignoreProperties.Distinct())
+                    {
+                        var parameter = Expression.Parameter(
+                            typeof(IMemberConfigurationExpression<,,>)
+                            .MakeGenericType(sourceType, destinationType, typeof(object)));
+                        var ignore = typeof(IProjectionMemberConfiguration<,,>)
+                            .MakeGenericType(sourceType, destinationType, typeof(object))
+                            .GetMethod(nameof(IProjectionMemberConfiguration<object, object, object>.Ignore));
+                        var body = Expression.Call(parameter, ignore!);
+                        var memberOptions = Expression.Lambda(body, parameter).Compile();
+
+                        var forMember = mapper.GetType().GetMethods()
+                            .First(x => x.Name == nameof(IMappingExpression.ForMember)
+                                && x.GetParameters().Length == 2
+                                && x.GetParameters()[0].ParameterType == typeof(string));
+                        forMember?.Invoke(mapper, new object[] { property, memberOptions });
+                    }
+
                     // create after map
                     var mappingAction = mapTypes.Length > 1 ? mapTypes[1] : null;
                     if (mappingAction != null)
