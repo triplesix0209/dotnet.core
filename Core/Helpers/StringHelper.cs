@@ -99,8 +99,7 @@ namespace TripleSix.Core.Helpers
         /// <returns>Chuỗi đã xử lý.</returns>
         public static string ToTitleCase(this string text)
         {
-            var cases = text.Split(' ')
-                .Select(x => (x.Length <= 1) ? x : char.ToUpper(x[0]) + x[1..]);
+            var cases = text.Split(' ').Select(x => char.ToUpper(x[0]) + x[1..]);
             return string.Join(' ', cases);
         }
     }
