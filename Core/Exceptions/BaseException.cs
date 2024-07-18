@@ -53,13 +53,18 @@ namespace TripleSix.Core.Exceptions
         public virtual int HttpCodeStatus { get; protected set; }
 
         /// <summary>
+        /// Dữ liệu lỗi.
+        /// </summary>
+        public virtual new IDictionary<string, object> Data { get; protected set; }
+
+        /// <summary>
         /// Chuyển đổi thành <see cref="ErrorResult"/>.
         /// </summary>x`
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         /// <returns><see cref="ErrorResult"/>.</returns>
         public virtual ErrorResult ToErrorResult(HttpContext? httpContext = default)
         {
-            return new ErrorResult(HttpCodeStatus, Code, Message, stackTrace: StackTrace);
+            return new ErrorResult(HttpCodeStatus, Code, Message, data: Data, stackTrace: StackTrace);
         }
     }
 }
