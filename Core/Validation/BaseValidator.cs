@@ -170,6 +170,15 @@ namespace TripleSix.Core.Validation
                     .WithName(propertyDisplayName);
             }
 
+            var mustRegExrAttr = property.GetCustomAttribute<MustRegExrAttribute>();
+            if (mustRegExrAttr != null)
+            {
+                RuleFor(x => valueGetter(x))
+                    .SetValidator(new MustRegExrValidator<T, object?>(mustRegExrAttr.PatternExr, mustRegExrAttr.PatternName))
+                    .OverridePropertyName(propertyName)
+                    .WithName(propertyDisplayName);
+            }
+
             if (propertyType.IsAssignableTo<IDto>())
             {
                 foreach (var childProperty in propertyType.GetProperties())
