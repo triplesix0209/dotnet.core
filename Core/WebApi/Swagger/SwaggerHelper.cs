@@ -215,6 +215,9 @@ namespace TripleSix.Core.WebApi
             var mustPhoneAtrr = propertyInfo.GetCustomAttribute<MustPhoneAttribute>();
             if (mustPhoneAtrr != null) validators.Add(mustPhoneAtrr);
 
+            var mustRegExrAtrr = propertyInfo.GetCustomAttribute<MustRegExrAttribute>();
+            if (mustRegExrAtrr != null) validators.Add(mustRegExrAtrr);
+
             if (validators.Any())
             {
                 result.Description = "<span class='sc-laZMeE dmLkmF'>Validators:</span> " +
