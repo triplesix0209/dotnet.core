@@ -5,13 +5,16 @@
         /// <inheritdoc/>
         public override void OnDataSeeding(ModelBuilder builder, DatabaseFacade database)
         {
+            //var cmd = database.GetDbConnection().CreateCommand();
+            //Console.WriteLine(cmd.Connection.State);
+
             var accounts = new List<Account>()
             {
                 new Account
                 {
                     Id = Guid.Parse("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
                     Code = "EM001",
-                    Name = "Nhân Viên 1",
+                    Name = "Nhân Viên 2",
                     SiteId = Guid.Parse("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22"),
                 },
                 new Account
