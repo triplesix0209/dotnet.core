@@ -14,10 +14,6 @@ namespace TripleSix.Core.Exceptions
         public NotFoundException(Type type)
             : base($"Không tìm thấy {type.GetDisplayName()}")
         {
-            Data = new Dictionary<string, object>
-            {
-                ["HelloName"] = "OK",
-            };
         }
 
         /// <summary>
