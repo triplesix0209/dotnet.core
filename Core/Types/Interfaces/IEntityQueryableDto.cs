@@ -1,4 +1,5 @@
-﻿using TripleSix.Core.Entities;
+﻿using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
 {
@@ -13,7 +14,8 @@ namespace TripleSix.Core.Types
         /// Chuyển hóa thành <see cref="IQueryable"/>.
         /// </summary>
         /// <param name="query">Câu query gốc.</param>
+        /// <param name="httpContextAccessor">Http context accessor.</param>
         /// <returns><see cref="IQueryable"/>.</returns>
-        IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query);
+        IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query, IHttpContextAccessor? httpContextAccessor);
     }
 }
