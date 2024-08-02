@@ -111,11 +111,11 @@ namespace TripleSix.Core.WebApi
                         if (context.Error.IsNullOrEmpty())
                             context.Error = "invalid_token";
                         if (context.ErrorDescription.IsNullOrEmpty())
-                            context.ErrorDescription = "This request requires a valid access token to be provided";
+                            context.ErrorDescription = "Access token bị sai hoặc không phù hợp";
 
                         // expired tokens case
                         if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() == typeof(SecurityTokenExpiredException))
-                            context.ErrorDescription = $"The access token has expired";
+                            context.ErrorDescription = $"Access token đã hết hạn";
 
                         // write response
                         if (webApiAppsetting.AllowedOrigins.Contains("*"))
@@ -135,7 +135,7 @@ namespace TripleSix.Core.WebApi
                             context.Response.Headers.AccessControlAllowOrigin = context.Request.Headers.Origin.First();
                         context.Response.ContentType = "application/json";
                         context.Response.StatusCode = 403;
-                        var errorResult = new ErrorResult(context.Response.StatusCode, "access_denied", "Your access is denied").ToJson();
+                        var errorResult = new ErrorResult(context.Response.StatusCode, "access_denied", "Phiên truy cập bị từ chối").ToJson();
                         return context.Response.WriteAsync(errorResult!);
                     },
                 };
@@ -311,7 +311,7 @@ namespace TripleSix.Core.WebApi
         /// <param name="errorCode">Mã lỗi.</param>
         /// <param name="errorMessage">Thông báo lỗi.</param>
         /// <returns><see cref="IApplicationBuilder"/>.</returns>
-        public static IApplicationBuilder Use404JsonError(this IApplicationBuilder app, string errorCode = "endpoint_not_found", string errorMessage = "Request endpopint not found")
+        public static IApplicationBuilder Use404JsonError(this IApplicationBuilder app, string errorCode = "endpoint_not_found", string errorMessage = "Không tìm thấy endpoint chỉ định")
         {
             return UseStatusCodeJsonError(app, 404, errorCode, errorMessage);
         }

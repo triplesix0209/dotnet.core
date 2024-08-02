@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.Exceptions
@@ -57,7 +58,12 @@ namespace TripleSix.Core.Exceptions
         /// <inheritdoc/>
         public override ErrorResult ToErrorResult(HttpContext? httpContext = null)
         {
-            return new ErrorResult(HttpCodeStatus, Code, Message, Items, StackTrace);
+            var message = Message;
+            var fieldErrors = Items.Where(x => x.ErrorCode != "model_validator");
+            if (fieldErrors.Any())
+                message += ": " + fieldErrors.Select(x => x.ErrorMessage).ToString("; ");
+
+            return new ErrorResult(HttpCodeStatus, Code, message, Items, StackTrace);
         }
     }
 
