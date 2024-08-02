@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
@@ -12,6 +13,6 @@ namespace TripleSix.Core.Types
         where TEntity : IEntity
     {
         /// <inheritdoc/>
-        public abstract IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query, IHttpContextAccessor? httpContextAccessor);
+        public abstract IQueryable<TEntity> ToQueryable(IQueryable<TEntity> query, IConfiguration configuration, IHttpContextAccessor? httpContextAccessor);
     }
 }
