@@ -46,7 +46,7 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
-        public Task AfterGetFirst(IServiceProvider serviceProvider)
+        public virtual Task AfterGetFirst(IServiceProvider serviceProvider)
         {
             return Task.CompletedTask;
         }
