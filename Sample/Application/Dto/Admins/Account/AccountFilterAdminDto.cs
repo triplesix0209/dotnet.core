@@ -10,12 +10,14 @@
 
         public Guid? SiteId { get; set; }
 
-        public override IQueryable<Account> ToQueryable(IQueryable<Account> query)
+        public override Task<IQueryable<Account>> ToQueryable(IQueryable<Account> query, IServiceProvider serviceProvider)
         {
-            return query
+            var result = query
                 .WhereIf(Code.IsNotNullOrEmpty(), x => EF.Functions.Like(x.Code, $"%{Code}%"))
                 .WhereIf(Name.IsNotNullOrEmpty(), x => EF.Functions.Like(x.Name, $"%{Name}%"))
                 .WhereIf(SiteId.HasValue, x => x.SiteId == SiteId);
+
+            return Task.FromResult(result);
         }
     }
 }
