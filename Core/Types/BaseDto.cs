@@ -46,6 +46,12 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
+        public Task AfterGetFirst(IServiceProvider serviceProvider)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
         public virtual bool IsAnyPropertyChanged()
         {
             return _propertyTracking.Any();

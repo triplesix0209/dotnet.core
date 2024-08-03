@@ -25,6 +25,13 @@ namespace TripleSix.Core.Types
         void Normalize();
 
         /// <summary>
+        /// Thao tác sau khi lấy dữ liệu đơn.
+        /// </summary>
+        /// <param name="serviceProvider">Service provider.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task AfterGetFirst(IServiceProvider serviceProvider);
+
+        /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.
         /// </summary>
         /// <returns><c>True</c> nếu có ít nhất một property bị thay đổi, ngược lại là <c>False</c>.</returns>
