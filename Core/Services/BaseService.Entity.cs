@@ -171,9 +171,12 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            var result = await query.FirstOrDefaultAsync<TResult>(Mapper);
-            if (result != null && result is IDto dto)
-                await dto.AfterGetFirst(ServiceProvider);
+            var entity = await query.FirstOrDefaultAsync();
+            if (entity == null) return null;
+
+            var result = Mapper.MapData<TResult>(entity);
+            if (result is IDto dto)
+                await dto.AfterGetFirst(entity, ServiceProvider);
 
             return result;
         }

@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
 {
@@ -27,9 +28,10 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Thao tác sau khi lấy dữ liệu đơn.
         /// </summary>
+        /// <param name="entity">Entity.</param>
         /// <param name="serviceProvider">Service provider.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task AfterGetFirst(IServiceProvider serviceProvider);
+        Task AfterGetFirst(IEntity entity, IServiceProvider serviceProvider);
 
         /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.
