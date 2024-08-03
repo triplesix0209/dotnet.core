@@ -7,11 +7,13 @@
         public string? Name { get; set; }
 
         /// <inheritdoc/>
-        public override IQueryable<Site> ToQueryable(IQueryable<Site> query)
+        public override Task<IQueryable<Site>> ToQueryable(IQueryable<Site> query, IServiceProvider serviceProvider)
         {
-            return query
+            var result = query
                 .WhereIf(Code.IsNotNullOrEmpty(), x => EF.Functions.Like(x.Code, $"%{Code}%"))
                 .WhereIf(Name.IsNotNullOrEmpty(), x => EF.Functions.Like(x.Name, $"%{Name}%"));
+
+            return Task.FromResult(result);
         }
     }
 }

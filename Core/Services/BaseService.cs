@@ -34,6 +34,11 @@ namespace TripleSix.Core.Services
         public ILogger<IService> Logger { get; set; }
 
         /// <summary>
+        /// Service Provider.
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
         /// Tạo activity để trace cho method hiện tại.
         /// </summary>
         /// <param name="callerName">Tên hàm đang xử lý.</param>

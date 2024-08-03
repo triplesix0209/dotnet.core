@@ -146,7 +146,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public async Task<bool> AnyByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await Any(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await Any(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -161,7 +161,7 @@ namespace TripleSix.Core.Services
         /// <inheritdoc/>
         public async Task<long> CountByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await Count(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await Count(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -171,7 +171,11 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            return await query.FirstOrDefaultAsync<TResult>(Mapper);
+            var result = await query.FirstOrDefaultAsync<TResult>(Mapper);
+            if (result != null && result is IDto dto)
+                await dto.AfterGetFirst(ServiceProvider);
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -184,13 +188,13 @@ namespace TripleSix.Core.Services
         public async Task<TResult?> GetFirstOrDefaultByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class
         {
-            return await GetFirstOrDefault<TResult>(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await GetFirstOrDefault<TResult>(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
         public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await GetFirstOrDefault(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await GetFirstOrDefault(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -212,13 +216,13 @@ namespace TripleSix.Core.Services
         public async Task<TResult> GetFirstByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class
         {
-            return await GetFirst<TResult>(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await GetFirst<TResult>(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
         public async Task<TEntity> GetFirstByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await GetFirst(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await GetFirst(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -241,13 +245,13 @@ namespace TripleSix.Core.Services
         public async Task<List<TResult>> GetListByQueryModel<TResult>(IEntityQueryableDto<TEntity> model)
             where TResult : class
         {
-            return await GetList<TResult>(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await GetList<TResult>(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
         public async Task<List<TEntity>> GetListByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await GetList(model.ToQueryable(Query, Configuration, HttpContextAccessor));
+            return await GetList(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -281,13 +285,13 @@ namespace TripleSix.Core.Services
         public async Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
             where TResult : class
         {
-            return await GetPage<TResult>(model.ToQueryable(Query, Configuration, HttpContextAccessor), page, size);
+            return await GetPage<TResult>(await model.ToQueryable(Query, ServiceProvider), page, size);
         }
 
         /// <inheritdoc/>
         public async Task<IPaging<TEntity>> GetPageByQueryModel(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
-            return await GetPage(model.ToQueryable(Query, Configuration, HttpContextAccessor), page, size);
+            return await GetPage(await model.ToQueryable(Query, ServiceProvider), page, size);
         }
 
         /// <summary>

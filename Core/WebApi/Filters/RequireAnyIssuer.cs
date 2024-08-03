@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TripleSix.Core.Helpers;
-using TripleSix.Core.Identity;
 
 namespace TripleSix.Core.WebApi
 {

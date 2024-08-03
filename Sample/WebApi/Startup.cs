@@ -7,7 +7,6 @@ using Hangfire.Dashboard.Management.v2;
 using Microsoft.Data.SqlClient;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.DataContext;
-using TripleSix.Core.Helpers;
 using TripleSix.Core.Mappers;
 
 namespace Sample.WebApi
