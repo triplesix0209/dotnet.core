@@ -3,6 +3,7 @@ using Autofac;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Entities;
 using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.Types
@@ -46,7 +47,7 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
-        public virtual Task AfterGetFirst(IServiceProvider serviceProvider)
+        public virtual Task AfterGetFirst(IEntity entity, IServiceProvider serviceProvider)
         {
             return Task.CompletedTask;
         }
