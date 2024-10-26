@@ -5,3 +5,4 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Sample.Domain.Entities;
 global using TripleSix.Core.DataContext;
 global using TripleSix.Core.Entities;
+global using TripleSix.Core.Exceptions;
