@@ -65,6 +65,12 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
+        public virtual string[] PropertiesChanged()
+        {
+            return _propertyTracking.ToArray();
+        }
+
+        /// <inheritdoc/>
         public virtual void SetPropertyChanged(string name, bool value)
         {
             if (value) _propertyTracking.Add(name);

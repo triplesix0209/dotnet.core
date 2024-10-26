@@ -47,6 +47,12 @@ namespace TripleSix.Core.Types
         bool IsPropertyChanged(string name);
 
         /// <summary>
+        /// Lấy danh sách các property có thay đổi.
+        /// </summary>
+        /// <returns>Danh sách các property có thay đổi.</returns>
+        string[] PropertiesChanged();
+
+        /// <summary>
         /// Đánh dấu property chỉ định có sự thay đổi.
         /// </summary>
         /// <param name="name">Tên property cần đánh dấu.</param>
