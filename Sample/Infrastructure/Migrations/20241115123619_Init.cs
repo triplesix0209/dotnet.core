@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -71,7 +72,7 @@ namespace Sample.Infrastructure.Migrations
                 columns: new[] { "Id", "Code", "CreateAt", "CreatorId", "DeleteAt", "Name", "SiteId", "UpdateAt", "UpdatorId" },
                 values: new object[,]
                 {
-                    { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), "EM001", null, null, null, "Nhân Viên 1", new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22"), null, null },
+                    { new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"), "EM001", null, null, null, "Nhân Viên 2", new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22"), null, null },
                     { new Guid("6f6e615e-feeb-40b5-b53c-7f9056082d36"), "EM002", null, null, null, "Nhân Viên 2", new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22"), null, null },
                     { new Guid("72b44a93-defc-4e24-a466-0d0d36b3669c"), "EM003", null, null, null, "Nhân Viên 3", new Guid("3e08cf2e-d8a2-49b5-8663-fa31f0cdd168"), null, null }
                 });

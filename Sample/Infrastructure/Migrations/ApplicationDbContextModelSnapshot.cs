@@ -96,7 +96,7 @@ namespace Sample.Infrastructure.Migrations
                         {
                             Id = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
                             Code = "EM001",
-                            Name = "Nhân Viên 1",
+                            Name = "Nhân Viên 2",
                             SiteId = new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22")
                         },
                         new

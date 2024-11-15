@@ -1,5 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Text;
+using Elastic.Clients.Elasticsearch.Requests;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,8 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
@@ -277,6 +284,101 @@ namespace TripleSix.Core.WebApi
         public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, IConfiguration configuration)
         {
             return UseReDocUI(app, new SwaggerAppsetting(configuration));
+        }
+
+        /// <summary>
+        /// Cài đặt OpenTelemetry.
+        /// </summary>
+        /// <param name="builder"><see cref="WebApplicationBuilder"/>.</param>
+        /// <param name="setting"><see cref="OpenTelemetryAppsetting"/>.</param>
+        public static void SetupOpenTelemetry(this WebApplicationBuilder builder, OpenTelemetryAppsetting setting)
+        {
+            if (setting.Enable == false) return;
+
+            builder.Logging.AddOpenTelemetry(config =>
+            {
+                config.IncludeScopes = true;
+                config.IncludeFormattedMessage = true;
+                config.ParseStateValues = true;
+                if (setting.AttachLog) config.AttachLogsToActivityEvent();
+            });
+
+            builder.Services.AddOpenTelemetry()
+                .ConfigureResource(resource =>
+                {
+                    resource.AddService(setting.ServiceName!);
+                })
+                .WithTracing(tracing =>
+                {
+                    tracing.AddOtlpExporter(config =>
+                    {
+                        config.Endpoint = new Uri(setting.Host!);
+                    });
+
+                    tracing.AddAspNetCoreInstrumentation(o =>
+                    {
+                        o.EnrichWithHttpRequest = async (activity, request) =>
+                        {
+                            try
+                            {
+                                activity.SetTag("curl", await request.ToCurl());
+                            }
+                            catch
+                            {
+                            }
+                        };
+
+                        o.EnrichWithHttpResponse = (activity, response) =>
+                        {
+                            activity.DisplayName = $"[API] {activity.DisplayName}";
+                        };
+                    });
+
+                    tracing.AddSqlClientInstrumentation(o =>
+                    {
+                        o.SetDbStatementForText = true;
+                        o.Enrich = (activity, @event, cmd) =>
+                        {
+                            activity.DisplayName = $"[DB] {activity.DisplayName}";
+                        };
+                    });
+
+                    tracing.AddHttpClientInstrumentation(o =>
+                    {
+                        o.EnrichWithHttpRequestMessage = async (activity, requestMessage) =>
+                        {
+                            if (requestMessage.RequestUri != null)
+                            {
+                                activity.DisplayName = $"[HTTP] {requestMessage.Method} {requestMessage.RequestUri.Authority + requestMessage.RequestUri.LocalPath}";
+                                activity.SetTag("peer.service", requestMessage.RequestUri.Authority);
+                            }
+
+                            try
+                            {
+                                activity.SetTag("http.curl", await requestMessage.ToCurl());
+                            }
+                            catch
+                            {
+                            }
+                        };
+
+                        o.EnrichWithHttpResponseMessage = async (activity, responseMessage) =>
+                        {
+                            activity.SetTag("http.response.content", await responseMessage.Content.ReadAsStringAsync());
+                            activity.SetTag("http.response.headers", responseMessage.Headers.ToJson());
+                        };
+                    });
+                });
+        }
+
+        /// <summary>
+        /// Cài đặt OpenTelemetry.
+        /// </summary>
+        /// <param name="builder"><see cref="WebApplicationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        public static void SetupOpenTelemetry(this WebApplicationBuilder builder, IConfiguration configuration)
+        {
+            SetupOpenTelemetry(builder, new OpenTelemetryAppsetting(configuration));
         }
 
         /// <summary>
