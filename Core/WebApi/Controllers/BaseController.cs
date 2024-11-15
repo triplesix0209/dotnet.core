@@ -10,6 +10,7 @@ namespace TripleSix.Core.WebApi
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [OpenTelemetryTracing]
     [ValidateInput]
     public abstract class BaseController : ControllerBase
     {

@@ -12,7 +12,7 @@ using Sample.Infrastructure.DataContext;
 namespace Sample.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231120111135_Init")]
+    [Migration("20241115123619_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Sample.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -99,7 +99,7 @@ namespace Sample.Infrastructure.Migrations
                         {
                             Id = new Guid("653dc4d4-ca05-45ac-83cd-e98fa91b890f"),
                             Code = "EM001",
-                            Name = "Nhân Viên 1",
+                            Name = "Nhân Viên 2",
                             SiteId = new Guid("7a2ed7c2-e6f7-48c1-a86a-aa701aee1e22")
                         },
                         new

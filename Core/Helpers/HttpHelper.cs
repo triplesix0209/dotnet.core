@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Reflection.PortableExecutable;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -31,12 +32,12 @@ namespace TripleSix.Core.Helpers
         /// <returns>Chuỗi Curl tương ứng.</returns>
         public static async Task<string> ToCurl(this HttpRequest request, string[]? excludeHeaderKeys = null)
         {
-            if (excludeHeaderKeys == null) excludeHeaderKeys = _excludeHeaderKeys;
+            excludeHeaderKeys ??= _excludeHeaderKeys;
 
             var curls = new List<string>
             {
                 "curl",
-                $"-X {request.Method}",
+                $"-L -X {request.Method}",
                 $"'{request.Scheme}://{request.Host.Value}{request.Path.Value}{request.QueryString.Value}'",
             };
 
@@ -59,14 +60,8 @@ namespace TripleSix.Core.Helpers
 
                 if (bodyText.IsNotNullOrEmpty())
                 {
-                    try
-                    {
-                        curls.Add($"--data '{JObject.Parse(bodyText).ToString(Formatting.None, JsonHelper.Converters)}'");
-                    }
-                    catch
-                    {
-                        curls.Add($"--data '{bodyText}'");
-                    }
+                    curls.Add($"-H 'Content-Type: application/json'");
+                    curls.Add($"-d '{bodyText}'");
                 }
             }
 
@@ -82,19 +77,19 @@ namespace TripleSix.Core.Helpers
         public static async Task<string> ToCurl(this HttpRequestMessage requestMessage, string[]? excludeHeaderKeys = null)
         {
             if (requestMessage.RequestUri == null) return string.Empty;
-            if (excludeHeaderKeys == null) excludeHeaderKeys = _excludeHeaderKeys;
+            excludeHeaderKeys ??= _excludeHeaderKeys;
 
             var curls = new List<string>
             {
                 "curl",
-                $"-X {requestMessage.Method}",
-                $"'{requestMessage.RequestUri.Scheme}://{requestMessage.RequestUri.PathAndQuery}'",
+                $"-L -X {requestMessage.Method}",
+                $"'{requestMessage.RequestUri.AbsoluteUri}'",
             };
 
             foreach (var header in requestMessage.Headers)
             {
                 if (excludeHeaderKeys.Any(x => x == header.Key)) continue;
-                curls.Add($"-H '{header.Key}: {header.Value}'");
+                curls.Add($"-H '{header.Key}: {header.Value.First()}'");
             }
 
             if (requestMessage.Content != null)
@@ -102,14 +97,8 @@ namespace TripleSix.Core.Helpers
                 var bodyText = await requestMessage.Content.ReadAsStringAsync();
                 if (bodyText.IsNotNullOrEmpty())
                 {
-                    try
-                    {
-                        curls.Add($"--data '{JObject.Parse(bodyText).ToString(Formatting.None, JsonHelper.Converters)}'");
-                    }
-                    catch
-                    {
-                        curls.Add($"--data '{bodyText}'");
-                    }
+                    curls.Add($"-H 'Content-Type: application/json'");
+                    curls.Add($"-d '{bodyText}'");
                 }
             }
 

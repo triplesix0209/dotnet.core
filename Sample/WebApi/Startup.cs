@@ -26,6 +26,7 @@ namespace Sample.WebApi
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
             builder.Services.ConfigureServices(configuration);
+            builder.SetupOpenTelemetry(configuration);
 
             // build app
             var app = builder.Build();
