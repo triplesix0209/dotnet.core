@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
@@ -337,6 +338,12 @@ namespace TripleSix.Core.WebApi
                     tracing.AddSqlClientInstrumentation(o =>
                     {
                         o.SetDbStatementForText = true;
+                        o.Filter = cmd =>
+                        {
+                            if (cmd is Microsoft.Data.SqlClient.SqlCommand command)
+                                return !command.CommandText.Contains("[HangFire]");
+                            return true;
+                        };
                         o.Enrich = (activity, @event, cmd) =>
                         {
                             activity.DisplayName = $"[DB] {activity.DisplayName}";
