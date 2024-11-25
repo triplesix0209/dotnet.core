@@ -368,12 +368,6 @@ namespace TripleSix.Core.WebApi
                             {
                             }
                         };
-
-                        o.EnrichWithHttpResponseMessage = async (activity, responseMessage) =>
-                        {
-                            activity.SetTag("http.response.content", await responseMessage.Content.ReadAsStringAsync());
-                            activity.SetTag("http.response.headers", responseMessage.Headers.ToJson());
-                        };
                     });
                 });
         }

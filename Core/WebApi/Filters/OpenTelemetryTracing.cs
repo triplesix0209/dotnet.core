@@ -48,8 +48,6 @@ namespace TripleSix.Core.WebApi
                 activity.SetTag("api.controller", controllerActionDescriptor.ControllerName);
                 activity.SetTag("api.action", controllerActionDescriptor.ActionName);
             }
-
-            activity.SetTag("api.response", context.Result.ToJson());
         }
     }
 }
