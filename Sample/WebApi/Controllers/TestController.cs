@@ -1,21 +1,22 @@
-﻿namespace Sample.WebApi.Controllers.Admins
+﻿using System.Net.Http.Headers;
+using System.Text;
+
+namespace Sample.WebApi.Controllers.Admins
 {
     [SwaggerTag("Test")]
     public class TestController : CommonController
     {
-        //[HttpPost]
-        //[SwaggerOperation("Test")]
-        //[Consumes("multipart/form-data")]
-        //public async Task<SuccessResult> Test1(FileInput input)
-        //{
-        //    return SuccessResult();
-        //}
+        [HttpGet]
+        [SwaggerOperation("Test")]
+        public async Task<SuccessResult> Test()
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes("dmcl.integration:DmclS4@2022")));
+            var response = await client.PostAsync($"https://sapapipopsrv53.stdmcl.com:53443/RESTAdapter/POS/GetSites", new StringContent(
+                "{}", Encoding.UTF8, "application/json"));
 
-        //[HttpPut]
-        //[SwaggerOperation("Test")]
-        //public async Task<SuccessResult> Test2()
-        //{
-        //    return SuccessResult();
-        //}
+            return SuccessResult();
+        }
     }
 }

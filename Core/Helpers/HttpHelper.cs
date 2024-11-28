@@ -95,11 +95,14 @@ namespace TripleSix.Core.Helpers
 
             if (requestMessage.Content != null)
             {
-                var bodyText = await requestMessage.Content.ReadAsStringAsync();
-                if (bodyText.IsNotNullOrEmpty())
+                if (requestMessage.Content.Headers.ContentType != null && requestMessage.Content.Headers.ContentType.MediaType == "application/json")
                 {
-                    curls.Add($"-H 'Content-Type: application/json'");
-                    curls.Add($"-d '{bodyText}'");
+                    var bodyText = await requestMessage.Content.ReadAsStringAsync();
+                    if (bodyText.IsNotNullOrEmpty())
+                    {
+                        curls.Add($"-H 'Content-Type: application/json'");
+                        curls.Add($"-d '{bodyText}'");
+                    }
                 }
             }
 
