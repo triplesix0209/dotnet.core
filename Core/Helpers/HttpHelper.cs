@@ -47,13 +47,14 @@ namespace TripleSix.Core.Helpers
                 curls.Add($"-H '{header.Key}: {header.Value}'");
             }
 
-            request.EnableBuffering();
-            using (var reader = new StreamReader(
-                request.Body,
-                Encoding.UTF8,
-                detectEncodingFromByteOrderMarks: false,
-                leaveOpen: true))
+            if (request.ContentType == "application/json")
             {
+                request.EnableBuffering();
+                using var reader = new StreamReader(
+                    request.Body,
+                    Encoding.UTF8,
+                    detectEncodingFromByteOrderMarks: false,
+                    leaveOpen: true);
                 request.Body.Position = 0;
                 var bodyText = await reader.ReadToEndAsync();
                 request.Body.Position = 0;
@@ -94,11 +95,14 @@ namespace TripleSix.Core.Helpers
 
             if (requestMessage.Content != null)
             {
-                var bodyText = await requestMessage.Content.ReadAsStringAsync();
-                if (bodyText.IsNotNullOrEmpty())
+                if (requestMessage.Content.Headers.ContentType != null && requestMessage.Content.Headers.ContentType.MediaType == "application/json")
                 {
-                    curls.Add($"-H 'Content-Type: application/json'");
-                    curls.Add($"-d '{bodyText}'");
+                    var bodyText = await requestMessage.Content.ReadAsStringAsync();
+                    if (bodyText.IsNotNullOrEmpty())
+                    {
+                        curls.Add($"-H 'Content-Type: application/json'");
+                        curls.Add($"-d '{bodyText}'");
+                    }
                 }
             }
 
