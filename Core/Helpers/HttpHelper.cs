@@ -47,13 +47,14 @@ namespace TripleSix.Core.Helpers
                 curls.Add($"-H '{header.Key}: {header.Value}'");
             }
 
-            request.EnableBuffering();
-            using (var reader = new StreamReader(
-                request.Body,
-                Encoding.UTF8,
-                detectEncodingFromByteOrderMarks: false,
-                leaveOpen: true))
+            if (request.ContentType == "application/json")
             {
+                request.EnableBuffering();
+                using var reader = new StreamReader(
+                    request.Body,
+                    Encoding.UTF8,
+                    detectEncodingFromByteOrderMarks: false,
+                    leaveOpen: true);
                 request.Body.Position = 0;
                 var bodyText = await reader.ReadToEndAsync();
                 request.Body.Position = 0;
