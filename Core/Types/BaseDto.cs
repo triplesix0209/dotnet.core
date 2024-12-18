@@ -13,8 +13,8 @@ namespace TripleSix.Core.Types
     /// </summary>
     public abstract class BaseDto : IDto
     {
-        private static readonly Dictionary<Type, IValidator?> _defaultValidators = new();
         private readonly HashSet<string> _propertyTracking = new();
+        private IValidator? _defaultValidator = null;
 
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -83,10 +83,10 @@ namespace TripleSix.Core.Types
         /// <returns><see cref="IValidator"/>.</returns>
         internal IValidator? GetDefaultValidator()
         {
-            var dtoType = GetType();
-            if (_defaultValidators.ContainsKey(dtoType))
-                return _defaultValidators[dtoType];
+            if (_defaultValidator != null)
+                return _defaultValidator;
 
+            var dtoType = GetType();
             var validatorTypes = dtoType.Assembly
                 .GetExportedTypes()
                 .Where(x => !x.IsAbstract)
@@ -102,7 +102,7 @@ namespace TripleSix.Core.Types
                 : validatorTypes.First();
 
             var validator = Activator.CreateInstance(validatorType) as IValidator;
-            _defaultValidators.Add(dtoType, validator);
+            _defaultValidator = validator;
             return validator;
         }
     }
