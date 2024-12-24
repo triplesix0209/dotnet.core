@@ -18,6 +18,9 @@ namespace Sample.Infrastructure
 
             builder.RegisterDbContext<ApplicationDbContext>()
                 .WithParameter("configuration", Configuration);
+
+            //builder.RegisterDbContext<DataDbContext>()
+            //    .WithParameter("configuration", Configuration);
         }
     }
 }

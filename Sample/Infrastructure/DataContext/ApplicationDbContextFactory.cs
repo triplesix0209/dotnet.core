@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Sample.Infrastructure.DataContext
 {
-    public class MigrationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+    public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
         /// <inheritdoc/>
         public ApplicationDbContext CreateDbContext(string[] args)

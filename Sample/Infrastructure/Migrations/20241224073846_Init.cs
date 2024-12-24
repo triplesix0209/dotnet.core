@@ -33,6 +33,25 @@ namespace Sample.Infrastructure.Migrations
                 comment: "Chi nhánh");
 
             migrationBuilder.CreateTable(
+                name: "Test",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Mã số"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Tên gọi"),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian khởi tạo"),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người tạo"),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian chỉnh sửa cuối"),
+                    UpdatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Id người chỉnh sửa"),
+                    DeleteAt = table.Column<DateTime>(type: "datetime2", nullable: true, comment: "Thời gian xóa")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Test", x => x.Id);
+                },
+                comment: "Test");
+
+            migrationBuilder.CreateTable(
                 name: "Account",
                 columns: table => new
                 {
@@ -153,6 +172,42 @@ namespace Sample.Infrastructure.Migrations
                 name: "IX_Site_UpdatorId",
                 table: "Site",
                 column: "UpdatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_Code",
+                table: "Test",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_CreateAt",
+                table: "Test",
+                column: "CreateAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_CreatorId",
+                table: "Test",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_DeleteAt",
+                table: "Test",
+                column: "DeleteAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_Name",
+                table: "Test",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_UpdateAt",
+                table: "Test",
+                column: "UpdateAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Test_UpdatorId",
+                table: "Test",
+                column: "UpdatorId");
         }
 
         /// <inheritdoc />
@@ -160,6 +215,9 @@ namespace Sample.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Account");
+
+            migrationBuilder.DropTable(
+                name: "Test");
 
             migrationBuilder.DropTable(
                 name: "Site");

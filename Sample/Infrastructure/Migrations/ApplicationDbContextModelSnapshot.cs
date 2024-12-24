@@ -190,6 +190,67 @@ namespace Sample.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Sample.Domain.Entities.Test", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Mã số");
+
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2")
+                        .HasComment("Thời gian khởi tạo");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Id người tạo");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2")
+                        .HasComment("Thời gian xóa");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Tên gọi");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2")
+                        .HasComment("Thời gian chỉnh sửa cuối");
+
+                    b.Property<Guid?>("UpdatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Id người chỉnh sửa");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("CreateAt");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("DeleteAt");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("UpdateAt");
+
+                    b.HasIndex("UpdatorId");
+
+                    b.ToTable("Test", t =>
+                        {
+                            t.HasComment("Test");
+                        });
+                });
+
             modelBuilder.Entity("Sample.Domain.Entities.Account", b =>
                 {
                     b.HasOne("Sample.Domain.Entities.Site", "Site")
