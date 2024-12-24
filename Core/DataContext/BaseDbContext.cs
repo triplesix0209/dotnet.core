@@ -174,7 +174,7 @@ namespace TripleSix.Core.DataContext
             foreach (var dataSeedType in dataSeedTypes)
             {
                 var dataSeed = Activator.CreateInstance(dataSeedType) as IDbDataSeed;
-                //dataSeed!.OnDataSeeding(modelBuilder, Database);
+                dataSeed!.OnDataSeeding(modelBuilder, Database);
             }
         }
     }
