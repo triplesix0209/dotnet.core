@@ -168,9 +168,10 @@ namespace TripleSix.Core.DataContext
 
             var dataSeedTypes = _seedAssembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
-                .Where(x => x.IsAssignableTo<IDbDataSeed>());
+                .Where(x => x.IsSubclassOfOpenGeneric(typeof(BaseDataSeed<>)));
             foreach (var dataSeedType in dataSeedTypes)
             {
+                if (dataSeedType.BaseType == null || !entityTypes.Contains(dataSeedType.BaseType.GenericTypeArguments[0])) continue;
                 var dataSeed = Activator.CreateInstance(dataSeedType) as IDbDataSeed;
                 dataSeed!.OnDataSeeding(modelBuilder, Database);
             }
