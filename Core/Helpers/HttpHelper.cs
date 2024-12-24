@@ -1,9 +1,6 @@
-﻿using System.Reflection.PortableExecutable;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace TripleSix.Core.Helpers
 {

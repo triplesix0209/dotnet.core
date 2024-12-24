@@ -5,8 +5,8 @@ using AutoMapper;
 using Hangfire;
 using Hangfire.Dashboard.Management.v2;
 using Microsoft.Data.SqlClient;
+using Sample.Domain.DataContext;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.DataContext;
 using TripleSix.Core.Mappers;
 
 namespace Sample.WebApi
@@ -94,8 +94,11 @@ namespace Sample.WebApi
             var migrationAppsetting = new MigrationAppsetting(configuration);
             if (migrationAppsetting.ApplyOnStartup)
             {
-                var db = serviceProvider.GetRequiredService<IDbMigrationContext>();
-                await db.MigrateAsync();
+                var db1 = serviceProvider.GetRequiredService<IApplicationDbContext>();
+                await db1.MigrateAsync();
+
+                var db2 = serviceProvider.GetRequiredService<IDataDbContext>();
+                await db2.MigrateAsync();
             }
 
             // setup hangfire

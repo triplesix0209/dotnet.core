@@ -1,9 +1,5 @@
-﻿using System.Data.SqlClient;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using System.Text;
-using Elastic.Clients.Elasticsearch.Requests;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
