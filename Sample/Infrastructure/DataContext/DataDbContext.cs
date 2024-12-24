@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Sample.Infrastructure.DataContext
 {
-    public partial class DataDbContext : DbContext
+    public partial class DataDbContext : BaseDbContext
     {
         private readonly IConfiguration _configuration;
 
         public DataDbContext(IConfiguration configuration)
-        //: base(typeof(IApplicationDbContext).Assembly, Assembly.GetExecutingAssembly())
+            : base(typeof(IApplicationDbContext).Assembly, Assembly.GetExecutingAssembly())
         {
             _configuration = configuration;
         }

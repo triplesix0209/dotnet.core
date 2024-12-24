@@ -160,15 +160,20 @@ namespace TripleSix.Core.DataContext
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(_entityAssembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(_entityAssembly, t =>
+            {
+                if (t.FullName == "Sample.Domain.Entities.Test")
+                    return true;
+                return false;
+            });
 
             var dataSeedTypes = _seedAssembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IDbDataSeed>());
             foreach (var dataSeedType in dataSeedTypes)
             {
-                var dataSeed = Activator.CreateInstance(dataSeedType) as IDbDataSeed;
-                dataSeed!.OnDataSeeding(modelBuilder, Database);
+                //var dataSeed = Activator.CreateInstance(dataSeedType) as IDbDataSeed;
+                //dataSeed!.OnDataSeeding(modelBuilder, Database);
             }
         }
     }
