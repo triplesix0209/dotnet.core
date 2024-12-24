@@ -8,11 +8,11 @@ namespace Sample.Infrastructure.DataContext
         /// <inheritdoc/>
         public DataDbContext CreateDbContext(string[] args)
         {
-            //var configuration = new ConfigurationBuilder()
-            //   .AddJsonFile(Path.Combine("Appsettings", "appsettings.json"), true)
-            //   .Build();
+            var configuration = new ConfigurationBuilder()
+               .AddJsonFile(Path.Combine("Appsettings", "appsettings.json"), true)
+               .Build();
 
-            return new DataDbContext();
+            return new DataDbContext(configuration);
         }
     }
 }
