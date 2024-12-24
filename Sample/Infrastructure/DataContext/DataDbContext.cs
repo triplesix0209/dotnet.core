@@ -19,8 +19,7 @@ namespace Sample.Infrastructure.DataContext
         {
             base.OnConfiguring(builder);
 
-            builder.UseSqlServer("Data Source=118.69.205.71;User ID=dmcl.dev;Password=DMCLDev@#23;Initial Catalog=Sample;Trust Server Certificate=True;");
-            //builder.UseSqlServer(_configuration.GetConnectionString("Default"));
+            builder.UseSqlServer(_configuration.GetConnectionString("Default"));
 
 #if DEBUG
             builder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
