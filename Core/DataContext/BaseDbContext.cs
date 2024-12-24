@@ -2,8 +2,6 @@
 using System.Reflection;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;

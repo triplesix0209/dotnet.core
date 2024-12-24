@@ -1,6 +1,6 @@
 ﻿namespace Sample.Infrastructure.Seeds
 {
-    public class SiteDataSeed : BaseDataSeed
+    public class SiteDataSeed : BaseDataSeed<Site>
     {
         /// <inheritdoc/>
         public override void OnDataSeeding(ModelBuilder builder, DatabaseFacade database)
