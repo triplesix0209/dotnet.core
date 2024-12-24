@@ -2,8 +2,11 @@
 using System.Reflection;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 
 namespace TripleSix.Core.DataContext
@@ -160,19 +163,17 @@ namespace TripleSix.Core.DataContext
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(_entityAssembly, t =>
-            {
-                if (t.FullName == "Sample.Domain.Entities.Test")
-                    return true;
-                return false;
-            });
+            var entityTypes = GetType().GetProperties()
+                .Where(x => x.PropertyType.IsSubclassOfOpenGeneric(typeof(DbSet<>)))
+                .Select(x => x.PropertyType.GenericTypeArguments[0]);
+            modelBuilder.ApplyConfigurationsFromAssembly(_entityAssembly, type => entityTypes.Contains(type));
 
             var dataSeedTypes = _seedAssembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract)
                 .Where(x => x.IsAssignableTo<IDbDataSeed>());
             foreach (var dataSeedType in dataSeedTypes)
             {
-                //var dataSeed = Activator.CreateInstance(dataSeedType) as IDbDataSeed;
+                var dataSeed = Activator.CreateInstance(dataSeedType) as IDbDataSeed;
                 //dataSeed!.OnDataSeeding(modelBuilder, Database);
             }
         }
