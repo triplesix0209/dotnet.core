@@ -2,6 +2,7 @@
 global using System.ComponentModel.DataAnnotations;
 global using AutoMapper;
 global using Microsoft.EntityFrameworkCore;
+global using Sample.Application.Dto.Admins;
 global using Sample.Domain.DataContext;
 global using Sample.Domain.Entities;
 global using TripleSix.Core.DataContext;

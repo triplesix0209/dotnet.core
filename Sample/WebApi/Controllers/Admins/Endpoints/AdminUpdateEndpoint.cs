@@ -6,14 +6,15 @@
         where TEntity : class, IStrongEntity
         where TInput : class, IDto
     {
-        public IStrongService<TEntity> Service { get; set; }
+        public IStrongServiceUpdate<TEntity, TInput> Service { get; set; }
 
         [HttpPut("{id}")]
         [SwaggerOperation("Sửa [controller]")]
         [Transactional]
         public async Task<SuccessResult> Update(RouteId route, [FromBody] TInput input)
         {
-            await Service.UpdateWithMapper(route.Id, input);
+            var entity = await Service.GetFirstById(route.Id);
+            await Service.Update(entity, input);
             return SuccessResult();
         }
     }
