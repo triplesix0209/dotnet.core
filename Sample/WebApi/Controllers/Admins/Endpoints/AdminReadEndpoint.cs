@@ -8,13 +8,13 @@
         where TDetail : class, IDto
         where TFilter : class, IEntityQueryableDto<TEntity>, IPagingInput
     {
-        public IStrongService<TEntity> Service { get; set; }
+        public IStrongServiceRead<TEntity, TFilter> Service { get; set; }
 
         [HttpGet]
         [SwaggerOperation("Lấy danh sách [controller]")]
         public async Task<PagingResult<TItem>> GetPage(TFilter input)
         {
-            var result = await Service.GetPageByQueryModel<TItem>(input, input.Page, input.Size);
+            var result = await Service.GetPage<TItem>(input, input.Page, input.Size);
             return PagingResult(result);
         }
 

@@ -1,13 +1,10 @@
-﻿using Hangfire;
-using TripleSix.Core.Hangfire;
-
-namespace Sample.Application.Services
+﻿namespace Sample.Application.Services
 {
-    public interface ISiteService : IStrongService<Site>
+    public interface ISiteService : IStrongService<Site>,
+        IStrongServiceRead<Site, SiteFilterAdminDto>,
+        IStrongServiceCreate<Site, SiteCreateAdminDto>,
+        IStrongServiceUpdate<Site, SiteUpdateAdminDto>
     {
-        [DisplayName("Hello")]
-        [Queue("sample")]
-        Task RunJob(JobContext? jobContext);
     }
 
     public class SiteService : StrongService<Site>, ISiteService
@@ -18,10 +15,5 @@ namespace Sample.Application.Services
         }
 
         public IApplicationDbContext Db { get; set; }
-
-        public Task RunJob(JobContext? jobContext)
-        {
-            return Task.CompletedTask;
-        }
     }
 }

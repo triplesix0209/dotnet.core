@@ -6,14 +6,14 @@
         where TEntity : class, IStrongEntity
         where TInput : class, IDto
     {
-        public IStrongService<TEntity> Service { get; set; }
+        public IStrongServiceCreate<TEntity, TInput> Service { get; set; }
 
         [HttpPost]
         [SwaggerOperation("Tạo [controller]")]
         [Transactional]
         public async Task<DataResult<Guid>> Create([FromBody] TInput input)
         {
-            var result = await Service.CreateWithMapper(input);
+            var result = await Service.Create(input);
             return DataResult(result.Id);
         }
     }

@@ -1,6 +1,9 @@
 ﻿namespace Sample.Application.Services
 {
-    public interface IAccountService : IStrongService<Account>
+    public interface IAccountService : IStrongService<Account>,
+        IStrongServiceRead<Account, AccountFilterAdminDto>,
+        IStrongServiceCreate<Account, AccountCreateAdminDto>,
+        IStrongServiceUpdate<Account, AccountUpdateAdminDto>
     {
     }
 
