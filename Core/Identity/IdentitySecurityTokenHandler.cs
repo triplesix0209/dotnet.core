@@ -39,9 +39,11 @@ namespace TripleSix.Core.Identity
         /// <inheritdoc/>
         public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
         {
+            var tokenData = ReadJwtToken(token);
+            var issuer = tokenData.Issuer;
+
             if (Setting.BypassUserIds.IsNotNullOrEmpty())
             {
-                var tokenData = ReadJwtToken(token);
                 var userId = tokenData.Claims.FindFirstValue(nameof(IIdentityContext.Id).ToCamelCase());
                 if (userId.IsNotNullOrEmpty() && Setting.BypassUserIds.Contains(userId))
                 {
@@ -49,26 +51,24 @@ namespace TripleSix.Core.Identity
                 }
             }
 
+            string? signingKey;
             switch (Setting.SigningKeyMode)
             {
                 case IdentitySigningKeyModes.Static:
-                    if (Setting.SigningKey.IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Setting.SigningKey));
-
-                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Setting.SigningKey));
+                    signingKey = Setting.IssuerSigningKey.FirstOrDefault(x => x.Issuer == issuer)?.SigningKey;
+                    if (signingKey.IsNullOrEmpty())
+                        throw new ArgumentNullException(nameof(Setting.IssuerSigningKey));
+                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
                     break;
 
                 case IdentitySigningKeyModes.Dynamic:
                     if (GetSigningKeyMethod == null)
                         throw new ArgumentNullException(nameof(GetSigningKeyMethod));
 
-                    var tokenData = ReadJwtToken(token);
-                    var issuer = tokenData.Issuer;
-
                     var signingKeyCacheItem = _signingKeyCaches.ContainsKey(issuer) ? _signingKeyCaches[issuer] : null;
                     if (signingKeyCacheItem == null || DateTime.UtcNow > signingKeyCacheItem.ExpiredAt)
                     {
-                        var signingKey = GetSigningKeyMethod(Setting, tokenData);
+                        signingKey = GetSigningKeyMethod(Setting, tokenData);
                         if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
                         var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife ?? 0);
                         signingKeyCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);

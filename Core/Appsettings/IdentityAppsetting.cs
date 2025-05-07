@@ -16,8 +16,8 @@ namespace TripleSix.Core.Appsettings
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
-            if (SigningKeyMode == IdentitySigningKeyModes.Static && SigningKey.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(SigningKey));
+            if (SigningKeyMode == IdentitySigningKeyModes.Static && IssuerSigningKey.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(IssuerSigningKey));
             if (SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0)
                 throw new ArgumentException(nameof(SigningKeyCacheTimelife));
         }
@@ -38,19 +38,14 @@ namespace TripleSix.Core.Appsettings
         public string ConnectionString { get; set; }
 
         /// <summary>
-        /// Signing Key.
+        /// Danh sách Issuer Key hợp lệ.
         /// </summary>
-        public string? SigningKey { get; set; } = null;
-
-        /// <summary>
-        /// Issuer hợp lệ.
-        /// </summary>
-        public string Issuer { get; set; } = "Identity";
+        public IdentityIssuerSigningKeyItem[] IssuerSigningKey { get; set; }
 
         /// <summary>
         /// Danh sách Audience hợp lệ.
         /// </summary>
-        public string[] Audience { get; set; } = new[] { "Identity" };
+        public string[] Audience { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// Bật/tắt kiểm tra Issuer.
@@ -76,5 +71,21 @@ namespace TripleSix.Core.Appsettings
         /// Url sử dụng để request internal.
         /// </summary>
         public string? InternalUrl { get; set; } = null;
+    }
+
+    /// <summary>
+    /// Identity Issuer Key Item.
+    /// </summary>
+    public class IdentityIssuerSigningKeyItem
+    {
+        /// <summary>
+        /// Issuer hợp lệ.
+        /// </summary>
+        public string Issuer { get; set; }
+
+        /// <summary>
+        /// Signing Key.
+        /// </summary>
+        public string SigningKey { get; set; }
     }
 }
