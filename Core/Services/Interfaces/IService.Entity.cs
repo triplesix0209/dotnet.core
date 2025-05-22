@@ -11,6 +11,11 @@ namespace TripleSix.Core.Services
         where TEntity : class, IEntity
     {
         /// <summary>
+        /// Câu query cơ bản.
+        /// </summary>
+        IQueryable<TEntity> Query { get; }
+
+        /// <summary>
         /// Khởi tạo entity.
         /// </summary>
         /// <param name="entity">Entity sử dụng để ghi nhận.</param>
