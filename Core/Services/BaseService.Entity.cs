@@ -32,10 +32,8 @@ namespace TripleSix.Core.Services
             _db = db;
         }
 
-        /// <summary>
-        /// Câu query cơ bản.
-        /// </summary>
-        protected IQueryable<TEntity> Query => _db.Set<TEntity>();
+        /// <inheritdoc/>
+        public IQueryable<TEntity> Query => _db.Set<TEntity>();
 
         /// <inheritdoc/>
         public virtual async Task<TEntity> Create(TEntity entity)
