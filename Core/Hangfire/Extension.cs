@@ -25,7 +25,8 @@ namespace TripleSix.Core.Hangfire
         /// <param name="backgroundJobClient"><see cref="IBackgroundJobClient"/>.</param>
         /// <param name="methodCall">Method call.</param>
         /// <param name="jobOption"><see cref="JobOption"/>.</param>
-        public static void EnqueueExternal<T>(
+        /// <returns>Id of created Job.</returns>
+        public static string EnqueueExternal<T>(
             this IBackgroundJobClient backgroundJobClient,
             Expression<Func<T, Task>> methodCall,
             JobOption? jobOption = null)
@@ -40,7 +41,7 @@ namespace TripleSix.Core.Hangfire
             var queue = jobOption.GetMethodQueue(method);
             var displayName = jobOption.GetMethodDisplayName(method);
 
-            backgroundJobClient.Enqueue<HangfireExternalCaller>(
+            return backgroundJobClient.Enqueue<HangfireExternalCaller>(
                 queue, service => service.Run(null, null, displayName, serviceTypeName, method.Name, arguments));
         }
 
@@ -52,7 +53,8 @@ namespace TripleSix.Core.Hangfire
         /// <param name="methodCall">Method call.</param>
         /// <param name="delay">Thời gian chờ.</param>
         /// <param name="jobOption"><see cref="JobOption"/>.</param>
-        public static void ScheduleExternal<T>(
+        /// <returns>Id of created Job.</returns>
+        public static string ScheduleExternal<T>(
             this IBackgroundJobClient backgroundJobClient,
             Expression<Func<T, Task>> methodCall,
             TimeSpan delay,
@@ -68,7 +70,7 @@ namespace TripleSix.Core.Hangfire
             var queue = jobOption.GetMethodQueue(method);
             var displayName = jobOption.GetMethodDisplayName(method);
 
-            backgroundJobClient.Schedule<HangfireExternalCaller>(
+            return backgroundJobClient.Schedule<HangfireExternalCaller>(
                 queue, service => service.Run(null, null, displayName, serviceTypeName, method.Name, arguments), delay);
         }
 
@@ -80,7 +82,8 @@ namespace TripleSix.Core.Hangfire
         /// <param name="parentId">Id job cha, sẽ chạy job đăng ký nếu job cha chạy xong.</param>
         /// <param name="methodCall">Method call.</param>
         /// <param name="jobOption"><see cref="JobOption"/>.</param>
-        public static void ContinueJobWithExternal<T>(
+        /// <returns>Id of created Job.</returns>
+        public static string ContinueJobWithExternal<T>(
             this IBackgroundJobClient backgroundJobClient,
             string parentId,
             Expression<Func<T, Task>> methodCall,
@@ -96,7 +99,7 @@ namespace TripleSix.Core.Hangfire
             var queue = jobOption.GetMethodQueue(method);
             var displayName = jobOption.GetMethodDisplayName(method);
 
-            backgroundJobClient.ContinueJobWith<HangfireExternalCaller>(
+            return backgroundJobClient.ContinueJobWith<HangfireExternalCaller>(
                 parentId, queue, service => service.Run(null, null, displayName, serviceTypeName, method.Name, arguments));
         }
 
