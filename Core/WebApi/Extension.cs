@@ -1,12 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using Hangfire;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,6 +15,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
@@ -336,8 +337,20 @@ namespace TripleSix.Core.WebApi
                         o.SetDbStatementForText = true;
                         o.Filter = cmd =>
                         {
-                            if (cmd is Microsoft.Data.SqlClient.SqlCommand command)
-                                return !command.CommandText.Contains("[HangFire]");
+                            if (cmd is SqlCommand sqlCommand)
+                            {
+                                var connectionString = sqlCommand.Connection?.ConnectionString ?? string.Empty;
+                                var excludedDatabases = new[] { "Hangfire" };
+                                foreach (var dbName in excludedDatabases)
+                                {
+                                    if (connectionString.Contains($"Database={dbName}", StringComparison.OrdinalIgnoreCase) ||
+                                        connectionString.Contains($"Initial Catalog={dbName}", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+
                             return true;
                         };
                         o.Enrich = (activity, @event, cmd) =>
