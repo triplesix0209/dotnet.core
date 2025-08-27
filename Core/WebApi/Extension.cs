@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -315,17 +316,6 @@ namespace TripleSix.Core.WebApi
 
                     tracing.AddAspNetCoreInstrumentation(o =>
                     {
-                        o.EnrichWithHttpRequest = async (activity, request) =>
-                        {
-                            try
-                            {
-                                activity.SetTag("curl", await request.ToCurl());
-                            }
-                            catch
-                            {
-                            }
-                        };
-
                         o.EnrichWithHttpResponse = (activity, response) =>
                         {
                             activity.DisplayName = $"[API] {activity.DisplayName}";
@@ -454,6 +444,7 @@ namespace TripleSix.Core.WebApi
             app.MapControllers();
             app.Use404JsonError();
 
+            app.UseMiddleware<OpenTelemetryMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
             return app;
