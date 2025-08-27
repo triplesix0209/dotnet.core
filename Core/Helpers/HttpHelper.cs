@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
 namespace TripleSix.Core.Helpers
@@ -44,21 +45,22 @@ namespace TripleSix.Core.Helpers
                 curls.Add($"-H '{header.Key}: {header.Value}'");
             }
 
-            if (request.ContentType == "application/json")
+            if (request.ContentType.IsNotNullOrEmpty() && request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
             {
                 request.EnableBuffering();
                 using var reader = new StreamReader(
                     request.Body,
                     Encoding.UTF8,
                     detectEncodingFromByteOrderMarks: false,
+                    bufferSize: -1,
                     leaveOpen: true);
-                request.Body.Position = 0;
-                var bodyText = await reader.ReadToEndAsync();
-                request.Body.Position = 0;
+                request.Body.Position = 0L;
+                string bodyText = await reader.ReadToEndAsync();
+                request.Body.Position = 0L;
 
                 if (bodyText.IsNotNullOrEmpty())
                 {
-                    curls.Add($"-H 'Content-Type: application/json'");
+                    bodyText = Regex.Unescape(bodyText);
                     curls.Add($"-d '{bodyText}'");
                 }
             }
