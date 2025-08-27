@@ -316,6 +316,11 @@ namespace TripleSix.Core.WebApi
 
                     tracing.AddAspNetCoreInstrumentation(o =>
                     {
+                        o.Filter = (context) =>
+                        {
+                            return context.Request.Method != HttpMethods.Options;
+                        };
+
                         o.EnrichWithHttpResponse = (activity, response) =>
                         {
                             activity.DisplayName = $"[API] {activity.DisplayName}";
