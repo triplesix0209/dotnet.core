@@ -1,6 +1,7 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    public abstract class BaseDataAdminDto : BaseDto
+    public abstract class BaseDataAdminDto<TEntity> : BaseDataDto<TEntity>
+        where TEntity : IEntity
     {
         [DisplayName("Id định danh")]
         public Guid Id { get; set; }

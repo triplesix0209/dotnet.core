@@ -1,11 +1,7 @@
 ﻿#pragma warning disable SA1401 // Fields should be private
 
-using System.Reflection;
-using Elastic.Transport.Products.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using TripleSix.Core.DataContext;
-using TripleSix.Core.Elastic;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
@@ -51,34 +47,42 @@ namespace TripleSix.Core.Services
         public async Task<TResult> Create<TResult>(TEntity entity)
             where TResult : class
         {
-            var result = await Create(entity);
-            return Mapper.MapData<TEntity, TResult>(result);
+            var createdEntity = await Create(entity);
+
+            var result = Mapper.MapData<TResult>(createdEntity);
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod != null)
+            {
+                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
+                Task.WaitAll(task!);
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> CreateWithMapper(IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input)
         {
             input.Validate(throwOnFailures: true);
-            input.Normalize();
-
-            var entity = Mapper.MapData<IDto, TEntity>(input);
-            afterMap?.Invoke(entity);
+            var entity = await input.MapToEntity(Mapper, ServiceProvider);
 
             return await Create(entity);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> CreateWithMapper<TResult>(IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input)
             where TResult : class
         {
-            input.Validate(throwOnFailures: true);
-            input.Normalize();
+            var entity = await CreateWithMapper(input);
+            var result = Mapper.MapData<TResult>(entity);
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod != null)
+            {
+                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
+                Task.WaitAll(task!);
+            }
 
-            var entity = Mapper.MapData<IDto, TEntity>(input);
-            afterMap?.Invoke(entity);
-
-            var result = await Create(entity);
-            return Mapper.MapData<TEntity, TResult>(result);
+            return result;
         }
 
         /// <inheritdoc/>
@@ -97,29 +101,44 @@ namespace TripleSix.Core.Services
         public async Task<TResult> Update<TResult>(TEntity entity)
             where TResult : class
         {
-            var result = await Update(entity);
-            return Mapper.MapData<TEntity, TResult>(result);
+            var updatedEntity = await Update(entity);
+
+            var result = Mapper.MapData<TResult>(updatedEntity);
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod != null)
+            {
+                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
+                Task.WaitAll(task!);
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> UpdateWithMapper(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input)
         {
             if (!input.IsAnyPropertyChanged()) return entity;
+
             input.Validate(throwOnFailures: true);
-            input.Normalize();
-
-            Mapper.MapUpdate(input, entity);
-            afterMap?.Invoke(entity);
-
-            return await Update(entity);
+            var mappedEntity = await input.MapChangeEntity(Mapper, ServiceProvider, entity);
+            return await Update(mappedEntity);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input)
             where TResult : class
         {
-            var result = await UpdateWithMapper(entity, input, afterMap);
-            return Mapper.MapData<TEntity, TResult>(result);
+            var updatedEntity = await UpdateWithMapper(entity, input);
+
+            var result = Mapper.MapData<TResult>(updatedEntity);
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod != null)
+            {
+                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
+                Task.WaitAll(task!);
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -173,8 +192,12 @@ namespace TripleSix.Core.Services
             if (entity == null) return null;
 
             var result = Mapper.MapData<TResult>(entity);
-            if (result is IDto dto)
-                await dto.AfterGetFirst(entity, ServiceProvider);
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod != null)
+            {
+                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
+                Task.WaitAll(task!);
+            }
 
             return result;
         }
@@ -233,7 +256,20 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            return await query.ToListAsync<TResult>(Mapper);
+            var tasks = new List<Task>();
+            var items = new List<TResult>();
+            var entities = await query.ToListAsync();
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            foreach (var entity in entities)
+            {
+                var dto = Mapper.MapData<TResult>(entity);
+                items.Add(dto);
+
+                if (mapMethod != null) tasks.Add((mapMethod.Invoke(dto, [entity, ServiceProvider]) as Task)!);
+            }
+
+            if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
+            return items;
         }
 
         /// <inheritdoc/>
@@ -265,15 +301,24 @@ namespace TripleSix.Core.Services
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
 
             query ??= Query;
-            var result = new Paging<TResult>(page, size)
+            var tasks = new List<Task>();
+            var items = new List<TResult>();
+            var entities = await query.Skip((page - 1) * size).Take(size).ToListAsync();
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            foreach (var entity in entities)
+            {
+                var dto = Mapper.MapData<TResult>(entity);
+                items.Add(dto);
+
+                if (mapMethod != null) tasks.Add((mapMethod.Invoke(dto, [entity, ServiceProvider]) as Task)!);
+            }
+
+            if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
+            return new Paging<TResult>(page, size)
             {
                 Total = await query.LongCountAsync(),
-                Items = await query
-                    .Skip((page - 1) * size)
-                    .Take(size)
-                    .ToListAsync<TResult>(Mapper),
+                Items = items,
             };
-            return result;
         }
 
         /// <inheritdoc/>
@@ -296,50 +341,14 @@ namespace TripleSix.Core.Services
         }
 
         /// <summary>
-        /// Hàm xử lý tự động đồng bộ dữ liệu với elasticsearch.
-        /// </summary>
-        /// <param name="entity">Entity xử lý.</param>
-        /// <param name="event">Sự kiện gây thay đổi.</param>
-        /// <returns>Task xử lý.</returns>
-        protected virtual async Task AutoSyncElastic(TEntity entity, EntityEvents @event)
-        {
-            if (!(@event == EntityEvents.Created
-                || @event == EntityEvents.Updated
-                || @event == EntityEvents.HardDeleted))
-                return;
-
-            var elasticAutoSyncAttrs = GetType().GetCustomAttributes(typeof(ElasticAutoSyncAttribute<>));
-            if (elasticAutoSyncAttrs.IsNullOrEmpty()) return;
-
-            var client = Extension.CreateElasticsearchClient(Configuration);
-            foreach (var elasticAutoSyncAttr in elasticAutoSyncAttrs)
-            {
-                var documentType = elasticAutoSyncAttr.GetType().GetGenericArguments()[0];
-                var elasticDocumentAttr = documentType.GetCustomAttribute<ElasticDocumentAttribute>();
-                if (elasticDocumentAttr == null) continue;
-                if (Mapper.MapData(entity, typeof(TEntity), documentType) is not IElasticDocument document) continue;
-
-                ElasticsearchResponse? response;
-                if (@event == EntityEvents.HardDeleted) response = await document.Delete(client);
-                else response = await document.Index(client);
-
-                if (response != null && response.IsValidResponse == false)
-                {
-                    Logger.LogError($"Auto sync elastic [{document.GetIndexName()}] failed"
-                        + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
-                }
-            }
-        }
-
-        /// <summary>
         /// Sự kiện khi entity được save changed thành công.
         /// </summary>
         /// <param name="entity">Entity xử lý.</param>
         /// <param name="event">Sự kiện gây thay đổi.</param>
         /// <returns>Task xử lý.</returns>
-        protected virtual async Task OnEntitySaveChanged(TEntity entity, EntityEvents @event)
+        protected virtual Task OnEntitySaveChanged(TEntity entity, EntityEvents @event)
         {
-            await AutoSyncElastic(entity, @event);
+            return Task.CompletedTask;
         }
     }
 }

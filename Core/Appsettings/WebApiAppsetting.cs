@@ -29,6 +29,6 @@ namespace TripleSix.Core.Appsettings
         /// <summary>
         /// Danh sách domain cho phép request.
         /// </summary>
-        public string[] AllowedOrigins { get; set; } = new[] { "*" };
+        public string[] AllowedOrigins { get; set; } = ["*"];
     }
 }

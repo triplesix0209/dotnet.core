@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-using Elastic.Transport.Products.Elasticsearch;
-using Microsoft.Extensions.Logging;
-using TripleSix.Core.DataContext;
-using TripleSix.Core.Elastic;
+﻿using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -44,18 +40,18 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> UpdateWithMapper(Guid id, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TEntity> UpdateWithMapper(Guid id, IMapToEntityDto<TEntity> input)
         {
             var entity = await GetFirstById(id);
-            return await UpdateWithMapper(entity, input, afterMap);
+            return await UpdateWithMapper(entity, input);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IDto input, Action<TEntity>? afterMap = null)
+        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IMapToEntityDto<TEntity> input)
             where TResult : class
         {
             var entity = await GetFirstById(id);
-            return await UpdateWithMapper<TResult>(entity, input, afterMap);
+            return await UpdateWithMapper<TResult>(entity, input);
         }
 
         /// <inheritdoc/>
@@ -165,36 +161,6 @@ namespace TripleSix.Core.Services
         {
             var query = Query.Where(x => x.Id == id);
             return await GetFirst(query);
-        }
-
-        /// <inheritdoc/>
-        protected override async Task AutoSyncElastic(TEntity entity, EntityEvents @event)
-        {
-            var elasticAutoSyncAttrs = GetType().GetCustomAttributes(typeof(ElasticAutoSyncAttribute<>));
-            if (elasticAutoSyncAttrs.IsNullOrEmpty()) return;
-
-            var client = Extension.CreateElasticsearchClient(Configuration);
-            foreach (var elasticAutoSyncAttr in elasticAutoSyncAttrs)
-            {
-                var documentType = elasticAutoSyncAttr.GetType().GetGenericArguments()[0];
-                var elasticDocumentAttr = documentType.GetCustomAttribute<ElasticDocumentAttribute>();
-                if (elasticDocumentAttr == null) continue;
-                if (Mapper.MapData(entity, typeof(TEntity), documentType) is not IElasticDocument document) continue;
-
-                ElasticsearchResponse? response;
-                if (@event == EntityEvents.SoftDeleted || @event == EntityEvents.HardDeleted)
-                    response = await document.Delete(client);
-                else if ((@event == EntityEvents.Created || @event == EntityEvents.Updated || @event == EntityEvents.Restore)
-                    && entity.DeleteAt == null)
-                    response = await document.Index(client);
-                else continue;
-
-                if (response != null && response.IsValidResponse == false)
-                {
-                    Logger.LogError($"Auto sync elastic [{document.GetIndexName()}] failed"
-                        + (response.ElasticsearchServerError != null ? "\n" + response.ElasticsearchServerError.Error.Reason : string.Empty));
-                }
-            }
         }
     }
 }

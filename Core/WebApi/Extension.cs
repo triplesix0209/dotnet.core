@@ -1,8 +1,9 @@
-﻿using Hangfire;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -16,8 +17,6 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
@@ -96,8 +95,8 @@ namespace TripleSix.Core.WebApi
                 };
 
                 var tokenValidator = new IdentitySecurityTokenHandler(identitySetting) { GetSigningKeyMethod = getSigningKeyMethod };
-                options.SecurityTokenValidators.Clear();
-                options.SecurityTokenValidators.Add(tokenValidator);
+                options.TokenHandlers.Clear();
+                options.TokenHandlers.Add(tokenValidator);
 
                 options.Events = new JwtBearerEvents
                 {

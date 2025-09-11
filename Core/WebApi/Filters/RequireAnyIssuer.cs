@@ -17,7 +17,7 @@ namespace TripleSix.Core.WebApi
         public RequireAnyIssuer(params string[] acceptedIssuers)
             : base(typeof(RequireAnyIssuerImplement))
         {
-            Arguments = new object[] { acceptedIssuers };
+            Arguments = [acceptedIssuers];
         }
     }
 

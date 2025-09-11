@@ -6,7 +6,6 @@
 
         public string? Name { get; set; }
 
-        /// <inheritdoc/>
         public override Task<IQueryable<Site>> ToQueryable(IQueryable<Site> query, IServiceProvider serviceProvider)
         {
             var result = query
