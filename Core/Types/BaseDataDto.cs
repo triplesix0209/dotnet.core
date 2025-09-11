@@ -14,10 +14,10 @@ namespace TripleSix.Core.Types
         where TEntity : IEntity
     {
         /// <inheritdoc/>
-        public virtual Task OnMapFromEntity(IServiceProvider serviceProvider, TEntity sourceEntity)
+        public virtual Task OnMapFromEntity(IServiceProvider serviceProvider, TEntity source)
         {
             var mapper = serviceProvider.GetRequiredService<IMapper>();
-            mapper.MapData(sourceEntity, this);
+            mapper.MapData(source, this);
             return Task.CompletedTask;
         }
     }
