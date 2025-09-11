@@ -17,14 +17,7 @@ namespace TripleSix.Core.Types
         /// <param name="validator">Các <see cref="IValidator"/> dùng để kiểm tra dữ liệu. Bỏ trống hệ thống sẽ tự tìm validator phù hợp.</param>
         /// <param name="throwOnFailures">Throw exception khi có lỗi.</param>
         /// <returns><see cref="ValidationResult"/>.</returns>
-        ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = false);
-
-        /// <summary>
-        /// Hàm kiểm tra và xử lý dữ liệu DTO.
-        /// </summary>
-        /// <param name="validationResult"><see cref="ValidationResult"/>.</param>
-        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
-        void OnValidate(ref ValidationResult validationResult, HttpContext? httpContext);
+        ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = true);
 
         /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.
