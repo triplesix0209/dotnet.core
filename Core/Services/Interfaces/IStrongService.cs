@@ -118,6 +118,13 @@ namespace TripleSix.Core.Services
             where TResult : class;
 
         /// <summary>
+        /// Lấy entity đầu tiên theo Id, không có sẽ trả về null.
+        /// </summary>
+        /// <param name="id">Id đối tượng.</param>
+        /// <returns>Entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
+        Task<TEntity?> GetFirstOrDefaultById(Guid id);
+
+        /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper theo Id, không có sẽ trả về null.
         /// </summary>
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
@@ -127,11 +134,11 @@ namespace TripleSix.Core.Services
             where TResult : class;
 
         /// <summary>
-        /// Lấy entity đầu tiên theo Id, không có sẽ trả về null.
+        /// Lấy entity đầu tiên theo Id.
         /// </summary>
         /// <param name="id">Id đối tượng.</param>
-        /// <returns>Entity đầu tiên thỏa query, trả về null nếu không tìm thấy.</returns>
-        Task<TEntity?> GetFirstOrDefaultById(Guid id);
+        /// <returns>Entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
+        Task<TEntity> GetFirstById(Guid id);
 
         /// <summary>
         /// Lấy entity đầu tiên và convert với Mapper theo Id.
@@ -142,11 +149,5 @@ namespace TripleSix.Core.Services
         Task<TResult> GetFirstById<TResult>(Guid id)
             where TResult : class;
 
-        /// <summary>
-        /// Lấy entity đầu tiên theo Id.
-        /// </summary>
-        /// <param name="id">Id đối tượng.</param>
-        /// <returns>Entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
-        Task<TEntity> GetFirstById(Guid id);
     }
 }

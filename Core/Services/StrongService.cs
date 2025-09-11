@@ -27,7 +27,6 @@ namespace TripleSix.Core.Services
         {
             var entity = await GetFirstById(id);
             updateAction(entity);
-
             return await Update(entity);
         }
 
@@ -35,8 +34,9 @@ namespace TripleSix.Core.Services
         public async Task<TResult> Update<TResult>(Guid id, Action<TEntity> updateAction)
             where TResult : class
         {
-            var result = await Update(id, updateAction);
-            return Mapper.MapData<TEntity, TResult>(result);
+            var entity = await GetFirstById(id);
+            updateAction(entity);
+            return await Update<TResult>(entity);
         }
 
         /// <inheritdoc/>
@@ -78,8 +78,15 @@ namespace TripleSix.Core.Services
         public async Task<TResult> SoftDelete<TResult>(TEntity entity)
             where TResult : class
         {
-            var result = await SoftDelete(entity);
-            return Mapper.MapData<TEntity, TResult>(result);
+            var updatedEntity = await SoftDelete(entity);
+
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
+
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            Task.WaitAll(task!);
+            return result;
         }
 
         /// <inheritdoc/>
@@ -114,8 +121,15 @@ namespace TripleSix.Core.Services
         public async Task<TResult> Restore<TResult>(TEntity entity)
             where TResult : class
         {
-            var result = await Restore(entity);
-            return Mapper.MapData<TEntity, TResult>(result);
+            var updatedEntity = await Restore(entity);
+
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
+
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            Task.WaitAll(task!);
+            return result;
         }
 
         /// <inheritdoc/>
@@ -134,6 +148,13 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
+        public async Task<TEntity?> GetFirstOrDefaultById(Guid id)
+        {
+            var query = Query.Where(x => x.Id == id);
+            return await GetFirstOrDefault(query);
+        }
+
+        /// <inheritdoc/>
         public async Task<TResult?> GetFirstOrDefaultById<TResult>(Guid id)
             where TResult : class
         {
@@ -142,10 +163,10 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity?> GetFirstOrDefaultById(Guid id)
+        public async Task<TEntity> GetFirstById(Guid id)
         {
             var query = Query.Where(x => x.Id == id);
-            return await GetFirstOrDefault(query);
+            return await GetFirst(query);
         }
 
         /// <inheritdoc/>
@@ -154,13 +175,6 @@ namespace TripleSix.Core.Services
         {
             var query = Query.Where(x => x.Id == id);
             return await GetFirst<TResult>(query);
-        }
-
-        /// <inheritdoc/>
-        public async Task<TEntity> GetFirstById(Guid id)
-        {
-            var query = Query.Where(x => x.Id == id);
-            return await GetFirst(query);
         }
     }
 }

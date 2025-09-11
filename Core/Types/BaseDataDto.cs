@@ -1,4 +1,6 @@
-﻿using TripleSix.Core.Entities;
+﻿using AutoMapper;
+using TripleSix.Core.Entities;
+using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Types
 {
@@ -11,8 +13,9 @@ namespace TripleSix.Core.Types
         where TEntity : IEntity
     {
         /// <inheritdoc/>
-        public virtual Task MapFromEntity(TEntity entity, IServiceProvider serviceProvider)
+        public virtual Task MapFromEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity sourceEntity)
         {
+            mapper.MapData(sourceEntity, this);
             return Task.CompletedTask;
         }
     }
