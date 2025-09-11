@@ -49,7 +49,7 @@ namespace TripleSix.Core.Services
         {
             var createdEntity = await Create(entity);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(createdEntity);
 
             var result = Activator.CreateInstance<TResult>();
@@ -62,7 +62,7 @@ namespace TripleSix.Core.Services
         public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input)
         {
             input.Validate(throwOnFailures: true);
-            var entity = await input.MapToEntity(Mapper, ServiceProvider);
+            var entity = await input.OnMapToEntity(Mapper, ServiceProvider, null);
 
             return await Create(entity);
         }
@@ -73,7 +73,7 @@ namespace TripleSix.Core.Services
         {
             var entity = await CreateWithMapper(input);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
             var result = Activator.CreateInstance<TResult>();
@@ -100,7 +100,7 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await Update(entity);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
@@ -115,7 +115,7 @@ namespace TripleSix.Core.Services
             if (!input.IsAnyPropertyChanged()) return entity;
 
             input.Validate(throwOnFailures: true);
-            var mappedEntity = await input.MapChangeEntity(Mapper, ServiceProvider, entity);
+            var mappedEntity = await input.OnMapToEntity(Mapper, ServiceProvider, entity);
             return await Update(mappedEntity);
         }
 
@@ -125,7 +125,7 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await UpdateWithMapper(entity, input);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
@@ -190,7 +190,7 @@ namespace TripleSix.Core.Services
             var entity = await GetFirstOrDefault(query);
             if (entity == null) return null;
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
             var result = Activator.CreateInstance<TResult>();
@@ -255,7 +255,7 @@ namespace TripleSix.Core.Services
         {
             var entities = await GetList(query);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<List<TResult>>(entities);
 
             var tasks = new List<Task>();
@@ -306,7 +306,7 @@ namespace TripleSix.Core.Services
         {
             var entityResult = await GetPage(query, page, size);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null)
             {
                 return new Paging<TResult>(page, size)

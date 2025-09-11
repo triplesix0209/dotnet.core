@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
-using TripleSix.Core.Mappers;
 using TripleSix.Core.Types;
 using TripleSix.Core.Validation;
 

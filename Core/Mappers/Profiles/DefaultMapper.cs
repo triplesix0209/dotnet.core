@@ -2,7 +2,6 @@
 using System.Reflection;
 using Autofac;
 using AutoMapper;
-using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
 
