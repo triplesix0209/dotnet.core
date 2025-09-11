@@ -22,9 +22,10 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Hàm kiểm tra dữ liệu DTO.
         /// </summary>
+        /// <param name="result"><see cref="ValidationResult"/>.</param>
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
         /// <returns><see cref="ValidationResult"/>.</returns>
-        ValidationResult ValidationRules(HttpContext? httpContext);
+        ValidationResult ValidationRules(ValidationResult result, HttpContext? httpContext);
 
         /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.

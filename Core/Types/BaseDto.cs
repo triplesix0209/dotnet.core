@@ -40,11 +40,11 @@ namespace TripleSix.Core.Types
             var result = validator.Validate(context);
             if (!result.IsValid) return result;
 
-            return ValidationRules(httpContext);
+            return ValidationRules(result, httpContext);
         }
 
         /// <inheritdoc/>
-        public virtual ValidationResult ValidationRules(HttpContext? httpContext)
+        public virtual ValidationResult ValidationRules(ValidationResult result, HttpContext? httpContext)
         {
             return new ValidationResult();
         }

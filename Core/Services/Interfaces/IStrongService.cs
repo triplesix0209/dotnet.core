@@ -148,6 +148,5 @@ namespace TripleSix.Core.Services
         /// <returns>Dữ liệu của entity đầu tiên thỏa query, nếu không tìm thấy sẽ trả lỗi.</returns>
         Task<TResult> GetFirstById<TResult>(Guid id)
             where TResult : class;
-
     }
 }
