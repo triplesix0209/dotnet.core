@@ -251,6 +251,5 @@ namespace TripleSix.Core.Services
         /// <returns>Dữ liệu phân trang của entity.</returns>
         Task<IPaging<TResult>> GetPageByQueryModel<TResult>(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
             where TResult : class;
-
     }
 }
