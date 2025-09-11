@@ -22,7 +22,7 @@ namespace TripleSix.Core.WebApi
         public RequireAnyScope(params string[] acceptedScopes)
             : base(typeof(RequireAnyScopeImplement))
         {
-            Arguments = new object[] { acceptedScopes };
+            Arguments = [acceptedScopes];
         }
 
         private class RequireAnyScopeImplement : IAuthorizationFilter

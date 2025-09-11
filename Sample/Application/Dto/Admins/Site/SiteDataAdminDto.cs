@@ -1,7 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapFromEntity<Site>]
-    public class SiteDataAdminDto : BaseDataAdminDto
+    public class SiteDataAdminDto : BaseDataAdminDto<Site>
     {
         public string Code { get; set; }
 

@@ -1,7 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapToEntity<Site>(true)]
-    public class SiteUpdateAdminDto : BaseDto
+    public class SiteUpdateAdminDto : BaseInputDto<Site>
     {
         [MustTrim]
         [MustUpperCase]

@@ -1,7 +1,6 @@
 ﻿namespace Sample.Application.Dto.Admins
 {
-    [MapToEntity<Site>]
-    public class SiteCreateAdminDto : BaseDto
+    public class SiteCreateAdminDto : BaseInputDto<Site>
     {
         [Required]
         [MustTrim]

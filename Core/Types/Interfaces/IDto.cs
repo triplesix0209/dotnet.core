@@ -2,7 +2,6 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
 {
@@ -14,24 +13,18 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Kiểm tra dữ liệu với các <see cref="IValidator"/>.
         /// </summary>
-        /// <param name="validator">Các <see cref="IValidator"/> dùng để kiểm tra dữ liệu. Bỏ trống hệ thống sẽ tự tìm validator phù hợp.</param>
         /// <param name="httpContext"><see cref="HttpContext"/>.</param>
+        /// <param name="validator">Các <see cref="IValidator"/> dùng để kiểm tra dữ liệu. Bỏ trống hệ thống sẽ tự tìm validator phù hợp.</param>
         /// <param name="throwOnFailures">Throw exception khi có lỗi.</param>
         /// <returns><see cref="ValidationResult"/>.</returns>
-        ValidationResult Validate(IValidator? validator = default, HttpContext? httpContext = default, bool throwOnFailures = false);
+        ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = false);
 
         /// <summary>
-        /// Chuẩn hóa dữ liệu.
+        /// Hàm kiểm tra dữ liệu DTO.
         /// </summary>
-        void Normalize();
-
-        /// <summary>
-        /// Thao tác sau khi lấy dữ liệu đơn.
-        /// </summary>
-        /// <param name="entity">Entity.</param>
-        /// <param name="serviceProvider">Service provider.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task AfterGetFirst(IEntity entity, IServiceProvider serviceProvider);
+        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
+        /// <returns><see cref="ValidationResult"/>.</returns>
+        ValidationResult ValidationRules(HttpContext? httpContext);
 
         /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.

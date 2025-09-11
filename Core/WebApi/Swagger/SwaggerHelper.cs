@@ -126,48 +126,17 @@ namespace TripleSix.Core.WebApi
                     if (displayName.IsNotNullOrEmpty())
                         displayName = "Lọc theo " + displayName;
                 }
-                else if (propertyInfo.DeclaringType?.IsAssignableToGenericType(typeof(IElasticQueryableDto<>)) == true)
-                {
-                    var documentType = propertyInfo.DeclaringType.GetInterfaces()
-                        .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IElasticQueryableDto<>))?
-                        .GenericTypeArguments[0];
-                    var entityType = documentType?
-                        .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
-                        .GetType().GetGenericArguments()[0];
-                    displayName ??= entityType?.GetProperty(propertyInfo.Name)?
-                        .GetCustomAttribute<CommentAttribute>()?.Comment;
-                    if (displayName.IsNotNullOrEmpty())
-                        displayName = "Lọc theo " + displayName;
-                }
                 else
                 {
-                    var entityType = propertyInfo.DeclaringType?
-                        .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
-                        .GetType().GetGenericArguments()[0] ??
-                        propertyInfo.DeclaringType?
-                        .GetCustomAttribute(typeof(MapToEntityAttribute<>))?
-                        .GetType().GetGenericArguments()[0];
-                    if (entityType == null)
-                    {
-                        var documentType = propertyInfo.DeclaringType?
-                        .GetCustomAttribute(typeof(MapFromElasticDocumentAttribute<>))?
-                        .GetType().GetGenericArguments()[0];
-                        entityType = documentType?
-                            .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
-                            .GetType().GetGenericArguments()[0];
-                    }
-
+                    var entityType = propertyInfo.DeclaringType?.GetGenericArguments(typeof(IMapFromEntityDto<>)).FirstOrDefault() ??
+                        propertyInfo.DeclaringType?.GetGenericArguments(typeof(IMapToEntityDto<>)).FirstOrDefault();
                     displayName ??= entityType?.GetProperty(propertyInfo.Name)?
                         .GetCustomAttribute<CommentAttribute>()?.Comment;
 
                     if (displayName.IsNullOrEmpty())
                     {
-                        var propertyEntityType = propertyInfo.PropertyType
-                            .GetCustomAttribute(typeof(MapFromEntityAttribute<>))?
-                            .GetType().GetGenericArguments()[0] ??
-                            propertyInfo.PropertyType
-                            .GetCustomAttribute(typeof(MapToEntityAttribute<>))?
-                            .GetType().GetGenericArguments()[0];
+                        var propertyEntityType = propertyInfo.PropertyType.GetGenericArguments(typeof(IMapFromEntityDto<>)).FirstOrDefault() ??
+                            propertyInfo.PropertyType.GetGenericArguments(typeof(IMapToEntityDto<>)).FirstOrDefault();
                         displayName ??= propertyEntityType?.GetCustomAttribute<CommentAttribute>()?.Comment;
                     }
                 }

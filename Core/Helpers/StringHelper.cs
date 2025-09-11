@@ -106,8 +106,8 @@ namespace TripleSix.Core.Helpers
 
     public static partial class StringHelper
     {
-        private static readonly string[] VietnameseSigns = new string[]
-        {
+        private static readonly string[] VietnameseSigns =
+        [
             "aAeEoOuUiIdDyY",
             "áàạảãâấầậẩẫăắằặẳẵ",
             "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ",
@@ -123,6 +123,6 @@ namespace TripleSix.Core.Helpers
             "Đ",
             "ýỳỵỷỹ",
             "ÝỲỴỶỸ",
-        };
+        ];
     }
 }

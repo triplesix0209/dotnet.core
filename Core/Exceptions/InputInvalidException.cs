@@ -21,10 +21,10 @@ namespace TripleSix.Core.Exceptions
             string errorCode = "runtime_validator")
             : base($"Dữ liệu đầu vào bị thiếu hoặc sai")
         {
-            Items = new InputInvalidItem[]
-            {
+            Items =
+            [
                 new() { FieldName = fieldName, ErrorCode = errorCode, ErrorMessage = errorMessage },
-            };
+            ];
         }
 
         /// <summary>

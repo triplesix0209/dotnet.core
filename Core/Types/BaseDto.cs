@@ -3,7 +3,6 @@ using Autofac;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-using TripleSix.Core.Entities;
 using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.Types
@@ -30,7 +29,7 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
-        public ValidationResult Validate(IValidator? validator = default, HttpContext? httpContext = default, bool throwOnFailures = false)
+        public ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = false)
         {
             validator ??= GetDefaultValidator();
             if (validator == null) return new ValidationResult();
@@ -38,18 +37,16 @@ namespace TripleSix.Core.Types
             var context = ValidationContext<IDto>.CreateWithOptions(this, options => { if (throwOnFailures) options.ThrowOnFailures(); });
             context.RootContextData[nameof(HttpContext)] = httpContext;
 
-            return validator.Validate(context);
+            var result = validator.Validate(context);
+            if (!result.IsValid) return result;
+
+            return ValidationRules(httpContext);
         }
 
         /// <inheritdoc/>
-        public virtual void Normalize()
+        public virtual ValidationResult ValidationRules(HttpContext? httpContext)
         {
-        }
-
-        /// <inheritdoc/>
-        public virtual Task AfterGetFirst(IEntity entity, IServiceProvider serviceProvider)
-        {
-            return Task.CompletedTask;
+            return new ValidationResult();
         }
 
         /// <inheritdoc/>

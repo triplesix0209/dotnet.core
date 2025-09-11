@@ -129,11 +129,34 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Execute a mapping from the source object to a new destination object with supplied mapping options, only map property changed.
         /// </summary>
+        /// <typeparam name="TDestination">Destination type to update.</typeparam>
+        /// <param name="mapper"><see cref="IMapper"/>.</param>
+        /// <param name="source">Source object to map from.</param>
+        /// <param name="destination">Destination object to update.</param>
+        /// <param name="opts">Mapping options.</param>
+        /// <returns>Mapped destination object.</returns>
+        public static TDestination MapUpdate<TDestination>(
+            this IMapper mapper,
+            object source,
+            TDestination destination,
+            Action<IMappingOperationOptions<object, TDestination>>? opts = null)
+            where TDestination : class
+        {
+            return mapper.Map(source, destination, context =>
+            {
+                context.Items["mapPropertyChangedOnly"] = "true";
+                opts?.Invoke(context);
+            });
+        }
+
+        /// <summary>
+        /// Execute a mapping from the source object to a new destination object with supplied mapping options, only map property changed.
+        /// </summary>
         /// <typeparam name="TSource">Source type to map.</typeparam>
         /// <typeparam name="TDestination">Destination type to update.</typeparam>
         /// <param name="mapper"><see cref="IMapper"/>.</param>
         /// <param name="source">Source object to map from.</param>
-        /// <param name="destination">Destination object to create.</param>
+        /// <param name="destination">Destination object to update.</param>
         /// <param name="opts">Mapping options.</param>
         /// <returns>Mapped destination object.</returns>
         public static TDestination MapUpdate<TSource, TDestination>(
@@ -156,7 +179,7 @@ namespace TripleSix.Core.Helpers
         /// </summary>
         /// <param name="mapper"><see cref="IMapper"/>.</param>
         /// <param name="source">Source object to map from.</param>
-        /// <param name="destination">Destination object to create.</param>
+        /// <param name="destination">Destination object to update.</param>
         /// <param name="sourceType">Source type to map from.</param>
         /// <param name="destinationType">Destination type to create.</param>
         /// <param name="opts">Mapping options.</param>

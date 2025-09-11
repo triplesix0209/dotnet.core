@@ -4,7 +4,7 @@
         IControllerEndpoint<TController, AdminCreateEndpointAttribute<TController, TEntity, TInput>>
         where TController : BaseController
         where TEntity : class, IStrongEntity
-        where TInput : class, IDto
+        where TInput : class, IMapToEntityDto<TEntity>
     {
         public IStrongServiceCreate<TEntity, TInput> Service { get; set; }
 
@@ -22,7 +22,7 @@
         : BaseControllerEndpointAttribute
         where TController : BaseController
         where TEntity : class, IStrongEntity
-        where TInput : class, IDto
+        where TInput : class, IMapToEntityDto<TEntity>
     {
         public override Type EndpointType => typeof(AdminCreateEndpoint<TController, TEntity, TInput>);
     }

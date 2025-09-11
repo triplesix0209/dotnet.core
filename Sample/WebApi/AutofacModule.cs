@@ -15,7 +15,6 @@ namespace Sample.WebApi
             base.Load(builder);
             var assembly = Assembly.GetExecutingAssembly();
 
-            builder.RegisterAllQuartzJob(assembly);
             builder.RegisterAllController(assembly);
             builder.RegisterHangfireStartup(assembly);
         }

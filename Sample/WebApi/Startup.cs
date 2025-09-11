@@ -22,10 +22,10 @@ namespace Sample.WebApi
 
             // builder & services
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.ConfigureServices(configuration);
             builder.Configuration.AddConfiguration(configuration);
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.ConfigureContainer(configuration));
-            builder.Services.ConfigureServices(configuration);
             builder.SetupOpenTelemetry(configuration);
 
             // build app
@@ -94,11 +94,8 @@ namespace Sample.WebApi
             var migrationAppsetting = new MigrationAppsetting(configuration);
             if (migrationAppsetting.ApplyOnStartup)
             {
-                var db1 = serviceProvider.GetRequiredService<IApplicationDbContext>();
-                await db1.MigrateAsync();
-
-                var db2 = serviceProvider.GetRequiredService<IDataDbContext>();
-                await db2.MigrateAsync();
+                var db = serviceProvider.GetRequiredService<IApplicationDbContext>();
+                await db.MigrateAsync();
             }
 
             // setup hangfire

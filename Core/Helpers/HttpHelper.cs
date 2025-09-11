@@ -10,8 +10,8 @@ namespace TripleSix.Core.Helpers
     /// </summary>
     public static class HttpHelper
     {
-        private static readonly string[] _excludeHeaderKeys = new[]
-        {
+        private static readonly string[] _excludeHeaderKeys =
+        [
            "Accept",
            "Accept-Encoding",
            "Connection",
@@ -20,7 +20,7 @@ namespace TripleSix.Core.Helpers
            "Host",
            "Postman-Token",
            "User-Agent",
-        };
+        ];
 
         /// <summary>
         /// Chuyển đổi <see cref="HttpRequest"/> sang curl.

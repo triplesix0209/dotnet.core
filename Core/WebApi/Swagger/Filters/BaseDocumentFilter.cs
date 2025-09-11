@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
-using Elastic.Transport.Extensions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
@@ -25,7 +24,7 @@ namespace TripleSix.Core.WebApi
             {
                 foreach (var (apiMethod, operation) in openApiPathItem.Operations)
                 {
-                    var apiDescription = context.ApiDescriptions.First(x => x.HttpMethod == apiMethod.GetStringValue().ToUpper() && x.RelativePath == apiPath[1..]);
+                    var apiDescription = context.ApiDescriptions.First(x => x.HttpMethod == apiMethod.ToString().ToUpper() && x.RelativePath == apiPath[1..]);
                     if (apiDescription.ActionDescriptor is not ControllerActionDescriptor controllerDescriptor) continue;
                     var controllerType = controllerDescriptor.ControllerTypeInfo;
                     var baseControllerType = controllerType.BaseType;

@@ -10,7 +10,7 @@ namespace TripleSix.Core.Services
     /// <typeparam name="TDto">Loại dto xử lý.</typeparam>
     public interface IStrongServiceCreate<TEntity, TDto> : IStrongService<TEntity>
         where TEntity : class, IStrongEntity
-        where TDto : class, IDto
+        where TDto : class, IMapToEntityDto<TEntity>
     {
         /// <summary>
         /// Khởi tạo dữ liệu với dto chỉ định.
