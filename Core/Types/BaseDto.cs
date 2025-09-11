@@ -3,6 +3,7 @@ using Autofac;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using TripleSix.Core.Exceptions;
 using TripleSix.Core.Validation;
 
 namespace TripleSix.Core.Types
@@ -41,12 +42,22 @@ namespace TripleSix.Core.Types
             if (!result.IsValid) return result;
 
             result = new ValidationResult();
-            ValidationRules(ref result, httpContext);
+            OnValidate(ref result, httpContext);
+            if (!result.IsValid && throwOnFailures)
+            {
+                throw new InputInvalidException(result.Errors.Select(x => new InputInvalidItem
+                {
+                    ErrorCode = x.ErrorCode,
+                    FieldName = x.PropertyName,
+                    ErrorMessage = x.ErrorMessage,
+                }));
+            }
+
             return result;
         }
 
         /// <inheritdoc/>
-        public virtual void ValidationRules(ref ValidationResult result, HttpContext? httpContext)
+        public virtual void OnValidate(ref ValidationResult validationResult, HttpContext? httpContext)
         {
         }
 
