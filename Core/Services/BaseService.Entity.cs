@@ -49,14 +49,12 @@ namespace TripleSix.Core.Services
         {
             var createdEntity = await Create(entity);
 
-            var result = Mapper.MapData<TResult>(createdEntity);
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
-            if (mapMethod != null)
-            {
-                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
-                Task.WaitAll(task!);
-            }
+            if (mapMethod == null) return Mapper.MapData<TResult>(createdEntity);
 
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, createdEntity]) as Task;
+            Task.WaitAll(task!);
             return result;
         }
 
@@ -74,14 +72,13 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             var entity = await CreateWithMapper(input);
-            var result = Mapper.MapData<TResult>(entity);
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
-            if (mapMethod != null)
-            {
-                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
-                Task.WaitAll(task!);
-            }
 
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod == null) return Mapper.MapData<TResult>(entity);
+
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, entity]) as Task;
+            Task.WaitAll(task!);
             return result;
         }
 
@@ -103,14 +100,12 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await Update(entity);
 
-            var result = Mapper.MapData<TResult>(updatedEntity);
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
-            if (mapMethod != null)
-            {
-                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
-                Task.WaitAll(task!);
-            }
+            if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            Task.WaitAll(task!);
             return result;
         }
 
@@ -130,14 +125,12 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await UpdateWithMapper(entity, input);
 
-            var result = Mapper.MapData<TResult>(updatedEntity);
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
-            if (mapMethod != null)
-            {
-                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
-                Task.WaitAll(task!);
-            }
+            if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            Task.WaitAll(task!);
             return result;
         }
 
@@ -182,30 +175,34 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default)
-            where TResult : class
+        public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default)
         {
             using var activity = StartTraceMethodActivity();
 
             query ??= Query;
-            var entity = await query.FirstOrDefaultAsync();
+            return await query.FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<TResult?> GetFirstOrDefault<TResult>(IQueryable<TEntity>? query = default)
+            where TResult : class
+        {
+            var entity = await GetFirstOrDefault(query);
             if (entity == null) return null;
 
-            var result = Mapper.MapData<TResult>(entity);
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
-            if (mapMethod != null)
-            {
-                var task = mapMethod.Invoke(result, [entity, ServiceProvider]) as Task;
-                Task.WaitAll(task!);
-            }
+            if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
+            var result = Activator.CreateInstance<TResult>();
+            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, entity]) as Task;
+            Task.WaitAll(task!);
             return result;
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity?> GetFirstOrDefault(IQueryable<TEntity>? query = default)
+        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await GetFirstOrDefault<TEntity>(query);
+            return await GetFirstOrDefault(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -216,24 +213,24 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity?> GetFirstOrDefaultByQueryModel(IEntityQueryableDto<TEntity> model)
+        public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default)
         {
-            return await GetFirstOrDefault(await model.ToQueryable(Query, ServiceProvider));
+            return await GetFirstOrDefault(query)
+                ?? throw new NotFoundException<TEntity>();
         }
 
         /// <inheritdoc/>
         public async Task<TResult> GetFirst<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
-            var data = await GetFirstOrDefault<TResult>(query)
+            return await GetFirstOrDefault<TResult>(query)
                 ?? throw new NotFoundException<TEntity>();
-            return data;
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> GetFirst(IQueryable<TEntity>? query = default)
+        public async Task<TEntity> GetFirstByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await GetFirst<TEntity>(query);
+            return await GetFirst(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -244,28 +241,30 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> GetFirstByQueryModel(IEntityQueryableDto<TEntity> model)
+        public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default)
         {
-            return await GetFirst(await model.ToQueryable(Query, ServiceProvider));
+            using var activity = StartTraceMethodActivity();
+
+            query ??= Query;
+            return await query.ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<List<TResult>> GetList<TResult>(IQueryable<TEntity>? query = default)
             where TResult : class
         {
-            using var activity = StartTraceMethodActivity();
+            var entities = await GetList(query);
 
-            query ??= Query;
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod == null) return Mapper.MapData<List<TResult>>(entities);
+
             var tasks = new List<Task>();
             var items = new List<TResult>();
-            var entities = await query.ToListAsync();
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
             foreach (var entity in entities)
             {
-                var dto = Mapper.MapData<TResult>(entity);
-                items.Add(dto);
-
-                if (mapMethod != null) tasks.Add((mapMethod.Invoke(dto, [entity, ServiceProvider]) as Task)!);
+                var item = Activator.CreateInstance<TResult>();
+                tasks.Add((mapMethod.Invoke(item, [Mapper, ServiceProvider, entity]) as Task)!);
+                items.Add(item);
             }
 
             if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
@@ -273,9 +272,9 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<List<TEntity>> GetList(IQueryable<TEntity>? query = default)
+        public async Task<List<TEntity>> GetListByQueryModel(IEntityQueryableDto<TEntity> model)
         {
-            return await GetList<TEntity>(query);
+            return await GetList(await model.ToQueryable(Query, ServiceProvider));
         }
 
         /// <inheritdoc/>
@@ -286,14 +285,7 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<List<TEntity>> GetListByQueryModel(IEntityQueryableDto<TEntity> model)
-        {
-            return await GetList(await model.ToQueryable(Query, ServiceProvider));
-        }
-
-        /// <inheritdoc/>
-        public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
-            where TResult : class
+        public async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
         {
             using var activity = StartTraceMethodActivity();
 
@@ -301,30 +293,50 @@ namespace TripleSix.Core.Services
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "must be greater than 0");
 
             query ??= Query;
+            return new Paging<TEntity>(page, size)
+            {
+                Total = await query.LongCountAsync(),
+                Items = await query.Skip((page - 1) * size).Take(size).ToListAsync(),
+            };
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPaging<TResult>> GetPage<TResult>(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
+            where TResult : class
+        {
+            var entityResult = await GetPage(query, page, size);
+
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
+            if (mapMethod == null)
+            {
+                return new Paging<TResult>(page, size)
+                {
+                    Total = entityResult.Total,
+                    Items = Mapper.MapData<List<TResult>>(entityResult.Items),
+                };
+            }
+
             var tasks = new List<Task>();
             var items = new List<TResult>();
-            var entities = await query.Skip((page - 1) * size).Take(size).ToListAsync();
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.MapFromEntity));
-            foreach (var entity in entities)
+            foreach (var entity in entityResult.Items)
             {
-                var dto = Mapper.MapData<TResult>(entity);
-                items.Add(dto);
-
-                if (mapMethod != null) tasks.Add((mapMethod.Invoke(dto, [entity, ServiceProvider]) as Task)!);
+                var item = Activator.CreateInstance<TResult>();
+                tasks.Add((mapMethod.Invoke(item, [Mapper, ServiceProvider, entity]) as Task)!);
+                items.Add(item);
             }
 
             if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
             return new Paging<TResult>(page, size)
             {
-                Total = await query.LongCountAsync(),
+                Total = entityResult.Total,
                 Items = items,
             };
         }
 
         /// <inheritdoc/>
-        public async Task<IPaging<TEntity>> GetPage(IQueryable<TEntity>? query = default, int page = 1, int size = 10)
+        public async Task<IPaging<TEntity>> GetPageByQueryModel(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
         {
-            return await GetPage<TEntity>(query, page, size);
+            return await GetPage(await model.ToQueryable(Query, ServiceProvider), page, size);
         }
 
         /// <inheritdoc/>
@@ -332,12 +344,6 @@ namespace TripleSix.Core.Services
             where TResult : class
         {
             return await GetPage<TResult>(await model.ToQueryable(Query, ServiceProvider), page, size);
-        }
-
-        /// <inheritdoc/>
-        public async Task<IPaging<TEntity>> GetPageByQueryModel(IEntityQueryableDto<TEntity> model, int page = 1, int size = 10)
-        {
-            return await GetPage(await model.ToQueryable(Query, ServiceProvider), page, size);
         }
 
         /// <summary>

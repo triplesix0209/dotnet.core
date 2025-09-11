@@ -1,4 +1,5 @@
-﻿using TripleSix.Core.Entities;
+﻿using AutoMapper;
+using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
 {
@@ -12,9 +13,10 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Nạp dữ liệu từ entity.
         /// </summary>
-        /// <param name="entity">Entity sử dụng để chuyển đổi.</param>
+        /// <param name="mapper"><see cref="IMapper"/>.</param>
         /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
+        /// <param name="sourceEntity">Entity sử dụng để chuyển đổi.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task MapFromEntity(TEntity entity, IServiceProvider serviceProvider);
+        Task MapFromEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity sourceEntity);
     }
 }
