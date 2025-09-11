@@ -41,7 +41,7 @@ namespace TripleSix.Core.Types
             if (!result.IsValid) return result;
 
             result = new ValidationResult();
-            ValidationRules(result, httpContext);
+            ValidationRules(ref result, httpContext);
             return result;
         }
 
