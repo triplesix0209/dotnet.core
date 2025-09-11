@@ -13,16 +13,11 @@ namespace TripleSix.Core.Types
         where TEntity : class, IEntity
     {
         /// <inheritdoc/>
-        public virtual Task<TEntity> MapToEntity(IMapper mapper, IServiceProvider serviceProvider)
+        public virtual Task<TEntity> OnMapToEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity? source)
         {
-            var result = mapper.MapData<TEntity>(this);
-            return Task.FromResult(result);
-        }
-
-        /// <inheritdoc/>
-        public virtual Task<TEntity> MapChangeEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity sourceEntity)
-        {
-            var result = mapper.MapUpdate<TEntity>(this, sourceEntity);
+            var result = source == null
+                ? mapper.MapData<TEntity>(this)
+                : mapper.MapUpdate<TEntity>(this, source);
             return Task.FromResult(result);
         }
     }

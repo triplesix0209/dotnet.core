@@ -15,16 +15,8 @@ namespace TripleSix.Core.Types
         /// </summary>
         /// <param name="mapper"><see cref="IMapper"/>.</param>
         /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
+        /// <param name="source">Entity nguồn, dùng cho hành động update.</param>
         /// <returns>Entity đã được chuyển đổi từ Dto.</returns>
-        Task<TEntity> MapToEntity(IMapper mapper, IServiceProvider serviceProvider);
-
-        /// <summary>
-        /// Chuyển đổi dữ liệu thành entity, chỉ map các trường property có thay đổi so với entity gốc.
-        /// </summary>
-        /// <param name="mapper"><see cref="IMapper"/>.</param>
-        /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
-        /// <param name="sourceEntity">Entity gốc.</param>
-        /// <returns>Entity đã được chuyển đổi từ Dto.</returns>
-        Task<TEntity> MapChangeEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity sourceEntity);
+        Task<TEntity> OnMapToEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity? source);
     }
 }
