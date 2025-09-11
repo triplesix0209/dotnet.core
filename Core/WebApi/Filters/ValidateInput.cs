@@ -28,7 +28,7 @@ namespace TripleSix.Core.WebApi
                     errors.Add(new()
                     {
                         FieldName = propertyName,
-                        ErrorCode = error.ErrorCode.ToSnakeCase(),
+                        ErrorCode = error.ErrorCode.IsNullOrEmpty() ? "model_validator" : error.ErrorCode.ToSnakeCase(),
                         ErrorMessage = error.ErrorMessage,
                     });
                 }
