@@ -84,7 +84,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
             Task.WaitAll(task!);
             return result;
         }
@@ -127,7 +127,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
             Task.WaitAll(task!);
             return result;
         }

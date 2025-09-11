@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 
@@ -13,8 +14,9 @@ namespace TripleSix.Core.Types
         where TEntity : class, IEntity
     {
         /// <inheritdoc/>
-        public virtual Task<TEntity> OnMapToEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity? source)
+        public virtual Task<TEntity> OnMapToEntity(IServiceProvider serviceProvider, TEntity? source)
         {
+            var mapper = serviceProvider.GetRequiredService<IMapper>();
             var result = source == null
                 ? mapper.MapData<TEntity>(this)
                 : mapper.MapUpdate<TEntity>(this, source);

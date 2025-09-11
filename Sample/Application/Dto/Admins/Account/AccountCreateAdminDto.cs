@@ -8,9 +8,9 @@
         [Required]
         public Guid SiteId { get; set; }
 
-        public override async Task<Account> OnMapToEntity(IMapper mapper, IServiceProvider serviceProvider, Account? source)
+        public override async Task<Account> OnMapToEntity(IServiceProvider serviceProvider, Account? source)
         {
-            var result = await base.OnMapToEntity(mapper, serviceProvider, source);
+            var result = await base.OnMapToEntity(serviceProvider, source);
             result.Code = RandomHelper.RandomString(10);
             return result;
         }

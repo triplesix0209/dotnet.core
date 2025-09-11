@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using TripleSix.Core.Entities;
+﻿using TripleSix.Core.Entities;
 
 namespace TripleSix.Core.Types
 {
@@ -13,10 +12,9 @@ namespace TripleSix.Core.Types
         /// <summary>
         /// Chuyển đổi dữ liệu thành entity.
         /// </summary>
-        /// <param name="mapper"><see cref="IMapper"/>.</param>
         /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
         /// <param name="source">Entity nguồn, dùng cho hành động update.</param>
         /// <returns>Entity đã được chuyển đổi từ Dto.</returns>
-        Task<TEntity> OnMapToEntity(IMapper mapper, IServiceProvider serviceProvider, TEntity? source);
+        Task<TEntity> OnMapToEntity(IServiceProvider serviceProvider, TEntity? source);
     }
 }

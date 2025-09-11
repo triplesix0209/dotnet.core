@@ -53,7 +53,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(createdEntity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, createdEntity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, createdEntity]) as Task;
             Task.WaitAll(task!);
             return result;
         }
@@ -62,7 +62,7 @@ namespace TripleSix.Core.Services
         public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input)
         {
             input.Validate(throwOnFailures: true);
-            var entity = await input.OnMapToEntity(Mapper, ServiceProvider, null);
+            var entity = await input.OnMapToEntity(ServiceProvider, null);
 
             return await Create(entity);
         }
@@ -77,7 +77,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, entity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
             Task.WaitAll(task!);
             return result;
         }
@@ -104,7 +104,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
             Task.WaitAll(task!);
             return result;
         }
@@ -115,7 +115,7 @@ namespace TripleSix.Core.Services
             if (!input.IsAnyPropertyChanged()) return entity;
 
             input.Validate(throwOnFailures: true);
-            var mappedEntity = await input.OnMapToEntity(Mapper, ServiceProvider, entity);
+            var mappedEntity = await input.OnMapToEntity(ServiceProvider, entity);
             return await Update(mappedEntity);
         }
 
@@ -129,7 +129,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, updatedEntity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
             Task.WaitAll(task!);
             return result;
         }
@@ -194,7 +194,7 @@ namespace TripleSix.Core.Services
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
             var result = Activator.CreateInstance<TResult>();
-            var task = mapMethod.Invoke(result, [Mapper, ServiceProvider, entity]) as Task;
+            var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
             Task.WaitAll(task!);
             return result;
         }
@@ -263,7 +263,7 @@ namespace TripleSix.Core.Services
             foreach (var entity in entities)
             {
                 var item = Activator.CreateInstance<TResult>();
-                tasks.Add((mapMethod.Invoke(item, [Mapper, ServiceProvider, entity]) as Task)!);
+                tasks.Add((mapMethod.Invoke(item, [ServiceProvider, entity]) as Task)!);
                 items.Add(item);
             }
 
@@ -321,7 +321,7 @@ namespace TripleSix.Core.Services
             foreach (var entity in entityResult.Items)
             {
                 var item = Activator.CreateInstance<TResult>();
-                tasks.Add((mapMethod.Invoke(item, [Mapper, ServiceProvider, entity]) as Task)!);
+                tasks.Add((mapMethod.Invoke(item, [ServiceProvider, entity]) as Task)!);
                 items.Add(item);
             }
 
