@@ -57,11 +57,6 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
-        public virtual void OnValidate(ref ValidationResult validationResult, HttpContext? httpContext)
-        {
-        }
-
-        /// <inheritdoc/>
         public virtual bool IsAnyPropertyChanged()
         {
             return _propertyTracking.Any();
@@ -113,6 +108,15 @@ namespace TripleSix.Core.Types
             var validator = Activator.CreateInstance(validatorType) as IValidator;
             _defaultValidator = validator;
             return validator;
+        }
+
+        /// <summary>
+        /// Hàm kiểm tra và xử lý dữ liệu DTO.
+        /// </summary>
+        /// <param name="validationResult"><see cref="ValidationResult"/>.</param>
+        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
+        protected virtual void OnValidate(ref ValidationResult validationResult, HttpContext? httpContext)
+        {
         }
     }
 }

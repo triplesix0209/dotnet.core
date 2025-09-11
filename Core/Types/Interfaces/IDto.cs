@@ -20,13 +20,6 @@ namespace TripleSix.Core.Types
         ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = false);
 
         /// <summary>
-        /// Hàm kiểm tra và xử lý dữ liệu DTO.
-        /// </summary>
-        /// <param name="validationResult"><see cref="ValidationResult"/>.</param>
-        /// <param name="httpContext"><see cref="HttpContext"/>.</param>
-        void OnValidate(ref ValidationResult validationResult, HttpContext? httpContext);
-
-        /// <summary>
         /// Kiểm tra có bất kỳ property nào được thay đổi.
         /// </summary>
         /// <returns><c>True</c> nếu có ít nhất một property bị thay đổi, ngược lại là <c>False</c>.</returns>
