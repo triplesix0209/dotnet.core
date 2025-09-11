@@ -30,7 +30,7 @@ namespace TripleSix.Core.Types
         }
 
         /// <inheritdoc/>
-        public ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = false)
+        public ValidationResult Validate(HttpContext? httpContext = default, IValidator? validator = default, bool throwOnFailures = true)
         {
             validator ??= GetDefaultValidator();
             if (validator == null) return new ValidationResult();

@@ -19,7 +19,7 @@ namespace TripleSix.Core.WebApi
             {
                 if (input.Value is not IDto inputValue) continue;
 
-                var validationResult = inputValue.Validate(httpContext: context.HttpContext);
+                var validationResult = inputValue.Validate(httpContext: context.HttpContext, throwOnFailures: false);
                 foreach (var error in validationResult.Errors)
                 {
                     var propertyName = error.PropertyName.Split('.')
