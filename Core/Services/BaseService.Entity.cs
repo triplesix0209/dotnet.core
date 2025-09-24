@@ -59,19 +59,20 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input)
+        public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
         {
             input.Validate(throwOnFailures: true);
             var entity = await input.OnMapToEntity(ServiceProvider, null);
+            afterMap?.Invoke(entity);
 
             return await Create(entity);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input)
+        public async Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
-            var entity = await CreateWithMapper(input);
+            var entity = await CreateWithMapper(input, afterMap);
 
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
@@ -110,20 +111,22 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input)
+        public async Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
         {
             if (!input.IsAnyPropertyChanged()) return entity;
 
             input.Validate(throwOnFailures: true);
             var mappedEntity = await input.OnMapToEntity(ServiceProvider, entity);
+            afterMap?.Invoke(entity);
+
             return await Update(mappedEntity);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input)
+        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
-            var updatedEntity = await UpdateWithMapper(entity, input);
+            var updatedEntity = await UpdateWithMapper(entity, input, afterMap);
 
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);

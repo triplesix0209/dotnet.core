@@ -40,18 +40,18 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> UpdateWithMapper(Guid id, IMapToEntityDto<TEntity> input)
+        public async Task<TEntity> UpdateWithMapper(Guid id, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
         {
             var entity = await GetFirstById(id);
-            return await UpdateWithMapper(entity, input);
+            return await UpdateWithMapper(entity, input, afterMap);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IMapToEntityDto<TEntity> input)
+        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
             var entity = await GetFirstById(id);
-            return await UpdateWithMapper<TResult>(entity, input);
+            return await UpdateWithMapper<TResult>(entity, input, afterMap);
         }
 
         /// <inheritdoc/>

@@ -35,16 +35,18 @@ namespace TripleSix.Core.Services
         /// Khởi tạo entity với Mapper.
         /// </summary>
         /// <param name="input">Dữ liệu đầu vào dùng để map sang entity.</param>
+        /// <param name="afterMap">Hàm xử lý để map dữ liệu.</param>
         /// <returns>Dữ liệu được map từ entity dã tạo.</returns>
-        Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input);
+        Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null);
 
         /// <summary>
         /// Khởi tạo entity với Mapper.
         /// </summary>
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="input">Dữ liệu đầu vào dùng để map sang entity.</param>
+        /// <param name="afterMap">Hàm xử lý để map dữ liệu.</param>
         /// <returns>Dữ liệu được map từ entity dã tạo.</returns>
-        Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input)
+        Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class;
 
         /// <summary>
@@ -68,8 +70,9 @@ namespace TripleSix.Core.Services
         /// </summary>
         /// <param name="entity">Entity sử dụng để cập nhận.</param>
         /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
+        /// <param name="afterMap">Hàm xử lý để map dữ liệu.</param>
         /// <returns>Entity sau chỉnh sửa.</returns>
-        Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input);
+        Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null);
 
         /// <summary>
         /// Cập nhật entity với Mapper.
@@ -77,8 +80,9 @@ namespace TripleSix.Core.Services
         /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
         /// <param name="entity">Entity sử dụng để cập nhận.</param>
         /// <param name="input">Data DTO dùng để dối chiếu và cập nhật entity.</param>
+        /// <param name="afterMap">Hàm xử lý để map dữ liệu.</param>
         /// <returns>Dữ liệu được map từ entity sau chỉnh sửa.</returns>
-        Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input)
+        Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class;
 
         /// <summary>
