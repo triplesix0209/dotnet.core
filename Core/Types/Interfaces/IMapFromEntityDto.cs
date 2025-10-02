@@ -15,6 +15,6 @@ namespace TripleSix.Core.Types
         /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
         /// <param name="source">Entity sử dụng để chuyển đổi.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task OnMapFromEntity(IServiceProvider serviceProvider, TEntity source);
+        Task FromEntity(IServiceProvider serviceProvider, TEntity source);
     }
 }

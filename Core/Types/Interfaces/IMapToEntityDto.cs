@@ -15,6 +15,6 @@ namespace TripleSix.Core.Types
         /// <param name="serviceProvider"><see cref="IServiceProvider"/>.</param>
         /// <param name="source">Entity nguồn, dùng cho hành động update.</param>
         /// <returns>Entity đã được chuyển đổi từ Dto.</returns>
-        Task<TEntity> OnMapToEntity(IServiceProvider serviceProvider, TEntity? source);
+        Task<TEntity> ToEntity(IServiceProvider serviceProvider, TEntity? source = default);
     }
 }
