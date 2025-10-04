@@ -54,7 +54,8 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, createdEntity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -79,7 +80,8 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -106,7 +108,8 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -133,7 +136,8 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -198,7 +202,8 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -261,16 +266,16 @@ namespace TripleSix.Core.Services
             var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<List<TResult>>(entities);
 
-            var tasks = new List<Task>();
             var items = new List<TResult>();
             foreach (var entity in entities)
             {
                 var item = Activator.CreateInstance<TResult>();
-                tasks.Add((mapMethod.Invoke(item, [ServiceProvider, entity]) as Task)!);
+                var task = mapMethod.Invoke(item, [ServiceProvider, entity]) as Task;
+                task!.Wait();
+
                 items.Add(item);
             }
 
-            if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
             return items;
         }
 
@@ -319,16 +324,16 @@ namespace TripleSix.Core.Services
                 };
             }
 
-            var tasks = new List<Task>();
             var items = new List<TResult>();
             foreach (var entity in entityResult.Items)
             {
                 var item = Activator.CreateInstance<TResult>();
-                tasks.Add((mapMethod.Invoke(item, [ServiceProvider, entity]) as Task)!);
+                var task = mapMethod.Invoke(item, [ServiceProvider, entity]) as Task;
+                task!.Wait();
+
                 items.Add(item);
             }
 
-            if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
             return new Paging<TResult>(page, size)
             {
                 Total = entityResult.Total,
