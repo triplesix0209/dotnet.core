@@ -45,7 +45,7 @@ namespace TripleSix.Core.Helpers
                 curls.Add($"-H '{header.Key}: {header.Value}'");
             }
 
-            if (request.ContentType.IsNotNullOrEmpty() && request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
+            try
             {
                 request.EnableBuffering();
                 using var reader = new StreamReader(
@@ -63,6 +63,9 @@ namespace TripleSix.Core.Helpers
                     bodyText = Regex.Unescape(bodyText);
                     curls.Add($"-d '{bodyText}'");
                 }
+            }
+            catch
+            {
             }
 
             return curls.ToString(" ");
