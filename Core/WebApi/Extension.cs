@@ -328,7 +328,6 @@ namespace TripleSix.Core.WebApi
 
                     tracing.AddSqlClientInstrumentation(o =>
                     {
-                        o.SetDbStatementForText = true;
                         o.Filter = cmd =>
                         {
                             if (cmd is SqlCommand sqlCommand)
@@ -347,7 +346,7 @@ namespace TripleSix.Core.WebApi
 
                             return true;
                         };
-                        o.Enrich = (activity, @event, cmd) =>
+                        o.EnrichWithSqlCommand = (activity, cmd) =>
                         {
                             activity.DisplayName = $"[DB] {activity.DisplayName}";
                         };
