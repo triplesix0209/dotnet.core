@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using Hangfire;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -11,12 +9,15 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
@@ -227,11 +228,16 @@ namespace TripleSix.Core.WebApi
                 setup(options, setting);
             });
 
-            return services.AddHangfireServer(options =>
+            foreach (var queueSetting in setting.Queues)
             {
-                options.Queues = setting.Queues;
-                if (setting.WorkerCount.HasValue) options.WorkerCount = setting.WorkerCount.Value;
-            });
+                services.AddHangfireServer(options =>
+                {
+                    options.Queues = [queueSetting.Name];
+                    options.WorkerCount = queueSetting.WorkerCount ?? 10;
+                });
+            }
+
+            return services;
         }
 
         /// <summary>
