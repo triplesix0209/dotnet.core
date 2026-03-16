@@ -23,5 +23,35 @@ namespace TripleSix.Core.Services
         Task<IPaging<TResult>> GetPage<TResult>(TFilter input, int page, int size)
             where TResult : class
             => GetPageByQueryModel<TResult>(input, page, size);
+
+        /// <summary>
+        /// Lấy danh sách các dữ liệu.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="input">Dữ liệu để tạo câu query.</param>
+        /// <returns>Dữ liệu phân trang của entity.</returns>
+        Task<List<TResult>> GetList<TResult>(TFilter input)
+            where TResult : class
+            => GetListByQueryModel<TResult>(input);
+
+        /// <summary>
+        /// Lấy mục dữ liệu đầu tiên.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="input">Dữ liệu để tạo câu query.</param>
+        /// <returns>Dữ liệu phân trang của entity.</returns>
+        Task<TResult> GetFirst<TResult>(TFilter input)
+            where TResult : class
+            => GetFirstByQueryModel<TResult>(input);
+
+        /// <summary>
+        /// Lấy mục dữ liệu đầu tiên, không có sẽ trả về null.
+        /// </summary>
+        /// <typeparam name="TResult">Loại dữ liệu đầu ra.</typeparam>
+        /// <param name="input">Dữ liệu để tạo câu query.</param>
+        /// <returns>Dữ liệu phân trang của entity.</returns>
+        Task<TResult?> GetFirstOrDefault<TResult>(TFilter input)
+            where TResult : class
+            => GetFirstOrDefaultByQueryModel<TResult>(input);
     }
 }

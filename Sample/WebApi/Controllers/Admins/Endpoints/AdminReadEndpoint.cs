@@ -10,12 +10,20 @@
     {
         public IStrongServiceRead<TEntity, TFilter> Service { get; set; }
 
-        [HttpGet]
-        [SwaggerOperation("Lấy danh sách [controller]")]
-        public async Task<PagingResult<TItem>> GetPage(TFilter input)
+        [HttpPost("GetPage")]
+        [SwaggerOperation("Lấy phân trang [controller]")]
+        public async Task<PagingResult<TItem>> GetPage([FromBody] TFilter input)
         {
             var result = await Service.GetPage<TItem>(input, input.Page, input.Size);
             return PagingResult(result);
+        }
+
+        [HttpPost("GetAll")]
+        [SwaggerOperation("Lấy phân trang [controller]")]
+        public async Task<DataResult<List<TItem>>> GetAll([FromBody] TFilter input)
+        {
+            var result = await Service.GetList<TItem>(input);
+            return DataResult(result);
         }
 
         [HttpGet("{id}")]
