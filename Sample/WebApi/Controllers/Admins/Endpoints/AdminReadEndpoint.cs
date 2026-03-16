@@ -6,15 +6,15 @@
         where TEntity : class, IStrongEntity
         where TItem : class, IDto
         where TDetail : class, IDto
-        where TFilter : class, IEntityQueryableDto<TEntity>, IPagingInput
+        where TFilter : class, IEntityQueryableDto<TEntity>
     {
         public IStrongServiceRead<TEntity, TFilter> Service { get; set; }
 
         [HttpPost("GetPage")]
         [SwaggerOperation("Lấy phân trang [controller]")]
-        public async Task<PagingResult<TItem>> GetPage([FromBody] TFilter input)
+        public async Task<PagingResult<TItem>> GetPage(RoutePaging route, [FromBody] TFilter input)
         {
-            var result = await Service.GetPage<TItem>(input, input.Page, input.Size);
+            var result = await Service.GetPage<TItem>(input, route.Page, route.Size);
             return PagingResult(result);
         }
 
@@ -41,7 +41,7 @@
         where TEntity : class, IStrongEntity
         where TItem : class, IDto
         where TDetail : class, IDto
-        where TFilter : class, IEntityQueryableDto<TEntity>, IPagingInput
+        where TFilter : class, IEntityQueryableDto<TEntity>
     {
         public override Type EndpointType => typeof(AdminReadEndpoint<TController, TEntity, TItem, TDetail, TFilter>);
     }
