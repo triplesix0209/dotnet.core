@@ -11,5 +11,9 @@
         /// <inheritdoc/>
         [DisplayName("Kích thước trang")]
         public int Size { get; set; } = 10;
+
+        /// <inheritdoc/>
+        [DisplayName("Lấy tất cả dữ liệu?")]
+        public bool GetAll { get; set; } = false;
     }
 }
