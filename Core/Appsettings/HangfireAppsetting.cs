@@ -18,8 +18,7 @@ namespace TripleSix.Core.Appsettings
             if (Enable == false) return;
 
             if (ConnectionString.IsNullOrEmpty()) throw new ArgumentNullException(nameof(ConnectionString));
-            if (Queues.IsNullOrEmpty()) throw new ArgumentNullException(nameof(Queues));
-            if (WorkerCount <= 0) throw new ArgumentOutOfRangeException(nameof(WorkerCount));
+            if (Queues.IsNullOrEmpty() || Queues.Any(x => x.WorkerCount <= 0)) throw new ArgumentNullException(nameof(Queues));
 
             var config = configuration.GetSection("Hangfire:Dashboard");
             if (config.GetChildren().IsNullOrEmpty()) return;
@@ -44,14 +43,9 @@ namespace TripleSix.Core.Appsettings
         public string ConnectionString { get; set; }
 
         /// <summary>
-        /// Danh sách queue listen.
+        /// Danh sách queue.
         /// </summary>
-        public string[]? Queues { get; set; }
-
-        /// <summary>
-        /// Số lượng worker.
-        /// </summary>
-        public int? WorkerCount { get; set; }
+        public HangfireQueueAppsetting[] Queues { get; set; }
 
         /// <summary>
         /// Bật/tắt hangfire dashboard (mặc định là false).
@@ -72,5 +66,21 @@ namespace TripleSix.Core.Appsettings
         /// Password truy cập vào dashboard.
         /// </summary>
         public string? DashboardPassword { get; set; }
+    }
+
+    /// <summary>
+    /// Cấu hình Hangfire Queue.
+    /// </summary>
+    public class HangfireQueueAppsetting
+    {
+        /// <summary>
+        /// Tên queue.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Số lượng worker.
+        /// </summary>
+        public int? WorkerCount { get; set; }
     }
 }
