@@ -117,11 +117,11 @@ namespace TripleSix.Core.WebApi
                         if (context.Error.IsNullOrEmpty())
                             context.Error = "invalid_token";
                         if (context.ErrorDescription.IsNullOrEmpty())
-                            context.ErrorDescription = "Access token bị sai hoặc không phù hợp";
+                            context.ErrorDescription = "Phiên đăng nhập bị sai hoặc không phù hợp";
 
                         // expired tokens case
                         if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() == typeof(SecurityTokenExpiredException))
-                            context.ErrorDescription = $"Access token đã hết hạn";
+                            context.ErrorDescription = $"Phiên đăng nhập đã hết hạn";
 
                         // write response
                         if (webApiAppsetting.AllowedOrigins.Contains("*"))
