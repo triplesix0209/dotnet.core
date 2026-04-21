@@ -31,6 +31,7 @@ namespace TripleSix.Core.Hangfire
             var service = ServiceProvider.GetService(serviceType)
                 ?? throw new Exception("Cannot find target service");
             var method = serviceType.GetMethod(methodName)
+                ?? serviceType.GetInterfaces().Select(x => x.GetMethod(methodName)).FirstOrDefault(x => x != null)
                 ?? throw new Exception("Cannot find target method");
 
             var parameterTypes = method.GetParameters();
