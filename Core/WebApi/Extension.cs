@@ -19,6 +19,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.Hangfire;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Jsons;
@@ -217,8 +218,6 @@ namespace TripleSix.Core.WebApi
         /// <returns><see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddHangfireWorker(this IServiceCollection services, HangfireAppsetting setting, Action<IGlobalConfiguration, HangfireAppsetting> setup)
         {
-            if (!setting.Enable) return services;
-
             services.AddHangfire(options =>
             {
                 options.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -227,15 +226,6 @@ namespace TripleSix.Core.WebApi
                     .UseIgnoredAssemblyVersionTypeResolver();
                 setup(options, setting);
             });
-
-            foreach (var queueSetting in setting.Queues)
-            {
-                services.AddHangfireServer(options =>
-                {
-                    options.Queues = [queueSetting.Name];
-                    options.WorkerCount = queueSetting.WorkerCount ?? 10;
-                });
-            }
 
             return services;
         }

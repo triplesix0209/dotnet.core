@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using TripleSix.Core.Appsettings;
 
 namespace TripleSix.Core.Hangfire
 {
@@ -7,6 +8,16 @@ namespace TripleSix.Core.Hangfire
     /// </summary>
     public abstract class HangfireBaseStartup
     {
+        /// <summary>
+        /// <see cref="HangfireAppsetting"/>.
+        /// </summary>
+        public HangfireAppsetting Setting { get; set; }
+
+        /// <summary>
+        /// Hangfire Worker Manager.
+        /// </summary>
+        public IHangfireServerManager ServerManager { get; set; }
+
         /// <summary>
         /// Recurring Job Manager.
         /// </summary>
@@ -22,5 +33,14 @@ namespace TripleSix.Core.Hangfire
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public abstract Task Setup();
+
+        /// <summary>
+        /// Init Hangfire Servers.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task InitServer()
+        {
+            if (Setting.Enable) ServerManager.Start();
+        }
     }
 }

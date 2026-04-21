@@ -2,9 +2,9 @@
 {
     public class HangfireStartup : HangfireBaseStartup
     {
-        public override Task Setup()
+        public override async Task Setup()
         {
-            return Task.CompletedTask;
+            await InitServer();
         }
     }
 }
