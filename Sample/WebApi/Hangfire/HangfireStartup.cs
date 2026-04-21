@@ -1,4 +1,6 @@
-﻿namespace Sample.WebApi.Hangfire
+﻿using Hangfire;
+
+namespace Sample.WebApi.Hangfire
 {
     public class HangfireStartup : HangfireBaseStartup
     {
