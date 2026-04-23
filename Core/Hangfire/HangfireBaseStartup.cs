@@ -35,12 +35,14 @@ namespace TripleSix.Core.Hangfire
         public abstract Task Setup();
 
         /// <summary>
-        /// Init Hangfire Servers.
+        /// Run Hangfire Servers.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task InitServer()
+        public async Task Run()
         {
-            if (Setting.Enable) ServerManager.Start();
+            if (!Setting.Enable) return;
+            if (Setting.StartupWorker) ServerManager.Start();
+            await Setup();
         }
     }
 }
