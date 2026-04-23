@@ -38,6 +38,11 @@ namespace TripleSix.Core.Appsettings
         public bool Enable { get; set; } = false;
 
         /// <summary>
+        /// Tự động khởi động worker khi ứng dụng chạy (mặc định là true).
+        /// </summary>
+        public bool StartupWorker { get; set; } = true;
+
+        /// <summary>
         /// Database connection string.
         /// </summary>
         public string ConnectionString { get; set; }
