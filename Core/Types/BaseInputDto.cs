@@ -14,7 +14,7 @@ namespace TripleSix.Core.Types
         where TEntity : class, IEntity
     {
         /// <inheritdoc/>
-        public virtual Task<TEntity> OnMapToEntity(IServiceProvider serviceProvider, TEntity? source)
+        public virtual Task<TEntity> ToEntity(IServiceProvider serviceProvider, TEntity? source = null)
         {
             var mapper = serviceProvider.GetRequiredService<IMapper>();
             var result = source == null

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TripleSix.Core.DataContext
@@ -31,6 +32,14 @@ namespace TripleSix.Core.DataContext
         ///     </para>
         /// </remarks>
         IDbContextTransaction? CurrentTransaction { get; }
+
+        /// <summary>
+        ///     Provides access to information and operations for entity instances this context is tracking.
+        /// </summary>
+        /// <remarks>
+        ///     See <see href="https://aka.ms/efcore-docs-change-tracking">EF Core change tracking</see> for more information and examples.
+        /// </remarks>
+        ChangeTracker ChangeTracker { get; }
 
         /// <summary>
         /// Creates a <see cref="DbSet{TEntity}" /> that can be used to query and save instances of <typeparamref name="TEntity" />.

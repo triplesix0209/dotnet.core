@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using Hangfire;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -11,13 +9,17 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.Hangfire;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Jsons;
@@ -216,8 +218,6 @@ namespace TripleSix.Core.WebApi
         /// <returns><see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddHangfireWorker(this IServiceCollection services, HangfireAppsetting setting, Action<IGlobalConfiguration, HangfireAppsetting> setup)
         {
-            if (!setting.Enable) return services;
-
             services.AddHangfire(options =>
             {
                 options.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -227,11 +227,7 @@ namespace TripleSix.Core.WebApi
                 setup(options, setting);
             });
 
-            return services.AddHangfireServer(options =>
-            {
-                options.Queues = setting.Queues;
-                if (setting.WorkerCount.HasValue) options.WorkerCount = setting.WorkerCount.Value;
-            });
+            return services;
         }
 
         /// <summary>
@@ -328,7 +324,6 @@ namespace TripleSix.Core.WebApi
 
                     tracing.AddSqlClientInstrumentation(o =>
                     {
-                        o.SetDbStatementForText = true;
                         o.Filter = cmd =>
                         {
                             if (cmd is SqlCommand sqlCommand)
@@ -347,7 +342,7 @@ namespace TripleSix.Core.WebApi
 
                             return true;
                         };
-                        o.Enrich = (activity, @event, cmd) =>
+                        o.EnrichWithSqlCommand = (activity, cmd) =>
                         {
                             activity.DisplayName = $"[DB] {activity.DisplayName}";
                         };

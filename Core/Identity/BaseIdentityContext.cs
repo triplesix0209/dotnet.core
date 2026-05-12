@@ -60,8 +60,8 @@ namespace TripleSix.Core.Identity
         protected virtual void ParseData(IEnumerable<Claim> claims)
         {
             Id = Guid.Parse(claims.FindFirstValue(nameof(Id).ToCamelCase())!);
-            Scope = claims.FindFirstValue(nameof(Scope).ToCamelCase())!.Split(' ');
             Issuer = claims.FindFirstValue("iss");
+            Scope = claims.FindFirstValue(nameof(Scope).ToCamelCase())?.Split(' ') ?? [];
         }
     }
 }

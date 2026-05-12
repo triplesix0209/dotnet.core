@@ -205,7 +205,7 @@ namespace TripleSix.Core.Hangfire
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static async Task StartHangfire(this IServiceProvider serviceProvider)
         {
-            await serviceProvider.GetRequiredService<HangfireBaseStartup>().Setup();
+            await serviceProvider.GetRequiredService<HangfireBaseStartup>().Run();
         }
     }
 }

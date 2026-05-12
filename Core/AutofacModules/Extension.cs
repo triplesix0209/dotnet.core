@@ -230,6 +230,11 @@ namespace TripleSix.Core.AutofacModules
             this ContainerBuilder builder,
             Assembly assembly)
         {
+            builder.RegisterType<HangfireServerManager>()
+               .As<IHangfireServerManager>()
+               .SingleInstance()
+               .PropertiesAutowired();
+
             return builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
                 .Where(x => !x.IsAbstract)

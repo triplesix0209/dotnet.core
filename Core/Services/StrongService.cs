@@ -40,18 +40,18 @@ namespace TripleSix.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> UpdateWithMapper(Guid id, IMapToEntityDto<TEntity> input)
+        public async Task<TEntity> UpdateWithMapper(Guid id, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
         {
             var entity = await GetFirstById(id);
-            return await UpdateWithMapper(entity, input);
+            return await UpdateWithMapper(entity, input, afterMap);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IMapToEntityDto<TEntity> input)
+        public async Task<TResult> UpdateWithMapper<TResult>(Guid id, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
             var entity = await GetFirstById(id);
-            return await UpdateWithMapper<TResult>(entity, input);
+            return await UpdateWithMapper<TResult>(entity, input, afterMap);
         }
 
         /// <inheritdoc/>
@@ -80,7 +80,7 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await SoftDelete(entity);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
@@ -123,7 +123,7 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await Restore(entity);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();

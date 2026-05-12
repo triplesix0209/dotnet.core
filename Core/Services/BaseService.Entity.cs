@@ -49,36 +49,39 @@ namespace TripleSix.Core.Services
         {
             var createdEntity = await Create(entity);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(createdEntity);
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, createdEntity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input)
+        public async Task<TEntity> CreateWithMapper(IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
         {
             input.Validate(throwOnFailures: true);
-            var entity = await input.OnMapToEntity(ServiceProvider, null);
+            var entity = await input.ToEntity(ServiceProvider);
+            afterMap?.Invoke(entity);
 
             return await Create(entity);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input)
+        public async Task<TResult> CreateWithMapper<TResult>(IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
-            var entity = await CreateWithMapper(input);
+            var entity = await CreateWithMapper(input, afterMap);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -100,37 +103,41 @@ namespace TripleSix.Core.Services
         {
             var updatedEntity = await Update(entity);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input)
+        public async Task<TEntity> UpdateWithMapper(TEntity entity, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
         {
             if (!input.IsAnyPropertyChanged()) return entity;
 
             input.Validate(throwOnFailures: true);
-            var mappedEntity = await input.OnMapToEntity(ServiceProvider, entity);
+            var mappedEntity = await input.ToEntity(ServiceProvider, entity);
+            afterMap?.Invoke(entity);
+
             return await Update(mappedEntity);
         }
 
         /// <inheritdoc/>
-        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input)
+        public async Task<TResult> UpdateWithMapper<TResult>(TEntity entity, IMapToEntityDto<TEntity> input, Action<TEntity>? afterMap = null)
             where TResult : class
         {
-            var updatedEntity = await UpdateWithMapper(entity, input);
+            var updatedEntity = await UpdateWithMapper(entity, input, afterMap);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(updatedEntity);
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -190,12 +197,13 @@ namespace TripleSix.Core.Services
             var entity = await GetFirstOrDefault(query);
             if (entity == null) return null;
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<TResult>(entity);
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
-            Task.WaitAll(task!);
+            task!.Wait();
+
             return result;
         }
 
@@ -255,19 +263,19 @@ namespace TripleSix.Core.Services
         {
             var entities = await GetList(query);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null) return Mapper.MapData<List<TResult>>(entities);
 
-            var tasks = new List<Task>();
             var items = new List<TResult>();
             foreach (var entity in entities)
             {
                 var item = Activator.CreateInstance<TResult>();
-                tasks.Add((mapMethod.Invoke(item, [ServiceProvider, entity]) as Task)!);
+                var task = mapMethod.Invoke(item, [ServiceProvider, entity]) as Task;
+                task!.Wait();
+
                 items.Add(item);
             }
 
-            if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
             return items;
         }
 
@@ -306,7 +314,7 @@ namespace TripleSix.Core.Services
         {
             var entityResult = await GetPage(query, page, size);
 
-            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.OnMapFromEntity));
+            var mapMethod = typeof(TResult).GetMethod(nameof(IMapFromEntityDto<TEntity>.FromEntity));
             if (mapMethod == null)
             {
                 return new Paging<TResult>(page, size)
@@ -316,16 +324,16 @@ namespace TripleSix.Core.Services
                 };
             }
 
-            var tasks = new List<Task>();
             var items = new List<TResult>();
             foreach (var entity in entityResult.Items)
             {
                 var item = Activator.CreateInstance<TResult>();
-                tasks.Add((mapMethod.Invoke(item, [ServiceProvider, entity]) as Task)!);
+                var task = mapMethod.Invoke(item, [ServiceProvider, entity]) as Task;
+                task!.Wait();
+
                 items.Add(item);
             }
 
-            if (tasks.IsNotNullOrEmpty()) Task.WaitAll(tasks);
             return new Paging<TResult>(page, size)
             {
                 Total = entityResult.Total,
