@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/Sample/WebApi/bin/Debug/net9.0/Sample.WebApi.dll",
+      "cwd": "${workspaceFolder}/Sample/WebApi",
+      "justMyCode": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Local"
+      }
+    }
+  ]
+}
