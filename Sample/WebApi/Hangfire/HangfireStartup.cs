@@ -1,9 +1,10 @@
-﻿namespace Sample.WebApi.Hangfire
+namespace Sample.WebApi.Hangfire
 {
     public class HangfireStartup : HangfireBaseStartup
     {
-        public override async Task Setup()
+        public override Task Setup()
         {
+            return Task.CompletedTask;
         }
     }
 }
