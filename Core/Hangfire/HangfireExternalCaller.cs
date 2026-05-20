@@ -1,6 +1,11 @@
-﻿using Hangfire;
+﻿using System.Reflection;
+using Hangfire;
 using Hangfire.Server;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using TripleSix.Core.DataContext;
 using TripleSix.Core.Helpers;
+using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.Hangfire
 {
@@ -44,8 +49,45 @@ namespace TripleSix.Core.Hangfire
                 return value.ToObject(parameterTypes[index].ParameterType);
             });
 
-            var result = method.Invoke(service, parameters!.ToArray()) as Task;
-            await result!.WaitAsync(CancellationToken.None);
+            var transactionalAttr = method.GetCustomAttribute<Transactional>(true)
+                ?? serviceType.GetCustomAttribute<Transactional>(true);
+
+            if (transactionalAttr != null)
+            {
+                var dbContexts = transactionalAttr.DbContextTypes
+                    .Select(type => (IDbDataContext)ServiceProvider.GetRequiredService(type))
+                    .Distinct()
+                    .ToList();
+                var transactions = new List<IDbContextTransaction>();
+                try
+                {
+                    foreach (var db in dbContexts)
+                        transactions.Add(await db.BeginTransactionAsync());
+
+                    var result = method.Invoke(service, [.. parameters!]) as Task;
+                    await result!.WaitAsync(CancellationToken.None);
+
+                    foreach (var transaction in transactions)
+                        await transaction.CommitAsync();
+                }
+                catch
+                {
+                    foreach (var transaction in transactions)
+                        await transaction.RollbackAsync();
+
+                    throw;
+                }
+                finally
+                {
+                    foreach (var transaction in transactions)
+                        await transaction.DisposeAsync();
+                }
+            }
+            else
+            {
+                var result = method.Invoke(service, [.. parameters!]) as Task;
+                await result!.WaitAsync(CancellationToken.None);
+            }
         }
     }
 }

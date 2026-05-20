@@ -31,8 +31,14 @@ namespace TripleSix.Core.WebApi
         public Transactional(params Type[] dbContextTypes)
             : base(typeof(TransactionalImplement))
         {
-            Arguments = [dbContextTypes.Length > 0 ? dbContextTypes : TransactionalOptions.DefaultDbContextTypes];
+            DbContextTypes = dbContextTypes.Length > 0 ? dbContextTypes : TransactionalOptions.DefaultDbContextTypes;
+            Arguments = [DbContextTypes];
         }
+
+        /// <summary>
+        /// Các DbContext cần chạy transaction.
+        /// </summary>
+        public Type[] DbContextTypes { get; }
     }
 
     internal class TransactionalImplement : ActionFilterAttribute
