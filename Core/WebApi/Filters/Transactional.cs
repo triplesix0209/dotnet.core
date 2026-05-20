@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using TripleSix.Core.DataContext;
 
 namespace TripleSix.Core.WebApi
@@ -12,32 +14,54 @@ namespace TripleSix.Core.WebApi
         /// <summary>
         /// Transaction cho các request.
         /// </summary>
-        public Transactional()
+        /// <param name="dbContextTypes">Các kiểu DbContext cần chạy transaction (ví dụ: typeof(IApplicationDbContext)).</param>
+        public Transactional(params Type[] dbContextTypes)
             : base(typeof(TransactionalImplement))
         {
+            Arguments = [dbContextTypes.Length > 0 ? dbContextTypes : [typeof(IDbDataContext)]];
         }
     }
 
     internal class TransactionalImplement : ActionFilterAttribute
     {
-        private readonly IDbDataContext _dbContext;
+        private readonly Type[] _dbContextTypes;
 
-        public TransactionalImplement(IDbDataContext dbContext)
+        public TransactionalImplement(Type[] dbContextTypes)
         {
-            _dbContext = dbContext;
+            _dbContextTypes = dbContextTypes;
         }
 
         public override async Task OnActionExecutionAsync(
             ActionExecutingContext context,
             ActionExecutionDelegate next)
         {
-            await using var transaction = await _dbContext.BeginTransactionAsync();
-            var result = await next();
+            var dbContexts = _dbContextTypes
+                .Select(type => (IDbDataContext)context.HttpContext.RequestServices.GetRequiredService(type))
+                .Distinct()
+                .ToList();
 
-            if (transaction.TransactionId == _dbContext.CurrentTransaction?.TransactionId)
+            var transactions = new List<IDbContextTransaction>();
+            try
             {
-                if (result.Exception == null) await transaction.CommitAsync();
-                else await transaction.RollbackAsync();
+                foreach (var db in dbContexts)
+                    transactions.Add(await db.BeginTransactionAsync());
+
+                var result = await next();
+                if (result.Exception == null)
+                {
+                    foreach (var transaction in transactions)
+                        await transaction.CommitAsync();
+                }
+                else
+                {
+                    foreach (var transaction in transactions)
+                        await transaction.RollbackAsync();
+                }
+            }
+            finally
+            {
+                foreach (var transaction in transactions)
+                    await transaction.DisposeAsync();
             }
         }
     }
