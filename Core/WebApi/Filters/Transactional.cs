@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#pragma warning disable SA1649 // File name should match first type name
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +8,17 @@ using TripleSix.Core.DataContext;
 
 namespace TripleSix.Core.WebApi
 {
+    /// <summary>
+    /// Transactional Options.
+    /// </summary>
+    public static class TransactionalOptions
+    {
+        /// <summary>
+        /// Default DbContext Type.
+        /// </summary>
+        public static Type[] DefaultDbContextTypes { get; set; } = [typeof(IDbDataContext)];
+    }
+
     /// <summary>
     /// Bật transaction cho các request.
     /// </summary>
@@ -18,7 +31,7 @@ namespace TripleSix.Core.WebApi
         public Transactional(params Type[] dbContextTypes)
             : base(typeof(TransactionalImplement))
         {
-            Arguments = [dbContextTypes.Length > 0 ? dbContextTypes : [typeof(IDbDataContext)]];
+            Arguments = [dbContextTypes.Length > 0 ? dbContextTypes : TransactionalOptions.DefaultDbContextTypes];
         }
     }
 
