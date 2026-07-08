@@ -85,7 +85,10 @@ namespace TripleSix.Core.Identity
                     if (Setting.JwksEndpoint.IsNullOrEmpty())
                         throw new ArgumentNullException(nameof(Setting.JwksEndpoint));
 
-                    var jwksCacheItem = _signingKeyCaches.ContainsKey(cacheKey) ? _signingKeyCaches[cacheKey] : null;
+                    var tokenKid = tokenData.Header.Kid;
+                    var jwksCacheKey = $"{cacheKey}_{(tokenKid.IsNullOrEmpty() ? "default" : tokenKid)}";
+
+                    var jwksCacheItem = _signingKeyCaches.ContainsKey(jwksCacheKey) ? _signingKeyCaches[jwksCacheKey] : null;
                     if (jwksCacheItem == null || DateTime.UtcNow > jwksCacheItem.ExpiredAt)
                     {
                         using var httpClient = new HttpClient();
@@ -93,13 +96,15 @@ namespace TripleSix.Core.Identity
                         if (jwksResponse.IsNullOrEmpty()) throw new ArgumentNullException("jwks response");
 
                         var jwks = new JsonWebKeySet(jwksResponse);
-                        var jwkItem = jwks.Keys.FirstOrDefault(k => k.Kid == issuer)
-                                  ?? throw new ArgumentNullException("jwk item");
+
+                        var jwkItem = (!tokenKid.IsNullOrEmpty() ? jwks.Keys.FirstOrDefault(k => k.Kid == tokenKid) : null)
+                            ?? jwks.Keys.FirstOrDefault(k => k.Kid == issuer)
+                            ?? throw new ArgumentNullException("jwk item");
 
                         var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
                         var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
                         jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
-                        _signingKeyCaches[cacheKey] = jwksCacheItem;
+                        _signingKeyCaches[jwksCacheKey] = jwksCacheItem;
                     }
 
                     signingKey = jwksCacheItem.SigningKey;
