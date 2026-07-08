@@ -25,11 +25,12 @@ namespace TripleSix.Core.Appsettings
             if (!Enum.IsDefined(SigningKeyMode))
                 SigningKeyMode = IdentitySigningKeyModes.Static;
 
+            if (SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0
+                && (SigningKeyMode == IdentitySigningKeyModes.Dynamic || SigningKeyMode == IdentitySigningKeyModes.Jwks))
+                throw new ArgumentException(nameof(SigningKeyCacheTimelife));
+
             if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && ConnectionString.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(ConnectionString));
-
-            if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0)
-                throw new ArgumentException(nameof(SigningKeyCacheTimelife));
 
             if (SigningKeyMode == IdentitySigningKeyModes.Static && IssuerSigningKey.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(IssuerSigningKey));
@@ -49,14 +50,14 @@ namespace TripleSix.Core.Appsettings
         public IdentitySigningKeyModes SigningKeyMode { get; set; } = IdentitySigningKeyModes.Static;
 
         /// <summary>
-        /// Connection string.
-        /// </summary>
-        public string ConnectionString { get; set; }
-
-        /// <summary>
         /// Thời gian cache của Signing Key.
         /// </summary>
         public long? SigningKeyCacheTimelife { get; set; }
+
+        /// <summary>
+        /// Connection string.
+        /// </summary>
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// Danh sách Issuer Key hợp lệ.
