@@ -9,6 +9,8 @@ namespace TripleSix.Core.Appsettings
     /// </summary>
     public class IdentityAppsetting : BaseAppsetting
     {
+        private static readonly string[] SupportedAlgorithms = ["HS256", "ES256"];
+
         /// <summary>
         /// Cấu hình identity.
         /// </summary>
@@ -16,8 +18,9 @@ namespace TripleSix.Core.Appsettings
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
-            if (Algorithm.IsNullOrEmpty())
-                Algorithm = "HS256";
+            if (Algorithm.IsNullOrEmpty()) SupportedAlgorithms.First();
+            if (!SupportedAlgorithms.Contains(Algorithm))
+                throw new ArgumentException($"Algorithm chỉ hỗ trợ {SupportedAlgorithms.ToString(", ")}.");
 
             if (!Enum.IsDefined(SigningKeyMode))
                 SigningKeyMode = IdentitySigningKeyModes.Static;
