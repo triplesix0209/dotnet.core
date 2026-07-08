@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +18,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Appsettings;
+using TripleSix.Core.Constants;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Jsons;
@@ -89,7 +90,9 @@ namespace TripleSix.Core.WebApi
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = identitySetting.ValidateIssuer,
-                    ValidIssuers = identitySetting.IssuerSigningKey?.Select(x => x.Issuer),
+                    ValidIssuers = identitySetting.SigningKeyMode == IdentitySigningKeyModes.Static
+                        ? identitySetting.IssuerSigningKey?.Select(x => x.Issuer)
+                        : null,
                     ValidateAudience = identitySetting.ValidateAudience,
                     ValidAudiences = identitySetting.Audience,
                 };
