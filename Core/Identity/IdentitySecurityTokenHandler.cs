@@ -130,7 +130,7 @@ namespace TripleSix.Core.Identity
                     break;
 
                 default:
-                    throw new NotSupportedException($"Algorithm {alg} không được hỗ trợ.");
+                    throw new NotSupportedException($"Algorithm {algorithm} không được hỗ trợ.");
             }
 
             return base.ValidateToken(token, validationParameters, out validatedToken);
