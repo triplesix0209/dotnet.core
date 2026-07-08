@@ -112,6 +112,10 @@ namespace TripleSix.Core.Identity
             if (algorithm.IsNullOrEmpty()) algorithm = Setting.Algorithm;
             switch (algorithm)
             {
+                case "HS256":
+                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
+                    break;
+
                 case "ES256":
                     if (signingKey.Contains("\"kty\""))
                     {
@@ -123,11 +127,6 @@ namespace TripleSix.Core.Identity
                         ecdsa.ImportFromPem(signingKey);
                         validationParameters.IssuerSigningKey = new ECDsaSecurityKey(ecdsa);
                     }
-
-                    break;
-
-                case "HS256":
-                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
                     break;
 
                 default:
