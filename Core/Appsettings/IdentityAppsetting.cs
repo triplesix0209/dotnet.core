@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Constants;
 using TripleSix.Core.Helpers;
 
@@ -16,11 +16,29 @@ namespace TripleSix.Core.Appsettings
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
+            if (Algorithm.IsNullOrEmpty())
+                Algorithm = "HS256";
+
+            if (!Enum.IsDefined(SigningKeyMode))
+                SigningKeyMode = IdentitySigningKeyModes.Static;
+
+            if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && ConnectionString.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(ConnectionString));
+
+            if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0)
+                throw new ArgumentException(nameof(SigningKeyCacheTimelife));
+
             if (SigningKeyMode == IdentitySigningKeyModes.Static && IssuerSigningKey.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(IssuerSigningKey));
-            if (SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0)
-                throw new ArgumentException(nameof(SigningKeyCacheTimelife));
+
+            if (SigningKeyMode == IdentitySigningKeyModes.Jwks && JwksEndpoint.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(JwksEndpoint));
         }
+
+        /// <summary>
+        /// Thuật toán ký token.
+        /// </summary>
+        public string Algorithm { get; set; } = "HS256";
 
         /// <summary>
         /// Phương pháp lấy Signing Key.
@@ -28,19 +46,24 @@ namespace TripleSix.Core.Appsettings
         public IdentitySigningKeyModes SigningKeyMode { get; set; } = IdentitySigningKeyModes.Static;
 
         /// <summary>
-        /// Thời gian cache của Signing Key.
-        /// </summary>
-        public long? SigningKeyCacheTimelife { get; set; }
-
-        /// <summary>
         /// Connection string.
         /// </summary>
         public string ConnectionString { get; set; }
 
         /// <summary>
+        /// Thời gian cache của Signing Key.
+        /// </summary>
+        public long? SigningKeyCacheTimelife { get; set; }
+
+        /// <summary>
         /// Danh sách Issuer Key hợp lệ.
         /// </summary>
         public IdentityIssuerSigningKeyItem[] IssuerSigningKey { get; set; }
+
+        /// <summary>
+        /// JWKS Endpoint để lấy public key.
+        /// </summary>
+        public string? JwksEndpoint { get; set; }
 
         /// <summary>
         /// Danh sách Audience hợp lệ.

@@ -1,4 +1,4 @@
-﻿namespace TripleSix.Core.Constants
+namespace TripleSix.Core.Constants
 {
     /// <summary>
     /// Loại Signing Key.
@@ -6,13 +6,18 @@
     public enum IdentitySigningKeyModes
     {
         /// <summary>
-        /// Signing Key cố định từ Appsetting.
-        /// </summary>
-        Static = 0,
-
-        /// <summary>
         /// Signing Key lấy động.
         /// </summary>
         Dynamic = 1,
+
+        /// <summary>
+        /// Signing Key cố định từ Appsetting.
+        /// </summary>
+        Static = 2,
+
+        /// <summary>
+        /// Public key từ JWKS endpoint.
+        /// </summary>
+        Jwks = 3,
     }
 }
