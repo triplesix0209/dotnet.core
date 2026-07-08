@@ -1,5 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using TripleSix.Core.Appsettings;
@@ -41,6 +43,7 @@ namespace TripleSix.Core.Identity
         {
             var tokenData = ReadJwtToken(token);
             var issuer = tokenData.Issuer;
+            var cacheKey = $"{Setting.SigningKeyMode}_{issuer}";
 
             if (Setting.BypassUserIds.IsNotNullOrEmpty())
             {
@@ -54,29 +57,86 @@ namespace TripleSix.Core.Identity
             string? signingKey;
             switch (Setting.SigningKeyMode)
             {
-                case IdentitySigningKeyModes.Static:
-                    signingKey = Setting.IssuerSigningKey.FirstOrDefault(x => x.Issuer == issuer)?.SigningKey;
-                    if (signingKey.IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Setting.IssuerSigningKey));
-                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
-                    break;
-
                 case IdentitySigningKeyModes.Dynamic:
                     if (GetSigningKeyMethod == null)
                         throw new ArgumentNullException(nameof(GetSigningKeyMethod));
 
-                    var signingKeyCacheItem = _signingKeyCaches.ContainsKey(issuer) ? _signingKeyCaches[issuer] : null;
-                    if (signingKeyCacheItem == null || DateTime.UtcNow > signingKeyCacheItem.ExpiredAt)
+                    var dynamicCacheItem = _signingKeyCaches.ContainsKey(cacheKey) ? _signingKeyCaches[cacheKey] : null;
+                    if (dynamicCacheItem == null || DateTime.UtcNow > dynamicCacheItem.ExpiredAt)
                     {
                         signingKey = GetSigningKeyMethod(Setting, tokenData);
                         if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
-                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife ?? 0);
-                        signingKeyCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);
-                        _signingKeyCaches[issuer] = signingKeyCacheItem;
+
+                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
+                        dynamicCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);
+                        _signingKeyCaches[cacheKey] = dynamicCacheItem;
                     }
 
-                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKeyCacheItem.SigningKey));
+                    signingKey = dynamicCacheItem.SigningKey;
                     break;
+
+                case IdentitySigningKeyModes.Static:
+                    signingKey = Setting.IssuerSigningKey.FirstOrDefault(x => x.Issuer == issuer)?.SigningKey;
+                    if (signingKey.IsNullOrEmpty())
+                        throw new ArgumentNullException(nameof(Setting.IssuerSigningKey));
+                    break;
+
+                case IdentitySigningKeyModes.Jwks:
+                    if (Setting.JwksEndpoint.IsNullOrEmpty())
+                        throw new ArgumentNullException(nameof(Setting.JwksEndpoint));
+
+                    var tokenKid = tokenData.Header.Kid;
+                    var jwksCacheKey = $"{cacheKey}_{(tokenKid.IsNullOrEmpty() ? "default" : tokenKid)}";
+
+                    var jwksCacheItem = _signingKeyCaches.ContainsKey(jwksCacheKey) ? _signingKeyCaches[jwksCacheKey] : null;
+                    if (jwksCacheItem == null || DateTime.UtcNow > jwksCacheItem.ExpiredAt)
+                    {
+                        using var httpClient = new HttpClient();
+                        var jwksResponse = httpClient.GetStringAsync(Setting.JwksEndpoint).GetAwaiter().GetResult();
+                        if (jwksResponse.IsNullOrEmpty()) throw new ArgumentNullException("jwks response");
+
+                        var jwks = new JsonWebKeySet(jwksResponse);
+
+                        var jwkItem = (!tokenKid.IsNullOrEmpty() ? jwks.Keys.FirstOrDefault(k => k.Kid == tokenKid) : null)
+                            ?? jwks.Keys.FirstOrDefault(k => k.Kid == issuer)
+                            ?? throw new ArgumentNullException("jwk item");
+
+                        var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
+                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
+                        jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
+                        _signingKeyCaches[jwksCacheKey] = jwksCacheItem;
+                    }
+
+                    signingKey = jwksCacheItem.SigningKey;
+                    break;
+
+                default:
+                    throw new NotSupportedException($"SigningKeyMode {Setting.SigningKeyMode} không được hỗ trợ.");
+            }
+
+            var algorithm = tokenData.Header.Alg;
+            if (algorithm.IsNullOrEmpty()) algorithm = Setting.Algorithm;
+            switch (algorithm)
+            {
+                case "HS256":
+                    validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
+                    break;
+
+                case "ES256":
+                    if (signingKey.Contains("\"kty\""))
+                    {
+                        validationParameters.IssuerSigningKey = new JsonWebKey(signingKey);
+                    }
+                    else
+                    {
+                        var ecdsa = ECDsa.Create();
+                        ecdsa.ImportFromPem(signingKey);
+                        validationParameters.IssuerSigningKey = new ECDsaSecurityKey(ecdsa);
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Algorithm {algorithm} không được hỗ trợ.");
             }
 
             return base.ValidateToken(token, validationParameters, out validatedToken);

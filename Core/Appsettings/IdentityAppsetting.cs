@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using TripleSix.Core.Constants;
 using TripleSix.Core.Helpers;
 
@@ -9,6 +9,8 @@ namespace TripleSix.Core.Appsettings
     /// </summary>
     public class IdentityAppsetting : BaseAppsetting
     {
+        private static readonly string[] SupportedAlgorithms = ["HS256", "ES256"];
+
         /// <summary>
         /// Cấu hình identity.
         /// </summary>
@@ -16,11 +18,31 @@ namespace TripleSix.Core.Appsettings
         public IdentityAppsetting(IConfiguration configuration)
             : base(configuration, "Identity")
         {
-            if (SigningKeyMode == IdentitySigningKeyModes.Static && IssuerSigningKey.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(IssuerSigningKey));
-            if (SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0)
+            if (Algorithm.IsNullOrEmpty()) SupportedAlgorithms.First();
+            if (!SupportedAlgorithms.Contains(Algorithm))
+                throw new ArgumentException($"Algorithm chỉ hỗ trợ {SupportedAlgorithms.ToString(", ")}.");
+
+            if (!Enum.IsDefined(SigningKeyMode))
+                SigningKeyMode = IdentitySigningKeyModes.Static;
+
+            if ((SigningKeyMode == IdentitySigningKeyModes.Dynamic || SigningKeyMode == IdentitySigningKeyModes.Jwks)
+                && SigningKeyCacheTimelife < 0)
                 throw new ArgumentException(nameof(SigningKeyCacheTimelife));
+
+            if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && ConnectionString.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(ConnectionString));
+
+            if (SigningKeyMode == IdentitySigningKeyModes.Static && (IssuerSigningKey.IsNullOrEmpty() || IssuerSigningKey.Any(x => x.SigningKey.IsNullOrEmpty())))
+                throw new ArgumentNullException(nameof(IssuerSigningKey));
+
+            if (SigningKeyMode == IdentitySigningKeyModes.Jwks && JwksEndpoint.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(JwksEndpoint));
         }
+
+        /// <summary>
+        /// Thuật toán ký token.
+        /// </summary>
+        public string Algorithm { get; set; } = "HS256";
 
         /// <summary>
         /// Phương pháp lấy Signing Key.
@@ -30,7 +52,7 @@ namespace TripleSix.Core.Appsettings
         /// <summary>
         /// Thời gian cache của Signing Key.
         /// </summary>
-        public long? SigningKeyCacheTimelife { get; set; }
+        public long SigningKeyCacheTimelife { get; set; } = 900;
 
         /// <summary>
         /// Connection string.
@@ -41,6 +63,11 @@ namespace TripleSix.Core.Appsettings
         /// Danh sách Issuer Key hợp lệ.
         /// </summary>
         public IdentityIssuerSigningKeyItem[] IssuerSigningKey { get; set; }
+
+        /// <summary>
+        /// JWKS Endpoint để lấy public key.
+        /// </summary>
+        public string? JwksEndpoint { get; set; }
 
         /// <summary>
         /// Danh sách Audience hợp lệ.
@@ -86,6 +113,6 @@ namespace TripleSix.Core.Appsettings
         /// <summary>
         /// Signing Key.
         /// </summary>
-        public string SigningKey { get; set; }
+        public string? SigningKey { get; set; }
     }
 }
