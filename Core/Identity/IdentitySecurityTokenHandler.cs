@@ -108,9 +108,9 @@ namespace TripleSix.Core.Identity
                     throw new NotSupportedException($"SigningKeyMode {Setting.SigningKeyMode} không được hỗ trợ.");
             }
 
-            var alg = tokenData.Header.Alg;
-            if (alg.IsNullOrEmpty()) alg = Setting.Algorithm;
-            switch (alg)
+            var algorithm = tokenData.Header.Alg;
+            if (algorithm.IsNullOrEmpty()) algorithm = Setting.Algorithm;
+            switch (algorithm)
             {
                 case "ES256":
                     if (signingKey.Contains("\"kty\""))
