@@ -32,7 +32,7 @@ namespace TripleSix.Core.Appsettings
             if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && ConnectionString.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(ConnectionString));
 
-            if (SigningKeyMode == IdentitySigningKeyModes.Static && IssuerSigningKey.IsNullOrEmpty())
+            if (SigningKeyMode == IdentitySigningKeyModes.Static && (IssuerSigningKey.IsNullOrEmpty() || IssuerSigningKey.Any(x => x.SigningKey.IsNullOrEmpty())))
                 throw new ArgumentNullException(nameof(IssuerSigningKey));
 
             if (SigningKeyMode == IdentitySigningKeyModes.Jwks && JwksEndpoint.IsNullOrEmpty())
@@ -113,6 +113,6 @@ namespace TripleSix.Core.Appsettings
         /// <summary>
         /// Signing Key.
         /// </summary>
-        public string SigningKey { get; set; }
+        public string? SigningKey { get; set; }
     }
 }

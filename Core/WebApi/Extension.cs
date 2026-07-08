@@ -90,9 +90,7 @@ namespace TripleSix.Core.WebApi
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = identitySetting.ValidateIssuer,
-                    ValidIssuers = identitySetting.SigningKeyMode == IdentitySigningKeyModes.Static
-                        ? identitySetting.IssuerSigningKey?.Select(x => x.Issuer)
-                        : null,
+                    ValidIssuers = identitySetting.IssuerSigningKey?.Select(x => x.Issuer),
                     ValidateAudience = identitySetting.ValidateAudience,
                     ValidAudiences = identitySetting.Audience,
                 };

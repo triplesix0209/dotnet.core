@@ -43,6 +43,7 @@ namespace TripleSix.Core.Identity
         {
             var tokenData = ReadJwtToken(token);
             var issuer = tokenData.Issuer;
+            var cacheKey = $"{Setting.SigningKeyMode}_{issuer}";
 
             if (Setting.BypassUserIds.IsNotNullOrEmpty())
             {
@@ -60,7 +61,7 @@ namespace TripleSix.Core.Identity
                     if (GetSigningKeyMethod == null)
                         throw new ArgumentNullException(nameof(GetSigningKeyMethod));
 
-                    var dynamicCacheItem = _signingKeyCaches.ContainsKey(issuer) ? _signingKeyCaches[issuer] : null;
+                    var dynamicCacheItem = _signingKeyCaches.ContainsKey(cacheKey) ? _signingKeyCaches[cacheKey] : null;
                     if (dynamicCacheItem == null || DateTime.UtcNow > dynamicCacheItem.ExpiredAt)
                     {
                         signingKey = GetSigningKeyMethod(Setting, tokenData);
@@ -68,7 +69,7 @@ namespace TripleSix.Core.Identity
 
                         var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
                         dynamicCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);
-                        _signingKeyCaches[issuer] = dynamicCacheItem;
+                        _signingKeyCaches[cacheKey] = dynamicCacheItem;
                     }
 
                     signingKey = dynamicCacheItem.SigningKey;
@@ -84,7 +85,7 @@ namespace TripleSix.Core.Identity
                     if (Setting.JwksEndpoint.IsNullOrEmpty())
                         throw new ArgumentNullException(nameof(Setting.JwksEndpoint));
 
-                    var jwksCacheItem = _signingKeyCaches.ContainsKey(issuer) ? _signingKeyCaches[issuer] : null;
+                    var jwksCacheItem = _signingKeyCaches.ContainsKey(cacheKey) ? _signingKeyCaches[cacheKey] : null;
                     if (jwksCacheItem == null || DateTime.UtcNow > jwksCacheItem.ExpiredAt)
                     {
                         using var httpClient = new HttpClient();
@@ -98,7 +99,7 @@ namespace TripleSix.Core.Identity
                         var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
                         var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
                         jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
-                        _signingKeyCaches[issuer] = jwksCacheItem;
+                        _signingKeyCaches[cacheKey] = jwksCacheItem;
                     }
 
                     signingKey = jwksCacheItem.SigningKey;
