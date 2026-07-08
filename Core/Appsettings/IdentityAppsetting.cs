@@ -25,8 +25,8 @@ namespace TripleSix.Core.Appsettings
             if (!Enum.IsDefined(SigningKeyMode))
                 SigningKeyMode = IdentitySigningKeyModes.Static;
 
-            if (SigningKeyCacheTimelife.HasValue && SigningKeyCacheTimelife < 0
-                && (SigningKeyMode == IdentitySigningKeyModes.Dynamic || SigningKeyMode == IdentitySigningKeyModes.Jwks))
+            if ((SigningKeyMode == IdentitySigningKeyModes.Dynamic || SigningKeyMode == IdentitySigningKeyModes.Jwks)
+                && SigningKeyCacheTimelife < 0)
                 throw new ArgumentException(nameof(SigningKeyCacheTimelife));
 
             if (SigningKeyMode == IdentitySigningKeyModes.Dynamic && ConnectionString.IsNullOrEmpty())
@@ -52,7 +52,7 @@ namespace TripleSix.Core.Appsettings
         /// <summary>
         /// Thời gian cache của Signing Key.
         /// </summary>
-        public long? SigningKeyCacheTimelife { get; set; }
+        public long SigningKeyCacheTimelife { get; set; } = 900;
 
         /// <summary>
         /// Connection string.

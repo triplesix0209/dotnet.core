@@ -163,7 +163,7 @@ namespace TripleSix.Core.Identity
                         signingKey = GetSigningKeyMethod(Setting, tokenData);
                         if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
 
-                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife ?? 0);
+                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
                         dynamicCacheItem = new SigningKeyCacheItem(signingKey, expiredAt);
                         _signingKeyCaches[issuer] = dynamicCacheItem;
                     }
@@ -192,9 +192,9 @@ namespace TripleSix.Core.Identity
                         var jwk = jwks.Keys.FirstOrDefault(k => k.Kid == issuer)
                                   ?? throw new ArgumentNullException("jwk");
 
-                        var jwkJson = JsonConvert.SerializeObject(jwk);
-                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife ?? 300);
-                        jwksCacheItem = new SigningKeyCacheItem(jwkJson, expiredAt);
+                        var jwkData = JsonConvert.SerializeObject(jwk);
+                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
+                        jwksCacheItem = new SigningKeyCacheItem(jwkData, expiredAt);
                         _signingKeyCaches[issuer] = jwksCacheItem;
                     }
 
@@ -202,7 +202,7 @@ namespace TripleSix.Core.Identity
                     break;
 
                 default:
-                    throw new NotSupportedException($"SigningKeyMode {Setting.SigningKeyMode} không được hỗ trợ.");
+                    throw new NotSupportedException($"Signing Key Mode '{Setting.SigningKeyMode}' không được hỗ trợ.");
             }
 
             switch (Setting.Algorithm)
@@ -218,7 +218,6 @@ namespace TripleSix.Core.Identity
                         ecdsa.ImportFromPem(signingKey);
                         validationParameters.IssuerSigningKey = new ECDsaSecurityKey(ecdsa);
                     }
-
                     break;
 
                 case "HS256":
@@ -226,7 +225,7 @@ namespace TripleSix.Core.Identity
                     break;
 
                 default:
-                    throw new NotSupportedException($"Algorithm {Setting.Algorithm} không được hỗ trợ.");
+                    throw new NotSupportedException($"Algorithm '{Setting.Algorithm}' không được hỗ trợ.");
             }
 
             return await base.ValidateTokenAsync(token, validationParameters);
