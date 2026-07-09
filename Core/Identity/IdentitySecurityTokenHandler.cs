@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
@@ -16,7 +17,16 @@ namespace TripleSix.Core.Identity
     public class IdentitySecurityTokenHandler : JwtSecurityTokenHandler,
         ISecurityTokenValidator
     {
-        private static Dictionary<string, SigningKeyCacheItem> _signingKeyCaches = new();
+        private static readonly ConcurrentDictionary<string, SigningKeyCacheItem> _signingKeyCaches = new();
+        private static readonly HttpClient _jwksHttpClient = new(new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+        })
+        {
+            Timeout = TimeSpan.FromSeconds(10),
+        };
+
+        private static readonly SemaphoreSlim _jwksFetchLock = new(1, 1);
 
         /// <summary>
         /// Create instance of <see cref="IdentitySecurityTokenHandler"/>.
@@ -37,6 +47,39 @@ namespace TripleSix.Core.Identity
         /// Hàm lấy signing key.
         /// </summary>
         public Func<IdentityAppsetting, JwtSecurityToken, string?>? GetSigningKeyMethod { get; set; }
+
+        /// <inheritdoc/>
+        public override async Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters)
+        {
+            // nạp trước JWKS bằng HTTP async, để ValidateToken sync bên dưới đọc cache mà không block thread chờ HTTP
+            if (Setting.SigningKeyMode == IdentitySigningKeyModes.Jwks)
+            {
+                if (Setting.JwksEndpoint.IsNullOrEmpty())
+                    throw new ArgumentNullException(nameof(Setting.JwksEndpoint));
+
+                var tokenData = ReadJwtToken(token);
+                var jwksCacheKey = GetJwksCacheKey(tokenData);
+                if (GetValidCacheItem(jwksCacheKey) == null)
+                {
+                    // khóa dedupe: khi cache hết hạn, chỉ 1 request fetch JWKS, các request khác chờ dùng lại cache
+                    await _jwksFetchLock.WaitAsync();
+                    try
+                    {
+                        if (GetValidCacheItem(jwksCacheKey) == null)
+                        {
+                            var jwksResponse = await _jwksHttpClient.GetStringAsync(Setting.JwksEndpoint);
+                            CacheJwksSigningKey(tokenData, jwksCacheKey, jwksResponse);
+                        }
+                    }
+                    finally
+                    {
+                        _jwksFetchLock.Release();
+                    }
+                }
+            }
+
+            return await base.ValidateTokenAsync(token, validationParameters);
+        }
 
         /// <inheritdoc/>
         public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
@@ -61,8 +104,8 @@ namespace TripleSix.Core.Identity
                     if (GetSigningKeyMethod == null)
                         throw new ArgumentNullException(nameof(GetSigningKeyMethod));
 
-                    var dynamicCacheItem = _signingKeyCaches.ContainsKey(cacheKey) ? _signingKeyCaches[cacheKey] : null;
-                    if (dynamicCacheItem == null || DateTime.UtcNow > dynamicCacheItem.ExpiredAt)
+                    var dynamicCacheItem = GetValidCacheItem(cacheKey);
+                    if (dynamicCacheItem == null)
                     {
                         signingKey = GetSigningKeyMethod(Setting, tokenData);
                         if (signingKey.IsNullOrEmpty()) throw new ArgumentNullException(nameof(signingKey));
@@ -85,26 +128,14 @@ namespace TripleSix.Core.Identity
                     if (Setting.JwksEndpoint.IsNullOrEmpty())
                         throw new ArgumentNullException(nameof(Setting.JwksEndpoint));
 
-                    var tokenKid = tokenData.Header.Kid;
-                    var jwksCacheKey = $"{cacheKey}_{(tokenKid.IsNullOrEmpty() ? "default" : tokenKid)}";
-
-                    var jwksCacheItem = _signingKeyCaches.ContainsKey(jwksCacheKey) ? _signingKeyCaches[jwksCacheKey] : null;
-                    if (jwksCacheItem == null || DateTime.UtcNow > jwksCacheItem.ExpiredAt)
+                    var jwksCacheKey = GetJwksCacheKey(tokenData);
+                    var jwksCacheItem = GetValidCacheItem(jwksCacheKey);
+                    if (jwksCacheItem == null)
                     {
-                        using var httpClient = new HttpClient();
-                        var jwksResponse = httpClient.GetStringAsync(Setting.JwksEndpoint).GetAwaiter().GetResult();
-                        if (jwksResponse.IsNullOrEmpty()) throw new ArgumentNullException("jwks response");
-
-                        var jwks = new JsonWebKeySet(jwksResponse);
-
-                        var jwkItem = (!tokenKid.IsNullOrEmpty() ? jwks.Keys.FirstOrDefault(k => k.Kid == tokenKid) : null)
-                            ?? jwks.Keys.FirstOrDefault(k => k.Kid == issuer)
-                            ?? throw new ArgumentNullException("jwk item");
-
-                        var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
-                        var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
-                        jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
-                        _signingKeyCaches[jwksCacheKey] = jwksCacheItem;
+                        // fallback cho đường gọi sync (ISecurityTokenValidator không có bản async);
+                        // request qua JwtBearer đi vào ValidateTokenAsync nên cache đã được nạp bằng HTTP async trước đó
+                        var jwksResponse = _jwksHttpClient.GetStringAsync(Setting.JwksEndpoint).GetAwaiter().GetResult();
+                        jwksCacheItem = CacheJwksSigningKey(tokenData, jwksCacheKey, jwksResponse);
                     }
 
                     signingKey = jwksCacheItem.SigningKey;
@@ -140,6 +171,38 @@ namespace TripleSix.Core.Identity
             }
 
             return base.ValidateToken(token, validationParameters, out validatedToken);
+        }
+
+        private static SigningKeyCacheItem? GetValidCacheItem(string cacheKey)
+        {
+            return _signingKeyCaches.TryGetValue(cacheKey, out var item) && DateTime.UtcNow <= item.ExpiredAt
+                ? item
+                : null;
+        }
+
+        private string GetJwksCacheKey(JwtSecurityToken tokenData)
+        {
+            var tokenKid = tokenData.Header.Kid;
+            return $"{Setting.SigningKeyMode}_{tokenData.Issuer}_{(tokenKid.IsNullOrEmpty() ? "default" : tokenKid)}";
+        }
+
+        private SigningKeyCacheItem CacheJwksSigningKey(JwtSecurityToken tokenData, string jwksCacheKey, string? jwksResponse)
+        {
+            if (jwksResponse.IsNullOrEmpty()) throw new ArgumentNullException("jwks response");
+
+            var jwks = new JsonWebKeySet(jwksResponse);
+            var tokenKid = tokenData.Header.Kid;
+
+            var jwkItem = (!tokenKid.IsNullOrEmpty() ? jwks.Keys.FirstOrDefault(k => k.Kid == tokenKid) : null)
+                ?? jwks.Keys.FirstOrDefault(k => k.Kid == tokenData.Issuer)
+                ?? throw new ArgumentNullException("jwk item");
+
+            var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
+            var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
+            var jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
+            _signingKeyCaches[jwksCacheKey] = jwksCacheItem;
+
+            return jwksCacheItem;
         }
 
         private class SigningKeyCacheItem
