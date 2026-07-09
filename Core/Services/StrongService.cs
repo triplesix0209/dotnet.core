@@ -85,7 +85,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            Task.WaitAll(task!);
+            await task!;
             return result;
         }
 
@@ -128,7 +128,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            Task.WaitAll(task!);
+            await task!;
             return result;
         }
 
