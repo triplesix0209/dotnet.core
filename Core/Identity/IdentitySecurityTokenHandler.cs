@@ -197,7 +197,7 @@ namespace TripleSix.Core.Identity
                 ?? jwks.Keys.FirstOrDefault(k => k.Kid == tokenData.Issuer)
                 ?? throw new ArgumentNullException("jwk item");
 
-            var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
+            var jwk = System.Text.Json.JsonSerializer.Serialize(jwkItem);
             var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
             var jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
             _signingKeyCaches[jwksCacheKey] = jwksCacheItem;

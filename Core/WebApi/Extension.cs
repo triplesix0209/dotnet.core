@@ -60,11 +60,14 @@ namespace TripleSix.Core.WebApi
                     options.FeatureProviders.Add(new ControllerEndpointFeatureProvider(assembly));
                     configureApplicationPartManager?.Invoke(options);
                 })
-                .AddNewtonsoftJson(options =>
+                .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver = new BaseContractResolver();
+                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                    var resolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver();
+                    resolver.Modifiers.Add(JsonHelper.BaseContractResolverModifier);
+                    options.JsonSerializerOptions.TypeInfoResolver = resolver;
                     foreach (var converter in JsonHelper.Converters)
-                        options.SerializerSettings.Converters.Add(converter);
+                        options.JsonSerializerOptions.Converters.Add(converter);
                 });
         }
 

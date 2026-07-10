@@ -1,14 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Autofac;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -31,7 +30,9 @@ namespace TripleSix.Core.WebApi
             var result = schemaGenerator.GenerateSchema(objectType, schemaRepository);
             var propertyType = objectType.GetUnderlyingType();
 
-            if (propertyType.IsAssignableTo<JToken>())
+            if (propertyType.IsAssignableTo<System.Text.Json.Nodes.JsonNode>()
+                || propertyType.IsAssignableTo<System.Text.Json.JsonDocument>()
+                || propertyType == typeof(System.Text.Json.JsonElement))
             {
                 result.Type = "object";
                 result.AdditionalProperties = null;
@@ -67,7 +68,7 @@ namespace TripleSix.Core.WebApi
                 result.Type = "object";
                 var properties = objectType.GetProperties()
                     .OrderBy(x => x.DeclaringType?.BaseTypesAndSelf().Count())
-                    .OrderBy(x => x.GetCustomAttribute<JsonPropertyAttribute>(true)?.Order ?? 0);
+                    .OrderBy(x => x.GetCustomAttribute<JsonPropertyOrderAttribute>(true)?.Order ?? 0);
 
                 foreach (var property in properties)
                 {

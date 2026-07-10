@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace TripleSix.Core.WebApi
 {
@@ -22,7 +22,7 @@ namespace TripleSix.Core.WebApi
         /// <summary>
         /// Dữ liệu.
         /// </summary>
-        [JsonProperty(Order = -9)]
+        [JsonPropertyOrder(-9)]
         [DisplayName("Dữ liệu")]
         public virtual TData? Data { get; set; }
     }
