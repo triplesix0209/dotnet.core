@@ -89,11 +89,14 @@ namespace TripleSix.Core.Helpers
         /// Chuyển đổi chuổi JSON thành JsonNode.
         /// </summary>
         /// <param name="json">Chuổi JSON cần đọc.</param>
+        /// <param name="nodeOptions">Cấu hình JsonNode.</param>
+        /// <param name="documentOptions">Cấu hình JsonDocument.</param>
         /// <returns><see cref="JsonNode"/>.</returns>
-        public static JsonNode? ToJsonNode(this string json)
+        public static JsonNode? ToJsonNode(this string json, JsonNodeOptions? nodeOptions = null, JsonDocumentOptions documentOptions = default)
         {
             if (json.IsNullOrEmpty()) return null;
-            return JsonNode.Parse(json);
+            nodeOptions ??= new JsonNodeOptions { PropertyNameCaseInsensitive = true };
+            return JsonNode.Parse(json, nodeOptions, documentOptions);
         }
 
         /// <summary>
@@ -120,6 +123,30 @@ namespace TripleSix.Core.Helpers
             return JsonSerializer.Deserialize<T>(json, SerializerOptions);
         }
 
+        /// <summary>
+        /// Chuyển đổi JsonNode thành đối tượng.
+        /// </summary>
+        /// <typeparam name="T">Loại đối tượng.</typeparam>
+        /// <param name="node"><see cref="JsonNode"/>.</param>
+        /// <returns>Đối tượng được chuyển đổi.</returns>
+        public static T? ToObject<T>(this JsonNode node)
+        {
+            if (node == null) return default;
+            return node.Deserialize<T>(SerializerOptions);
+        }
+
+        /// <summary>
+        /// Chuyển đổi JsonNode thành đối tượng.
+        /// </summary>
+        /// <param name="node"><see cref="JsonNode"/>.</param>
+        /// <param name="type">Loại đối tượng.</param>
+        /// <returns>Đối tượng được chuyển đổi.</returns>
+        public static object? ToObject(this JsonNode node, Type type)
+        {
+            if (node == null) return null;
+            return node.Deserialize(type, SerializerOptions);
+        }
+
         private static JsonSerializerOptions CreateDefaultOptions()
         {
             var resolver = new DefaultJsonTypeInfoResolver();
@@ -127,6 +154,7 @@ namespace TripleSix.Core.Helpers
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true,
                 TypeInfoResolver = resolver,
             };
             foreach (var converter in Converters)
