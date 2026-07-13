@@ -145,9 +145,19 @@ namespace TripleSix.Core.Identity
                     throw new NotSupportedException($"SigningKeyMode {Setting.SigningKeyMode} không được hỗ trợ.");
             }
 
-            var algorithm = tokenData.Header.Alg;
-            if (algorithm.IsNullOrEmpty()) algorithm = Setting.Algorithm;
-            switch (algorithm)
+            // luôn dùng Setting.Algorithm làm nguồn tin cậy duy nhất để chọn loại key,
+            // không được tin vào header "alg" của token (tránh tấn công algorithm confusion,
+            // ví dụ đổi alg sang HS256 rồi dùng public key ES256/JWKS làm HMAC secret để giả mạo chữ ký)
+            if (tokenData.Header.Alg.IsNotNullOrEmpty() && tokenData.Header.Alg != Setting.Algorithm)
+            {
+                throw new SecurityTokenInvalidAlgorithmException(
+                    $"Token sử dụng algorithm {tokenData.Header.Alg} không khớp với algorithm {Setting.Algorithm} được cấu hình.");
+            }
+
+            // bắt buộc validator của Microsoft cũng chỉ chấp nhận đúng algorithm đã cấu hình (defense in depth)
+            validationParameters.ValidAlgorithms = new[] { Setting.Algorithm };
+
+            switch (Setting.Algorithm)
             {
                 case "HS256":
                     validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
@@ -167,7 +177,7 @@ namespace TripleSix.Core.Identity
                     break;
 
                 default:
-                    throw new NotSupportedException($"Algorithm {algorithm} không được hỗ trợ.");
+                    throw new NotSupportedException($"Algorithm {Setting.Algorithm} không được hỗ trợ.");
             }
 
             return base.ValidateToken(token, validationParameters, out validatedToken);
@@ -190,14 +200,18 @@ namespace TripleSix.Core.Identity
         {
             if (jwksResponse.IsNullOrEmpty()) throw new ArgumentNullException("jwks response");
 
-            var jwks = new JsonWebKeySet(jwksResponse);
+            // lấy nguyên văn JSON thô của jwk khớp thay vì parse thành JsonWebKey rồi serialize lại;
+            // JsonWebKey (IdentityModel) không có attribute của Newtonsoft nên serialize ra sẽ bị PascalCase
+            // ("Kty", "X", "Y"...), làm nhánh ES256 phía trên (check "\"kty\"" chữ thường) nhận nhầm là PEM và lỗi
+            var jwks = Newtonsoft.Json.Linq.JObject.Parse(jwksResponse);
+            var keys = jwks["keys"] as Newtonsoft.Json.Linq.JArray;
             var tokenKid = tokenData.Header.Kid;
 
-            var jwkItem = (!tokenKid.IsNullOrEmpty() ? jwks.Keys.FirstOrDefault(k => k.Kid == tokenKid) : null)
-                ?? jwks.Keys.FirstOrDefault(k => k.Kid == tokenData.Issuer)
+            var jwkItem = (!tokenKid.IsNullOrEmpty() ? keys?.FirstOrDefault(k => (string?)k["kid"] == tokenKid) : null)
+                ?? keys?.FirstOrDefault(k => (string?)k["kid"] == tokenData.Issuer)
                 ?? throw new ArgumentNullException("jwk item");
 
-            var jwk = System.Text.Json.JsonSerializer.Serialize(jwkItem);
+            var jwk = Newtonsoft.Json.JsonConvert.SerializeObject(jwkItem);
             var expiredAt = DateTime.UtcNow.AddSeconds(Setting.SigningKeyCacheTimelife);
             var jwksCacheItem = new SigningKeyCacheItem(jwk, expiredAt);
             _signingKeyCaches[jwksCacheKey] = jwksCacheItem;
