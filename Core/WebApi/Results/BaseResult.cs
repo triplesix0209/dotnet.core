@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace TripleSix.Core.WebApi
 {
@@ -33,7 +33,7 @@ namespace TripleSix.Core.WebApi
         /// <summary>
         /// Metadata.
         /// </summary>
-        [JsonProperty(Order = -10)]
+        [JsonPropertyOrder(-10)]
         [DisplayName("Metadata")]
         public virtual TMeta Meta { get; set; }
 

@@ -60,11 +60,14 @@ namespace TripleSix.Core.WebApi
                     options.FeatureProviders.Add(new ControllerEndpointFeatureProvider(assembly));
                     configureApplicationPartManager?.Invoke(options);
                 })
-                .AddNewtonsoftJson(options =>
+                .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver = new BaseContractResolver();
+                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                    var resolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver();
+                    resolver.Modifiers.Add(JsonHelper.BaseContractResolverModifier);
+                    options.JsonSerializerOptions.TypeInfoResolver = resolver;
                     foreach (var converter in JsonHelper.Converters)
-                        options.SerializerSettings.Converters.Add(converter);
+                        options.JsonSerializerOptions.Converters.Add(converter);
                 });
         }
 
@@ -349,7 +352,7 @@ namespace TripleSix.Core.WebApi
 
                     tracing.AddHttpClientInstrumentation(o =>
                     {
-                        o.EnrichWithHttpRequestMessage = async (activity, requestMessage) =>
+                        o.EnrichWithHttpRequestMessage = (activity, requestMessage) =>
                         {
                             if (requestMessage.RequestUri != null)
                             {
@@ -359,7 +362,11 @@ namespace TripleSix.Core.WebApi
 
                             try
                             {
-                                activity.SetTag("http.curl", await requestMessage.ToCurl());
+                                // enrich callback là Action (không hỗ trợ async); chỉ lấy curl khi task
+                                // hoàn thành sẵn (content dạng buffer), tránh async void & block thread
+                                var curlTask = requestMessage.ToCurl();
+                                if (curlTask.IsCompletedSuccessfully)
+                                    activity.SetTag("http.curl", curlTask.Result);
                             }
                             catch
                             {

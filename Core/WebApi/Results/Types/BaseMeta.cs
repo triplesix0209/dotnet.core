@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace TripleSix.Core.WebApi
 {
@@ -20,14 +20,14 @@ namespace TripleSix.Core.WebApi
         /// <summary>
         /// Trace Id.
         /// </summary>
-        [JsonProperty(Order = -10)]
+        [JsonPropertyOrder(-10)]
         [DisplayName("Trace Id")]
         public virtual string? TraceId { get; set; }
 
         /// <summary>
         /// Phiên xử lý thành công hay thất bại?.
         /// </summary>
-        [JsonProperty(Order = -10)]
+        [JsonPropertyOrder(-10)]
         [DisplayName("Phiên xử lý thành công hay thất bại?")]
         public virtual bool Success { get; set; }
     }

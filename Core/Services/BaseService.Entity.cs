@@ -54,7 +54,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, createdEntity]) as Task;
-            task!.Wait();
+            await task!;
 
             return result;
         }
@@ -80,7 +80,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
-            task!.Wait();
+            await task!;
 
             return result;
         }
@@ -108,7 +108,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            task!.Wait();
+            await task!;
 
             return result;
         }
@@ -136,7 +136,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, updatedEntity]) as Task;
-            task!.Wait();
+            await task!;
 
             return result;
         }
@@ -202,7 +202,7 @@ namespace TripleSix.Core.Services
 
             var result = Activator.CreateInstance<TResult>();
             var task = mapMethod.Invoke(result, [ServiceProvider, entity]) as Task;
-            task!.Wait();
+            await task!;
 
             return result;
         }
@@ -271,7 +271,7 @@ namespace TripleSix.Core.Services
             {
                 var item = Activator.CreateInstance<TResult>();
                 var task = mapMethod.Invoke(item, [ServiceProvider, entity]) as Task;
-                task!.Wait();
+                await task!;
 
                 items.Add(item);
             }
@@ -329,7 +329,7 @@ namespace TripleSix.Core.Services
             {
                 var item = Activator.CreateInstance<TResult>();
                 var task = mapMethod.Invoke(item, [ServiceProvider, entity]) as Task;
-                task!.Wait();
+                await task!;
 
                 items.Add(item);
             }

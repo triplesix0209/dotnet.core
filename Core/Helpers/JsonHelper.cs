@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.Helpers
@@ -12,19 +15,35 @@ namespace TripleSix.Core.Helpers
         /// <summary>
         /// Danh sách Json Converter mặc định.
         /// </summary>
-        public static readonly JsonConverter[] Converters = new[]
+        public static readonly JsonConverter[] Converters = new JsonConverter[]
         {
             new TimestampConverter(),
         };
 
         /// <summary>
-        /// Cấu hình Json Serializer mặc đình.
+        /// Cấu hình Json Serializer mặc định.
         /// </summary>
-        public static readonly JsonSerializerSettings SerializerSettings = new()
+        public static readonly JsonSerializerOptions SerializerOptions = CreateDefaultOptions();
+
+        /// <summary>
+        /// Modifier cho DefaultJsonTypeInfoResolver sắp xếp properties theo thứ tự kế thừa.
+        /// </summary>
+        /// <param name="typeInfo"><see cref="JsonTypeInfo"/>.</param>
+        public static void BaseContractResolverModifier(JsonTypeInfo typeInfo)
         {
-            ContractResolver = new BaseContractResolver(),
-            Converters = Converters,
-        };
+            if (typeInfo.Kind != JsonTypeInfoKind.Object) return;
+
+            var properties = typeInfo.Properties.ToList();
+            typeInfo.Properties.Clear();
+            foreach (var prop in properties.OrderBy(p =>
+            {
+                var memberInfo = p.AttributeProvider as MemberInfo;
+                return memberInfo?.DeclaringType?.BaseTypesAndSelf().Count() ?? 0;
+            }))
+            {
+                typeInfo.Properties.Add(prop);
+            }
+        }
 
         /// <summary>
         /// Mã hóa đối tượng thành chuỗi JSON.
@@ -33,7 +52,7 @@ namespace TripleSix.Core.Helpers
         /// <returns>Chuỗi JSON ứng với đối tượng chỉ định.</returns>
         public static string ToJson(this object obj)
         {
-            return JsonConvert.SerializeObject(obj, SerializerSettings);
+            return JsonSerializer.Serialize(obj, SerializerOptions);
         }
 
         /// <summary>
@@ -44,22 +63,40 @@ namespace TripleSix.Core.Helpers
         /// <returns>Chuỗi JSON ứng với đối tượng chỉ định.</returns>
         public static string ToJson(this object obj, params string[] ignorePropertyNames)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            var ignoreProps = new HashSet<string>(ignorePropertyNames.Select(x => x.ToLower()));
+            var resolver = new DefaultJsonTypeInfoResolver();
+            resolver.Modifiers.Add(BaseContractResolverModifier);
+            resolver.Modifiers.Add(typeInfo =>
             {
-                ContractResolver = new IgnoreContractResolver(ignorePropertyNames),
-                Converters = Converters,
+                if (typeInfo.Kind != JsonTypeInfoKind.Object) return;
+                foreach (var prop in typeInfo.Properties)
+                {
+                    if (prop.Name.IsNotNullOrEmpty() && ignoreProps.Contains(prop.Name.ToLower()))
+                    {
+                        prop.ShouldSerialize = (_, _) => false;
+                    }
+                }
             });
+
+            var options = new JsonSerializerOptions(SerializerOptions)
+            {
+                TypeInfoResolver = resolver
+            };
+            return JsonSerializer.Serialize(obj, options);
         }
 
         /// <summary>
-        /// Chuyển đổi chuổi JSON thành JToken.
+        /// Chuyển đổi chuổi JSON thành JsonNode.
         /// </summary>
         /// <param name="json">Chuổi JSON cần đọc.</param>
-        /// <returns><see cref="JToken"/>.</returns>
-        public static JToken? ToJToken(this string json)
+        /// <param name="nodeOptions">Cấu hình JsonNode.</param>
+        /// <param name="documentOptions">Cấu hình JsonDocument.</param>
+        /// <returns><see cref="JsonNode"/>.</returns>
+        public static JsonNode? ToJsonNode(this string json, JsonNodeOptions? nodeOptions = null, JsonDocumentOptions documentOptions = default)
         {
             if (json.IsNullOrEmpty()) return null;
-            return JsonConvert.DeserializeObject<JToken>(json, SerializerSettings);
+            nodeOptions ??= new JsonNodeOptions { PropertyNameCaseInsensitive = true };
+            return JsonNode.Parse(json, nodeOptions, documentOptions);
         }
 
         /// <summary>
@@ -71,7 +108,7 @@ namespace TripleSix.Core.Helpers
         public static object? ToObject(this string json, Type type)
         {
             if (json.IsNullOrEmpty()) return null;
-            return JsonConvert.DeserializeObject(json, type, SerializerSettings);
+            return JsonSerializer.Deserialize(json, type, SerializerOptions);
         }
 
         /// <summary>
@@ -83,7 +120,46 @@ namespace TripleSix.Core.Helpers
         public static T? ToObject<T>(this string json)
         {
             if (json.IsNullOrEmpty()) return default;
-            return JsonConvert.DeserializeObject<T>(json, SerializerSettings);
+            return JsonSerializer.Deserialize<T>(json, SerializerOptions);
+        }
+
+        /// <summary>
+        /// Chuyển đổi JsonNode thành đối tượng.
+        /// </summary>
+        /// <typeparam name="T">Loại đối tượng.</typeparam>
+        /// <param name="node"><see cref="JsonNode"/>.</param>
+        /// <returns>Đối tượng được chuyển đổi.</returns>
+        public static T? ToObject<T>(this JsonNode node)
+        {
+            if (node == null) return default;
+            return node.Deserialize<T>(SerializerOptions);
+        }
+
+        /// <summary>
+        /// Chuyển đổi JsonNode thành đối tượng.
+        /// </summary>
+        /// <param name="node"><see cref="JsonNode"/>.</param>
+        /// <param name="type">Loại đối tượng.</param>
+        /// <returns>Đối tượng được chuyển đổi.</returns>
+        public static object? ToObject(this JsonNode node, Type type)
+        {
+            if (node == null) return null;
+            return node.Deserialize(type, SerializerOptions);
+        }
+
+        private static JsonSerializerOptions CreateDefaultOptions()
+        {
+            var resolver = new DefaultJsonTypeInfoResolver();
+            resolver.Modifiers.Add(BaseContractResolverModifier);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true,
+                TypeInfoResolver = resolver,
+            };
+            foreach (var converter in Converters)
+                options.Converters.Add(converter);
+            return options;
         }
     }
 }
