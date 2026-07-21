@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
@@ -15,6 +15,7 @@ using TripleSix.Core.Identity;
 using TripleSix.Core.Mappers;
 using TripleSix.Core.Repositories;
 using TripleSix.Core.Services;
+using TripleSix.Core.Types;
 using TripleSix.Core.WebApi;
 
 namespace TripleSix.Core.AutofacModules
@@ -242,6 +243,25 @@ namespace TripleSix.Core.AutofacModules
                 .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
                 .InstancePerLifetimeScope()
                 .As<HangfireBaseStartup>();
+        }
+
+        /// <summary>
+        /// Đăng ký các data initializer dưới dạng InstancePerLifetimeScope.
+        /// </summary>
+        /// <param name="builder">Container builder.</param>
+        /// <param name="assembly">Assembly chứa các data initializer để scan.</param>
+        /// <returns>Registration builder cho phép tiếp tục cấu hình.</returns>
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterAllDataInitializer(
+            this ContainerBuilder builder,
+            Assembly assembly)
+        {
+            return builder.RegisterAssemblyTypes(assembly)
+                .PublicOnly()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsAssignableTo<BaseDataInitializer>())
+                .PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies)
+                .InstancePerLifetimeScope()
+                .AsSelf();
         }
     }
 }
