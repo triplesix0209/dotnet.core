@@ -150,14 +150,18 @@ namespace TripleSix.Core.Identity
             if (tokenData.Header.Alg.IsNotNullOrEmpty() && tokenData.Header.Alg != Setting.Algorithm)
                 throw new SecurityTokenInvalidAlgorithmException($"Token sử dụng algorithm {tokenData.Header.Alg} không khớp với algorithm {Setting.Algorithm} được cấu hình.");
 
-            validationParameters.ValidAlgorithms = [Setting.Algorithm];
-            switch (Setting.Algorithm)
+            var alg = Setting.Algorithm;
+            if (cacheKey.StartsWith("api-key-"))
+                alg = SecurityAlgorithms.EcdsaSha256;
+
+            validationParameters.ValidAlgorithms = [alg];
+            switch (alg)
             {
-                case "HS256":
+                case SecurityAlgorithms.HmacSha256:
                     validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
                     break;
 
-                case "ES256":
+                case SecurityAlgorithms.EcdsaSha256:
                     if (signingKey.Contains("\"kty\""))
                     {
                         validationParameters.IssuerSigningKey = new JsonWebKey(signingKey);

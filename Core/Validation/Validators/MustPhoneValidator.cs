@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using FluentValidation;
 using FluentValidation.Validators;
 
@@ -19,7 +19,7 @@ namespace TripleSix.Core.Validation.Validators
         /// </summary>
         /// <param name="minLength">Min length allowed.</param>
         /// <param name="maxLength">Max length allowed.</param>
-        public MustPhoneValidator(int minLength = 10, int? maxLength = null)
+        public MustPhoneValidator(int minLength = 10, int? maxLength = 12)
         {
             _minLength = minLength;
             _maxLength = maxLength;
@@ -37,7 +37,7 @@ namespace TripleSix.Core.Validation.Validators
             if (value == null)
                 return true;
 
-            var pattern = "^[0-9]{" + _minLength + "," + (_maxLength.HasValue ? _maxLength : string.Empty) + "}$";
+            var pattern = @"^\+?[0-9]{" + _minLength + "," + (_maxLength.HasValue ? _maxLength : string.Empty) + "}$";
             switch (value)
             {
                 case string str when !Regex.IsMatch(str, pattern):
