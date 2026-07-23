@@ -4,6 +4,7 @@ namespace Sample.Application.Dto.Admins
     public class AccountCreateAdminDto : BaseInputDto<Account>
     {
         [Required]
+        [MustPhone]
         public string Name { get; set; }
 
         [Required]

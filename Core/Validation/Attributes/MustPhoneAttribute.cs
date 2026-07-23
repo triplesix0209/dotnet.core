@@ -11,7 +11,7 @@ namespace TripleSix.Core.Validation
         /// </summary>
         /// <param name="minLength">Min length allowed.</param>
         /// <param name="maxLength">Max length allowed.</param>
-        public MustPhoneAttribute(int minLength = 10, int? maxLength = 12)
+        public MustPhoneAttribute(int minLength = 10, int maxLength = 12)
         {
             MinLength = minLength;
             MaxLength = maxLength;
@@ -25,6 +25,6 @@ namespace TripleSix.Core.Validation
         /// <summary>
         /// Độ dài tối đa của số điện thoại.
         /// </summary>
-        public int? MaxLength { get; set; } = 12;
+        public int MaxLength { get; set; } = 12;
     }
 }
