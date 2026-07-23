@@ -188,6 +188,7 @@ namespace TripleSix.Core.WebApi
                 options.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
                 options.CustomSchemaIds(x => x.FullName);
                 options.EnableAnnotations();
+                options.OrderActionsBy(apiDesc => apiDesc.RelativePath);
 
                 options.MapType<DateTime>(() => new OpenApiSchema { Type = "integer", Format = "int64" });
                 options.MapType<DateTime?>(() => new OpenApiSchema { Type = "integer", Format = "int64", Nullable = true });

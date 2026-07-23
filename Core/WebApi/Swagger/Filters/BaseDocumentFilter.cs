@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
@@ -66,7 +66,13 @@ namespace TripleSix.Core.WebApi
 
             // build swagger tags
             swaggerDoc.Tags.Clear();
-            foreach (var tag in tagGroups.SelectMany(x => x.Tags))
+            var allTags = tagGroups
+                .SelectMany(x => x.Tags)
+                .GroupBy(x => x.Name)
+                .Select(g => g.First())
+                .OrderBy(x => x.Description ?? x.Name);
+
+            foreach (var tag in allTags)
             {
                 swaggerDoc.Tags.Add(new OpenApiTag
                 {
@@ -82,10 +88,11 @@ namespace TripleSix.Core.WebApi
             // build swagger tag groups
             var xTagGroups = new OpenApiArray();
             swaggerDoc.Extensions.Add("x-tagGroups", xTagGroups);
-            foreach (var group in tagGroups.OrderBy(x => x.OrderIndex))
+            foreach (var group in tagGroups.OrderBy(x => x.OrderIndex).ThenBy(x => x.Name))
             {
                 var xTagGroupItem = new OpenApiArray();
-                xTagGroupItem.AddRange(group.Tags.Select(x => new OpenApiString(x.Name)));
+                var sortedGroupTags = group.Tags.OrderBy(x => x.Description ?? x.Name);
+                xTagGroupItem.AddRange(sortedGroupTags.Select(x => new OpenApiString(x.Name)));
                 xTagGroups.Add(new OpenApiObject()
                 {
                     ["name"] = new OpenApiString(group.Name),
@@ -103,6 +110,14 @@ namespace TripleSix.Core.WebApi
                     operation.Summary = Regex.Replace(operation.Summary, @"\[controller\]", swaggerDoc.Tags.FirstOrDefault(x => x.Name == tagName)?.Description ?? tagName);
                 }
             }
+
+            // sort paths alphabetically
+            var orderedPaths = new OpenApiPaths();
+            foreach (var (pathKey, pathItem) in swaggerDoc.Paths.OrderBy(x => x.Key))
+            {
+                orderedPaths.Add(pathKey, pathItem);
+            }
+            swaggerDoc.Paths = orderedPaths;
         }
 
         private class TagGroupItem
