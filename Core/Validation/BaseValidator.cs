@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Autofac;
 using FluentValidation;
@@ -165,7 +165,7 @@ namespace TripleSix.Core.Validation
             if (mustPhoneAttr != null)
             {
                 RuleFor(x => valueGetter(x))
-                    .SetValidator(new MustPhoneValidator<T, object?>())
+                    .SetValidator(new MustPhoneValidator<T, object?>(mustPhoneAttr.MinLength, mustPhoneAttr.MaxLength))
                     .OverridePropertyName(propertyName)
                     .WithName(propertyDisplayName);
             }
