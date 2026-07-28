@@ -1,5 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,8 +15,12 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using TripleSix.Core.Appsettings;
 using TripleSix.Core.Constants;
+using TripleSix.Core.Exceptions;
+using TripleSix.Core.Hangfire;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
 using TripleSix.Core.Jsons;
@@ -188,6 +190,7 @@ namespace TripleSix.Core.WebApi
                 options.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
                 options.CustomSchemaIds(x => x.FullName);
                 options.EnableAnnotations();
+                options.OrderActionsBy(apiDesc => apiDesc.RelativePath);
 
                 options.MapType<DateTime>(() => new OpenApiSchema { Type = "integer", Format = "int64" });
                 options.MapType<DateTime?>(() => new OpenApiSchema { Type = "integer", Format = "int64", Nullable = true });
@@ -228,6 +231,8 @@ namespace TripleSix.Core.WebApi
                     .UseIgnoredAssemblyVersionTypeResolver();
                 setup(options, setting);
             });
+
+            GlobalJobFilters.Filters.Add(new SkipRetryOnExceptionAttribute(typeof(JobException)));
 
             return services;
         }
