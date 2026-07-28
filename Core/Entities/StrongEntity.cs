@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TripleSix.Core.DataContext;
 
 namespace TripleSix.Core.Entities
 {
@@ -41,6 +42,8 @@ namespace TripleSix.Core.Entities
         /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
+            builder.Property(x => x.Id).HasValueGenerator<UuidV7ValueGenerator>();
+
             builder.HasIndex(x => x.CreateAt);
             builder.HasIndex(x => x.CreatorId);
             builder.HasIndex(x => x.UpdateAt);
