@@ -53,6 +53,24 @@ namespace TripleSix.Core.Helpers
         }
 
         /// <summary>
+        /// Thêm where vào query khi thỏa điều kiện.
+        /// </summary>
+        /// <typeparam name="TEntity">Loại entity.</typeparam>
+        /// <param name="query">Câu query cần xử lý.</param>
+        /// <param name="condition">Điều kiện.</param>
+        /// <param name="truePredicate">Nội dung câu where khi điều kiện đúng.</param>
+        /// <param name="falsePredicate">Nội dung câu where khi điều kiện sai.</param>
+        /// <returns>Câu query đã được xử lý.</returns>
+        public static IQueryable<TEntity> WhereIfElse<TEntity>(
+            this IQueryable<TEntity> query,
+            bool condition,
+            Expression<Func<TEntity, bool>> truePredicate,
+            Expression<Func<TEntity, bool>> falsePredicate)
+        {
+            return condition ? query.Where(truePredicate) : query.Where(falsePredicate);
+        }
+
+        /// <summary>
         /// Thêm where or vào query.
         /// </summary>
         /// <typeparam name="TEntity">Loại entity.</typeparam>
