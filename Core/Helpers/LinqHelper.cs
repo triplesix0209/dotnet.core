@@ -68,5 +68,26 @@ namespace TripleSix.Core.Helpers
                 expr = expr.Or(predicate);
             return query.Where(expr);
         }
+
+        /// <summary>
+        /// Thêm where or vào query khi thỏa điều kiện.
+        /// </summary>
+        /// <typeparam name="TEntity">Loại entity.</typeparam>
+        /// <param name="query">Câu query cần xử lý.</param>
+        /// <param name="condition">Điều kiện.</param>
+        /// <param name="predicates">Danh sách các điều kiện.</param>
+        /// <returns>Câu query đã được xử lý.</returns>
+        public static IQueryable<TEntity> WhereIfOrs<TEntity>(
+            this IQueryable<TEntity> query,
+            bool condition,
+            params Expression<Func<TEntity, bool>>[] predicates)
+        {
+            if (!condition) return query;
+
+            var expr = PredicateBuilder.New<TEntity>();
+            foreach (var predicate in predicates)
+                expr = expr.Or(predicate);
+            return query.Where(expr);
+        }
     }
 }
