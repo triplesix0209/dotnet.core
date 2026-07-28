@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Reflection;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
@@ -84,6 +84,10 @@ namespace TripleSix.Core.DataContext
                 var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
                 foreach (var entity in addedEntities)
                 {
+                    var id = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.Id));
+                    if (id != null && id.CurrentValue is Guid guid && guid == Guid.Empty)
+                        id.CurrentValue = Guid.CreateVersion7();
+
                     var createAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreateAt));
                     if (createAt != null && createAt.CurrentValue == null) createAt.CurrentValue = now;
 
@@ -121,6 +125,10 @@ namespace TripleSix.Core.DataContext
                 var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
                 foreach (var entity in addedEntities)
                 {
+                    var id = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.Id));
+                    if (id != null && id.CurrentValue is Guid guid && guid == Guid.Empty)
+                        id.CurrentValue = Guid.CreateVersion7();
+
                     var createAt = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.CreateAt));
                     if (createAt != null && createAt.CurrentValue == null) createAt.CurrentValue = now;
 
