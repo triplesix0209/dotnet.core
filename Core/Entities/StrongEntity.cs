@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TripleSix.Core.DataContext;
 
 namespace TripleSix.Core.Entities
 {
@@ -15,7 +16,7 @@ namespace TripleSix.Core.Entities
     {
         /// <inheritdoc/>
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public virtual Guid Id { get; set; }
 
         /// <inheritdoc/>
@@ -41,6 +42,8 @@ namespace TripleSix.Core.Entities
         /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
+            builder.Property(x => x.Id).HasValueGenerator<UuidValueGenerator>();
+
             builder.HasIndex(x => x.CreateAt);
             builder.HasIndex(x => x.CreatorId);
             builder.HasIndex(x => x.UpdateAt);
