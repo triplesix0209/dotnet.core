@@ -42,7 +42,7 @@ namespace TripleSix.Core.Entities
         /// <inheritdoc/>
         public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.Property(x => x.Id).HasValueGenerator<UuidV7ValueGenerator>();
+            builder.Property(x => x.Id).HasValueGenerator<UuidValueGenerator>();
 
             builder.HasIndex(x => x.CreateAt);
             builder.HasIndex(x => x.CreatorId);

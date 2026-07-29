@@ -5,11 +5,9 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 namespace TripleSix.Core.DataContext
 {
     /// <summary>
-    /// Value generator tạo UUID V7 cho primary key.
-    /// Riêng SQL Server sẽ sinh UUID V8 với timestamp nằm ở 6 byte cuối,
-    /// do SQL Server so sánh uniqueidentifier với 6 byte cuối là nhóm có trọng số cao nhất.
+    /// Value generator tạo UUID cho primary key.
     /// </summary>
-    public class UuidV7ValueGenerator : ValueGenerator<Guid>
+    public class UuidValueGenerator : ValueGenerator<Guid>
     {
         /// <inheritdoc/>
         public override bool GeneratesTemporaryValues => false;
@@ -18,13 +16,16 @@ namespace TripleSix.Core.DataContext
         public override Guid Next(EntityEntry entry)
         {
             var providerName = entry.Context.Database.ProviderName;
-            return providerName != null && providerName.Contains("SqlServer", StringComparison.OrdinalIgnoreCase)
-                ? NextSqlServer()
-                : Guid.CreateVersion7();
+
+            if (providerName != null && providerName.Contains("SqlServer", StringComparison.OrdinalIgnoreCase))
+                return CreateSqlServerUuid();
+            return Guid.CreateVersion7();
         }
 
-        private static Guid NextSqlServer()
+        private Guid CreateSqlServerUuid()
         {
+            // Riêng SQL Server sẽ sinh UUID V8 với timestamp nằm ở 6 byte cuối,
+            // do SQL Server so sánh uniqueidentifier với 6 byte cuối là nhóm có trọng số cao nhất.
             Span<byte> bytes = stackalloc byte[16];
             RandomNumberGenerator.Fill(bytes[..10]);
 
