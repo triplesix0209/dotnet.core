@@ -31,6 +31,6 @@
         /// <summary>
         /// Cho phép cập nhật hay không ?.
         /// </summary>
-        public bool CanUpdate { get; set; } = false;
+        public bool AllowUpdate { get; set; } = false;
     }
 }
