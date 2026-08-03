@@ -147,12 +147,10 @@ namespace TripleSix.Core.Identity
                     throw new NotSupportedException($"SigningKeyMode {Setting.SigningKeyMode} không được hỗ trợ.");
             }
 
-            if (tokenData.Header.Alg.IsNotNullOrEmpty() && tokenData.Header.Alg != Setting.Algorithm)
-                throw new SecurityTokenInvalidAlgorithmException($"Token sử dụng algorithm {tokenData.Header.Alg} không khớp với algorithm {Setting.Algorithm} được cấu hình.");
+            var alg = cacheKey.StartsWith("api-key-") ? SecurityAlgorithms.EcdsaSha256 : Setting.Algorithm;
 
-            var alg = Setting.Algorithm;
-            if (cacheKey.StartsWith("api-key-"))
-                alg = SecurityAlgorithms.EcdsaSha256;
+            if (tokenData.Header.Alg.IsNotNullOrEmpty() && tokenData.Header.Alg != alg)
+                throw new SecurityTokenInvalidAlgorithmException($"Token sử dụng algorithm {tokenData.Header.Alg} không khớp với algorithm {alg} được cấu hình.");
 
             validationParameters.ValidAlgorithms = [alg];
             switch (alg)
