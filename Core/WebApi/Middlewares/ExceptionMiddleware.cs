@@ -90,8 +90,8 @@ namespace TripleSix.Core.WebApi
         private async Task SendResponse(HttpContext httpContext, ErrorResult error)
         {
             var json = _webApiAppsetting.ShowStackTrace ?
-                error.ToJson() :
-                error.ToJson(nameof(ErrorResult.StackTrace));
+                error.ToJsonText() :
+                error.ToJsonText(nameof(ErrorResult.StackTrace));
 
             if (_webApiAppsetting.AllowedOrigins.Contains("*"))
                 httpContext.Response.Headers.AccessControlAllowOrigin = "*";

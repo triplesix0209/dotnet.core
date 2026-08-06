@@ -135,7 +135,7 @@ namespace TripleSix.Core.WebApi
                             context.Response.Headers.AccessControlAllowOrigin = context.Request.Headers.Origin.First();
                         context.Response.ContentType = "application/json";
                         context.Response.StatusCode = 401;
-                        var errorResult = new ErrorResult(context.Response.StatusCode, context.Error, context.ErrorDescription).ToJson();
+                        var errorResult = new ErrorResult(context.Response.StatusCode, context.Error, context.ErrorDescription).ToJsonText();
                         return context.Response.WriteAsync(errorResult!);
                     },
                     OnForbidden = context =>
@@ -146,7 +146,7 @@ namespace TripleSix.Core.WebApi
                             context.Response.Headers.AccessControlAllowOrigin = context.Request.Headers.Origin.First();
                         context.Response.ContentType = "application/json";
                         context.Response.StatusCode = 403;
-                        var errorResult = new ErrorResult(context.Response.StatusCode, "access_denied", "Phiên truy cập bị từ chối").ToJson();
+                        var errorResult = new ErrorResult(context.Response.StatusCode, "access_denied", "Phiên truy cập bị từ chối").ToJsonText();
                         return context.Response.WriteAsync(errorResult!);
                     },
                 };
@@ -415,7 +415,7 @@ namespace TripleSix.Core.WebApi
                     return;
                 }
 
-                var result = new ErrorResult(statusCode, errorCode, errorMessage).ToJson();
+                var result = new ErrorResult(statusCode, errorCode, errorMessage).ToJsonText();
                 context.HttpContext.Response.Headers.AccessControlAllowOrigin = "*";
                 context.HttpContext.Response.ContentType = "application/json";
                 await context.HttpContext.Response.WriteAsync(result!);

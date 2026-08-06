@@ -34,7 +34,7 @@ namespace TripleSix.Core.Hangfire
             var serviceTypeName = typeof(T).AssemblyQualifiedName!;
             var method = ((MethodCallExpression)methodCall.Body).Method;
             var arguments = ((MethodCallExpression)methodCall.Body).Arguments
-                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJsonText())
                 .ToArray();
 
             jobOption ??= new JobOption();
@@ -63,7 +63,7 @@ namespace TripleSix.Core.Hangfire
             var serviceTypeName = typeof(T).AssemblyQualifiedName!;
             var method = ((MethodCallExpression)methodCall.Body).Method;
             var arguments = ((MethodCallExpression)methodCall.Body).Arguments
-                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJsonText())
                 .ToArray();
 
             jobOption ??= new JobOption();
@@ -92,7 +92,7 @@ namespace TripleSix.Core.Hangfire
             var serviceTypeName = typeof(T).AssemblyQualifiedName!;
             var method = ((MethodCallExpression)methodCall.Body).Method;
             var arguments = ((MethodCallExpression)methodCall.Body).Arguments
-                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJsonText())
                 .ToArray();
 
             jobOption ??= new JobOption();
@@ -122,7 +122,7 @@ namespace TripleSix.Core.Hangfire
             var serviceTypeName = typeof(T).AssemblyQualifiedName!;
             var method = ((MethodCallExpression)methodCall.Body).Method;
             var arguments = ((MethodCallExpression)methodCall.Body).Arguments
-                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJson())
+                .Select(argument => Expression.Lambda(argument).Compile().DynamicInvoke()?.ToJsonText())
                 .ToArray();
 
             jobOption ??= new JobOption();
