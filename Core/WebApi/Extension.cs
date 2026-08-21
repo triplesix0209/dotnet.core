@@ -367,7 +367,7 @@ namespace TripleSix.Core.WebApi
                         {
                             if (requestMessage.RequestUri != null)
                             {
-                                activity.DisplayName = $"[HTTP] {requestMessage.Method} {requestMessage.RequestUri.Authority + requestMessage.RequestUri.LocalPath}";
+                                activity.DisplayName = $"[HTTP] {requestMessage.Method} {requestMessage.RequestUri.Authority}{NormalizeUrlPath(requestMessage.RequestUri.LocalPath)}";
                                 activity.SetTag("peer.service", requestMessage.RequestUri.Authority);
                             }
 
@@ -475,6 +475,51 @@ namespace TripleSix.Core.WebApi
         public static WebApplication UseMvcService(this WebApplication app, IConfiguration configuration)
         {
             return app.UseMvcService(new WebApiAppsetting(configuration));
+        }
+
+        // thay các segment high-cardinality (guid, số) bằng {id} để span name không bị phân mảnh
+        private static string NormalizeUrlPath(string path)
+        {
+            if (path.IsNullOrEmpty())
+            {
+                return path;
+            }
+
+            var segments = path.Split('/');
+
+            for (var i = 0; i < segments.Length; i++)
+            {
+                var segment = segments[i];
+
+                if (segment.Length == 0)
+                {
+                    continue;
+                }
+
+                if (Guid.TryParse(segment, out _))
+                {
+                    segments[i] = "{id}";
+                    continue;
+                }
+
+                var isAllDigits = true;
+
+                for (var j = 0; j < segment.Length; j++)
+                {
+                    if (!char.IsDigit(segment[j]))
+                    {
+                        isAllDigits = false;
+                        break;
+                    }
+                }
+
+                if (isAllDigits)
+                {
+                    segments[i] = "{id}";
+                }
+            }
+
+            return string.Join('/', segments);
         }
     }
 }
