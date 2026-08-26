@@ -294,6 +294,34 @@ namespace TripleSix.Core.WebApi
         }
 
         /// <summary>
+        /// Sử dụng Static Document Page làm tài liệu hệ thống.
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
+        /// <param name="requestPath">Đường dẫn URL (mặc định "/document").</param>
+        /// <param name="folderName">Tên thư mục tài liệu (mặc định "Document").</param>
+        /// <returns><see cref="IApplicationBuilder"/>.</returns>
+        public static IApplicationBuilder UseDocumentPage(
+            this IApplicationBuilder app,
+            string requestPath = "/document",
+            string folderName = "Document")
+        {
+            var docPath = Path.Combine(AppContext.BaseDirectory, folderName);
+            if (!Directory.Exists(docPath))
+                docPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            if (!Directory.Exists(docPath)) return app;
+
+            app.UseFileServer(new FileServerOptions
+            {
+                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(docPath),
+                RequestPath = new PathString(requestPath.StartsWith('/') ? requestPath : $"/{requestPath}"),
+                EnableDefaultFiles = true,
+            });
+
+            return app;
+        }
+
+        /// <summary>
         /// Cài đặt OpenTelemetry.
         /// </summary>
         /// <param name="builder"><see cref="WebApplicationBuilder"/>.</param>
