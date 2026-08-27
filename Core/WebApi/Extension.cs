@@ -311,10 +311,26 @@ namespace TripleSix.Core.WebApi
 
             if (!Directory.Exists(docPath)) return app;
 
+            var normalizedRequestPath = requestPath.StartsWith('/') ? requestPath : $"/{requestPath}";
+            normalizedRequestPath = normalizedRequestPath.TrimEnd('/');
+
+            app.Use(async (context, next) =>
+            {
+                var path = context.Request.Path.Value;
+                if (path != null && (path.Equals(normalizedRequestPath, StringComparison.OrdinalIgnoreCase) || path.Equals($"{normalizedRequestPath}/", StringComparison.OrdinalIgnoreCase)))
+                {
+                    var target = $"{context.Request.PathBase}{normalizedRequestPath}/index.html{context.Request.QueryString}";
+                    context.Response.Redirect(target, permanent: false);
+                    return;
+                }
+
+                await next();
+            });
+
             app.UseFileServer(new FileServerOptions
             {
                 FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(docPath),
-                RequestPath = new PathString(requestPath.StartsWith('/') ? requestPath : $"/{requestPath}"),
+                RequestPath = new PathString(normalizedRequestPath),
                 EnableDefaultFiles = true,
             });
 
