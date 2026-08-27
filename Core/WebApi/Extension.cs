@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,15 +17,11 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using TripleSix.Core.Appsettings;
-using TripleSix.Core.Constants;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Hangfire;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
-using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.WebApi
 {
@@ -169,10 +167,10 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình Swagger.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
-        /// <param name="setting"><see cref="SwaggerAppsetting"/>.</param>
+        /// <param name="setting"><see cref="DocumentSwaggerAppsetting"/>.</param>
         /// <param name="setupAction">Hàm tùy chỉnh Swagger.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddSwagger(this IServiceCollection services, SwaggerAppsetting setting, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, DocumentSwaggerAppsetting setting, Action<SwaggerGenOptions, DocumentSwaggerAppsetting>? setupAction = null)
         {
             if (!setting.Enable) return services;
 
@@ -212,12 +210,24 @@ namespace TripleSix.Core.WebApi
         /// Cấu hình Swagger.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="setting"><see cref="DocumentAppsetting"/>.</param>
+        /// <param name="setupAction">Hàm tùy chỉnh Swagger.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddSwagger(this IServiceCollection services, DocumentAppsetting setting, Action<SwaggerGenOptions, DocumentSwaggerAppsetting>? setupAction = null)
+        {
+            return AddSwagger(services, setting.Swagger, setupAction);
+        }
+
+        /// <summary>
+        /// Cấu hình Swagger.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
         /// <param name="configuration"><see cref="IConfiguration"/>.</param>
         /// <param name="setupAction">Hàm tùy chỉnh Swagger.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration, Action<SwaggerGenOptions, SwaggerAppsetting>? setupAction = null)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration, Action<SwaggerGenOptions, DocumentSwaggerAppsetting>? setupAction = null)
         {
-            return AddSwagger(services, new SwaggerAppsetting(configuration), setupAction);
+            return AddSwagger(services, new DocumentAppsetting(configuration).Swagger, setupAction);
         }
 
         /// <summary>
@@ -256,70 +266,36 @@ namespace TripleSix.Core.WebApi
         }
 
         /// <summary>
-        /// Sử dụng Redoc làm API Document.
+        /// Cài đặt endpoint tài liệu hệ thống.
         /// </summary>
         /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
-        /// <param name="setting"><see cref="SwaggerAppsetting"/>.</param>
+        /// <param name="setting"><see cref="DocumentAppsetting"/>.</param>
         /// <returns><see cref="IApplicationBuilder"/>.</returns>
-        public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, SwaggerAppsetting setting)
-        {
-            if (!setting.Enable) return app;
-
-            app.UseSwagger();
-            app.UseReDoc(options =>
-            {
-                options.RoutePrefix = setting.Route;
-                options.IndexStream = () =>
-                {
-                    var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                        .First(x => x.GetName().Name == $"{nameof(TripleSix)}.{nameof(Core)}");
-                    var streamName = assembly.GetManifestResourceNames()
-                        .First(x => x.EndsWith("ReDoc.html"));
-                    return assembly.GetManifestResourceStream(streamName);
-                };
-            });
-
-            return app;
-        }
-
-        /// <summary>
-        /// Sử dụng Redoc làm API Document.
-        /// </summary>
-        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
-        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
-        /// <returns><see cref="IApplicationBuilder"/>.</returns>
-        public static IApplicationBuilder UseReDocUI(this IApplicationBuilder app, IConfiguration configuration)
-        {
-            return UseReDocUI(app, new SwaggerAppsetting(configuration));
-        }
-
-        /// <summary>
-        /// Sử dụng Static Document Page làm tài liệu hệ thống.
-        /// </summary>
-        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
-        /// <param name="requestPath">Đường dẫn URL (mặc định "/document").</param>
-        /// <param name="folderName">Tên thư mục tài liệu (mặc định "Document").</param>
-        /// <returns><see cref="IApplicationBuilder"/>.</returns>
-        public static IApplicationBuilder UseDocumentPage(
+        public static IApplicationBuilder UseDocument(
             this IApplicationBuilder app,
-            string requestPath = "/document",
-            string folderName = "Document")
+            DocumentAppsetting setting)
         {
-            var docPath = Path.Combine(AppContext.BaseDirectory, folderName);
-            if (!Directory.Exists(docPath))
-                docPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+            if (!setting.Page.Enable && !setting.Swagger.Enable) return app;
 
-            if (!Directory.Exists(docPath)) return app;
+            var baseRoute = setting.Route.Trim('/');
+            if (baseRoute.IsNullOrEmpty()) baseRoute = "_document";
 
-            var normalizedRequestPath = requestPath.StartsWith('/') ? requestPath : $"/{requestPath}";
-            normalizedRequestPath = normalizedRequestPath.TrimEnd('/');
+            var pageDefaultFile = setting.Page.DefaultFile.Trim('/');
+            var folderPath = setting.Page.FolderPath.IsNullOrEmpty() ? "Document" : setting.Page.FolderPath;
+
+            var docPath = Path.IsPathRooted(folderPath) ? folderPath : Path.Combine(AppContext.BaseDirectory, folderPath);
+            if (!Directory.Exists(docPath)) docPath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+            var hasDocFolder = Directory.Exists(docPath);
+
+            var pageEnabled = setting.Page.Enable && hasDocFolder;
 
             app.Use(async (context, next) =>
             {
                 var path = context.Request.Path.Value;
-                if (path != null && (path.Equals(normalizedRequestPath, StringComparison.OrdinalIgnoreCase) || path.Equals($"{normalizedRequestPath}/", StringComparison.OrdinalIgnoreCase)))
+                if (path != null && (path.Equals($"/{baseRoute}", StringComparison.OrdinalIgnoreCase) || path.Equals($"/{baseRoute}/", StringComparison.OrdinalIgnoreCase)))
                 {
-                    var target = $"{context.Request.PathBase}{normalizedRequestPath}/index.html{context.Request.QueryString}";
+                    var targetRoute = pageEnabled ? pageDefaultFile : "swagger";
+                    var target = $"{context.Request.PathBase}/{baseRoute}/{targetRoute}{context.Request.QueryString}";
                     context.Response.Redirect(target, permanent: false);
                     return;
                 }
@@ -327,14 +303,51 @@ namespace TripleSix.Core.WebApi
                 await next();
             });
 
-            app.UseFileServer(new FileServerOptions
+            if (pageEnabled)
             {
-                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(docPath),
-                RequestPath = new PathString(normalizedRequestPath),
-                EnableDefaultFiles = true,
-            });
+                app.UseFileServer(new FileServerOptions
+                {
+                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(docPath),
+                    RequestPath = new PathString($"/{baseRoute}"),
+                    EnableDefaultFiles = true,
+                });
+            }
+
+            if (setting.Swagger.Enable)
+            {
+                app.UseSwagger(options =>
+                {
+                    options.RouteTemplate = $"{baseRoute}/swagger/{{documentName}}/swagger.json";
+                });
+
+                app.UseReDoc(options =>
+                {
+                    options.RoutePrefix = $"{baseRoute}/swagger";
+                    options.IndexStream = () =>
+                    {
+                        var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                            .First(x => x.GetName().Name == $"{nameof(TripleSix)}.{nameof(Core)}");
+                        var streamName = assembly.GetManifestResourceNames()
+                            .First(x => x.EndsWith("ReDoc.html"));
+                        return assembly.GetManifestResourceStream(streamName);
+                    };
+                });
+            }
 
             return app;
+        }
+
+        /// <summary>
+        /// Cài đặt endpoint tài liệu hệ thống.
+        /// </summary>
+        /// <param name="app"><see cref="IApplicationBuilder"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns><see cref="IApplicationBuilder"/>.</returns>
+        public static IApplicationBuilder UseDocument(
+            this IApplicationBuilder app,
+            IConfiguration configuration)
+        {
+            return UseDocument(app, new DocumentAppsetting(configuration));
         }
 
         /// <summary>

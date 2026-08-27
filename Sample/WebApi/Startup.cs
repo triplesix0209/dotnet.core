@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -74,7 +74,7 @@ namespace Sample.WebApi
         private static void ConfigureApp(this WebApplication app, IConfiguration configuration)
         {
             app.UseMvcService(configuration);
-            app.UseReDocUI(configuration);
+            app.UseDocument(configuration);
             app.UseHangfireDashboard(configuration);
 
             app.UseAuthentication();
