@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +45,14 @@ namespace TripleSix.Core.WebApi
             Action<MvcOptions>? configureMvc = null,
             Action<ApplicationPartManager>? configureApplicationPartManager = null)
         {
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/json"]);
+            });
+
             return services
                 .AddCors()
                 .AddMvc(options =>
@@ -201,6 +210,7 @@ namespace TripleSix.Core.WebApi
 
                 options.DocumentFilter<BaseDocumentFilter>();
                 options.OperationFilter<DescribeOperationFilter>();
+                options.SchemaFilter<DescribeSchemaFilter>();
 
                 setupAction?.Invoke(options, setting);
             });
@@ -499,6 +509,8 @@ namespace TripleSix.Core.WebApi
         /// <returns><see cref="WebApplication"/>.</returns>
         public static WebApplication UseMvcService(this WebApplication app, WebApiAppsetting setting)
         {
+            app.UseResponseCompression();
+
             app.UseCors(builder =>
             {
                 if (setting.AllowedOrigins.Contains("*")) builder.AllowAnyOrigin();

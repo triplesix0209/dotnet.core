@@ -1,10 +1,12 @@
-﻿#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
+#pragma warning disable SA1009 // Closing parenthesis should be spaced correctly
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -44,12 +46,7 @@ namespace TripleSix.Core.WebApi
                         operation.RequestBody.Content.Add("application/json", new OpenApiMediaType());
                     var bodyContent = operation.RequestBody.Content["application/json"];
 
-                    var instance = Activator.CreateInstance(parameterDescription.Type);
-                    bodyContent.Schema = parameterDescription.Type.GenerateSwaggerSchema(
-                        context.SchemaGenerator,
-                        context.SchemaRepository,
-                        defaultValue: instance,
-                        generateDefaultValue: true);
+                    bodyContent.Schema = context.SchemaGenerator.GenerateSchema(parameterDescription.Type, context.SchemaRepository);
                     bodyContent.Schema.Nullable = false;
                 }
                 else if (parameterLocation == "FormFile")
@@ -58,10 +55,7 @@ namespace TripleSix.Core.WebApi
                         operation.RequestBody.Content.Add("multipart/form-data", new OpenApiMediaType());
                     var bodyContent = operation.RequestBody.Content["multipart/form-data"];
 
-                    bodyContent.Schema = parameterDescription.ParameterDescriptor.ParameterType.GenerateSwaggerSchema(
-                        context.SchemaGenerator,
-                        context.SchemaRepository,
-                        generateDefaultValue: false);
+                    bodyContent.Schema = context.SchemaGenerator.GenerateSchema(parameterDescription.ParameterDescriptor.ParameterType, context.SchemaRepository);
                     bodyContent.Schema.Nullable = false;
                 }
                 else
@@ -83,23 +77,29 @@ namespace TripleSix.Core.WebApi
                     var modelType = parameterDescription.ModelMetadata.ContainerType;
                     if (modelType == null) continue;
 
-                    var instance = Activator.CreateInstance(modelType);
                     var propertyInfo = parameterDescription.PropertyInfo();
-                    PropertyInfo? parentPropertyInfo = null;
-                    if (parameterDescription.Name.Contains('.'))
-                        parentPropertyInfo = parameterDescription.ParameterDescriptor.ParameterType.GetProperty(parameterDescription.Name.Split(".")[0]);
-
-                    parameter.Schema = parameterDescription.Type.GenerateSwaggerSchema(
-                        context.SchemaGenerator,
-                        context.SchemaRepository,
-                        propertyInfo: propertyInfo,
-                        parentPropertyInfo: parentPropertyInfo,
-                        defaultValue: propertyInfo.GetValue(instance),
-                        generateDefaultValue: true);
-
+                    parameter.Schema = context.SchemaGenerator.GenerateSchema(parameterDescription.Type, context.SchemaRepository);
                     parameter.Name = parameterDescription.Name.Split(".").Select(x => x.ToCamelCase()).ToString(".");
                     parameter.Required = parameter.In == ParameterLocation.Path ||
                             (propertyInfo?.GetCustomAttribute<RequiredAttribute>() != null && parameter.Schema.Default is OpenApiNull);
+
+                    if (propertyInfo != null)
+                    {
+                        var displayName = propertyInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName.ToTitleCase();
+                        if (displayName.IsNullOrEmpty() && modelType.IsAssignableToGenericType(typeof(IEntityQueryableDto<>)))
+                        {
+                            displayName = modelType.GetInterfaces()
+                                .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEntityQueryableDto<>))?
+                                .GenericTypeArguments[0].GetProperty(propertyInfo.Name)?
+                                .GetCustomAttribute<CommentAttribute>()?.Comment;
+                            if (displayName.IsNotNullOrEmpty()) displayName = "Lọc theo " + displayName;
+                        }
+
+                        var description = propertyInfo.GetCustomAttribute<DescriptionAttribute>()?.Description.ToTitleCase();
+                        var docDesc = new[] { displayName, description }.Where(x => x.IsNotNullOrEmpty()).ToString("<br/>");
+                        if (docDesc.IsNotNullOrEmpty())
+                            parameter.Description = docDesc;
+                    }
 
                     operation.Parameters.Add(parameter);
                 }
@@ -120,10 +120,7 @@ namespace TripleSix.Core.WebApi
                 : typeof(SuccessResult);
 
             var responseType = new OpenApiMediaType();
-            responseType.Schema = returnType.GenerateSwaggerSchema(
-                context.SchemaGenerator,
-                context.SchemaRepository,
-                generateDefaultValue: false);
+            responseType.Schema = context.SchemaGenerator.GenerateSchema(returnType, context.SchemaRepository);
 
             var successResponse = new OpenApiResponse { Description = "Success" };
             successResponse.Content.Add("application/json", responseType);
@@ -280,7 +277,6 @@ namespace TripleSix.Core.WebApi
             #endregion
 
             operation.OperationId = groupName + controllerDescriptor.ControllerName + controllerDescriptor.ActionName;
-            context.SchemaRepository.Schemas.Clear();
         }
     }
 }

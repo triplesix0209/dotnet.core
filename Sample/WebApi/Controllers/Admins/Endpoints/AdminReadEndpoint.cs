@@ -1,4 +1,4 @@
-﻿namespace Sample.WebApi.Controllers.Admins
+namespace Sample.WebApi.Controllers.Admins
 {
     public class AdminReadEndpoint<TController, TEntity, TItem, TDetail, TFilter> : AdminController,
         IControllerEndpoint<TController, AdminReadEndpointAttribute<TController, TEntity, TItem, TDetail, TFilter>>
@@ -19,7 +19,7 @@
         }
 
         [HttpPost("GetAll")]
-        [SwaggerOperation("Lấy phân trang [controller]")]
+        [SwaggerOperation("Lấy danh sách [controller]")]
         public async Task<DataResult<List<TItem>>> GetAll([FromBody] TFilter input)
         {
             var result = await Service.GetList<TItem>(input);

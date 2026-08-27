@@ -9,7 +9,7 @@
 		<Nullable>enable</Nullable>
 
 		<PackageId>TripleSix.Core</PackageId>
-		<Version>9.2.19</Version>
+		<Version>9.2.20</Version>
 		<Authors>triplesix0209@gmail.com</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -26,6 +26,10 @@
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 		<None Include="..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
 	<ItemGroup>
