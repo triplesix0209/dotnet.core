@@ -35,5 +35,15 @@ namespace TripleSix.Core.Appsettings
         /// Port kết nối MQTT broker (mặc định 1883).
         /// </summary>
         public int Port { get; set; } = 1883;
+
+        /// <summary>
+        /// Username xác thực MQTT broker.
+        /// </summary>
+        public string? Username { get; set; }
+
+        /// <summary>
+        /// Password xác thực MQTT broker.
+        /// </summary>
+        public string? Password { get; set; }
     }
 }
