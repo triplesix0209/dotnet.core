@@ -32,6 +32,11 @@ namespace TripleSix.Core.Appsettings
         public string Host { get; set; } = "localhost";
 
         /// <summary>
+        /// Password xác thực MQTT broker.
+        /// </summary>
+        public string? Password { get; set; }
+
+        /// <summary>
         /// Port kết nối MQTT broker (mặc định 1883).
         /// </summary>
         public int Port { get; set; } = 1883;
@@ -40,10 +45,5 @@ namespace TripleSix.Core.Appsettings
         /// Username xác thực MQTT broker.
         /// </summary>
         public string? Username { get; set; }
-
-        /// <summary>
-        /// Password xác thực MQTT broker.
-        /// </summary>
-        public string? Password { get; set; }
     }
 }
