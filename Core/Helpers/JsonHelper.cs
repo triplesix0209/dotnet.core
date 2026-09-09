@@ -18,6 +18,9 @@ namespace TripleSix.Core.Helpers
         public static readonly JsonConverter[] Converters =
         [
             new TimestampConverter(),
+            new NewtonsoftCompatibleDoubleConverter(),
+            new NewtonsoftCompatibleFloatConverter(),
+            new NewtonsoftCompatibleDecimalConverter(),
         ];
 
         /// <summary>
