@@ -26,11 +26,6 @@ namespace TripleSix.Core.Helpers
             Converters = Converters,
         };
 
-        static JsonHelper()
-        {
-            JsonConvert.DefaultSettings = () => SerializerSettings;
-        }
-
         /// <summary>
         /// Mã hóa đối tượng thành chuỗi JSON.
         /// </summary>
