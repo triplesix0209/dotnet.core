@@ -50,6 +50,15 @@ namespace TripleSix.Core.DataContext
             where TEntity : class;
 
         /// <summary>
+        ///     Provides access to change tracking information and operations for a given entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entity">The entity to get the entry for.</param>
+        /// <returns>The entry for the given entity.</returns>
+        EntityEntry<TEntity> Entry<TEntity>(TEntity entity)
+            where TEntity : class;
+
+        /// <summary>
         ///     Starts a new transaction.
         /// </summary>
         /// <remarks>

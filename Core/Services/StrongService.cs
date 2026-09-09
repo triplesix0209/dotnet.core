@@ -1,4 +1,5 @@
-﻿using TripleSix.Core.DataContext;
+﻿using Microsoft.EntityFrameworkCore;
+using TripleSix.Core.DataContext;
 using TripleSix.Core.Entities;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -67,11 +68,14 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             entity.DeleteAt = DateTime.UtcNow;
-            var result = _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true);
-            await OnEntitySaveChanged(result.Entity, EntityEvents.SoftDeleted);
 
-            return result.Entity;
+            if (_db.Entry(entity).State == EntityState.Detached)
+                _db.Set<TEntity>().Update(entity);
+
+            await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(entity, EntityEvents.SoftDeleted);
+
+            return entity;
         }
 
         /// <inheritdoc/>
@@ -110,11 +114,14 @@ namespace TripleSix.Core.Services
             using var activity = StartTraceMethodActivity();
 
             entity.DeleteAt = null;
-            var result = _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true);
-            await OnEntitySaveChanged(result.Entity, EntityEvents.Restore);
 
-            return result.Entity;
+            if (_db.Entry(entity).State == EntityState.Detached)
+                _db.Set<TEntity>().Update(entity);
+
+            await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(entity, EntityEvents.Restore);
+
+            return entity;
         }
 
         /// <inheritdoc/>

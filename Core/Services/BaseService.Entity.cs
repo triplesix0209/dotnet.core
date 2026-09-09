@@ -90,11 +90,13 @@ namespace TripleSix.Core.Services
         {
             using var activity = StartTraceMethodActivity();
 
-            var result = _db.Set<TEntity>().Update(entity);
-            await _db.SaveChangesAsync(true);
-            await OnEntitySaveChanged(result.Entity, EntityEvents.Updated);
+            if (_db.Entry(entity).State == EntityState.Detached)
+                _db.Set<TEntity>().Update(entity);
 
-            return result.Entity;
+            await _db.SaveChangesAsync(true);
+            await OnEntitySaveChanged(entity, EntityEvents.Updated);
+
+            return entity;
         }
 
         /// <inheritdoc/>

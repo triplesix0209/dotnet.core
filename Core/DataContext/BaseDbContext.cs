@@ -104,7 +104,7 @@ namespace TripleSix.Core.DataContext
                     if (updateAt != null) updateAt.CurrentValue = now;
 
                     var updatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
-                    if (updatorId != null && updatorId.CurrentValue == null && Identity.Id.HasValue) updatorId.CurrentValue = Identity.Id;
+                    if (updatorId != null && Identity.Id.HasValue) updatorId.CurrentValue = Identity.Id;
                 }
             }
 
@@ -141,7 +141,7 @@ namespace TripleSix.Core.DataContext
                     if (updateAt != null) updateAt.CurrentValue = now;
 
                     var updatorId = entity.Properties.FirstOrDefault(x => x.Metadata.Name == nameof(IStrongEntity.UpdatorId));
-                    if (updatorId != null && updatorId.CurrentValue == null && Identity.Id.HasValue) updatorId.CurrentValue = Identity.Id;
+                    if (updatorId != null && Identity.Id.HasValue) updatorId.CurrentValue = Identity.Id;
                 }
             }
 
