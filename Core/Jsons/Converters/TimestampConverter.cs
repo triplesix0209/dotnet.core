@@ -1,5 +1,5 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.Jsons
@@ -7,26 +7,19 @@ namespace TripleSix.Core.Jsons
     /// <summary>
     /// Timestamp converter.
     /// </summary>
-    public class TimestampConverter : JsonConverter<DateTime>
+    public class TimestampConverter : DateTimeConverterBase
     {
         /// <inheritdoc/>
-        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonTokenType.Number)
-            {
-                return reader.GetInt64().ToDateTime();
-            }
-            if (reader.TokenType == JsonTokenType.String && long.TryParse(reader.GetString(), out var timestamp))
-            {
-                return timestamp.ToDateTime();
-            }
-            throw new JsonException("Expected number or string representing unix timestamp.");
+            if (reader.Value == null) return null;
+            return ((long)reader.Value).ToDateTime();
         }
 
         /// <inheritdoc/>
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            writer.WriteNumberValue(value.ToEpochTimestamp());
+            writer.WriteValue(value == null ? null : ((DateTime)value).ToEpochTimestamp());
         }
     }
 }

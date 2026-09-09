@@ -23,6 +23,7 @@ using TripleSix.Core.Exceptions;
 using TripleSix.Core.Hangfire;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Identity;
+using TripleSix.Core.Jsons;
 
 namespace TripleSix.Core.WebApi
 {
@@ -69,14 +70,11 @@ namespace TripleSix.Core.WebApi
                     options.FeatureProviders.Add(new ControllerEndpointFeatureProvider(assembly));
                     configureApplicationPartManager?.Invoke(options);
                 })
-                .AddJsonOptions(options =>
+                .AddNewtonsoftJson(options =>
                 {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-                    var resolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver();
-                    resolver.Modifiers.Add(JsonHelper.BaseContractResolverModifier);
-                    options.JsonSerializerOptions.TypeInfoResolver = resolver;
+                    options.SerializerSettings.ContractResolver = new BaseContractResolver();
                     foreach (var converter in JsonHelper.Converters)
-                        options.JsonSerializerOptions.Converters.Add(converter);
+                        options.SerializerSettings.Converters.Add(converter);
                 });
         }
 

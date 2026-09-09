@@ -172,10 +172,8 @@ namespace TripleSix.Core.WebApi
                 {
                     try
                     {
-                        using var doc = JsonDocument.Parse(responseString);
-                        var root = doc.RootElement;
-                        if (root.TryGetProperty("data", out var data) && data.ValueKind == JsonValueKind.String)
-                            publicKey = data.GetString() ?? string.Empty;
+                        var token = responseString.ToJToken();
+                        publicKey = token?["data"]?.ToString() ?? responseString.Trim();
                     }
                     catch
                     {

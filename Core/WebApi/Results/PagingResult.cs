@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using TripleSix.Core.Types;
 
 namespace TripleSix.Core.WebApi
@@ -43,6 +44,7 @@ namespace TripleSix.Core.WebApi
         /// Dữ liệu.
         /// </summary>
         [JsonPropertyOrder(-9)]
+        [JsonProperty(Order = -9)]
         [DisplayName("Dữ liệu")]
         public virtual IEnumerable<TItem> Data { get; protected set; }
     }

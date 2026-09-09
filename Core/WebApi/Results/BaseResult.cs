@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace TripleSix.Core.WebApi
 {
@@ -26,7 +27,8 @@ namespace TripleSix.Core.WebApi
         /// <summary>
         /// Mã trạng thái http.
         /// </summary>
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         [DisplayName("Mã trạng thái http")]
         public virtual int HttpStatusCode { get; set; }
 
@@ -34,6 +36,7 @@ namespace TripleSix.Core.WebApi
         /// Metadata.
         /// </summary>
         [JsonPropertyOrder(-10)]
+        [JsonProperty(Order = -10)]
         [DisplayName("Metadata")]
         public virtual TMeta Meta { get; set; }
 

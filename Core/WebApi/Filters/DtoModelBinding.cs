@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Text;
-using System.Text.Json.Nodes;
 using Autofac;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json.Linq;
 using TripleSix.Core.Exceptions;
 using TripleSix.Core.Helpers;
 using TripleSix.Core.Types;
@@ -88,7 +88,7 @@ namespace TripleSix.Core.WebApi
             }
             else if (bindingSource == "Body")
             {
-                JsonObject? bodyData;
+                JObject? bodyData;
                 using (var reader = new StreamReader(
                     request.Body,
                     Encoding.UTF8,
@@ -96,7 +96,7 @@ namespace TripleSix.Core.WebApi
                     leaveOpen: true))
                 {
                     request.Body.Position = 0;
-                    bodyData = (await reader.ReadToEndAsync()).ToJsonNode() as JsonObject;
+                    bodyData = (await reader.ReadToEndAsync()).ToJToken() as JObject;
                     request.Body.Position = 0;
                 }
 
@@ -107,18 +107,19 @@ namespace TripleSix.Core.WebApi
             return value;
         }
 
-        private static void SetBodyPropertyChanged(IDto result, JsonObject bodyData)
+        private static void SetBodyPropertyChanged(IDto result, JObject bodyData)
         {
             var resultProperties = result.GetType().GetProperties();
+            var bodyProperties = bodyData.Properties();
             foreach (var resultProperty in resultProperties)
             {
-                var bodyProperty = bodyData.FirstOrDefault(x => x.Key.Equals(resultProperty.Name, _stringComparison));
-                if (bodyProperty.Key == null) continue;
+                var bodyProperty = bodyProperties.FirstOrDefault(x => x.Name.Equals(resultProperty.Name, _stringComparison));
+                if (bodyProperty == null) continue;
 
                 result.SetPropertyChanged(resultProperty.Name, true);
 
                 if (resultProperty.GetValue(result) is IDto childResult
-                    && bodyProperty.Value is JsonObject childBodyProperty)
+                    && bodyProperty.Value is JObject childBodyProperty)
                     SetBodyPropertyChanged(childResult, childBodyProperty);
             }
         }

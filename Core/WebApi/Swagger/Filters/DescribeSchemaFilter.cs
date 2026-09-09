@@ -39,7 +39,8 @@ namespace TripleSix.Core.WebApi
                 return;
             }
 
-            if (underlyingType.IsAssignableTo<System.Text.Json.Nodes.JsonNode>()
+            if (underlyingType.IsAssignableTo<Newtonsoft.Json.Linq.JToken>()
+                || underlyingType.IsAssignableTo<System.Text.Json.Nodes.JsonNode>()
                 || underlyingType.IsAssignableTo<System.Text.Json.JsonDocument>()
                 || underlyingType == typeof(System.Text.Json.JsonElement))
             {
@@ -55,6 +56,7 @@ namespace TripleSix.Core.WebApi
             {
                 var propertyName = property.Name.ToCamelCase();
                 if (property.GetCustomAttribute<JsonIgnoreAttribute>(true) != null
+                    || property.GetCustomAttribute<Newtonsoft.Json.JsonIgnoreAttribute>(true) != null
                     || property.GetCustomAttribute<SwaggerHideAttribute>(true) != null)
                 {
                     schema.Properties.Remove(propertyName);

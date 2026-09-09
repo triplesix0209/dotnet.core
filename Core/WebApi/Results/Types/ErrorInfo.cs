@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using TripleSix.Core.Helpers;
 
 namespace TripleSix.Core.WebApi
@@ -28,6 +29,7 @@ namespace TripleSix.Core.WebApi
         /// Mã lỗi.
         /// </summary>
         [JsonPropertyOrder(-10)]
+        [JsonProperty(Order = -10)]
         [DisplayName("Mã lỗi")]
         public virtual string Code
         {
@@ -39,6 +41,7 @@ namespace TripleSix.Core.WebApi
         /// Mô tả lỗi.
         /// </summary>
         [JsonPropertyOrder(-10)]
+        [JsonProperty(Order = -10)]
         [DisplayName("Mô tả lỗi")]
         public virtual string Message { get; set; }
 
@@ -46,6 +49,7 @@ namespace TripleSix.Core.WebApi
         /// Dữ liệu lỗi.
         /// </summary>
         [JsonPropertyOrder(-10)]
+        [JsonProperty(Order = -10)]
         [DisplayName("Dữ liệu lỗi")]
         public virtual object? Data { get; set; }
     }
